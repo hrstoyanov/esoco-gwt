@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -209,7 +209,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 *
 	 * @param rCaught The exception that occurred
 	 */
-	private void handleLoginFailure(Throwable rCaught)
+	protected void handleLoginFailure(Throwable rCaught)
 	{
 		aLoginButton.setEnabled(true);
 		aFailureMessage.setVisible(true);
@@ -224,7 +224,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 *                  service method {@link WorkflowService#connect(String,
 	 *                  String)}
 	 */
-	private void handleLoginSuccess(DataElementList rUserData)
+	protected void handleLoginSuccess(DataElementList rUserData)
 	{
 		String sSessionID =
 			rUserData.getProperty(AuthenticatedService.SESSION_ID, null);
@@ -250,7 +250,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	/***************************************
 	 * Performs the login with the data from the input fields.
 	 */
-	private void login()
+	protected void login()
 	{
 		aLoginButton.setEnabled(false);
 

@@ -92,9 +92,9 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * Handles the action event of the login button.
+	 * Handles events in the login components.
 	 *
-	 * @param rEvent The event
+	 * @param rEvent The event that occurred
 	 */
 	@Override
 	public void handleEvent(EWTEvent rEvent)
@@ -103,7 +103,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 		{
 			aPasswordField.requestFocus();
 		}
-		else
+		else // return in password field or login button
 		{
 			login();
 		}
@@ -130,15 +130,101 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	@Override
 	protected void addComponents()
 	{
+		ContainerBuilder<Panel> aBuilder = createLoginComponentsPanel();
+
 		String sUserName = Cookies.getCookie(sUserCookie);
 
-		ContainerBuilder<Panel> aBuilder =
-			addPanel(AlignedPosition.CENTER, new GridLayout(2, true, 3));
+		addLoginPanelHeader(aBuilder);
 
+		aUserField	    = addUserComponents(aBuilder, sUserName);
+		aPasswordField  = addPasswortComponents(aBuilder);
+		aFailureMessage = addFailureMessageComponents(aBuilder);
+		aLoginButton    = addSubmitLoginComponents(aBuilder);
+
+		aPasswordField.addEventListener(EventType.ACTION, this);
+		aLoginButton.addEventListener(EventType.ACTION, this);
+		aFailureMessage.setVisible(false);
+	}
+
+	/***************************************
+	 * Adds the components to displays a login failure message.
+	 *
+	 * @param  aBuilder The container build to create the components with
+	 *
+	 * @return The failure message label
+	 */
+	protected Label addFailureMessageComponents(ContainerBuilder<?> aBuilder)
+	{
+		String sError = GwtFrameworkResource.INSTANCE.css().error();
+
+		StyleData rErrorStyle =
+			StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES, sError);
+
+		aBuilder.addLabel(StyleData.DEFAULT, "", null);
+
+		return aBuilder.addLabel(rErrorStyle, "$lblLoginFailed", null);
+	}
+
+	/***************************************
+	 * Adds the header of the login panel.
+	 *
+	 * @param aBuilder The container builder to add the header with
+	 */
+	protected void addLoginPanelHeader(ContainerBuilder<?> aBuilder)
+	{
 		aBuilder.addLabel(AlignedPosition.TOP,
 						  null,
 						  GwtFrameworkResource.INSTANCE.imLogin());
 		aBuilder.addLabel(AlignedPosition.TOP, "$lblLogin", null);
+	}
+
+	/***************************************
+	 * Adds the components for the password input.
+	 *
+	 * @param  aBuilder The builder to create the components with
+	 *
+	 * @return The password input field
+	 */
+	protected TextField addPasswortComponents(ContainerBuilder<?> aBuilder)
+	{
+		aBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
+						  "$lblPassword",
+						  null);
+
+		return aBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
+									 "");
+	}
+
+	/***************************************
+	 * Adds the components for the submission of the login data.
+	 *
+	 * @param  aBuilder The builder to create the components with
+	 *
+	 * @return The login button
+	 */
+	protected Button addSubmitLoginComponents(ContainerBuilder<?> aBuilder)
+	{
+		StyleData rButtonStyle =
+			StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_CENTER);
+
+		aBuilder.addLabel(StyleData.DEFAULT, "", null);
+
+		return aBuilder.addButton(rButtonStyle, "$btnLogin", null);
+	}
+
+	/***************************************
+	 * Adds the components for the user input.
+	 *
+	 * @param  aBuilder  The builder to create the components with
+	 * @param  sUserName The user name preset
+	 *
+	 * @return The user input field
+	 */
+	protected TextField addUserComponents(
+		ContainerBuilder<?> aBuilder,
+		String				sUserName)
+	{
+		TextField aUserInputField = null;
 
 		aBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
 						  "$lblLoginName",
@@ -150,37 +236,12 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 		}
 		else
 		{
-			aUserField = aBuilder.addTextField(StyleData.DEFAULT, "");
-			aUserField.setText(sUserName);
-			aUserField.addEventListener(EventType.ACTION, this);
+			aUserInputField = aBuilder.addTextField(StyleData.DEFAULT, "");
+			aUserInputField.setText(sUserName);
+			aUserInputField.addEventListener(EventType.ACTION, this);
 		}
 
-		aBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
-						  "$lblPassword",
-						  null);
-		aPasswordField =
-			aBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
-								  "");
-
-		aBuilder.addLabel(StyleData.DEFAULT, "", null);
-
-		String sError = GwtFrameworkResource.INSTANCE.css().error();
-
-		StyleData rErrorStyle =
-			StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES, sError);
-
-		StyleData rButtonStyle =
-			StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_CENTER);
-
-		aFailureMessage =
-			aBuilder.addLabel(rErrorStyle, "$lblLoginFailed", null);
-
-		aBuilder.addLabel(StyleData.DEFAULT, "", null);
-
-		aLoginButton = aBuilder.addButton(rButtonStyle, "$btnLogin", null);
-		aPasswordField.addEventListener(EventType.ACTION, this);
-		aLoginButton.addEventListener(EventType.ACTION, this);
-		aFailureMessage.setVisible(false);
+		return aUserInputField;
 	}
 
 	/***************************************
@@ -193,6 +254,72 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 		StyleData			rStyleData)
 	{
 		return rBuilder.addPanel(rStyleData);
+	}
+
+	/***************************************
+	 * Creates the panel for the login components.
+	 *
+	 * @return The container builder for the new panel
+	 */
+	protected ContainerBuilder<Panel> createLoginComponentsPanel()
+	{
+		return addPanel(AlignedPosition.CENTER, new GridLayout(2, true, 3));
+	}
+
+	/***************************************
+	 * Creates a new data element containing the login data. The default
+	 * implementation creates a string data element with the user name as it's
+	 * name and the password as it's value. It also adds the user info created
+	 * by {@link #createLoginUserInfo()} as a property with the property name
+	 * {@link AuthenticatedService#LOGIN_USER_INFO} and an existing session ID
+	 * (from the session cookie) with the property {@link
+	 * AuthenticatedService#SESSION_ID}.
+	 *
+	 * @param  sUserName The login user name
+	 * @param  sPassword The login password
+	 *
+	 * @return The login data object
+	 */
+	protected StringDataElement createLoginData(
+		String sUserName,
+		String sPassword)
+	{
+		String			  sSessionId = Cookies.getCookie(sSessionCookie);
+		StringDataElement aLoginData =
+			new StringDataElement(sUserName, sPassword);
+
+		aLoginData.setProperty(AuthenticatedService.LOGIN_USER_INFO,
+							   createLoginUserInfo());
+
+		if (sSessionId != null)
+		{
+			aLoginData.setProperty(AuthenticatedService.SESSION_ID, sSessionId);
+		}
+
+		return aLoginData;
+	}
+
+	/***************************************
+	 * Creates an information string for the user that is currently logging in.
+	 *
+	 * @return The user info string
+	 */
+	protected String createLoginUserInfo()
+	{
+		StringBuilder aLoginUserInfo = new StringBuilder();
+
+		aLoginUserInfo.append("UserAgent: ");
+		aLoginUserInfo.append(Window.Navigator.getUserAgent());
+		aLoginUserInfo.append("\nApp: ");
+		aLoginUserInfo.append(Window.Navigator.getAppName());
+		aLoginUserInfo.append(" (");
+		aLoginUserInfo.append(Window.Navigator.getAppCodeName());
+		aLoginUserInfo.append(")\nVersion: ");
+		aLoginUserInfo.append(Window.Navigator.getAppVersion());
+		aLoginUserInfo.append("\nPlatform: ");
+		aLoginUserInfo.append(Window.Navigator.getPlatform());
+
+		return aLoginUserInfo.toString();
 	}
 
 	/***************************************
@@ -258,40 +385,13 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 			bReauthenticate ? Cookies.getCookie(sUserCookie)
 							: aUserField.getText();
 
-		String sPassword   = aPasswordField.getText();
-		String sSessionId  = Cookies.getCookie(sSessionCookie);
-		Date   aExpiryDate = new Date();
+		String sPassword = aPasswordField.getText();
 
-		StringDataElement aLoginData =
-			new StringDataElement(sUserName, sPassword);
-
-		StringBuilder aLoginUserInfo = new StringBuilder();
-
-		aLoginUserInfo.append("UserAgent: ");
-		aLoginUserInfo.append(Window.Navigator.getUserAgent());
-		aLoginUserInfo.append("\nApp: ");
-		aLoginUserInfo.append(Window.Navigator.getAppName());
-		aLoginUserInfo.append(" (");
-		aLoginUserInfo.append(Window.Navigator.getAppCodeName());
-		aLoginUserInfo.append(")\nVersion: ");
-		aLoginUserInfo.append(Window.Navigator.getAppVersion());
-		aLoginUserInfo.append("\nPlatform: ");
-		aLoginUserInfo.append(Window.Navigator.getPlatform());
-
-		aLoginData.setProperty(AuthenticatedService.LOGIN_USER_INFO,
-							   aLoginUserInfo.toString());
-
-		CalendarUtil.addMonthsToDate(aExpiryDate, 3);
-		Cookies.setCookie(sUserCookie, sUserName, aExpiryDate);
-
-		if (sSessionId != null)
-		{
-			aLoginData.setProperty(AuthenticatedService.SESSION_ID, sSessionId);
-		}
+		setUserNameCookie(sUserName);
 
 		ServiceRegistry.getCommandService()
 					   .executeCommand(AuthenticatedService.LOGIN,
-									   aLoginData,
+									   createLoginData(sUserName, sPassword),
 			new AsyncCallback<DataElementList>()
 			{
 				@Override
@@ -306,5 +406,19 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 					handleLoginSuccess(rResult);
 				}
 			});
+	}
+
+	/***************************************
+	 * Sets a cookie with the user name for re-use on subsequent logins. The
+	 * expiration period of this cookie is 3 months.
+	 *
+	 * @param sUserName The user name to set
+	 */
+	protected void setUserNameCookie(String sUserName)
+	{
+		Date aExpiryDate = new Date();
+
+		CalendarUtil.addMonthsToDate(aExpiryDate, 3);
+		Cookies.setCookie(sUserCookie, sUserName, aExpiryDate);
 	}
 }

@@ -818,7 +818,9 @@ public class DataElementUI<D extends DataElement<?>>
 		else if (eContentType == ContentType.HYPERLINK)
 		{
 			aComponent =
-				createHyperlinkComponent(rBuilder, rDisplayStyle, rDataElement);
+				createHyperlinkDisplayComponent(rBuilder,
+												rDisplayStyle,
+												rDataElement);
 		}
 		else if (eContentType == ContentType.ABSOLUTE_URL ||
 				 eContentType == ContentType.RELATIVE_URL)
@@ -890,17 +892,22 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else if (eContentType == ContentType.FILE_UPLOAD)
 		{
-			String sUploadUrl = rDataElement.getProperty(URL, null);
-
 			aComponent =
 				rBuilder.addFileChooser(rStyle,
-										sUploadUrl,
+										rDataElement.getProperty(URL, null),
 										"$btn" + rDataElement.getResourceId());
 		}
 		else if (eContentType == ContentType.WEBSITE)
 		{
 			aComponent =
 				rBuilder.addWebsite(rStyle, rDataElement.getValue().toString());
+		}
+		else if (eContentType == ContentType.HYPERLINK)
+		{
+			aComponent =
+				rBuilder.addLabel(rStyle.setFlags(StyleFlag.HYPERLINK),
+								  rDataElement.getValue().toString(),
+								  null);
 		}
 		else
 		{
@@ -935,21 +942,22 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Creates a display component to render hyperlinks.
 	 *
-	 * @param  rBuilder      The container builder
-	 * @param  rDisplayStyle The style data
-	 * @param  rDataElement  The data element
+	 * @param  rBuilder     The container builder
+	 * @param  rStyle       The style data
+	 * @param  rDataElement The data element
 	 *
 	 * @return The new hyperlink component
 	 */
-	protected Component createHyperlinkComponent(
+	protected Component createHyperlinkDisplayComponent(
 		ContainerBuilder<?> rBuilder,
-		StyleData			rDisplayStyle,
+		StyleData			rStyle,
 		D					rDataElement)
 	{
-		StyleData    rStyle = rDisplayStyle.setFlags(StyleFlag.HYPERLINK);
 		final String sURL   = rDataElement.getValue().toString();
 		final String sTitle =
 			rBuilder.getContext().expandResource(rDataElement.getResourceId());
+
+		rStyle = rStyle.setFlags(StyleFlag.HYPERLINK);
 
 		Component aComponent = rBuilder.addLabel(rStyle, sURL, null);
 

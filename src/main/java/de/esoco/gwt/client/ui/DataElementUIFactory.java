@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,6 +61,8 @@ public class DataElementUIFactory
 	 * @param  rElement      The data element to create the user interface for
 	 *
 	 * @return An instance of a subclass for the given data element
+	 *
+	 * @throws IllegalArgumentException If no matching UI could be created
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T, D extends DataElement<T>> DataElementUI<?> create(
@@ -111,6 +113,12 @@ public class DataElementUIFactory
 		else
 		{
 			aUI = new DataElementUI<DataElement<?>>();
+		}
+
+		if (aUI == null)
+		{
+			throw new IllegalArgumentException("No UI for data element " +
+											   rElement);
 		}
 
 		((DataElementUI<D>) aUI).init(rPanelManager, rElement);

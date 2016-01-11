@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -70,12 +70,29 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void update()
 	{
-		String sAddStyle = aListPanelManager.getStyleName();
+		DataElementList rDataElement = getDataElement();
 
+		String    sAddStyle = aListPanelManager.getStyleName();
 		StyleData rNewStyle =
-			applyElementStyle(getDataElement(),
+			applyElementStyle(rDataElement,
 							  PanelManager.addStyles(getBaseStyle(),
 													 sAddStyle));
+
+		ListDisplayMode eDisplayMode =
+			rDataElement.getProperty(LIST_DISPLAY_MODE, ListDisplayMode.GRID);
+
+		if (eDisplayMode == ListDisplayMode.GRID)
+		{
+			aListPanelManager =
+				new DataElementGridPanelManager(getParent(),
+												getElementStyleName(),
+												rDataElement);
+		}
+		else
+		{
+			aListPanelManager =
+				new DataElementListPanelManager(getParent(), rDataElement);
+		}
 
 		applyElementProperties();
 		aListPanelManager.getPanel().applyStyle(rNewStyle);
@@ -93,29 +110,11 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
-		DataElementList rDataElementList = getDataElement();
-		Panel		    rListPanel		 = null;
-
-		ListDisplayMode eDisplayMode =
-			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.GRID);
-
-		if (eDisplayMode == ListDisplayMode.GRID)
-		{
-			aListPanelManager =
-				new DataElementGridPanelManager(getParent(),
-												getElementStyleName(),
-												rDataElementList);
-		}
-		else
-		{
-			aListPanelManager =
-				new DataElementListPanelManager(getParent(), rDataElementList);
-		}
+		Panel rListPanel = null;
 
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
-		setupInteractiveInputHandling(rListPanel, false);
+		// event handling is performed by the panel manager if necessary
 
 		return rListPanel;
 	}

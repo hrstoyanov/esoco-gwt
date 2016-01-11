@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -366,23 +366,23 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
-	 * Handles the occurrence of an interactive input event in an UI object that
-	 * is a child of this manager. Will be invoked by the child UIs.
+	 * Handles the occurrence of an interactive input event for a data element
+	 * that is a child of this manager. Will be invoked by the event handler of
+	 * the child's data element UI.
 	 *
-	 * @param rDataElementUI The data element user interface in which the event
-	 *                       occurred
-	 * @param bActionEvent   TRUE for an action event, FALSE for a continuous
-	 *                       selection event
+	 * @param rDataElement The data element in which the event occurred
+	 * @param bActionEvent TRUE for an action event, FALSE for a continuous
+	 *                     (selection) event
 	 */
 	protected void handleInteractiveInput(
-		DataElementUI<?> rDataElementUI,
-		boolean			 bActionEvent)
+		DataElement<?> rDataElement,
+		boolean		   bActionEvent)
 	{
 		if (!bHandlingSelectionEvent)
 		{
 			if (rInteractiveInputHandler != null)
 			{
-				rInteractiveInputHandler.handleInteractiveInput(rDataElementUI,
+				rInteractiveInputHandler.handleInteractiveInput(rDataElement,
 																bActionEvent);
 			}
 			else
@@ -391,7 +391,7 @@ public abstract class DataElementPanelManager
 
 				if (rParent instanceof DataElementPanelManager)
 				{
-					((DataElementPanelManager) rParent).handleInteractiveInput(rDataElementUI,
+					((DataElementPanelManager) rParent).handleInteractiveInput(rDataElement,
 																			   bActionEvent);
 				}
 			}
@@ -438,13 +438,12 @@ public abstract class DataElementPanelManager
 		 * Handles the occurrence of an interactive input event for a certain
 		 * data element.
 		 *
-		 * @param rDataElementUI The data element user interface that caused the
-		 *                       event
-		 * @param bActionEvent   TRUE if the event was an action event
+		 * @param rDataElemen  The data element that caused the event
+		 * @param bActionEvent TRUE if the event was an action event
 		 */
 		void handleInteractiveInput(
-			DataElementUI<?> rDataElementUI,
-			boolean			 bActionEvent);
+			DataElement<?> rDataElemen,
+			boolean		   bActionEvent);
 	}
 
 	//~ Inner Classes ----------------------------------------------------------

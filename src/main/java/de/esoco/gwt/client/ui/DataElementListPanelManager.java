@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,6 +69,8 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 	private GroupPanel aGroupPanel;
 	private String     sLabelPrefix;
+
+	private DataElementInteractionHandler<DataElementList> aInteractionHandler;
 
 	private List<DataElementPanelManager> aPanelManagers =
 		new ArrayList<DataElementPanelManager>();
@@ -506,12 +508,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 		if (aGroupPanel != null)
 		{
-			@SuppressWarnings("boxing")
-			int nSelectedElement =
-				rDataElementList.getProperty(CURRENT_SELECTION, 0);
-
-			setSelectedElement(nSelectedElement);
-			aGroupPanel.addEventListener(EventType.SELECTION, this);
+			setupEventHandling();
 		}
 	}
 
@@ -583,6 +580,24 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		}
 
 		return (ContainerBuilder<Panel>) aPanelBuilder;
+	}
+
+	/***************************************
+	 * Initializes the event handling for this instance.
+	 */
+	protected void setupEventHandling()
+	{
+		@SuppressWarnings("boxing")
+		int nSelectedElement =
+			rDataElementList.getProperty(CURRENT_SELECTION, 0);
+
+		setSelectedElement(nSelectedElement);
+		aGroupPanel.addEventListener(EventType.SELECTION, this);
+
+		aInteractionHandler =
+			new DataElementInteractionHandler<>(this, rDataElementList);
+
+		aInteractionHandler.setupEventHandling(aGroupPanel, false);
 	}
 
 	/***************************************

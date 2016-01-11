@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,11 +108,11 @@ public class DateDataElementUI extends DataElementUI<DateDataElement>
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Set<EventType> getInteractionEventTypes(
-		Component			 aComponent,
-		InteractiveInputMode eInputMode)
+	protected DataElementInteractionHandler<DateDataElement> createInteractionHandler(
+		DataElementPanelManager rPanelManager,
+		DateDataElement			rDataElement)
 	{
-		return EnumSet.of(EventType.VALUE_CHANGED);
+		return new DateInteractionHandler(rPanelManager, rDataElement);
 	}
 
 	/***************************************
@@ -185,6 +185,42 @@ public class DateDataElementUI extends DataElementUI<DateDataElement>
 			String sStyle = rEntry.getValue();
 
 			rCalendar.addDateStyle(rDate, sStyle);
+		}
+	}
+
+	//~ Inner Classes ----------------------------------------------------------
+
+	/********************************************************************
+	 * A date-specific interaction handler subclass.
+	 *
+	 * @author eso
+	 */
+	static class DateInteractionHandler
+		extends DataElementInteractionHandler<DateDataElement>
+	{
+		//~ Constructors -------------------------------------------------------
+
+		/***************************************
+		 * {@inheritDoc}
+		 */
+		public DateInteractionHandler(
+			DataElementPanelManager rPanelManager,
+			DateDataElement			rDataElement)
+		{
+			super(rPanelManager, rDataElement);
+		}
+
+		//~ Methods ------------------------------------------------------------
+
+		/***************************************
+		 * {@inheritDoc}
+		 */
+		@Override
+		protected Set<EventType> getInteractionEventTypes(
+			Component			 aComponent,
+			InteractiveInputMode eInputMode)
+		{
+			return EnumSet.of(EventType.VALUE_CHANGED);
 		}
 	}
 }

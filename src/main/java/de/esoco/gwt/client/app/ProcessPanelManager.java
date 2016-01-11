@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ import de.esoco.gwt.client.ui.DataElementListPanelManager;
 import de.esoco.gwt.client.ui.DataElementListView;
 import de.esoco.gwt.client.ui.DataElementPanelManager;
 import de.esoco.gwt.client.ui.DataElementPanelManager.InteractiveInputHandler;
-import de.esoco.gwt.client.ui.DataElementUI;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
 import de.esoco.gwt.shared.ProcessDescription;
@@ -131,8 +130,8 @@ public class ProcessPanelManager
 	private boolean bCancelProcess     = false;
 	private boolean bCancelled		   = false;
 
-	private DataElementUI<?> rInteractiveInputUI		  = null;
-	private boolean			 bInteractiveInputActionEvent;
+	private DataElement<?> rInteractionElement     = null;
+	private boolean		   bInteractionActionEvent;
 
 	private Map<String, DataElementListView> aViews = Collections.emptyMap();
 
@@ -238,10 +237,10 @@ public class ProcessPanelManager
 			{
 				processUpdated(this, rProcessState);
 
-				if (rInteractiveInputUI != null)
+				if (rInteractionElement != null)
 				{
-					handleDeferredInteraction(rInteractiveInputUI,
-											  bInteractiveInputActionEvent);
+					handleDeferredInteraction(rInteractionElement,
+											  bInteractionActionEvent);
 				}
 				else
 				{
@@ -353,23 +352,23 @@ public class ProcessPanelManager
 	 * Executes the current process step to send the new value when an
 	 * interactive input event occurs.
 	 *
-	 * @see InteractiveInputHandler#handleInteractiveInput(DataElementUI, boolean)
+	 * @see InteractiveInputHandler#handleInteractiveInput(DataElement, boolean)
 	 */
 	@Override
 	public void handleInteractiveInput(
-		final DataElementUI<?> rUI,
-		boolean				   bActionEvent)
+		final DataElement<?> rDataElement,
+		boolean				 bActionEvent)
 	{
 		if (isCommandExecuting())
 		{
 			// save the last interaction UI to prevent loss of input by
 			// executing the process after the current handling ends
-			rInteractiveInputUI			 = rUI;
-			bInteractiveInputActionEvent = bActionEvent;
+			rInteractionElement     = rDataElement;
+			bInteractionActionEvent = bActionEvent;
 		}
 		else
 		{
-			rInteractiveInputUI = null;
+			rInteractionElement = null;
 
 			lockUserInterface();
 
@@ -378,8 +377,7 @@ public class ProcessPanelManager
 				rView.collectInput();
 			}
 
-			rProcessState.setInteractionElement(rUI.getDataElement(),
-												bActionEvent);
+			rProcessState.setInteractionElement(rDataElement, bActionEvent);
 			executeProcess(ProcessExecutionMode.EXECUTE, rProcessState, true);
 		}
 	}
@@ -757,20 +755,21 @@ public class ProcessPanelManager
 	/***************************************
 	 * Process a deferred interaction to prevent loss of input.
 	 *
-	 * @param rInteractionUI The UI that caused the interaction
-	 * @param bActionEvent   TRUE for an action event, FALSE for a continuous
-	 *                       selection event
+	 * @param rInteractionElement The data element that caused the interaction
+	 * @param bActionEvent        TRUE for an action event, FALSE for a
+	 *                            continuous (selection) event
 	 */
 	private void handleDeferredInteraction(
-		DataElementUI<?> rInteractionUI,
-		boolean			 bActionEvent)
+		DataElement<?> rInteractionElement,
+		boolean		   bActionEvent)
 	{
 		List<DataElement<?>> rInteractionParams =
 			rProcessState.getInteractionParams();
 
 		aParamPanelManager.updateDataElements(rInteractionParams, null, false);
 		aParamPanelManager.collectInput();
-		handleInteractiveInput(rInteractionUI, bActionEvent);
+
+		handleInteractiveInput(rInteractionElement, bActionEvent);
 	}
 
 	/***************************************

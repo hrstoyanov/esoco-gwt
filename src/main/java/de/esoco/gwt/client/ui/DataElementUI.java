@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,11 +56,9 @@ import de.esoco.gwt.client.res.GwtFrameworkCss;
 import de.esoco.gwt.client.res.GwtFrameworkResource;
 
 import de.esoco.lib.property.Selectable;
-import de.esoco.lib.property.SingleSelection;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.ContentType;
-import de.esoco.lib.property.UserInterfaceProperties.InteractiveInputMode;
 import de.esoco.lib.property.UserInterfaceProperties.ListStyle;
 import de.esoco.lib.text.TextConvert;
 
@@ -70,7 +68,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +75,6 @@ import java.util.Set;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -100,7 +96,6 @@ import static de.esoco.lib.property.UserInterfaceProperties.HAS_IMAGES;
 import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDDEN;
 import static de.esoco.lib.property.UserInterfaceProperties.INPUT_CONSTRAINT;
-import static de.esoco.lib.property.UserInterfaceProperties.INTERACTIVE_INPUT_MODE;
 import static de.esoco.lib.property.UserInterfaceProperties.LABEL;
 import static de.esoco.lib.property.UserInterfaceProperties.LIST_STYLE;
 import static de.esoco.lib.property.UserInterfaceProperties.MIME_TYPE;
@@ -171,7 +166,7 @@ public class DataElementUI<D extends DataElement<?>>
 	private boolean bInteractionEnabled = true;
 	private boolean bUIEnabled		    = true;
 
-	private Timer aInputEventTimer;
+	private DataElementInteractionHandler<D> aInteractionHandler;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -655,7 +650,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (aElementComponent != null)
 			{
-				setupInteractiveInputHandling(aElementComponent, true);
+				setupInteractionHandling(aElementComponent, true);
 			}
 
 			setEnabled(rOptionalCheckBox == null);
@@ -1009,6 +1004,23 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		return aComponent;
+	}
+
+	/***************************************
+	 * Creates the interaction handler for this instances. Subclasses may
+	 * override this method to return their own type of interaction handler.
+	 *
+	 * @param  rPanelManager
+	 * @param  rDataElement
+	 *
+	 * @return The data element interaction handler
+	 */
+	protected DataElementInteractionHandler<D> createInteractionHandler(
+		DataElementPanelManager rPanelManager,
+		D						rDataElement)
+	{
+		return new DataElementInteractionHandler<D>(rPanelManager,
+													rDataElement);
 	}
 
 	/***************************************
@@ -1549,59 +1561,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Returns the event types that need to be handles for interactions of the
-	 * given component in a certain interactive input mode. Can be overridden by
-	 * subclasses
-	 *
-	 * @param  aComponent The component
-	 * @param  eInputMode The interactive input mode
-	 *
-	 * @return
-	 */
-	protected Set<EventType> getInteractionEventTypes(
-		Component				   aComponent,
-		final InteractiveInputMode eInputMode)
-	{
-		Set<EventType> rEventTypes = EnumSet.noneOf(EventType.class);
-
-		if (aComponent instanceof TextComponent)
-		{
-			if (eInputMode == InteractiveInputMode.CONTINUOUS ||
-				eInputMode == InteractiveInputMode.BOTH)
-			{
-				rEventTypes.add(EventType.VALUE_CHANGED);
-				rEventTypes.add(EventType.KEY_RELEASED);
-			}
-
-			if (eInputMode == InteractiveInputMode.ACTION ||
-				eInputMode == InteractiveInputMode.BOTH)
-			{
-				rEventTypes.add(EventType.ACTION);
-			}
-		}
-		else if (aComponent instanceof SingleSelection)
-		{
-			if (eInputMode == InteractiveInputMode.CONTINUOUS ||
-				eInputMode == InteractiveInputMode.BOTH)
-			{
-				rEventTypes.add(EventType.SELECTION);
-			}
-
-			if (eInputMode == InteractiveInputMode.ACTION ||
-				eInputMode == InteractiveInputMode.BOTH)
-			{
-				rEventTypes.add(EventType.ACTION);
-			}
-		}
-		else
-		{
-			rEventTypes.add(EventType.ACTION);
-		}
-
-		return rEventTypes;
-	}
-
-	/***************************************
 	 * Returns the display values for a list from a value list. If the list
 	 * values are resource IDs they will be converted accordingly. If the data
 	 * element has the flag {@link UserInterfaceProperties#SORT} set and the
@@ -1636,51 +1595,6 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		return aListValues;
-	}
-
-	/***************************************
-	 * Checks whether an input event should be cause an interaction according to
-	 * a certain input mode.
-	 *
-	 * @param rEvent     The event to check
-	 * @param eInputMode The input mode
-	 */
-	protected void handleInteractiveInput(
-		EWTEvent			 rEvent,
-		InteractiveInputMode eInputMode)
-	{
-		EventType     eEventType   = rEvent.getType();
-		final boolean bActionEvent = (eEventType == EventType.ACTION);
-
-		// only cause interactions if event is not caused by the parent's
-		// interactive input handler to prevent recursion
-		if ((eInputMode == InteractiveInputMode.CONTINUOUS ||
-			 eInputMode == InteractiveInputMode.BOTH || bActionEvent))
-		{
-			if (aInputEventTimer != null)
-			{
-				aInputEventTimer.cancel();
-			}
-
-			aInputEventTimer =
-				new Timer()
-				{
-					@Override
-					public void run()
-					{
-						rPanelManager.getRootDataElementPanelManager()
-									 .collectInput();
-						rPanelManager.handleInteractiveInput(DataElementUI.this,
-															 bActionEvent);
-					}
-				};
-
-			boolean bLongDelay =
-				(eInputMode == InteractiveInputMode.CONTINUOUS &&
-				 eEventType == EventType.KEY_RELEASED);
-
-			aInputEventTimer.schedule(bLongDelay ? 250 : 50);
-		}
 	}
 
 	/***************************************
@@ -1725,34 +1639,6 @@ public class DataElementUI<D extends DataElement<?>>
 		else
 		{
 			EWT.openUrl(sUrl, null, null);
-		}
-	}
-
-	/***************************************
-	 * Registers an event listener for the handling of interactive input events
-	 * with the given component.
-	 *
-	 * @param aComponent The component
-	 * @param eInputMode The input mode
-	 */
-	protected void registerInteractiveInputHandler(
-		Component				   aComponent,
-		final InteractiveInputMode eInputMode)
-	{
-		EWTEventHandler rListener =
-			new EWTEventHandler()
-			{
-				@Override
-				public void handleEvent(EWTEvent rEvent)
-				{
-					handleInteractiveInput(rEvent, eInputMode);
-				}
-			};
-
-		for (EventType rEventType :
-			 getInteractionEventTypes(aComponent, eInputMode))
-		{
-			aComponent.addEventListener(rEventType, rListener);
 		}
 	}
 
@@ -1849,6 +1735,25 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		return rListControl;
+	}
+
+	/***************************************
+	 * Initializes the handling of interaction events for a certain component if
+	 * necessary.
+	 *
+	 * @param rComponent           The component to setup the input handling for
+	 * @param bOnContainerChildren TRUE to setup the input handling for the
+	 *                             children if the component is a container
+	 */
+	protected void setupInteractionHandling(
+		Component rComponent,
+		boolean   bOnContainerChildren)
+	{
+		aInteractionHandler =
+			createInteractionHandler(rPanelManager, rDataElement);
+
+		aInteractionHandler.setupEventHandling(rComponent,
+											   bOnContainerChildren);
 	}
 
 	/***************************************
@@ -2171,41 +2076,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Initializes the handling of interactive input events for a certain
-	 * component if necessary.
-	 *
-	 * @param rComponent           The component to setup the input handling for
-	 * @param bOnContainerChildren TRUE to setup the input handling for the
-	 *                             children if the component is a container
-	 */
-	void setupInteractiveInputHandling(
-		Component rComponent,
-		boolean   bOnContainerChildren)
-	{
-		final InteractiveInputMode eInputMode =
-			rDataElement.getProperty(INTERACTIVE_INPUT_MODE,
-									 InteractiveInputMode.NONE);
-
-		if (eInputMode != InteractiveInputMode.NONE)
-		{
-			if (bOnContainerChildren && rComponent instanceof Container)
-			{
-				List<Component> rComponents =
-					((Container) rComponent).getComponents();
-
-				for (Component rChild : rComponents)
-				{
-					registerInteractiveInputHandler(rChild, eInputMode);
-				}
-			}
-			else
-			{
-				registerInteractiveInputHandler(rComponent, eInputMode);
-			}
-		}
-	}
-
-	/***************************************
 	 * Package-internal method to update the data element of this instance.
 	 *
 	 * @param rNewElement    The new data element
@@ -2513,7 +2383,7 @@ public class DataElementUI<D extends DataElement<?>>
 									  eListStyle,
 									  bMultiselect);
 
-				setupInteractiveInputHandling(rContainer, true);
+				setupInteractionHandling(rContainer, true);
 			}
 		}
 

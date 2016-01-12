@@ -106,16 +106,18 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 				new DataElementGridPanelManager(getParent(),
 												getElementStyleName(),
 												rDataElementList);
+			setupInteractionHandling(aListPanelManager.getPanel(), false);
 		}
 		else
 		{
 			aListPanelManager =
 				new DataElementListPanelManager(getParent(), rDataElementList);
+			// DataElementListPanelManager already perfoms event handling
 		}
 
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
-		// event handling is performed by the panel manager if necessary
+		
 		return rListPanel;
 	}
 

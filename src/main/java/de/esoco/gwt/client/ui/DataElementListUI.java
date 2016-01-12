@@ -70,29 +70,12 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void update()
 	{
-		DataElementList rDataElement = getDataElement();
+		String sAddStyle = aListPanelManager.getStyleName();
 
-		String    sAddStyle = aListPanelManager.getStyleName();
 		StyleData rNewStyle =
-			applyElementStyle(rDataElement,
+			applyElementStyle(getDataElement(),
 							  PanelManager.addStyles(getBaseStyle(),
 													 sAddStyle));
-
-		ListDisplayMode eDisplayMode =
-			rDataElement.getProperty(LIST_DISPLAY_MODE, ListDisplayMode.GRID);
-
-		if (eDisplayMode == ListDisplayMode.GRID)
-		{
-			aListPanelManager =
-				new DataElementGridPanelManager(getParent(),
-												getElementStyleName(),
-												rDataElement);
-		}
-		else
-		{
-			aListPanelManager =
-				new DataElementListPanelManager(getParent(), rDataElement);
-		}
 
 		applyElementProperties();
 		aListPanelManager.getPanel().applyStyle(rNewStyle);
@@ -110,12 +93,29 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
-		Panel rListPanel = null;
+		DataElementList rDataElementList = getDataElement();
+		Panel		    rListPanel		 = null;
+
+		ListDisplayMode eDisplayMode =
+			rDataElementList.getProperty(LIST_DISPLAY_MODE,
+										 ListDisplayMode.GRID);
+
+		if (eDisplayMode == ListDisplayMode.GRID)
+		{
+			aListPanelManager =
+				new DataElementGridPanelManager(getParent(),
+												getElementStyleName(),
+												rDataElementList);
+		}
+		else
+		{
+			aListPanelManager =
+				new DataElementListPanelManager(getParent(), rDataElementList);
+		}
 
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
 		// event handling is performed by the panel manager if necessary
-
 		return rListPanel;
 	}
 

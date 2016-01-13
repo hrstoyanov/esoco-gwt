@@ -506,10 +506,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			}
 		}
 
-		if (aGroupPanel != null)
-		{
-			setupEventHandling();
-		}
+		setupEventHandling();
 	}
 
 	/***************************************
@@ -587,17 +584,20 @@ public class DataElementListPanelManager extends DataElementPanelManager
 	 */
 	protected void setupEventHandling()
 	{
-		@SuppressWarnings("boxing")
-		int nSelectedElement =
-			rDataElementList.getProperty(CURRENT_SELECTION, 0);
+		if (aGroupPanel != null)
+		{
+			@SuppressWarnings("boxing")
+			int nSelectedElement =
+				rDataElementList.getProperty(CURRENT_SELECTION, 0);
 
-		setSelectedElement(nSelectedElement);
-		aGroupPanel.addEventListener(EventType.SELECTION, this);
+			setSelectedElement(nSelectedElement);
+			aGroupPanel.addEventListener(EventType.SELECTION, this);
+		}
 
 		aInteractionHandler =
 			new DataElementInteractionHandler<>(this, rDataElementList);
 
-		aInteractionHandler.setupEventHandling(aGroupPanel, false);
+		aInteractionHandler.setupEventHandling(getContainer(), false);
 	}
 
 	/***************************************

@@ -367,7 +367,6 @@ public class DataElementListPanelManager extends DataElementPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("boxing")
 	public void updateDataElements(List<DataElement<?>> rNewDataElements,
 								   Map<String, String>  rErrorMessages,
 								   boolean				bUpdateUI)
@@ -380,6 +379,9 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			throw new IllegalArgumentException("DataElementList expected, not " +
 											   rNewDataElements);
 		}
+
+		getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
+																  getStyle()));
 
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);
@@ -418,15 +420,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			nIndex++;
 		}
 
-		int nCurrentSelection = getSelectedElement();
-
-		Integer nNewSelection =
-			rDataElementList.getProperty(CURRENT_SELECTION, nCurrentSelection);
-
-		if (nCurrentSelection != nNewSelection)
-		{
-			setSelectedElement(nNewSelection);
-		}
+		updateSelection();
 	}
 
 	/***************************************
@@ -712,5 +706,22 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		}
 
 		return aPanelManager;
+	}
+
+	/***************************************
+	 * Updates the current selection from the data element state.
+	 */
+	@SuppressWarnings("boxing")
+	private void updateSelection()
+	{
+		int nCurrentSelection = getSelectedElement();
+
+		Integer nNewSelection =
+			rDataElementList.getProperty(CURRENT_SELECTION, nCurrentSelection);
+
+		if (nCurrentSelection != nNewSelection)
+		{
+			setSelectedElement(nNewSelection);
+		}
 	}
 }

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.obrel.core.RelationType;
-import org.obrel.type.StandardTypes;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
@@ -228,8 +227,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			catch (ProcessException e)
 			{
 				Log.error("Could not cancel process " +
-						  rProcess.get(StandardTypes.NAME),
-						  e);
+						  rProcess.getName(), e);
 			}
 		}
 

@@ -630,7 +630,8 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		Map<DataElement<?>, StyleData> rDataElements =
 			new LinkedHashMap<>(nElementCount);
 
-		if (aGroupPanel == null)
+		if (eDisplayMode == ListDisplayMode.PLAIN ||
+			eDisplayMode == ListDisplayMode.SPLIT)
 		{
 			// reorder elements because the center element must be added last
 			AlignedPosition rCenter = AlignedPosition.CENTER;

@@ -195,8 +195,12 @@ public class DataElementUI<D extends DataElement<?>>
 		String sStyle    = rDataElement.getProperty(STYLE, null);
 		String sMimeType = rDataElement.getProperty(MIME_TYPE, null);
 
-		rStyle =
-			rStyle.set(CSS_STYLES, rDataElement.getProperty(CSS_STYLES, null));
+		Map<String, String> rCss = rDataElement.getProperty(CSS_STYLES, null);
+
+		if (rCss != null)
+		{
+			rStyle = rStyle.set(CSS_STYLES, rCss);
+		}
 
 		if (sStyle != null)
 		{

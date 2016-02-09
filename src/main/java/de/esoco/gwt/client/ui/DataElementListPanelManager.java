@@ -30,6 +30,7 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.layout.FillLayout;
+import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
@@ -116,6 +117,14 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			{
 				case GRID:
 					sStyle = CSS.gfDataElementPanel();
+					break;
+
+				case FLOW:
+					sStyle = CSS.gfDataElementFlowPanel();
+					break;
+
+				case FILL:
+					sStyle = CSS.gfDataElementFillPanel();
 					break;
 
 				case PLAIN:
@@ -531,6 +540,16 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 			switch (eDisplayMode)
 			{
+				case FLOW:
+					aPanelBuilder =
+						rBuilder.addPanel(rStyleData, new FlowLayout());
+					break;
+
+				case FILL:
+					aPanelBuilder =
+						rBuilder.addPanel(rStyleData, new FillLayout());
+					break;
+
 				case PLAIN:
 					aPanelBuilder =
 						rBuilder.addPanel(rStyleData,
@@ -565,9 +584,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		}
 		else
 		{
-			FillLayout rLayout = new FillLayout(true);
-
-			aPanelBuilder = rBuilder.addPanel(rStyleData, rLayout);
+			aPanelBuilder = rBuilder.addPanel(rStyleData, new FillLayout());
 		}
 
 		return (ContainerBuilder<Panel>) aPanelBuilder;

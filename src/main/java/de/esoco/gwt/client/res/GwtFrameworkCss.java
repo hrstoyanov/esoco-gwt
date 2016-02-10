@@ -46,6 +46,12 @@ public interface GwtFrameworkCss extends CssResource {
   @ClassName("gf-DataElementPanel")
   String gfDataElementPanel();
   
+  @ClassName("gf-DataElementFlowPanel")
+  String gfDataElementFlowPanel();
+  
+  @ClassName("gf-DataElementFillPanel")
+  String gfDataElementFillPanel();
+  
   @ClassName("gf-DataElementSplitPanel")
   String gfDataElementSplitPanel();
   

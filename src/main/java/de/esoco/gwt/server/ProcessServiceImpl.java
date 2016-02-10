@@ -630,6 +630,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 				aProcessState.setProperty(PROCESS_ENTITY_LOCKS, sLocks);
 			}
+
+			// reset modifications here to allow parameter relation listeners
+			// to update parameters when the DataElements are applied after the
+			// client returns from the interaction
+			rInteractionStep.resetParameterModifications();
 		}
 
 		return aProcessState;

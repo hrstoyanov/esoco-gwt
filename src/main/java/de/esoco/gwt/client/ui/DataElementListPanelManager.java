@@ -127,7 +127,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					sStyle = CSS.gfDataElementFillPanel();
 					break;
 
-				case PLAIN:
+				case DOCK:
 					sStyle = CSS.gfDataElementListPanel();
 					break;
 
@@ -534,7 +534,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 				rDataElementList.getProperty(LIST_DISPLAY_MODE,
 											 ListDisplayMode.TABS);
 
-			assert !((eDisplayMode == ListDisplayMode.PLAIN ||
+			assert !((eDisplayMode == ListDisplayMode.DOCK ||
 					  eDisplayMode == ListDisplayMode.SPLIT) &&
 					 rDataElementList.getElementCount() > 3) : "Element count for PLAIN or SPLIT mode must be <= 3";
 
@@ -550,7 +550,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 						rBuilder.addPanel(rStyleData, new FillLayout());
 					break;
 
-				case PLAIN:
+				case DOCK:
 					aPanelBuilder =
 						rBuilder.addPanel(rStyleData,
 										  new DockLayout(true, false));
@@ -630,7 +630,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		Map<DataElement<?>, StyleData> rDataElements =
 			new LinkedHashMap<>(nElementCount);
 
-		if (eDisplayMode == ListDisplayMode.PLAIN ||
+		if (eDisplayMode == ListDisplayMode.DOCK ||
 			eDisplayMode == ListDisplayMode.SPLIT)
 		{
 			// reorder elements because the center element must be added last

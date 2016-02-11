@@ -67,6 +67,8 @@ public abstract class DataElementPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
+	private StyleData rStyle;
+
 	private InteractiveInputHandler rInteractiveInputHandler = null;
 	private boolean				    bHandlingSelectionEvent  = false;
 
@@ -213,9 +215,11 @@ public abstract class DataElementPanelManager
 	 * @see PanelManager#buildIn(ContainerBuilder, StyleData)
 	 */
 	@Override
-	public void buildIn(ContainerBuilder<?> rBuilder, StyleData rStyleData)
+	public void buildIn(ContainerBuilder<?> rBuilder, StyleData rStyle)
 	{
-		super.buildIn(rBuilder, rStyleData);
+		this.rStyle = rStyle;
+
+		super.buildIn(rBuilder, rStyle);
 
 		// only check selection dependencies from the root after all child data
 		// element UIs have been initialized
@@ -262,6 +266,16 @@ public abstract class DataElementPanelManager
 		return rParent instanceof DataElementPanelManager
 			   ? ((DataElementPanelManager) rParent)
 			   .getRootDataElementPanelManager() : this;
+	}
+
+	/***************************************
+	 * Returns the original style data of this instance.
+	 *
+	 * @return The style data
+	 */
+	public final StyleData getStyle()
+	{
+		return rStyle;
 	}
 
 	/***************************************

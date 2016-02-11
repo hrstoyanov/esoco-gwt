@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.esoco.gwt.server;
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.DataElementList.ViewDisplayType;
 
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
@@ -44,6 +45,9 @@ import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
 import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
+import de.esoco.process.step.EditInteractionParameters;
+import de.esoco.process.step.FragmentInteraction;
+import de.esoco.process.step.ViewFragment;
 
 import de.esoco.storage.StorageException;
 
@@ -56,7 +60,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.obrel.core.RelationType;
-import org.obrel.type.StandardTypes;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
@@ -227,9 +230,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			}
 			catch (ProcessException e)
 			{
-				Log.error("Could not cancel process " +
-						  rProcess.get(StandardTypes.NAME),
-						  e);
+				Log.error("Could not cancel process " + rProcess.getName(), e);
 			}
 		}
 
@@ -268,31 +269,41 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		Entity			   rReferenceEntity) throws AuthenticationException,
 													ServiceException
 	{
-		SessionData			 rSessionData  = getSessionData();
-		ProcessExecutionMode eMode		   = ProcessExecutionMode.EXECUTE;
-		Process				 rProcess	   = null;
-		Integer				 rId		   = null;
-		ProcessState		 rProcessState;
+		SessionData			 rSessionData = getSessionData();
+		ProcessExecutionMode eMode		  = ProcessExecutionMode.EXECUTE;
+
+		Process		 rProcess	   = null;
+		Integer		 rId		   = null;
+		ProcessState rProcessState;
 
 		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
 
 		Map<Integer, Process> rProcessMap = rSessionData.get(USER_PROCESS_MAP);
 
-		if (rDescription instanceof ProcessState)
-		{
-			eMode = ((ProcessState) rDescription).getExecutionMode();
-		}
-
 		try
 		{
-			boolean bReload = eMode == ProcessExecutionMode.RELOAD;
-
 			rProcess = getProcess(rDescription, rSessionData, rReferenceEntity);
 			rId		 = rProcess.getParameter(PROCESS_ID);
 
+			if (rDescription instanceof ProcessState)
+			{
+				rProcessState = (ProcessState) rDescription;
+
+				eMode = rProcessState.getExecutionMode();
+				checkOpenUiInspector(rProcessState, rProcess);
+			}
+			else
+			{
+				// property name is not known to GWT serialization otherwise...
+				SHOW_UI_INSPECTOR.getName();
+			}
+
 			executeProcess(rProcess, eMode);
 
-			rProcessState = createProcessState(rDescription, rProcess, bReload);
+			rProcessState =
+				createProcessState(rDescription,
+								   rProcess,
+								   eMode == ProcessExecutionMode.RELOAD);
 
 			if (rProcess.isFinished())
 			{
@@ -443,6 +454,39 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Checks whether the client has requested to open the UI inspector and
+	 * opens the corresponding view if necessary.
+	 *
+	 * @param  rProcessState The current process state
+	 * @param  rProcess      The
+	 *
+	 * @throws Exception
+	 */
+	private void checkOpenUiInspector(
+		ProcessState rProcessState,
+		Process		 rProcess) throws Exception
+	{
+		if (rProcessState.hasFlag(SHOW_UI_INSPECTOR))
+		{
+			ProcessStep rInteractionStep = rProcess.getInteractionStep();
+
+			if (rInteractionStep instanceof FragmentInteraction)
+			{
+				List<RelationType<?>> rParams =
+					rInteractionStep.get(INTERACTION_PARAMS);
+
+				ViewFragment aViewFragment =
+					new ViewFragment("UI_INSPECTOR",
+									 new EditInteractionParameters(rParams),
+									 ViewDisplayType.VIEW);
+
+				aViewFragment.show(((FragmentInteraction) rInteractionStep)
+								   .getRootFragment());
+			}
+		}
+	}
+
+	/***************************************
 	 * Creates the data elements for certain relations of a relatable object.
 	 * For each relation a single data element will be created by invoking the
 	 * method {@link #createDataElement(Relatable, RelationType, Set)}. If that
@@ -586,6 +630,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 				aProcessState.setProperty(PROCESS_ENTITY_LOCKS, sLocks);
 			}
+
+			// reset modifications here to allow parameter relation listeners
+			// to update parameters when the DataElements are applied after the
+			// client returns from the interaction
+			rInteractionStep.resetParameterModifications();
 		}
 
 		return aProcessState;

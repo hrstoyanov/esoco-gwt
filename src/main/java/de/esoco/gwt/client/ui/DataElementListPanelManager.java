@@ -487,11 +487,16 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			DataElement<?> rDataElement = rElementStyle.getKey();
 			StyleData	   rPanelStyle  = rElementStyle.getValue();
 
-			rPanelStyle =
-				DataElementUI.applyElementStyle(rDataElement, rPanelStyle);
-
 			DataElementPanelManager rPanelManager =
 				aPanelManagers.get(nPanelIndex++);
+
+			if (rPanelManager instanceof SingleDataElementPanelManager)
+			{
+				rPanelStyle = addStyles(rPanelStyle, CSS.gfDataElement());
+			}
+
+			rPanelStyle =
+				DataElementUI.applyElementStyle(rDataElement, rPanelStyle);
 
 			build(rPanelManager, rPanelStyle);
 

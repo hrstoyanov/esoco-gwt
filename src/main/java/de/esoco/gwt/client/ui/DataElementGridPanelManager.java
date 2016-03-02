@@ -288,8 +288,11 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 	{
 		if (rNewDataElement instanceof DataElementList)
 		{
-			getContainer().applyStyle(DataElementUI.applyElementStyle(rNewDataElement,
-																	  getStyle()));
+			StyleData rNewStyle =
+				DataElementUI.applyElementStyle(rNewDataElement,
+												getBaseStyle());
+
+			getContainer().applyStyle(rNewStyle);
 
 			updateDataElements(((ListDataElement<DataElement<?>>)
 								rNewDataElement).getElements(),

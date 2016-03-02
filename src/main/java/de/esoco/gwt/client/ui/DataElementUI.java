@@ -574,7 +574,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			applyElementProperties();
 			aElementComponent.applyStyle(applyElementStyle(rDataElement,
-														   rBaseStyle));
+														   getBaseStyle()));
 			enableComponent(bUIEnabled);
 			aElementComponent.repaint();
 		}

@@ -390,7 +390,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		}
 
 		getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
-																  getStyle()));
+																  getBaseStyle()));
 
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);

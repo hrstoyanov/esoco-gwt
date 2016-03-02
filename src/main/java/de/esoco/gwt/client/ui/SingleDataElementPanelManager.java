@@ -44,7 +44,6 @@ public class SingleDataElementPanelManager extends DataElementPanelManager
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElement<?>   rDataElement;
-	private StyleData		 rElementStyle;
 	private DataElementUI<?> aElementUI;
 
 	//~ Constructors -----------------------------------------------------------
@@ -188,7 +187,7 @@ public class SingleDataElementPanelManager extends DataElementPanelManager
 
 		String    sStyle = aElementUI.getElementStyleName();
 		StyleData aStyle =
-			addStyles(rElementStyle,
+			addStyles(getBaseStyle(),
 					  CSS.gfDataElement(),
 					  CSS.gfSingleDataElement());
 
@@ -219,8 +218,6 @@ public class SingleDataElementPanelManager extends DataElementPanelManager
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData)
 	{
-		rElementStyle = rStyleData;
-
 		return (ContainerBuilder<Panel>) rBuilder;
 	}
 }

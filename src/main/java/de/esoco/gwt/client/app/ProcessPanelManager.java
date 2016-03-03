@@ -286,6 +286,7 @@ public class ProcessPanelManager
 
 			String			    sMessage     = eService.getMessage();
 			Map<String, String> rErrorParams = eService.getErrorParameters();
+			ProcessState	    rNewState    = eService.getProcessState();
 
 			if (sMessage.equals(ERROR_ENTITY_LOCKED))
 			{
@@ -298,6 +299,11 @@ public class ProcessPanelManager
 			}
 			else
 			{
+				if (rNewState != null)
+				{
+					rProcessState = rNewState;
+				}
+
 				if (!sMessage.startsWith("$"))
 				{
 					sMessage = "$msg" + sMessage;

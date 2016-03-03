@@ -274,7 +274,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		Process		 rProcess	   = null;
 		Integer		 rId		   = null;
-		ProcessState rProcessState;
+		ProcessState rProcessState = null;
 
 		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
 
@@ -313,7 +313,18 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		}
 		catch (Exception e)
 		{
-			ServiceException eService = wrapException(e);
+			try
+			{
+				rProcessState =
+					createProcessState(rDescription, rProcess, false);
+			}
+			catch (StorageException eStorage)
+			{
+				// should normally not occur. If it does then just fall through
+				// to standard exception handling
+			}
+
+			ServiceException eService = wrapException(e, rProcessState);
 
 			// keep the process on recoverable error for re-execution when the
 			// client has tried to resolve the error condition
@@ -396,11 +407,14 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * an {@link InvalidParametersException} the service exception will contain
 	 * information about the invalid parameters.
 	 *
-	 * @param  e The exception to handle
+	 * @param  e             The exception to handle
+	 * @param  rProcessState
 	 *
 	 * @return The resulting {@link ServiceException}
 	 */
-	protected ServiceException wrapException(Exception e)
+	protected ServiceException wrapException(
+		Exception    e,
+		ProcessState rProcessState)
 	{
 		ServiceException eResult;
 
@@ -427,7 +441,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 									   rEntry.getValue());
 				}
 
-				eResult = new ServiceException(sMessage, aInvalidParams);
+				eResult =
+					new ServiceException(sMessage,
+										 aInvalidParams,
+										 rProcessState);
 			}
 			else if (e.getCause() instanceof
 					 ConcurrentEntityModificationException)
@@ -442,7 +459,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				aLockedEntity.put(ERROR_LOCKED_ENTITY_ID, sEntityId);
 
 				eResult =
-					new ServiceException(ERROR_ENTITY_LOCKED, aLockedEntity);
+					new ServiceException(ERROR_ENTITY_LOCKED,
+										 aLockedEntity,
+										 rProcessState);
 			}
 			else
 			{

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,9 +32,11 @@ public class ServiceException extends Exception
 
 	//~ Instance fields --------------------------------------------------------
 
-	private Map<String, String> rErrorParameters;
 	private String			    sCauseMessage;
+	private Map<String, String> rErrorParameters;
 	private boolean			    bRecoverable;
+
+	private ProcessState rProcessState = null;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -62,26 +64,6 @@ public class ServiceException extends Exception
 	}
 
 	/***************************************
-	 * Creates a new instance of a recoverable service exception. A recoverable
-	 * exception will return TRUE from the {@link #isRecoverable()} method. It
-	 * provides additional information about the causing problem by returning a
-	 * map containing the causing parameters and a description of the error from
-	 * the method {@link #getErrorParameters()}.
-	 *
-	 * @param sMessage         The error message
-	 * @param rErrorParameters The list of error
-	 */
-	public ServiceException(
-		String				sMessage,
-		Map<String, String> rErrorParameters)
-	{
-		super(sMessage);
-
-		this.rErrorParameters = rErrorParameters;
-		this.bRecoverable     = true;
-	}
-
-	/***************************************
 	 * @see Exception#Exception(String, Throwable)
 	 */
 	public ServiceException(String sMessage, Throwable eCause)
@@ -94,6 +76,30 @@ public class ServiceException extends Exception
 			eCause		  = eCause.getCause();
 		}
 		while (eCause != null);
+	}
+
+	/***************************************
+	 * Creates a new instance of a recoverable service exception. A recoverable
+	 * exception will return TRUE from the {@link #isRecoverable()} method. It
+	 * provides additional information about the causing problem by returning a
+	 * map containing the causing parameters and a description of the error from
+	 * the method {@link #getErrorParameters()} and optionally an updated
+	 * process state from {@link #getProcessState()}.
+	 *
+	 * @param sMessage         The error message
+	 * @param rErrorParameters The list of error
+	 * @param rProcessState    An updated process state that reflects parameter
+	 *                         updates for the signaled error
+	 */
+	public ServiceException(String				sMessage,
+							Map<String, String> rErrorParameters,
+							ProcessState		rProcessState)
+	{
+		super(sMessage);
+
+		this.rErrorParameters = rErrorParameters;
+		this.bRecoverable     = true;
+		this.rProcessState    = rProcessState;
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -111,15 +117,25 @@ public class ServiceException extends Exception
 	}
 
 	/***************************************
-	 * Returns the parameters of a recoverable exception. The result is a map of
-	 * strings that contains the erroneous parameters as the keys and the
-	 * associated error message as the values.
+	 * Returns the optional parameters of a recoverable exception. The result is
+	 * a map of strings that contains the erroneous parameters as the keys and
+	 * the associated error message as the values.
 	 *
 	 * @return A map from erroneous parameters to error messages (NULL for none)
 	 */
 	public Map<String, String> getErrorParameters()
 	{
 		return rErrorParameters;
+	}
+
+	/***************************************
+	 * Returns an optional process state that is associated with this exception.
+	 *
+	 * @return The process state or NULL for none
+	 */
+	public ProcessState getProcessState()
+	{
+		return rProcessState;
 	}
 
 	/***************************************

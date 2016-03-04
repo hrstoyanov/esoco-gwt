@@ -2,6 +2,7 @@
 
 @external .gf-DataElementPanel, .gf-DataElementListPanel, .gf-DataElementTabPanel;
 @external .gf-DataElementStackPanel, .gf-DataElementSplitPanel;
+@external .gf-DataElementFlowPanel, .gf-DataElementFillPanel;
 @external .gf-DataElementLabel, .gf-DataElementHeader;
 @external .gf-DataElement, .gf-SingleDataElement, .gf-EmptyCell;
 @external .gf-DataElementListDialog, .gf-LoginPanel;
@@ -25,6 +26,14 @@
 .gf-DataElementPanel.ProcessStepFragment
 {
     width: 100%;
+}
+
+.gf-DataElementFlowPanel
+{
+}
+
+.gf-DataElementFillPanel
+{
 }
 
 .gf-DataElementTabPanel

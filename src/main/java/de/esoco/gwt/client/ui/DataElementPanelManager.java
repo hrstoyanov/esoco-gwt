@@ -213,9 +213,9 @@ public abstract class DataElementPanelManager
 	 * @see PanelManager#buildIn(ContainerBuilder, StyleData)
 	 */
 	@Override
-	public void buildIn(ContainerBuilder<?> rBuilder, StyleData rStyleData)
+	public void buildIn(ContainerBuilder<?> rBuilder, StyleData rStyle)
 	{
-		super.buildIn(rBuilder, rStyleData);
+		super.buildIn(rBuilder, rStyle);
 
 		// only check selection dependencies from the root after all child data
 		// element UIs have been initialized

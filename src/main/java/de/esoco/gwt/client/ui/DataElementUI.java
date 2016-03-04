@@ -88,6 +88,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 import static de.esoco.lib.property.UserInterfaceProperties.CARET_POSITION;
 import static de.esoco.lib.property.UserInterfaceProperties.COLUMNS;
 import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.UserInterfaceProperties.CSS_STYLES;
 import static de.esoco.lib.property.UserInterfaceProperties.DISABLED;
 import static de.esoco.lib.property.UserInterfaceProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.UserInterfaceProperties.EDITABLE;
@@ -193,6 +194,13 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		String sStyle    = rDataElement.getProperty(STYLE, null);
 		String sMimeType = rDataElement.getProperty(MIME_TYPE, null);
+
+		Map<String, String> rCss = rDataElement.getProperty(CSS_STYLES, null);
+
+		if (rCss != null)
+		{
+			rStyle = rStyle.set(CSS_STYLES, rCss);
+		}
 
 		if (sStyle != null)
 		{
@@ -566,7 +574,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			applyElementProperties();
 			aElementComponent.applyStyle(applyElementStyle(rDataElement,
-														   rBaseStyle));
+														   getBaseStyle()));
 			enableComponent(bUIEnabled);
 			aElementComponent.repaint();
 		}

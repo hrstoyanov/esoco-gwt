@@ -36,6 +36,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
+
 import static de.esoco.lib.property.UserInterfaceProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.UserInterfaceProperties.HEADER_LABEL;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
@@ -288,6 +290,26 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 	{
 		if (rNewDataElement instanceof DataElementList)
 		{
+			String sElementStyle = rNewDataElement.getProperty(STYLE, null);
+			String sStyleName    = getStyleName();
+
+			if (sElementStyle != null && sStyleName.indexOf(sElementStyle) < 0)
+			{
+				sStyleName = sStyleName + " " + sElementStyle;
+			}
+
+			GWT.log("ELEMENT STYLE: " + sStyleName);
+			GWT.log("BASE STYLE   : " + getBaseStyle());
+			rNewDataElement.setProperty(STYLE, sStyleName);
+
+			StyleData rNewStyle =
+				DataElementUI.applyElementStyle(rNewDataElement,
+												getBaseStyle());
+
+			GWT.log("NEW STYLE    : " + rNewStyle);
+
+			getContainer().applyStyle(rNewStyle);
+
 			updateDataElements(((ListDataElement<DataElement<?>>)
 								rNewDataElement).getElements(),
 							   rErrorMessages,

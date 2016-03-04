@@ -30,6 +30,7 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.layout.FillLayout;
+import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
@@ -118,7 +119,15 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					sStyle = CSS.gfDataElementPanel();
 					break;
 
-				case PLAIN:
+				case FLOW:
+					sStyle = CSS.gfDataElementFlowPanel();
+					break;
+
+				case FILL:
+					sStyle = CSS.gfDataElementFillPanel();
+					break;
+
+				case DOCK:
 					sStyle = CSS.gfDataElementListPanel();
 					break;
 
@@ -367,7 +376,6 @@ public class DataElementListPanelManager extends DataElementPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("boxing")
 	public void updateDataElements(List<DataElement<?>> rNewDataElements,
 								   Map<String, String>  rErrorMessages,
 								   boolean				bUpdateUI)
@@ -380,6 +388,9 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			throw new IllegalArgumentException("DataElementList expected, not " +
 											   rNewDataElements);
 		}
+
+		getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
+																  getBaseStyle()));
 
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);
@@ -418,15 +429,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			nIndex++;
 		}
 
-		int nCurrentSelection = getSelectedElement();
-
-		Integer nNewSelection =
-			rDataElementList.getProperty(CURRENT_SELECTION, nCurrentSelection);
-
-		if (nCurrentSelection != nNewSelection)
-		{
-			setSelectedElement(nNewSelection);
-		}
+		updateSelection();
 	}
 
 	/***************************************
@@ -484,11 +487,16 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			DataElement<?> rDataElement = rElementStyle.getKey();
 			StyleData	   rPanelStyle  = rElementStyle.getValue();
 
-			rPanelStyle =
-				DataElementUI.applyElementStyle(rDataElement, rPanelStyle);
-
 			DataElementPanelManager rPanelManager =
 				aPanelManagers.get(nPanelIndex++);
+
+			if (rPanelManager instanceof SingleDataElementPanelManager)
+			{
+				rPanelStyle = addStyles(rPanelStyle, CSS.gfDataElement());
+			}
+
+			rPanelStyle =
+				DataElementUI.applyElementStyle(rDataElement, rPanelStyle);
 
 			build(rPanelManager, rPanelStyle);
 
@@ -531,13 +539,23 @@ public class DataElementListPanelManager extends DataElementPanelManager
 				rDataElementList.getProperty(LIST_DISPLAY_MODE,
 											 ListDisplayMode.TABS);
 
-			assert !((eDisplayMode == ListDisplayMode.PLAIN ||
+			assert !((eDisplayMode == ListDisplayMode.DOCK ||
 					  eDisplayMode == ListDisplayMode.SPLIT) &&
 					 rDataElementList.getElementCount() > 3) : "Element count for PLAIN or SPLIT mode must be <= 3";
 
 			switch (eDisplayMode)
 			{
-				case PLAIN:
+				case FLOW:
+					aPanelBuilder =
+						rBuilder.addPanel(rStyleData, new FlowLayout());
+					break;
+
+				case FILL:
+					aPanelBuilder =
+						rBuilder.addPanel(rStyleData, new FillLayout());
+					break;
+
+				case DOCK:
 					aPanelBuilder =
 						rBuilder.addPanel(rStyleData,
 										  new DockLayout(true, false));
@@ -571,9 +589,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		}
 		else
 		{
-			FillLayout rLayout = new FillLayout(true);
-
-			aPanelBuilder = rBuilder.addPanel(rStyleData, rLayout);
+			aPanelBuilder = rBuilder.addPanel(rStyleData, new FillLayout());
 		}
 
 		return (ContainerBuilder<Panel>) aPanelBuilder;
@@ -619,7 +635,8 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		Map<DataElement<?>, StyleData> rDataElements =
 			new LinkedHashMap<>(nElementCount);
 
-		if (aGroupPanel == null)
+		if (eDisplayMode == ListDisplayMode.DOCK ||
+			eDisplayMode == ListDisplayMode.SPLIT)
 		{
 			// reorder elements because the center element must be added last
 			AlignedPosition rCenter = AlignedPosition.CENTER;
@@ -712,5 +729,22 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		}
 
 		return aPanelManager;
+	}
+
+	/***************************************
+	 * Updates the current selection from the data element state.
+	 */
+	@SuppressWarnings("boxing")
+	private void updateSelection()
+	{
+		int nCurrentSelection = getSelectedElement();
+
+		Integer nNewSelection =
+			rDataElementList.getProperty(CURRENT_SELECTION, nCurrentSelection);
+
+		if (nCurrentSelection != nNewSelection)
+		{
+			setSelectedElement(nNewSelection);
+		}
 	}
 }

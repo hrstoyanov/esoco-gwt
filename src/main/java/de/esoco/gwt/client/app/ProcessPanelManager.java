@@ -49,6 +49,7 @@ import de.esoco.gwt.client.ui.DataElementPanelManager.InteractiveInputHandler;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
 import de.esoco.gwt.shared.ProcessDescription;
+import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ProcessState;
 import de.esoco.gwt.shared.ProcessState.ProcessExecutionMode;
 import de.esoco.gwt.shared.ServiceException;
@@ -57,6 +58,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.gwt.event.shared.HandlerRegistration;
 
 import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
 
@@ -134,6 +137,8 @@ public class ProcessPanelManager
 	private boolean		   bInteractionActionEvent;
 
 	private Map<String, DataElementListView> aViews = Collections.emptyMap();
+
+	private HandlerRegistration rUiInspectorEventHandler = null;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -281,6 +286,7 @@ public class ProcessPanelManager
 
 			String			    sMessage     = eService.getMessage();
 			Map<String, String> rErrorParams = eService.getErrorParameters();
+			ProcessState	    rNewState    = eService.getProcessState();
 
 			if (sMessage.equals(ERROR_ENTITY_LOCKED))
 			{
@@ -293,6 +299,11 @@ public class ProcessPanelManager
 			}
 			else
 			{
+				if (rNewState != null)
+				{
+					rProcessState = rNewState;
+				}
+
 				if (!sMessage.startsWith("$"))
 				{
 					sMessage = "$msg" + sMessage;
@@ -400,6 +411,8 @@ public class ProcessPanelManager
 
 		buildParameterPanel(null);
 		setUserInterfaceState();
+
+		addUiInspectorEventHandler();
 	}
 
 	/***************************************
@@ -414,6 +427,8 @@ public class ProcessPanelManager
 	}
 
 	/***************************************
+	 * Overridden to remove the UI inspector event handler registration.
+	 *
 	 * @see GwtApplicationPanelManager#processFinished(PanelManager, ProcessState)
 	 */
 	@Override
@@ -421,6 +436,11 @@ public class ProcessPanelManager
 		PanelManager<?, ?> rProcessPanelManager,
 		ProcessState	   rProcessState)
 	{
+		if (rUiInspectorEventHandler != null)
+		{
+			rUiInspectorEventHandler.removeHandler();
+		}
+
 		super.processFinished(rProcessPanelManager, rProcessState);
 	}
 
@@ -444,6 +464,21 @@ public class ProcessPanelManager
 		{
 			aParamPanelManager.enableInteraction(false);
 		}
+	}
+
+	/***************************************
+	 * Opens the UI inspector panel.
+	 */
+	void toggleUiInspector()
+	{
+		@SuppressWarnings("boxing")
+		boolean bShowUiInspector =
+			rProcessState.getProperty(ProcessService.SHOW_UI_INSPECTOR, false);
+
+		rProcessState.setProperty(ProcessService.SHOW_UI_INSPECTOR,
+								  !bShowUiInspector);
+
+		executeProcess(ProcessExecutionMode.RELOAD, rProcessState, false);
 	}
 
 	/***************************************
@@ -504,6 +539,31 @@ public class ProcessPanelManager
 		aPanelManager.setInteractiveInputHandler(this);
 
 		return aPanelManager;
+	}
+
+	/***************************************
+	 * Adds a global event handler that listens for the invocation of the UI
+	 * inspector.
+	 */
+	private void addUiInspectorEventHandler()
+	{
+//		rUiInspectorEventHandler =
+//			Event.addNativePreviewHandler(new NativePreviewHandler()
+//				{
+//					@Override
+//					public void onPreviewNativeEvent(NativePreviewEvent rEvent)
+//					{
+//						NativeEvent rNativeEvent = rEvent.getNativeEvent();
+//
+//						if ((rEvent.getTypeInt() & Event.ONKEYDOWN) != 0 &&
+//							rNativeEvent.getKeyCode() == 73 &&
+//							rNativeEvent.getAltKey() &&
+//							rNativeEvent.getCtrlKey())
+//						{
+//							toggleUiInspector();
+//						}
+//					}
+//				});
 	}
 
 	/***************************************

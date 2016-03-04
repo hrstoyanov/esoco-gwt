@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,10 @@ public interface ProcessService extends StorageService
 	 */
 	public static final PropertyName<String> PROCESS_ENTITY_LOCKS =
 		PropertyName.newStringName("ProcessEntityLocks");
+
+	/** A flag used to show or hide the UI inspector view. */
+	public static final PropertyName<Boolean> SHOW_UI_INSPECTOR =
+		PropertyName.newBooleanName("SHOW_UI_INSPECTOR");
 
 	// - Commands --------------------------------------------------------------
 

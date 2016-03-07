@@ -31,6 +31,7 @@ import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.layout.FillLayout;
 import de.esoco.ewt.layout.FlowLayout;
+import de.esoco.ewt.layout.FormLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
@@ -121,6 +122,10 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 				case FLOW:
 					sStyle = CSS.gfDataElementFlowPanel();
+					break;
+
+				case FORM:
+					sStyle = CSS.gfDataElementFormPanel();
 					break;
 
 				case FILL:
@@ -550,6 +555,11 @@ public class DataElementListPanelManager extends DataElementPanelManager
 						rBuilder.addPanel(rStyleData, new FlowLayout());
 					break;
 
+				case FORM:
+					aPanelBuilder =
+						rBuilder.addPanel(rStyleData, new FormLayout());
+					break;
+
 				case FILL:
 					aPanelBuilder =
 						rBuilder.addPanel(rStyleData, new FillLayout());
@@ -575,7 +585,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					aPanelBuilder = rBuilder.addTabPanel(rStyleData);
 					break;
 
-				default:
+				case GRID:
 					throw new IllegalStateException("Unsupported DataElementList mode " +
 													eDisplayMode);
 			}

@@ -94,7 +94,9 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 									   String					  sName,
 									   Collection<DataElement<?>> rDataElements)
 	{
-		super(rParent, CSS.gfDataElementPanel() + " " + sName);
+		super(rParent,
+			  CSS.gfDataElementPanel() + " " + CSS.gfDataElementGridPanel() +
+			  " " + sName);
 
 		initDataElements(rDataElements);
 	}

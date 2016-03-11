@@ -32,6 +32,7 @@ import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.layout.FillLayout;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.FormLayout;
+import de.esoco.ewt.layout.GroupLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
@@ -117,7 +118,9 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			switch (eDisplayMode)
 			{
 				case GRID:
-					sStyle = CSS.gfDataElementPanel();
+					sStyle =
+						CSS.gfDataElementPanel() + " " +
+						CSS.gfDataElementGridPanel();
 					break;
 
 				case FLOW:
@@ -126,6 +129,10 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 				case FORM:
 					sStyle = CSS.gfDataElementFormPanel();
+					break;
+
+				case GROUP:
+					sStyle = CSS.gfDataElementGroupPanel();
 					break;
 
 				case FILL:
@@ -146,6 +153,10 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 				case TABS:
 					sStyle = CSS.gfDataElementTabPanel();
+					break;
+
+				case DECK:
+					sStyle = CSS.gfDataElementDeckPanel();
 					break;
 			}
 		}
@@ -560,6 +571,11 @@ public class DataElementListPanelManager extends DataElementPanelManager
 						rBuilder.addPanel(rStyleData, new FormLayout());
 					break;
 
+				case GROUP:
+					aPanelBuilder =
+						rBuilder.addPanel(rStyleData, new GroupLayout());
+					break;
+
 				case FILL:
 					aPanelBuilder =
 						rBuilder.addPanel(rStyleData, new FillLayout());
@@ -575,14 +591,19 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					aPanelBuilder = rBuilder.addSplitPanel(rStyleData);
 					break;
 
+				case TABS:
+					sLabelPrefix  = "$tab";
+					aPanelBuilder = rBuilder.addTabPanel(rStyleData);
+					break;
+
 				case STACK:
 					sLabelPrefix  = "$grp";
 					aPanelBuilder = rBuilder.addStackPanel(rStyleData);
 					break;
 
-				case TABS:
-					sLabelPrefix  = "$tab";
-					aPanelBuilder = rBuilder.addTabPanel(rStyleData);
+				case DECK:
+					sLabelPrefix  = "$grp";
+					aPanelBuilder = rBuilder.addDeckPanel(rStyleData);
 					break;
 
 				case GRID:

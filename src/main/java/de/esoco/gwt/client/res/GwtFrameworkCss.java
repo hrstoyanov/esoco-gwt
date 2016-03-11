@@ -46,15 +46,21 @@ public interface GwtFrameworkCss extends CssResource {
   @ClassName("gf-DataElementPanel")
   String gfDataElementPanel();
   
+  @ClassName("gf-DataElementGridPanel")
+  String gfDataElementGridPanel();
+  
+  @ClassName("gf-DataElementFillPanel")
+  String gfDataElementFillPanel();
+  
   @ClassName("gf-DataElementFlowPanel")
   String gfDataElementFlowPanel();
   
   @ClassName("gf-DataElementFormPanel")
   String gfDataElementFormPanel();
   
-  @ClassName("gf-DataElementFillPanel")
-  String gfDataElementFillPanel();
-  
+  @ClassName("gf-DataElementGroupPanel")
+  String gfDataElementGroupPanel();
+
   @ClassName("gf-DataElementSplitPanel")
   String gfDataElementSplitPanel();
   
@@ -64,6 +70,9 @@ public interface GwtFrameworkCss extends CssResource {
   @ClassName("gf-DataElementTabPanel")
   String gfDataElementTabPanel();
 
+  @ClassName("gf-DataElementDeckPanel")
+  String gfDataElementDeckPanel();
+  
   @ClassName("gf-EmptyCell")
   String gfEmptyCell();
   

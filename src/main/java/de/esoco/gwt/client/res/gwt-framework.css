@@ -1,7 +1,9 @@
 @external .gwt-TextArea, .gwt-TextArea-readonly, .gwt-DialogBox, .gwt-PushButton;
-
-@external .gf-DataElementPanel, .gf-DataElementListPanel, .gf-DataElementTabPanel;
+@external .gf-DataElementPanel;
+@external .gf-DataElementGridPanel, .gf-DataElementListPanel;
+@external .gf-DataElementTabPanel. .gf-DataElementGroupPanel;
 @external .gf-DataElementStackPanel, .gf-DataElementSplitPanel;
+@external .gf-DataElementDeckPanel, .gf-DataElementFormPanel;
 @external .gf-DataElementFlowPanel, .gf-DataElementFillPanel;
 @external .gf-DataElementLabel, .gf-DataElementHeader;
 @external .gf-DataElement, .gf-SingleDataElement, .gf-EmptyCell;
@@ -10,202 +12,191 @@
 @external .gf-ButtonPanel1, .gf-ButtonPanel2, .gf-ButtonPanel3, .gf-ButtonPanel4;
 @external .gf-PeriodCount, .gf-PeriodUnit;
 @external .error, .readonly, .vertical, .horizontal;
-
 @external .DialogAction;
 @external .MessageBox, .MessageBoxContent, .MessageBoxIcon, .MessageBoxText;
-
 @external .EditTextValue, .EditTextAction;
-
 @external .ProcessStepFragment;
-
-.gf-DataElementPanel
-{
+.gf-DataElementPanel {
 	height: 100%;
 }
 
-.gf-DataElementPanel.ProcessStepFragment
-{
-    width: 100%;
+.gf-DataElementPanel.ProcessStepFragment {
+	width: 100%;
 }
 
-.gf-DataElementFlowPanel
-{
+.gf-DataElementGridPanel {
+	
 }
 
-.gf-DataElementFormPanel
-{
+.gf-DataElementFillPanel {
+	
 }
 
-.gf-DataElementFillPanel
-{
+.gf-DataElementFlowPanel {
+	
 }
 
-.gf-DataElementTabPanel
-{
+.gf-DataElementFormPanel {
+	
 }
 
-.gf-DataElementStackPanel
-{
+.gf-DataElementGroupPanel {
+	
 }
 
-.gf-DataElementSplitPanel
-{
+.gf-DataElementTabPanel {
+	
 }
 
-.gf-DataElementListPanel
-{
+.gf-DataElementStackPanel {
+	
 }
 
-.gf-DataElement
-{
+.gf-DataElementDeckPanel {
+	
 }
 
-.gf-SingleDataElement
-{
+.gf-DataElementSplitPanel {
+	
 }
 
-.gf-DataElement.gwt-TextArea
-{
+.gf-DataElementListPanel {
+	
+}
+
+.gf-DataElement {
+	
+}
+
+.gf-SingleDataElement {
+	
+}
+
+.gf-DataElement.gwt-TextArea {
 	/* for correct border display and padding: */
-	height: 99%; 
+	height: 99%;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
-	box-sizing: border-box;		
+	box-sizing: border-box;
 }
 
-.gf-DataElement.gwt-TextArea-readonly
-{
+.gf-DataElement.gwt-TextArea-readonly {
 	color: black;
 	border: 1px outset Gray;
 	background: #FFE;
 }
 
-.gf-DataElementLabel
-{
+.gf-DataElementLabel {
+	
 }
 
-td.gf-DataElementHeader
-{
+td.gf-DataElementHeader {
 	height: 0;
 	font-size: 120%;
 	font-weight: bold;
 }
 
-.gf-EmptyCell
-{
+.gf-EmptyCell {
+	
 }
 
-.error, .readonly
-{
+.error, .readonly {
+	
 }
 
-.gf-LoginPanel
-{
+.gf-LoginPanel {
+	
 }
 
-.gf-MailMessagePanel
-{
+.gf-MailMessagePanel {
+	
 }
 
-.gf-Toolbar
-{
+.gf-Toolbar {
+	
 }
 
-.gf-ToolbarBack.vertical
-{
+.gf-ToolbarBack.vertical {
 	height: 100%;
-}	
+}
 
-.gf-ToolbarBack.horizontal
-{
+.gf-ToolbarBack.horizontal {
 	width: 100%;
-}	
+}
 
-.gf-ToolButton
-{
+.gf-ToolButton {
 	margin: 2px;
 }
 
-.gf-ToolSeparator
-{
+.gf-ToolSeparator {
 	width: 2em;
 	height: 1em;
 }
 
 .gf-ButtonPanel1 td, .gf-ButtonPanel2 td, .gf-ButtonPanel3 td, .gf-ButtonPanel4 td
-{
+	{
 	padding: 2px;
 }
 
-.gf-ButtonPanel1 colgroup
-{
+.gf-ButtonPanel1 colgroup {
+	
 }
 
-.gf-ButtonPanel2 colgroup
-{
+.gf-ButtonPanel2 colgroup {
 	width: 50%;
 }
 
-.gf-ButtonPanel3 colgroup
-{
+.gf-ButtonPanel3 colgroup {
 	width: 33%;
 }
 
-.gf-ButtonPanel4 colgroup
-{
+.gf-ButtonPanel4 colgroup {
 	width: 25%;
 }
 
-.gf-DataElementListDialog
-{
+.gf-DataElementListDialog {
+	
 }
 
-.gf-PeriodCount
-{
+.gf-PeriodCount {
+	
 }
 
-.gf-PeriodUnit
-{
+.gf-PeriodUnit {
 	width: 96%;
 }
 
-.gwt-DialogBox .DialogAction
-{
+.gwt-DialogBox .DialogAction {
+	
 }
 
-.DialogAction .gwt-PushButton
-{
-    min-width: 8em;
+.DialogAction .gwt-PushButton {
+	min-width: 8em;
 }
 
-.MessageBox
-{
+.MessageBox {
 	min-width: 30em;
 }
 
-.gf-DataElement.MessageBoxContent
-{
+.gf-DataElement.MessageBoxContent {
 	width: 100%;
 	height: 100%;
-	padding-bottom: 1em;	
+	padding-bottom: 1em;
 }
 
-.MessageBoxContent .MessageBoxIcon
-{
+.MessageBoxContent .MessageBoxIcon {
+	
 }
 
-.MessageBoxContent .MessageBoxText
-{
+.MessageBoxContent .MessageBoxText {
 	white-space: pre-wrap !important;
 }
 
-.EditTextValue
-{
+.EditTextValue {
 	width: 100%;
-	height: 100%;	
+	height: 100%;
 }
 
-.EditTextAction
-{
+.EditTextAction {
 	
 }

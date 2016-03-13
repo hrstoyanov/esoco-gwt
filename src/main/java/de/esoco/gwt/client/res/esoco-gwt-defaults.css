@@ -1,0 +1,161 @@
+/* This file contains default styles for CSS classes used in the esoco-gwt 
+   framework. They can be imported by applications to set default values for 
+   several framework styles.
+*/
+@external .error;
+@external .vertical;
+@external .horizontal;
+@external .gf-DataElement;
+@external .gf-DataElementPanel;
+@external .gf-DataElementLabel;
+@external .gf-DataElementHeader;
+@external .gf-EmptyCell;
+@external .EditEntityTagsFragment;
+@external .SelectedEntityTags;
+@external .EditTextActions;
+@external .EditTextValue;
+@external .ProcessStepFragment;
+@external .gwt-TextArea;
+@external .gwt-TextArea-readonly;
+@external .gwt-PushButton;
+@external .gf-Toolbar;
+@external .gf-ToolbarBack;
+@external .gf-ToolButton;
+@external .gf-ToolSeparator;
+@external .gf-ButtonPanel1;
+@external .gf-ButtonPanel2;
+@external .gf-ButtonPanel3;
+@external .gf-ButtonPanel4;
+@external .gf-PeriodUnit;
+@external .DialogAction;
+@external .MessageBox;
+@external .MessageBoxContent;
+@external .MessageBoxText;
+.error {
+	color: #E84040;
+}
+
+.gf-DataElementPanel>tbody>tr>td {
+	padding: 0.3em;
+	vertical-align: top;
+}
+
+.gf-DataElementPanel.EditTextActions {
+	width: 100%;
+}
+
+.gf-DataElementPanel.EditTextActions>tbody>tr>td {
+	color: #555;
+	padding: 0;
+	text-align: right;
+	vertical-align: middle;
+}
+
+.gf-DataElementPanel>tbody>tr>td.gf-DataElementLabel {
+	vertical-align: middle;
+}
+
+.gf-DataElementPanel>tbody>tr>td.gf-EmptyCell {
+	padding: 0;
+}
+
+.gf-DataElementPanel {
+	height: 100%;
+}
+
+.gf-DataElementPanel.ProcessStepFragment {
+	width: 100%;
+}
+
+.gf-DataElementPanel.EditEntityTagsFragment, td.SelectedEntityTags {
+	width: 100%;
+}
+
+.EditTextValue {
+	width: 100%;
+	height: 100%;
+}
+
+.gf-DataElement.gwt-TextArea {
+	/* for correct border display and padding: */
+	height: 99%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.gf-DataElement.gwt-TextArea-readonly {
+	color: black;
+	border: 1px outset Gray;
+	background: #FFE;
+}
+
+.gf-DataElement.error, .gf-DataElement.gwt-TextArea-readonly.error {
+	border: 2px solid #E84040;
+}
+
+.DialogAction .gwt-PushButton {
+	min-width: 8em;
+}
+
+.gf-DataElementLabel.error {
+	color: #E84040;
+}
+
+td.gf-DataElementHeader {
+	height: 0;
+	font-size: 120%;
+	font-weight: bold;
+}
+
+.gf-ToolbarBack.vertical {
+	height: 100%;
+}
+
+.gf-ToolbarBack.horizontal {
+	width: 100%;
+}
+
+.gf-ToolButton {
+	margin: 2px;
+}
+
+.gf-ToolSeparator {
+	width: 2em;
+	height: 1em;
+}
+
+.gf-ButtonPanel1 td, .gf-ButtonPanel2 td, .gf-ButtonPanel3 td, .gf-ButtonPanel4 td
+	{
+	padding: 2px;
+}
+
+.gf-ButtonPanel2 colgroup {
+	width: 50%;
+}
+
+.gf-ButtonPanel3 colgroup {
+	width: 33%;
+}
+
+.gf-ButtonPanel4 colgroup {
+	width: 25%;
+}
+
+.gf-PeriodUnit {
+	width: 96%;
+}
+
+.MessageBox {
+	min-width: 30em;
+}
+
+.gf-DataElement.MessageBoxContent {
+	width: 100%;
+	height: 100%;
+	padding-bottom: 1em;
+}
+
+.MessageBoxContent .MessageBoxText {
+	white-space: pre-wrap !important;
+}

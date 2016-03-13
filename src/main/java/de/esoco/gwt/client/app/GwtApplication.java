@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package de.esoco.gwt.client.app;
 import de.esoco.ewt.app.EWTEntryPoint;
 
 import de.esoco.gwt.client.ServiceRegistry;
-import de.esoco.gwt.client.res.GwtApplicationResources;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.client.ui.AuthenticationPanelManager;
 import de.esoco.gwt.shared.GwtApplicationServiceAsync;
 
@@ -93,6 +93,6 @@ public abstract class GwtApplication extends EWTEntryPoint
 	 */
 	protected void injectApplicationCss()
 	{
-		GwtApplicationResources.INSTANCE.css().ensureInjected();
+		EsocoGwtResources.INSTANCE.css().ensureInjected();
 	}
 }

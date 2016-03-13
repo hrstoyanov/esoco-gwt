@@ -26,7 +26,7 @@ import de.esoco.ewt.component.View;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
 
-import de.esoco.gwt.client.res.GwtFrameworkResource;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import java.util.Collection;
 import java.util.Map;
@@ -153,7 +153,7 @@ public class DataElementListView
 		View				   aPanelView	    = null;
 
 		String sDialogStyle =
-			GwtFrameworkResource.INSTANCE.css().gfDataElementListDialog();
+			EsocoGwtResources.INSTANCE.css().gfDataElementListDialog();
 
 		switch (eViewType)
 		{

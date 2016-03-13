@@ -38,8 +38,8 @@ import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
-import de.esoco.gwt.client.res.GwtApplicationCss;
-import de.esoco.gwt.client.res.GwtApplicationResources;
+import de.esoco.gwt.client.res.EsocoGwtCss;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.client.ui.CommandResultHandler;
 import de.esoco.gwt.client.ui.DataElementGridPanelManager;
 import de.esoco.gwt.client.ui.DataElementListPanelManager;
@@ -86,8 +86,7 @@ public class ProcessPanelManager
 	/** A prefix for the generation of labels from process names. */
 	public static final String PROCESS_LABEL_PREFIX = "$lblPrc";
 
-	private static final GwtApplicationCss CSS =
-		GwtApplicationResources.INSTANCE.css();
+	private static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	private static final StyleData TOP_PANEL_STYLE     =
 		AlignedPosition.TOP.h(6)

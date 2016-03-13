@@ -28,8 +28,8 @@ import de.esoco.ewt.component.Spinner;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.gwt.client.res.GwtFrameworkCss;
-import de.esoco.gwt.client.res.GwtFrameworkResource;
+import de.esoco.gwt.client.res.EsocoGwtCss;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class PeriodDataElementUI extends DataElementUI<PeriodDataElement>
 	//~ Static fields/initializers ---------------------------------------------
 
 	/** Shortcut constant to access the framework CSS */
-	static final GwtFrameworkCss CSS = GwtFrameworkResource.INSTANCE.css();
+	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	/** Style constant for the period count input field. */
 	private static final StyleData PERIOD_COUNT_STYLE =

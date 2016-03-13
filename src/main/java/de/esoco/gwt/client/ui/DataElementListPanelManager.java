@@ -140,7 +140,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					break;
 
 				case DOCK:
-					sStyle = CSS.gfDataElementListPanel();
+					sStyle = CSS.gfDataElementDockPanel();
 					break;
 
 				case SPLIT:

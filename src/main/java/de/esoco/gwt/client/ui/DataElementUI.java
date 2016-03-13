@@ -52,8 +52,8 @@ import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
-import de.esoco.gwt.client.res.GwtFrameworkCss;
-import de.esoco.gwt.client.res.GwtFrameworkResource;
+import de.esoco.gwt.client.res.EsocoGwtCss;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.Selectable;
 import de.esoco.lib.property.TextAttribute;
@@ -129,7 +129,7 @@ public class DataElementUI<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	static final GwtFrameworkCss CSS = GwtFrameworkResource.INSTANCE.css();
+	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	/** The default prefix for label resource IDs. */
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";

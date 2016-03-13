@@ -33,8 +33,8 @@ import de.esoco.ewt.style.StyleData;
 
 import de.esoco.gwt.client.ServiceCallback;
 import de.esoco.gwt.client.ServiceRegistry;
-import de.esoco.gwt.client.res.GwtFrameworkCss;
-import de.esoco.gwt.client.res.GwtFrameworkResource;
+import de.esoco.gwt.client.res.EsocoGwtCss;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.shared.Command;
 import de.esoco.gwt.shared.CommandService;
 
@@ -70,7 +70,7 @@ public abstract class PanelManager<C extends Container,
 	//~ Static fields/initializers ---------------------------------------------
 
 	/** Shortcut constant to access the framework CSS */
-	static final GwtFrameworkCss CSS = GwtFrameworkResource.INSTANCE.css();
+	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	/** A default style constant for the background panel of toolbars. */
 	private static final StyleData TOOLBAR_HORIZONTAL_BACKGROUND_STYLE =
@@ -243,7 +243,7 @@ public abstract class PanelManager<C extends Container,
 
 	/***************************************
 	 * Create a standard button toolbar panel. The toolbar panel will have the
-	 * style {@link GwtFrameworkCss#gfToolbar()} and the enclosing (background)
+	 * style {@link EsocoGwtCss#gfToolbar()} and the enclosing (background)
 	 * panel will have the argument style. To achieve a standard appearance of
 	 * toolbars applications can set the {@link #DEFAULT_TOOLBAR_BACKGROUND}
 	 * style name on the given style or use NULL for a default style with top
@@ -302,7 +302,7 @@ public abstract class PanelManager<C extends Container,
 	/***************************************
 	 * Create a standard toolbar button. The builder should be one that has been
 	 * returned by {@link #addToolbar(ContainerBuilder, boolean)}. The button
-	 * will have the style {@link GwtFrameworkCss#gfToolButton()}.
+	 * will have the style {@link EsocoGwtCss#gfToolButton()}.
 	 *
 	 * @param  rToolbarBuilder The toolbar panel builder to create the button
 	 *                         with
@@ -335,7 +335,7 @@ public abstract class PanelManager<C extends Container,
 	 * Adds a separator to a toolbar. The builder must be one that had been
 	 * returned by {@link #addToolbar(ContainerBuilder, StyleData, StyleData,
 	 * int)}. The button will have the style {@link
-	 * GwtFrameworkCss#gfToolSeparator()}.
+	 * EsocoGwtCss#gfToolSeparator()}.
 	 *
 	 * @param rBuilder The toolbar panel builder
 	 */

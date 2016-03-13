@@ -28,8 +28,8 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.gwt.client.res.GwtFrameworkCss;
-import de.esoco.gwt.client.res.GwtFrameworkResource;
+import de.esoco.gwt.client.res.EsocoGwtCss;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.SingleSelection;
 
@@ -54,7 +54,7 @@ public abstract class DataElementPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	static final GwtFrameworkCss CSS = GwtFrameworkResource.INSTANCE.css();
+	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	static final StyleData ELEMENT_STYLE =
 		addStyles(StyleData.DEFAULT, CSS.gfDataElement());

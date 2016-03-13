@@ -1,0 +1,49 @@
+@external .error, .readonly, .vertical, .horizontal;
+.error, .readonly, .horizontal, .vertical {
+	
+}
+
+@external .gf-DataElementPanel;
+@external .gf-DataElementGridPanel, .gf-DataElementDockPanel;
+@external .gf-DataElementTabPanel, .gf-DataElementGroupPanel;
+@external .gf-DataElementStackPanel, .gf-DataElementSplitPanel;
+@external .gf-DataElementDeckPanel, .gf-DataElementFormPanel;
+@external .gf-DataElementFlowPanel, .gf-DataElementFillPanel;
+@external .gf-DataElementListDialog;
+.gf-DataElementPanel, .gf-DataElementGridPanel, .gf-DataElementDockPanel,
+	.gf-DataElementTabPanel, .gf-DataElementGroupPanel, .gf-DataElementStackPanel,
+	.gf-DataElementSplitPanel, .gf-DataElementDeckPanel, .gf-DataElementFormPanel,
+	.gf-DataElementFlowPanel, .gf-DataElementFillPanel, .gf-DataElementListDialog {
+	
+}
+
+@external .gf-DataElement, .gf-SingleDataElement;
+@external .gf-DataElementLabel, .gf-DataElementHeader, .gf-EmptyCell;
+.gf-DataElement, .gf-SingleDataElement, .gf-DataElementLabel,
+	.gf-DataElementHeader, .gf-EmptyCell {
+	
+}
+
+@external .gf-LoginPanel;
+.gf-LoginPanel {
+	
+}
+
+@external .gf-Toolbar, .gf-ToolbarBack, .gf-ToolButton, .gf-ToolSeparator;
+.gf-Toolbar, .gf-ToolbarBack, .gf-ToolButton, .gf-ToolSeparator {
+	
+}
+
+@external .gf-PeriodCount, .gf-PeriodUnit;
+.gf-PeriodCount, .gf-PeriodUnit {
+	
+}
+
+@external .ga-ProcessPanel, .ga-ProcessTitle;
+@external .ga-ProcessTopPanel, .ga-ProcessButtonPanel;
+@external .ga-ProcessParamPanel, .ga-ProcessSummaryPanel;
+@external .ga-ErrorMessage;
+.ga-ProcessPanel, .ga-ProcessTitle, .ga-ProcessTopPanel, .ga-ProcessButtonPanel,
+	.ga-ProcessParamPanel, .ga-ProcessSummaryPanel, .ga-ErrorMessage {
+	
+}

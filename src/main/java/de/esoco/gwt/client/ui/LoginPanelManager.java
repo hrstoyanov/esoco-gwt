@@ -33,7 +33,7 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
 import de.esoco.gwt.client.ServiceRegistry;
-import de.esoco.gwt.client.res.GwtFrameworkResource;
+import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.shared.AuthenticatedService;
 
 import java.util.Date;
@@ -80,7 +80,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 							 String				sCookiePrefix,
 							 boolean			bReauthenticate)
 	{
-		super(rParent, GwtFrameworkResource.INSTANCE.css().gfLoginPanel());
+		super(rParent, EsocoGwtResources.INSTANCE.css().gfLoginPanel());
 
 		this.rLoginHandler   = rLoginHandler;
 		this.bReauthenticate = bReauthenticate;
@@ -155,7 +155,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 */
 	protected Label addFailureMessageComponents(ContainerBuilder<?> aBuilder)
 	{
-		String sError = GwtFrameworkResource.INSTANCE.css().error();
+		String sError = EsocoGwtResources.INSTANCE.css().error();
 
 		StyleData rErrorStyle =
 			StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES, sError);
@@ -172,9 +172,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 */
 	protected void addLoginPanelHeader(ContainerBuilder<?> aBuilder)
 	{
-		aBuilder.addLabel(AlignedPosition.TOP,
-						  null,
-						  GwtFrameworkResource.INSTANCE.imLogin());
+		aBuilder.addLabel(AlignedPosition.TOP, null, "#$imLogin");
 		aBuilder.addLabel(AlignedPosition.TOP, "$lblLogin", null);
 	}
 

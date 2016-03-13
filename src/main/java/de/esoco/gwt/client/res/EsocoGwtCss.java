@@ -3,31 +3,16 @@
 //J-
 package de.esoco.gwt.client.res;
 import com.google.gwt.resources.client.CssResource;
-public interface GwtFrameworkCss extends CssResource {
-  
-  @ClassName("DialogAction")
-  String dialogAction();
-  
-  @ClassName("EditTextAction")
-  String editTextAction();
-  
-  @ClassName("EditTextValue")
-  String editTextValue();
+public interface EsocoGwtCss extends CssResource {
   
   String error();
   
-  @ClassName("gf-ButtonPanel1")
-  String gfButtonPanel1();
+  String horizontal();
+
+  String readonly();
   
-  @ClassName("gf-ButtonPanel2")
-  String gfButtonPanel2();
-  
-  @ClassName("gf-ButtonPanel3")
-  String gfButtonPanel3();
-  
-  @ClassName("gf-ButtonPanel4")
-  String gfButtonPanel4();
-  
+  String vertical();
+
   @ClassName("gf-DataElement")
   String gfDataElement();
   
@@ -40,11 +25,11 @@ public interface GwtFrameworkCss extends CssResource {
   @ClassName("gf-DataElementListDialog")
   String gfDataElementListDialog();
   
-  @ClassName("gf-DataElementListPanel")
-  String gfDataElementListPanel();
-  
   @ClassName("gf-DataElementPanel")
   String gfDataElementPanel();
+  
+  @ClassName("gf-DataElementDockPanel")
+  String gfDataElementDockPanel();
   
   @ClassName("gf-DataElementGridPanel")
   String gfDataElementGridPanel();
@@ -79,9 +64,6 @@ public interface GwtFrameworkCss extends CssResource {
   @ClassName("gf-LoginPanel")
   String gfLoginPanel();
   
-  @ClassName("gf-MailMessagePanel")
-  String gfMailMessagePanel();
-  
   @ClassName("gf-PeriodCount")
   String gfPeriodCount();
   
@@ -103,37 +85,24 @@ public interface GwtFrameworkCss extends CssResource {
   @ClassName("gf-ToolSeparator")
   String gfToolSeparator();
   
-  @ClassName("gwt-DialogBox")
-  String gwtDialogBox();
+  @ClassName("ga-ErrorMessage")
+  String gaErrorMessage();
   
-  @ClassName("gwt-PushButton")
-  String gwtPushButton();
+  @ClassName("ga-ProcessButtonPanel")
+  String gaProcessButtonPanel();
   
-  @ClassName("gwt-TextArea")
-  String gwtTextArea();
+  @ClassName("ga-ProcessPanel")
+  String gaProcessPanel();
   
-  @ClassName("gwt-TextArea-readonly")
-  String gwtTextAreaReadonly();
+  @ClassName("ga-ProcessParamPanel")
+  String gaProcessParamPanel();
   
-  String horizontal();
+  @ClassName("ga-ProcessSummaryPanel")
+  String gaProcessSummaryPanel();
   
-  @ClassName("MessageBox")
-  String messageBox();
+  @ClassName("ga-ProcessTitle")
+  String gaProcessTitle();
   
-  @ClassName("MessageBoxContent")
-  String messageBoxContent();
-  
-  @ClassName("MessageBoxIcon")
-  String messageBoxIcon();
-  
-  @ClassName("MessageBoxText")
-  String messageBoxText();
-  
-  @ClassName("ProcessStepFragment")
-  String processStepFragment();
-  
-  String readonly();
-  
-  String vertical();
-}
+  @ClassName("ga-ProcessTopPanel")
+  String gaProcessTopPanel();}
 

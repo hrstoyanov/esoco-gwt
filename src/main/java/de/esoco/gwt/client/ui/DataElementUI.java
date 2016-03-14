@@ -59,6 +59,7 @@ import de.esoco.lib.property.Selectable;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.ContentType;
+import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
 import de.esoco.lib.property.UserInterfaceProperties.ListStyle;
 import de.esoco.lib.text.TextConvert;
 
@@ -72,6 +73,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -98,6 +100,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDDEN;
 import static de.esoco.lib.property.UserInterfaceProperties.INPUT_CONSTRAINT;
 import static de.esoco.lib.property.UserInterfaceProperties.LABEL;
+import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
 import static de.esoco.lib.property.UserInterfaceProperties.LIST_STYLE;
 import static de.esoco.lib.property.UserInterfaceProperties.MIME_TYPE;
 import static de.esoco.lib.property.UserInterfaceProperties.NO_INTERACTION_LOCK;
@@ -859,6 +862,16 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else
 		{
+			LabelStyle eLabelStyle =
+				rDataElement.getProperty(LABEL_STYLE, null);
+
+			GWT.log("LABELSTYLE: " + eLabelStyle);
+
+			if (eLabelStyle != null)
+			{
+				rDisplayStyle = rDisplayStyle.set(LABEL_STYLE, eLabelStyle);
+			}
+
 			Label aLabel =
 				rBuilder.addLabel(rDisplayStyle,
 								  convertValueToString(rDataElement,

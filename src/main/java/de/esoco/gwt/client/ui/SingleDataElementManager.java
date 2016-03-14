@@ -25,22 +25,32 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.UserInterfaceProperties;
+import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
+import static de.esoco.lib.property.UserInterfaceProperties.INITIAL_FOCUS;
+import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
+
 
 /********************************************************************
- * A data element panel manager implementation that wraps a single data element
- * and it's UI.
+ * A data element panel manager implementation that manages a single data
+ * element and it's UI.
  *
  * @author eso
  */
-public class SingleDataElementPanelManager extends DataElementPanelManager
+public class SingleDataElementManager extends DataElementPanelManager
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final StyleData ELEMENT_LABEL_STYLE =
+		addStyles(StyleData.DEFAULT, CSS.gfDataElementLabel()).set(LABEL_STYLE,
+																   LabelStyle.INLINE);
+
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElement<?>   rDataElement;
@@ -51,7 +61,7 @@ public class SingleDataElementPanelManager extends DataElementPanelManager
 	/***************************************
 	 * {@inheritDoc}
 	 */
-	public SingleDataElementPanelManager(
+	public SingleDataElementManager(
 		PanelManager<?, ?> rParent,
 		DataElement<?>	   rDataElement)
 	{
@@ -185,8 +195,9 @@ public class SingleDataElementPanelManager extends DataElementPanelManager
 	{
 		aElementUI = DataElementUIFactory.create(this, rDataElement);
 
-		String    sStyle = aElementUI.getElementStyleName();
-		StyleData aStyle =
+		boolean   bHideLabel = rDataElement.hasFlag(HIDE_LABEL);
+		String    sStyle     = aElementUI.getElementStyleName();
+		StyleData aStyle     =
 			addStyles(getBaseStyle(),
 					  CSS.gfDataElement(),
 					  CSS.gfSingleDataElement());
@@ -198,12 +209,26 @@ public class SingleDataElementPanelManager extends DataElementPanelManager
 
 		aStyle = addStyles(aStyle, sStyle);
 
+		if (!bHideLabel)
+		{
+			StyleData aElementLabelStyle =
+				addStyles(ELEMENT_LABEL_STYLE,
+						  aElementUI.getElementStyleName());
+
+			aElementUI.createElementLabel(this, aElementLabelStyle);
+		}
+
 		aElementUI.buildUserInterface(this, aStyle);
-		aElementUI.setHiddenLabelHint(getContext());
+
+		if (bHideLabel)
+		{
+			aElementUI.setHiddenLabelHint(getContext());
+		}
+
 		checkSelectionDependency(getRootDataElementPanelManager(),
 								 rDataElement);
 
-		if (rDataElement.hasFlag(UserInterfaceProperties.INITIAL_FOCUS))
+		if (rDataElement.hasFlag(INITIAL_FOCUS))
 		{
 			aElementUI.requestFocus();
 		}

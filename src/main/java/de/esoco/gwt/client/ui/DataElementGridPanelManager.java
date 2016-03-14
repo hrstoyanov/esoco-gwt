@@ -54,6 +54,17 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
  */
 public class DataElementGridPanelManager extends DataElementPanelManager
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final StyleData ELEMENT_STYLE =
+		addStyles(StyleData.DEFAULT, CSS.gfDataElement());
+
+	private static final StyleData ELEMENT_LABEL_STYLE =
+		addStyles(StyleData.DEFAULT, CSS.gfDataElementLabel());
+
+	private static final StyleData HEADER_LABEL_STYLE =
+		addStyles(StyleData.DEFAULT, CSS.gfDataElementHeader());
+
 	//~ Instance fields --------------------------------------------------------
 
 	private List<DataElement<?>>		  aDataElements;
@@ -535,9 +546,10 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 			!(rDataElement.hasFlag(HIDE_LABEL) ||
 			  rDataElement.hasFlag(HEADER_LABEL)))
 		{
-			StyleData rLabelStyle = addStyles(LABEL_STYLE, sLabelCellStyle);
+			StyleData aElementLabelStyle =
+				addStyles(ELEMENT_LABEL_STYLE, sLabelCellStyle);
 
-			aElementUI.createElementLabel(this, rLabelStyle);
+			aElementUI.createElementLabel(this, aElementLabelStyle);
 			addCellStyles(CSS.gfDataElementLabel(), sLabelCellStyle);
 		}
 	}

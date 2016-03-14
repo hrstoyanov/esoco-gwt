@@ -506,7 +506,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			DataElementPanelManager rPanelManager =
 				aPanelManagers.get(nPanelIndex++);
 
-			if (rPanelManager instanceof SingleDataElementPanelManager)
+			if (rPanelManager instanceof SingleDataElementManager)
 			{
 				rPanelStyle = addStyles(rPanelStyle, CSS.gfDataElement());
 			}
@@ -747,17 +747,19 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					new DataElementListPanelManager(this, rElementList);
 			}
 		}
-		else if (eDisplayMode != null)
+		else // if (eDisplayMode != null)
 		{
 			aPanelManager =
-				new SingleDataElementPanelManager(this, rDataElement);
+				new SingleDataElementManager(this, rDataElement);
 		}
-		else
-		{
-			aElements     = Arrays.<DataElement<?>>asList(rDataElement);
-			aPanelManager =
-				new DataElementGridPanelManager(this, sName, aElements);
-		}
+//		else
+//		{
+//			aElements	  = Arrays.<DataElement<?>>asList(rDataElement);
+//			aPanelManager =
+//				new DataElementGridPanelManager(this, sName, aElements);
+//
+//			GWT.log("--- Single Element Grid: " + rDataElement.getName());
+//		}
 
 		return aPanelManager;
 	}

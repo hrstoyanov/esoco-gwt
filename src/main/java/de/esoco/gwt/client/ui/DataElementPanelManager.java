@@ -56,15 +56,6 @@ public abstract class DataElementPanelManager
 
 	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
-	static final StyleData ELEMENT_STYLE =
-		addStyles(StyleData.DEFAULT, CSS.gfDataElement());
-
-	static final StyleData LABEL_STYLE =
-		addStyles(StyleData.DEFAULT, CSS.gfDataElementLabel());
-
-	static final StyleData HEADER_LABEL_STYLE =
-		addStyles(StyleData.DEFAULT, CSS.gfDataElementHeader());
-
 	//~ Instance fields --------------------------------------------------------
 
 	private InteractiveInputHandler rInteractiveInputHandler = null;

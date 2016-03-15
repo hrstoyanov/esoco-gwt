@@ -747,19 +747,16 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					new DataElementListPanelManager(this, rElementList);
 			}
 		}
-		else // if (eDisplayMode != null)
+		else if (eDisplayMode != null)
 		{
-			aPanelManager =
-				new SingleDataElementManager(this, rDataElement);
+			aPanelManager = new SingleDataElementManager(this, rDataElement);
 		}
-//		else
-//		{
-//			aElements	  = Arrays.<DataElement<?>>asList(rDataElement);
-//			aPanelManager =
-//				new DataElementGridPanelManager(this, sName, aElements);
-//
-//			GWT.log("--- Single Element Grid: " + rDataElement.getName());
-//		}
+		else
+		{
+			aElements     = Arrays.<DataElement<?>>asList(rDataElement);
+			aPanelManager =
+				new DataElementGridPanelManager(this, sName, aElements);
+		}
 
 		return aPanelManager;
 	}

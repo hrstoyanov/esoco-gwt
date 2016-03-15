@@ -47,6 +47,7 @@ public class SingleDataElementManager extends DataElementPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
+	@SuppressWarnings("unused")
 	private static final StyleData ELEMENT_LABEL_STYLE =
 		addStyles(StyleData.DEFAULT, CSS.gfDataElementLabel()).set(LABEL_STYLE,
 																   LabelStyle.INLINE);
@@ -211,11 +212,11 @@ public class SingleDataElementManager extends DataElementPanelManager
 
 		if (!bHideLabel)
 		{
-			StyleData aElementLabelStyle =
-				addStyles(ELEMENT_LABEL_STYLE,
-						  aElementUI.getElementStyleName());
+//			StyleData aElementLabelStyle =
+//				addStyles(ELEMENT_LABEL_STYLE,
+//						  aElementUI.getElementStyleName());
 
-			aElementUI.createElementLabel(this, aElementLabelStyle);
+//			aElementUI.createElementLabel(this, aElementLabelStyle);
 		}
 
 		aElementUI.buildUserInterface(this, aStyle);

@@ -196,6 +196,8 @@ public class SingleDataElementManager extends DataElementPanelManager
 	{
 		aElementUI = DataElementUIFactory.create(this, rDataElement);
 
+		ContainerBuilder<Panel> rBuilder = this;
+
 		boolean   bHideLabel = rDataElement.hasFlag(HIDE_LABEL);
 		String    sStyle     = aElementUI.getElementStyleName();
 		StyleData aStyle     =
@@ -212,14 +214,14 @@ public class SingleDataElementManager extends DataElementPanelManager
 
 		if (!bHideLabel)
 		{
-//			StyleData aElementLabelStyle =
-//				addStyles(ELEMENT_LABEL_STYLE,
-//						  aElementUI.getElementStyleName());
+			StyleData aElementLabelStyle =
+				addStyles(ELEMENT_LABEL_STYLE,
+						  aElementUI.getElementStyleName());
 
-//			aElementUI.createElementLabel(this, aElementLabelStyle);
+			aElementUI.createElementLabel(this, aElementLabelStyle);
 		}
 
-		aElementUI.buildUserInterface(this, aStyle);
+		aElementUI.buildUserInterface(rBuilder, aStyle);
 
 		if (bHideLabel)
 		{

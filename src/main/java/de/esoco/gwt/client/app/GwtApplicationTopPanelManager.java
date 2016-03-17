@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -231,15 +231,14 @@ public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPane
 	@Override
 	protected void addComponents()
 	{
-		ContainerBuilder<Panel> aBuilder =
-			addPanel(aUserInfoStyle, new GridLayout(2));
+		ContainerBuilder<Panel> aBuilder = createUserInfoPanel(aUserInfoStyle);
 
 		aBuilder.addLabel(aLogoStyle, null, "#$imLogo");
 		addUserComponents(aBuilder);
 
 		aBuilder =
 			addPanel(AlignedPosition.CENTER.setFlags(StyleFlag.VERTICAL_ALIGN_CENTER),
-					 new FlowLayout(true));
+					 new FlowLayout());
 
 		aMessageLabel = aBuilder.addLabel(aMessageStyle, "$lblDoLogin", null);
 	}
@@ -298,6 +297,18 @@ public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPane
 		StyleData			rStyleData)
 	{
 		return rBuilder.addPanel(rStyleData);
+	}
+
+	/***************************************
+	 * Creates the user info panel.
+	 *
+	 * @param  rStyle The style data for the panel
+	 *
+	 * @return The user info panel
+	 */
+	protected ContainerBuilder<Panel> createUserInfoPanel(StyleData rStyle)
+	{
+		return addPanel(aUserInfoStyle, new GridLayout(2));
 	}
 
 	/***************************************

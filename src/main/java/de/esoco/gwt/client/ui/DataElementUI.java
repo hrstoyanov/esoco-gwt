@@ -48,7 +48,6 @@ import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.KeyCode;
 import de.esoco.ewt.event.ModifierKeys;
 import de.esoco.ewt.layout.FlowLayout;
-import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
@@ -779,7 +778,7 @@ public class DataElementUI<D extends DataElement<?>>
 			{
 				sValue = "#" + sValue;
 			}
-			else
+			else if (sValue.charAt(0) != '%')
 			{
 				sValue = "%" + sValue;
 			}
@@ -1106,7 +1105,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		rBuilder =
 			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),
-							  new GridLayout(nColumns));
+							  new FlowLayout());
 
 		final List<Button> aButtons =
 			createListButtons(rBuilder,

@@ -238,7 +238,7 @@ public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPane
 
 		aBuilder =
 			addPanel(AlignedPosition.CENTER.setFlags(StyleFlag.VERTICAL_ALIGN_CENTER),
-					 new FlowLayout());
+					 new FlowLayout(true));
 
 		aMessageLabel = aBuilder.addLabel(aMessageStyle, "$lblDoLogin", null);
 	}

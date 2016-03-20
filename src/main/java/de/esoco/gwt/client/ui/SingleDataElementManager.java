@@ -218,7 +218,7 @@ public class SingleDataElementManager extends DataElementPanelManager
 				addStyles(ELEMENT_LABEL_STYLE,
 						  aElementUI.getElementStyleName());
 
-			aElementUI.createElementLabel(this, aElementLabelStyle);
+//			aElementUI.createElementLabel(this, aElementLabelStyle);
 		}
 
 		aElementUI.buildUserInterface(rBuilder, aStyle);

@@ -1102,7 +1102,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		String sAddStyle = rStyle.getProperty(WEB_ADDITIONAL_STYLES, "");
 
-		sAddStyle += " gf-ButtonPanel" + nColumns;
+		sAddStyle += " " + CSS.gfButtonPanel();
 
 		rBuilder =
 			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),

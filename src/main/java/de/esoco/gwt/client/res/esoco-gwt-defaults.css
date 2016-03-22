@@ -22,10 +22,7 @@
 @external .gf-ToolbarBack;
 @external .gf-ToolButton;
 @external .gf-ToolSeparator;
-@external .gf-ButtonPanel1;
-@external .gf-ButtonPanel2;
-@external .gf-ButtonPanel3;
-@external .gf-ButtonPanel4;
+@external .gf-ButtonPanel;
 @external .gf-PeriodUnit;
 @external .DialogAction;
 @external .MessageBox;
@@ -125,21 +122,9 @@ td.gf-DataElementHeader {
 	height: 1em;
 }
 
-.gf-ButtonPanel1 td, .gf-ButtonPanel2 td, .gf-ButtonPanel3 td, .gf-ButtonPanel4 td
+.gf-ButtonPanel td
 	{
 	padding: 2px;
-}
-
-.gf-ButtonPanel2 colgroup {
-	width: 50%;
-}
-
-.gf-ButtonPanel3 colgroup {
-	width: 33%;
-}
-
-.gf-ButtonPanel4 colgroup {
-	width: 25%;
 }
 
 .gf-PeriodUnit {

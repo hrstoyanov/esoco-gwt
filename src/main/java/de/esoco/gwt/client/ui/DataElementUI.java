@@ -136,9 +136,6 @@ public class DataElementUI<D extends DataElement<?>>
 
 	private static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
-	private static ListDisplayMode eButtonPanelDefaultLayout =
-		ListDisplayMode.GRID;
-
 	/** The default prefix for label resource IDs. */
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";
 
@@ -147,6 +144,9 @@ public class DataElementUI<D extends DataElement<?>>
 
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
+
+	private static ListDisplayMode eButtonPanelDefaultLayout =
+		ListDisplayMode.GRID;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -1123,8 +1123,6 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
-		eButtonPanelDefaultLayout = ListDisplayMode.GRID;
-
 		ListDisplayMode eDisplayMode =
 			rDataElement.getProperty(DataElementList.LIST_DISPLAY_MODE,
 									 eButtonPanelDefaultLayout);
@@ -1134,8 +1132,8 @@ public class DataElementUI<D extends DataElement<?>>
 		sAddStyle += " " + CSS.gfButtonPanel();
 
 		GenericLayout aPanelLayout =
-			eDisplayMode == eButtonPanelDefaultLayout ? new GridLayout(nColumns)
-													  : new FlowLayout();
+			eDisplayMode == ListDisplayMode.GRID ? new GridLayout(nColumns)
+												 : new FlowLayout();
 
 		rBuilder =
 			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),

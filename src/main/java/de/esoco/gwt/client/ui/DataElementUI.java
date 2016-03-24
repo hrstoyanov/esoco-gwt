@@ -17,6 +17,8 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
+import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.DataElementList.ListDisplayMode;
 import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.element.StringDataElement;
@@ -48,6 +50,8 @@ import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.KeyCode;
 import de.esoco.ewt.event.ModifierKeys;
 import de.esoco.ewt.layout.FlowLayout;
+import de.esoco.ewt.layout.GenericLayout;
+import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
@@ -130,7 +134,10 @@ public class DataElementUI<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
+	private static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
+
+	private static ListDisplayMode eButtonPanelDefaultLayout =
+		ListDisplayMode.GRID;
 
 	/** The default prefix for label resource IDs. */
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";
@@ -247,6 +254,16 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Returns the default layout mode used for button panels.
+	 *
+	 * @return The default layout mode
+	 */
+	public static ListDisplayMode getButtonPanelDefaultLayout()
+	{
+		return eButtonPanelDefaultLayout;
+	}
+
+	/***************************************
 	 * Returns the resource ID prefix for a value item of a certain data
 	 * element.
 	 *
@@ -293,6 +310,16 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		return sValue;
+	}
+
+	/***************************************
+	 * Sets the default layout mode to be used for button panels.
+	 *
+	 * @param eLayoutMode The new button panel default layout mode
+	 */
+	public static void setButtonPanelDefaultLayout(ListDisplayMode eLayoutMode)
+	{
+		eButtonPanelDefaultLayout = eLayoutMode;
 	}
 
 	/***************************************
@@ -777,9 +804,9 @@ public class DataElementUI<D extends DataElement<?>>
 			{
 				sValue = "#" + sValue;
 			}
-			else if (sValue.charAt(0) != '%')
+			else if (sValue.charAt(0) != '+')
 			{
-				sValue = "%" + sValue;
+				sValue = "+" + sValue;
 			}
 		}
 
@@ -1096,13 +1123,23 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
+		eButtonPanelDefaultLayout = ListDisplayMode.GRID;
+
+		ListDisplayMode eDisplayMode =
+			rDataElement.getProperty(DataElementList.LIST_DISPLAY_MODE,
+									 eButtonPanelDefaultLayout);
+
 		String sAddStyle = rStyle.getProperty(WEB_ADDITIONAL_STYLES, "");
 
 		sAddStyle += " gf-ButtonPanel" + nColumns;
 
+		GenericLayout aPanelLayout =
+			eDisplayMode == eButtonPanelDefaultLayout ? new GridLayout(nColumns)
+													  : new FlowLayout();
+
 		rBuilder =
 			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),
-							  new FlowLayout());
+							  aPanelLayout);
 
 		final List<Button> aButtons =
 			createListButtons(rBuilder,
@@ -1406,7 +1443,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (rDataElement.hasFlag(HAS_IMAGES))
 		{
-			sText = "%" + sText;
+			sText = "+" + sText;
 		}
 
 		Button aButton = rBuilder.addButton(rDisplayStyle, sText, null);

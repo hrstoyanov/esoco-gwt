@@ -130,17 +130,20 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	@Override
 	protected void addComponents()
 	{
-		ContainerBuilder<Panel> aBuilder = createLoginComponentsPanel();
+		ContainerBuilder<Panel> aBuilder =
+			createLoginComponentsPanel(AlignedPosition.CENTER);
 
 		String sUserName = Cookies.getCookie(sUserCookie);
 
-		addLoginPanelHeader(aBuilder);
+		addLoginPanelHeader(aBuilder, AlignedPosition.TOP);
 
-		aUserField	    = addUserComponents(aBuilder, sUserName);
+		aUserField	    =
+			addUserComponents(aBuilder, sUserName, bReauthenticate);
 		aPasswordField  = addPasswortComponents(aBuilder);
 		aFailureMessage = addFailureMessageComponents(aBuilder);
 		aLoginButton    = addSubmitLoginComponents(aBuilder);
 
+		aUserField.addEventListener(EventType.ACTION, this);
 		aPasswordField.addEventListener(EventType.ACTION, this);
 		aLoginButton.addEventListener(EventType.ACTION, this);
 		aFailureMessage.setVisible(false);
@@ -149,94 +152,98 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	/***************************************
 	 * Adds the components to displays a login failure message.
 	 *
-	 * @param  aBuilder The container build to create the components with
+	 * @param  rBuilder The container build to create the components with
 	 *
 	 * @return The failure message label
 	 */
-	protected Label addFailureMessageComponents(ContainerBuilder<?> aBuilder)
+	protected Label addFailureMessageComponents(ContainerBuilder<?> rBuilder)
 	{
 		String sError = EsocoGwtResources.INSTANCE.css().error();
 
 		StyleData rErrorStyle =
 			StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES, sError);
 
-		aBuilder.addLabel(StyleData.DEFAULT, "", null);
+		rBuilder.addLabel(StyleData.DEFAULT, "", null);
 
-		return aBuilder.addLabel(rErrorStyle, "$lblLoginFailed", null);
+		return rBuilder.addLabel(rErrorStyle, "$lblLoginFailed", null);
 	}
 
 	/***************************************
 	 * Adds the header of the login panel.
 	 *
-	 * @param aBuilder The container builder to add the header with
+	 * @param rBuilder     The container builder to add the header with
+	 * @param rHeaderStyle The style for the panel header
 	 */
-	protected void addLoginPanelHeader(ContainerBuilder<?> aBuilder)
+	protected void addLoginPanelHeader(
+		ContainerBuilder<?> rBuilder,
+		StyleData			rHeaderStyle)
 	{
-		aBuilder.addLabel(AlignedPosition.TOP, null, "#$imLogin");
-		aBuilder.addLabel(AlignedPosition.TOP, "$lblLogin", null);
+		rBuilder.addLabel(rHeaderStyle, null, "#$imLogin");
+		rBuilder.addLabel(rHeaderStyle, "$lblLogin", null);
 	}
 
 	/***************************************
 	 * Adds the components for the password input.
 	 *
-	 * @param  aBuilder The builder to create the components with
+	 * @param  rBuilder The builder to create the components with
 	 *
 	 * @return The password input field
 	 */
-	protected TextField addPasswortComponents(ContainerBuilder<?> aBuilder)
+	protected TextField addPasswortComponents(ContainerBuilder<?> rBuilder)
 	{
-		aBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
+		rBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
 						  "$lblPassword",
 						  null);
 
-		return aBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
+		return rBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
 									 "");
 	}
 
 	/***************************************
 	 * Adds the components for the submission of the login data.
 	 *
-	 * @param  aBuilder The builder to create the components with
+	 * @param  rBuilder The builder to create the components with
 	 *
 	 * @return The login button
 	 */
-	protected Button addSubmitLoginComponents(ContainerBuilder<?> aBuilder)
+	protected Button addSubmitLoginComponents(ContainerBuilder<?> rBuilder)
 	{
 		StyleData rButtonStyle =
 			StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_CENTER);
 
-		aBuilder.addLabel(StyleData.DEFAULT, "", null);
+		rBuilder.addLabel(StyleData.DEFAULT, "", null);
 
-		return aBuilder.addButton(rButtonStyle, "$btnLogin", null);
+		return rBuilder.addButton(rButtonStyle, "$btnLogin", null);
 	}
 
 	/***************************************
 	 * Adds the components for the user input.
 	 *
-	 * @param  aBuilder  The builder to create the components with
-	 * @param  sUserName The user name preset
+	 * @param  rBuilder        The builder to create the components with
+	 * @param  sUserName       The user name preset
+	 * @param  bReauthenticate TRUE for a re-authentication of the current user
 	 *
-	 * @return The user input field
+	 * @return The user input field or NULL if no user input is needed (in the
+	 *         case of re-authentication)
 	 */
-	protected TextField addUserComponents(
-		ContainerBuilder<?> aBuilder,
-		String				sUserName)
+	protected TextField addUserComponents(ContainerBuilder<?> rBuilder,
+										  String			  sUserName,
+										  boolean			  bReauthenticate)
 	{
 		TextField aUserInputField = null;
 
-		aBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
+		rBuilder.addLabel(StyleData.DEFAULT.setFlags(StyleFlag.HORIZONTAL_ALIGN_RIGHT),
 						  "$lblLoginName",
 						  null);
 
 		if (bReauthenticate)
 		{
-			aBuilder.addLabel(StyleData.DEFAULT, sUserName, null);
+			rBuilder.addLabel(StyleData.DEFAULT, sUserName, null);
 		}
 		else
 		{
-			aUserInputField = aBuilder.addTextField(StyleData.DEFAULT, "");
+			aUserInputField = rBuilder.addTextField(StyleData.DEFAULT, "");
 			aUserInputField.setText(sUserName);
-			aUserInputField.addEventListener(EventType.ACTION, this);
 		}
 
 		return aUserInputField;
@@ -257,11 +264,14 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	/***************************************
 	 * Creates the panel for the login components.
 	 *
+	 * @param  rPanelStyle The style to be used for the panel
+	 *
 	 * @return The container builder for the new panel
 	 */
-	protected ContainerBuilder<Panel> createLoginComponentsPanel()
+	protected ContainerBuilder<Panel> createLoginComponentsPanel(
+		StyleData rPanelStyle)
 	{
-		return addPanel(AlignedPosition.CENTER, new GridLayout(2, true, 3));
+		return addPanel(rPanelStyle, new GridLayout(2, true, 3));
 	}
 
 	/***************************************

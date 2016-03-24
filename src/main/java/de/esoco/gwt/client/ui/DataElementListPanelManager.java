@@ -39,15 +39,18 @@ import de.esoco.ewt.style.StyleData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
 
 import static de.esoco.lib.property.UserInterfaceProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
+import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 import static de.esoco.lib.property.UserInterfaceProperties.VERTICAL;
 import static de.esoco.lib.property.UserInterfaceProperties.WIDTH;
 
@@ -65,6 +68,16 @@ import static de.esoco.lib.property.UserInterfaceProperties.WIDTH;
 public class DataElementListPanelManager extends DataElementPanelManager
 	implements EWTEventHandler
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final Set<ListDisplayMode> ORDERED_DISPLAY_MODES =
+		EnumSet.of(ListDisplayMode.DOCK, ListDisplayMode.SPLIT);
+	private static final Set<ListDisplayMode> LAYOUT_DISPLAY_MODES  =
+		EnumSet.of(ListDisplayMode.FILL,
+				   ListDisplayMode.FLOW,
+				   ListDisplayMode.FORM,
+				   ListDisplayMode.GROUP);
+
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementList rDataElementList;
@@ -422,7 +435,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		rDataElementList = rNewDataElementList;
 
 		List<DataElement<?>> rOrderedElements =
-			new ArrayList<>(checkReorderElements(rDataElementList).keySet());
+			new ArrayList<>(prepareChildDataElements().keySet());
 
 		for (DataElementPanelManager rPanelManager : aPanelManagers)
 		{
@@ -485,7 +498,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		int					 nPanelIndex = 0;
 
 		Map<DataElement<?>, StyleData> rDataElementStyles =
-			checkReorderElements(rDataElementList);
+			prepareChildDataElements();
 
 		for (DataElement<?> rDataElement : rDataElementStyles.keySet())
 		{
@@ -549,7 +562,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 		aPanelManagers.clear();
 
-		if (rDataElementList.getElementCount() > 1)
+//		if (rDataElementList.getElementCount() > 1)
 		{
 			eDisplayMode =
 				rDataElementList.getProperty(LIST_DISPLAY_MODE,
@@ -618,10 +631,10 @@ public class DataElementListPanelManager extends DataElementPanelManager
 				aGroupPanel = (GroupPanel) rPanel;
 			}
 		}
-		else
-		{
-			aPanelBuilder = rBuilder.addPanel(rStyleData, new FillLayout());
-		}
+//		else
+//		{
+//			aPanelBuilder = rBuilder.addPanel(rStyleData, new FillLayout());
+//		}
 
 		return (ContainerBuilder<Panel>) aPanelBuilder;
 	}
@@ -649,67 +662,60 @@ public class DataElementListPanelManager extends DataElementPanelManager
 
 	/***************************************
 	 * Checks whether the order of a list of data elements needs to be changed
-	 * to comply with layout constraints. Also maps the corresponding layout
-	 * styles if necessary.
+	 * to comply with layout constraints. Also creates the corresponding layout
+	 * styles and puts them in the argument map.
 	 *
 	 * @param  rDataElementList The list of data elements
+	 * @param  rElementStyles   The map to store the data element styles in
 	 *
 	 * @return An mapping from the data elements (reordered if necessary) to the
 	 *         associated layout style data
 	 */
-	private Map<DataElement<?>, StyleData> checkReorderElements(
-		DataElementList rDataElementList)
+	private Collection<DataElement<?>> checkReorderElements(
+		DataElementList				   rDataElementList,
+		Map<DataElement<?>, StyleData> rElementStyles)
 	{
 		boolean bVertical     = rDataElementList.hasFlag(VERTICAL);
 		int     nElementCount = rDataElementList.getElementCount();
 
-		Map<DataElement<?>, StyleData> rDataElements =
-			new LinkedHashMap<>(nElementCount);
-
-		if (eDisplayMode == ListDisplayMode.DOCK ||
-			eDisplayMode == ListDisplayMode.SPLIT)
+		if (rElementStyles == null)
 		{
-			// reorder elements because the center element must be added last
-			AlignedPosition rCenter = AlignedPosition.CENTER;
-			AlignedPosition rFirst  =
-				bVertical ? AlignedPosition.TOP : AlignedPosition.LEFT;
-			AlignedPosition rLast   =
-				bVertical ? AlignedPosition.BOTTOM : AlignedPosition.RIGHT;
+			rElementStyles = new LinkedHashMap<>(nElementCount);
+		}
 
-			if (nElementCount == 3)
+		// reorder elements because the center element must be added last
+		AlignedPosition rCenter = AlignedPosition.CENTER;
+		AlignedPosition rFirst  =
+			bVertical ? AlignedPosition.TOP : AlignedPosition.LEFT;
+		AlignedPosition rLast   =
+			bVertical ? AlignedPosition.BOTTOM : AlignedPosition.RIGHT;
+
+		if (nElementCount == 3)
+		{
+			rElementStyles.put(rDataElementList.getElement(0), rFirst);
+			rElementStyles.put(rDataElementList.getElement(2), rLast);
+			rElementStyles.put(rDataElementList.getElement(1), rCenter);
+		}
+		else if (nElementCount == 2)
+		{
+			if (rDataElementList.getElement(1)
+				.hasProperty(bVertical ? HEIGHT : WIDTH))
 			{
-				rDataElements.put(rDataElementList.getElement(0), rFirst);
-				rDataElements.put(rDataElementList.getElement(2), rLast);
-				rDataElements.put(rDataElementList.getElement(1), rCenter);
-			}
-			else if (nElementCount == 2)
-			{
-				if (rDataElementList.getElement(1)
-					.hasProperty(bVertical ? HEIGHT : WIDTH))
-				{
-					rDataElements.put(rDataElementList.getElement(1), rLast);
-					rDataElements.put(rDataElementList.getElement(0), rCenter);
-				}
-				else
-				{
-					rDataElements.put(rDataElementList.getElement(0), rFirst);
-					rDataElements.put(rDataElementList.getElement(1), rCenter);
-				}
+				rElementStyles.put(rDataElementList.getElement(1), rLast);
+				rElementStyles.put(rDataElementList.getElement(0), rCenter);
 			}
 			else
 			{
-				rDataElements.put(rDataElementList.getElement(0), rCenter);
+				rElementStyles.put(rDataElementList.getElement(0), rFirst);
+				rElementStyles.put(rDataElementList.getElement(1), rCenter);
 			}
 		}
 		else
 		{
-			for (DataElement<?> rDataElement : rDataElementList)
-			{
-				rDataElements.put(rDataElement, StyleData.DEFAULT);
-			}
+			rElementStyles.put(rDataElementList.getElement(0), rCenter);
 		}
 
-		return rDataElements;
+		return rElementStyles.keySet();
 	}
 
 	/***************************************
@@ -747,18 +753,65 @@ public class DataElementListPanelManager extends DataElementPanelManager
 					new DataElementListPanelManager(this, rElementList);
 			}
 		}
-		else if (eDisplayMode != null)
+		else //if (eDisplayMode != null)
 		{
 			aPanelManager = new SingleDataElementManager(this, rDataElement);
 		}
-		else
-		{
-			aElements     = Arrays.<DataElement<?>>asList(rDataElement);
-			aPanelManager =
-				new DataElementGridPanelManager(this, sName, aElements);
-		}
+//		else
+//		{
+//			aElements	  = Arrays.<DataElement<?>>asList(rDataElement);
+//			aPanelManager =
+//				new DataElementGridPanelManager(this, sName, aElements);
+//		}
 
 		return aPanelManager;
+	}
+
+	/***************************************
+	 * Prepares the child data elements that need to be displayed in this
+	 * instance.
+	 *
+	 * @return A mapping from child data elements to the corresponding styles
+	 */
+	private Map<DataElement<?>, StyleData> prepareChildDataElements()
+	{
+		Map<DataElement<?>, StyleData> rDataElementStyles =
+			new LinkedHashMap<>();
+
+		if (ORDERED_DISPLAY_MODES.contains(eDisplayMode))
+		{
+			checkReorderElements(rDataElementList, rDataElementStyles);
+		}
+		else if (LAYOUT_DISPLAY_MODES.contains(eDisplayMode) &&
+				 rDataElementList.getElementCount() > 1 &&
+				 !(rDataElementList instanceof DataElementRow))
+		{
+			DataElementList aLayoutRow = null;
+
+			String sRowName = rDataElementList.getResourceId() + "Row";
+
+			for (DataElement<?> rDataElement : rDataElementList)
+			{
+				boolean bNewRow = !rDataElement.hasFlag(SAME_ROW);
+
+				if (aLayoutRow == null || bNewRow)
+				{
+					aLayoutRow = new DataElementRow("DataElementRow");
+					rDataElementStyles.put(aLayoutRow, StyleData.DEFAULT);
+				}
+
+				aLayoutRow.addElement(rDataElement);
+			}
+		}
+		else
+		{
+			for (DataElement<?> rDataElement : rDataElementList)
+			{
+				rDataElementStyles.put(rDataElement, StyleData.DEFAULT);
+			}
+		}
+
+		return rDataElementStyles;
 	}
 
 	/***************************************
@@ -775,6 +828,49 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		if (nCurrentSelection != nNewSelection)
 		{
 			setSelectedElement(nNewSelection);
+		}
+	}
+
+	//~ Inner Classes ----------------------------------------------------------
+
+	/********************************************************************
+	 * An internal data element list subclass that serves as a container for the
+	 * data elements in a row of a UI layout.
+	 *
+	 * @author eso
+	 */
+	private static class DataElementRow extends DataElementList
+	{
+		//~ Static fields/initializers -----------------------------------------
+
+		private static final long serialVersionUID = 1L;
+
+		//~ Constructors -------------------------------------------------------
+
+		/***************************************
+		 * Creates a new instance.
+		 *
+		 * @param sName The instance name
+		 */
+		public DataElementRow(String sName)
+		{
+			super(sName, null);
+
+			setProperty(LIST_DISPLAY_MODE, ListDisplayMode.FLOW);
+		}
+
+		//~ Methods ------------------------------------------------------------
+
+		/***************************************
+		 * Overriden to prevent an update of the parent of the child data
+		 * element.
+		 *
+		 * @see DataElementList#addElement(int, DataElement)
+		 */
+		@Override
+		public void addElement(int nIndex, DataElement<?> rElement)
+		{
+			getList().add(nIndex, rElement);
 		}
 	}
 }

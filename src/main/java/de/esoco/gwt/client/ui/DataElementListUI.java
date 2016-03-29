@@ -103,9 +103,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		if (eDisplayMode == ListDisplayMode.GRID)
 		{
 			aListPanelManager =
-				new DataElementGridPanelManager(getParent(),
-												getElementStyleName(),
-												rDataElementList);
+				new DataElementGridPanelManager(getParent(), rDataElementList);
 		}
 		else
 		{

@@ -67,6 +67,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
+import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
 import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
 
 
@@ -524,11 +525,17 @@ public class ProcessPanelManager
 
 			if (sStyle != null && sStyle.length() > 0)
 			{
-				sName = sName + " " + sStyle;
+				sName += " " + sStyle;
 			}
 
+			DataElementList rParamDataElements =
+				new DataElementList(sName, rParams);
+
+			// also set ResID
+			rParamDataElements.setProperty(RESOURCE_ID, sName);
+
 			aPanelManager =
-				new DataElementGridPanelManager(this, sName, rParams);
+				new DataElementGridPanelManager(this, rParamDataElements);
 		}
 
 		StyleData aPanelStyle =

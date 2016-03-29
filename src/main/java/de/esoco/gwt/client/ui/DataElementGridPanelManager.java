@@ -67,6 +67,7 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
+	private DataElementList				  rDataElementList;
 	private List<DataElement<?>>		  aDataElements;
 	private Map<String, DataElementUI<?>> aDataElementUIs;
 
@@ -79,35 +80,21 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 	/***************************************
 	 * Creates a new instance from the elements in a {@link DataElementList}.
 	 *
-	 * @param rParent       The parent panel manager
-	 * @param sName         A name for this instance that will be set as an
-	 *                      additional GWT style name
-	 * @param rDataElements The list of data elements to create the panel for
+	 * @param rParent          The parent panel manager
+	 * @param rDataElementList sName A name for this instance that will be set
+	 *                         as an additional GWT style name
 	 */
-	public DataElementGridPanelManager(PanelManager<?, ?> rParent,
-									   String			  sName,
-									   DataElementList    rDataElements)
-	{
-		this(rParent, sName, rDataElements.getElements());
-	}
-
-	/***************************************
-	 * Creates a new instance.
-	 *
-	 * @param rParent       The parent panel manager
-	 * @param sName         A name for this instance that will be set as an
-	 *                      additional GWT style name
-	 * @param rDataElements The data elements to create the panel for
-	 */
-	public DataElementGridPanelManager(PanelManager<?, ?>		  rParent,
-									   String					  sName,
-									   Collection<DataElement<?>> rDataElements)
+	public DataElementGridPanelManager(
+		PanelManager<?, ?> rParent,
+		DataElementList    rDataElementList)
 	{
 		super(rParent,
 			  CSS.gfDataElementPanel() + " " + CSS.gfDataElementGridPanel() +
-			  " " + sName);
+			  " " + rDataElementList.getResourceId());
 
-		initDataElements(rDataElements);
+		this.rDataElementList = rDataElementList;
+
+		initDataElements(rDataElementList.getDataElements());
 	}
 
 	//~ Methods ----------------------------------------------------------------

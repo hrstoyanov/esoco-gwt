@@ -730,9 +730,6 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		DataElement<?> rDataElement)
 	{
 		DataElementPanelManager aPanelManager = null;
-		List<DataElement<?>>    aElements     = null;
-
-		String sName = rDataElement.getResourceId();
 
 		if (rDataElement instanceof DataElementList)
 		{
@@ -745,7 +742,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 			if (eListElementDisplayMode == ListDisplayMode.GRID)
 			{
 				aPanelManager =
-					new DataElementGridPanelManager(this, sName, rElementList);
+					new DataElementGridPanelManager(this, rElementList);
 			}
 			else
 			{
@@ -788,7 +785,7 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		{
 			DataElementList aLayoutRow = null;
 
-			String sRowName = rDataElementList.getResourceId() + "Row";
+//			String sRowName = rDataElementList.getResourceId() + "Row";
 
 			for (DataElement<?> rDataElement : rDataElementList)
 			{

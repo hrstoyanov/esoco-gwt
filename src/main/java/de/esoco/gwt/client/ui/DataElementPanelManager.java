@@ -18,6 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.DataElementList.ListDisplayMode;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
@@ -39,6 +40,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
 
 import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
@@ -109,6 +112,73 @@ public abstract class DataElementPanelManager
 		}
 
 		return bHasSameElements;
+	}
+
+	/***************************************
+	 * Static helper method to create the panel manager's style name.
+	 *
+	 * @param  rDataElementList The data element list to create the style name
+	 *                          for
+	 *
+	 * @return
+	 */
+	protected static String createPanelStyle(DataElementList rDataElementList)
+	{
+		String sStyle = CSS.gfDataElementPanel();
+
+		if (rDataElementList.getElementCount() > 1)
+		{
+			ListDisplayMode eDisplayMode =
+				rDataElementList.getProperty(LIST_DISPLAY_MODE,
+											 ListDisplayMode.TABS);
+
+			switch (eDisplayMode)
+			{
+				case GRID:
+					sStyle =
+						CSS.gfDataElementPanel() + " " +
+						CSS.gfDataElementGridPanel();
+					break;
+
+				case FLOW:
+					sStyle = CSS.gfDataElementFlowPanel();
+					break;
+
+				case FORM:
+					sStyle = CSS.gfDataElementFormPanel();
+					break;
+
+				case GROUP:
+					sStyle = CSS.gfDataElementGroupPanel();
+					break;
+
+				case FILL:
+					sStyle = CSS.gfDataElementFillPanel();
+					break;
+
+				case DOCK:
+					sStyle = CSS.gfDataElementDockPanel();
+					break;
+
+				case SPLIT:
+					sStyle = CSS.gfDataElementSplitPanel();
+					break;
+
+				case STACK:
+					sStyle = CSS.gfDataElementStackPanel();
+					break;
+
+				case TABS:
+					sStyle = CSS.gfDataElementTabPanel();
+					break;
+
+				case DECK:
+					sStyle = CSS.gfDataElementDeckPanel();
+					break;
+			}
+		}
+
+		return sStyle + " " + rDataElementList.getResourceId();
 	}
 
 	//~ Methods ----------------------------------------------------------------

@@ -50,7 +50,6 @@ import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
 
 import static de.esoco.lib.property.UserInterfaceProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
-import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 import static de.esoco.lib.property.UserInterfaceProperties.VERTICAL;
 import static de.esoco.lib.property.UserInterfaceProperties.WIDTH;
 
@@ -106,75 +105,6 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		super(rParent, createPanelStyle(rDataElementList));
 
 		this.rDataElementList = rDataElementList;
-	}
-
-	//~ Static methods ---------------------------------------------------------
-
-	/***************************************
-	 * Static helper method to create the panel manager's style name.
-	 *
-	 * @param  rDataElementList The data element list to create the style name
-	 *                          for
-	 *
-	 * @return
-	 */
-	private static String createPanelStyle(DataElementList rDataElementList)
-	{
-		String sStyle = CSS.gfDataElementPanel();
-
-		if (rDataElementList.getElementCount() > 1)
-		{
-			ListDisplayMode eDisplayMode =
-				rDataElementList.getProperty(LIST_DISPLAY_MODE,
-											 ListDisplayMode.TABS);
-
-			switch (eDisplayMode)
-			{
-				case GRID:
-					sStyle =
-						CSS.gfDataElementPanel() + " " +
-						CSS.gfDataElementGridPanel();
-					break;
-
-				case FLOW:
-					sStyle = CSS.gfDataElementFlowPanel();
-					break;
-
-				case FORM:
-					sStyle = CSS.gfDataElementFormPanel();
-					break;
-
-				case GROUP:
-					sStyle = CSS.gfDataElementGroupPanel();
-					break;
-
-				case FILL:
-					sStyle = CSS.gfDataElementFillPanel();
-					break;
-
-				case DOCK:
-					sStyle = CSS.gfDataElementDockPanel();
-					break;
-
-				case SPLIT:
-					sStyle = CSS.gfDataElementSplitPanel();
-					break;
-
-				case STACK:
-					sStyle = CSS.gfDataElementStackPanel();
-					break;
-
-				case TABS:
-					sStyle = CSS.gfDataElementTabPanel();
-					break;
-
-				case DECK:
-					sStyle = CSS.gfDataElementDeckPanel();
-					break;
-			}
-		}
-
-		return sStyle + " " + rDataElementList.getResourceId();
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -779,27 +709,28 @@ public class DataElementListPanelManager extends DataElementPanelManager
 		{
 			checkReorderElements(rDataElementList, rDataElementStyles);
 		}
-		else if (LAYOUT_DISPLAY_MODES.contains(eDisplayMode) &&
-				 rDataElementList.getElementCount() > 1 &&
-				 !(rDataElementList instanceof DataElementRow))
-		{
-			DataElementList aLayoutRow = null;
 
+//		else if (LAYOUT_DISPLAY_MODES.contains(eDisplayMode) &&
+//				 rDataElementList.getElementCount() > 1 &&
+//				 !(rDataElementList instanceof DataElementRow))
+//		{
+//			DataElementList aLayoutRow = null;
+//
 //			String sRowName = rDataElementList.getResourceId() + "Row";
-
-			for (DataElement<?> rDataElement : rDataElementList)
-			{
-				boolean bNewRow = !rDataElement.hasFlag(SAME_ROW);
-
-				if (aLayoutRow == null || bNewRow)
-				{
-					aLayoutRow = new DataElementRow("DataElementRow");
-					rDataElementStyles.put(aLayoutRow, StyleData.DEFAULT);
-				}
-
-				aLayoutRow.addElement(rDataElement);
-			}
-		}
+//
+//			for (DataElement<?> rDataElement : rDataElementList)
+//			{
+//				boolean bNewRow = !rDataElement.hasFlag(SAME_ROW);
+//
+//				if (aLayoutRow == null || bNewRow)
+//				{
+//					aLayoutRow = new DataElementRow("DataElementRow");
+//					rDataElementStyles.put(aLayoutRow, StyleData.DEFAULT);
+//				}
+//
+//				aLayoutRow.addElement(rDataElement);
+//			}
+//		}
 		else
 		{
 			for (DataElement<?> rDataElement : rDataElementList)

@@ -515,9 +515,9 @@ public class ProcessPanelManager
 			ListDisplayMode.GRID)
 		{
 			aPanelManager =
-				new DataElementListPanelManager(this,
-												(DataElementList)
-												rFirstElement);
+				DataElementListPanelManager.newInstance(this,
+														(DataElementList)
+														rFirstElement);
 		}
 		else
 		{

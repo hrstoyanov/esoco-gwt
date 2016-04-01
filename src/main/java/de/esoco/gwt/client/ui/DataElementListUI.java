@@ -108,7 +108,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		else
 		{
 			aListPanelManager =
-				new DataElementListPanelManager(getParent(), rDataElementList);
+				DataElementListPanelManager.newInstance(getParent(),
+														rDataElementList);
 		}
 
 		aListPanelManager.buildIn(rBuilder, rStyle);

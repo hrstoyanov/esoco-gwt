@@ -804,9 +804,9 @@ public class DataElementUI<D extends DataElement<?>>
 			{
 				sValue = "#" + sValue;
 			}
-			else if (sValue.charAt(0) != '+')
+			else if ("+%".indexOf(sValue.charAt(0)) < 0)
 			{
-				sValue = "+" + sValue;
+				sValue = "%" + sValue;
 			}
 		}
 

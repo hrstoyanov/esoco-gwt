@@ -33,6 +33,7 @@ import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.SingleSelection;
+import de.esoco.lib.text.TextConvert;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -124,7 +125,7 @@ public abstract class DataElementPanelManager
 	 */
 	protected static String createPanelStyle(DataElementList rDataElementList)
 	{
-		String sStyle = CSS.gfDataElementPanel();
+		StringBuilder aStyle = new StringBuilder(CSS.gfDataElementPanel());
 
 		if (rDataElementList.getElementCount() > 1)
 		{
@@ -132,53 +133,15 @@ public abstract class DataElementPanelManager
 				rDataElementList.getProperty(LIST_DISPLAY_MODE,
 											 ListDisplayMode.TABS);
 
-			switch (eDisplayMode)
-			{
-				case GRID:
-					sStyle =
-						CSS.gfDataElementPanel() + " " +
-						CSS.gfDataElementGridPanel();
-					break;
-
-				case FLOW:
-					sStyle = CSS.gfDataElementFlowPanel();
-					break;
-
-				case FORM:
-					sStyle = CSS.gfDataElementFormPanel();
-					break;
-
-				case GROUP:
-					sStyle = CSS.gfDataElementGroupPanel();
-					break;
-
-				case FILL:
-					sStyle = CSS.gfDataElementFillPanel();
-					break;
-
-				case DOCK:
-					sStyle = CSS.gfDataElementDockPanel();
-					break;
-
-				case SPLIT:
-					sStyle = CSS.gfDataElementSplitPanel();
-					break;
-
-				case STACK:
-					sStyle = CSS.gfDataElementStackPanel();
-					break;
-
-				case TABS:
-					sStyle = CSS.gfDataElementTabPanel();
-					break;
-
-				case DECK:
-					sStyle = CSS.gfDataElementDeckPanel();
-					break;
-			}
+			aStyle.append(' ');
+			aStyle.append(TextConvert.capitalizedIdentifier(eDisplayMode
+															.name()));
 		}
 
-		return sStyle + " " + rDataElementList.getResourceId();
+		aStyle.append(' ');
+		aStyle.append(rDataElementList.getResourceId());
+
+		return aStyle.toString();
 	}
 
 	//~ Methods ----------------------------------------------------------------

@@ -52,7 +52,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
  *
  * @author eso
  */
-public class DataElementGridPanelManager extends DataElementPanelManager
+public class DataElementGridPanelManager extends DataElementListPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -67,7 +67,6 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
-	private DataElementList				  rDataElementList;
 	private List<DataElement<?>>		  aDataElements;
 	private Map<String, DataElementUI<?>> aDataElementUIs;
 
@@ -88,11 +87,7 @@ public class DataElementGridPanelManager extends DataElementPanelManager
 		PanelManager<?, ?> rParent,
 		DataElementList    rDataElementList)
 	{
-		super(rParent,
-			  CSS.gfDataElementPanel() + " " + CSS.gfDataElementGridPanel() +
-			  " " + rDataElementList.getResourceId());
-
-		this.rDataElementList = rDataElementList;
+		super(rParent, rDataElementList);
 
 		initDataElements(rDataElementList.getDataElements());
 	}

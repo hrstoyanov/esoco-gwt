@@ -55,8 +55,8 @@ public interface EsocoGwtCss extends CssResource {
   @ClassName("gf-DataElementStackPanel")
   String gfDataElementStackPanel();
   
-  @ClassName("gf-DataElementTabPanel")
-  String gfDataElementTabPanel();
+  @ClassName("gf-DataElementTabsPanel")
+  String gfDataElementTabsPanel();
 
   @ClassName("gf-DataElementDeckPanel")
   String gfDataElementDeckPanel();

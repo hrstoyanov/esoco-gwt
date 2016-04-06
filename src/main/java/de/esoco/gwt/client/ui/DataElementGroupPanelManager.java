@@ -173,15 +173,6 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void addComponents()
-	{
-		super.addComponents();
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected void buildDataElementUI(
 		DataElementUI<?> rDataElementUI,
 		StyleData		 rStyle)

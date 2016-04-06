@@ -143,7 +143,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 		{
 			dispose();
 			initDataElements(rNewDataElements);
-			getDataElementsLayout().setGridCount(calcLayoutColumns());
+			getDataElementsLayout().setGridCount(calcLayoutColumns(aDataElements));
 			rebuild();
 		}
 	}
@@ -325,6 +325,59 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	}
 
 	/***************************************
+	 * Calculates the total number of columns for a panel layout containing the
+	 * given data elements.
+	 *
+	 * @param  rDataElements The data elements to analyze
+	 *
+	 * @return The new layout
+	 */
+	protected int calcLayoutColumns(Collection<DataElement<?>> rDataElements)
+	{
+		int nExtraColumns	   = 0;
+		int nRowElementColumns = 0;
+
+		nElementColumns = 0;
+		bHasOptions     = false;
+		bHasLabels	    = false;
+
+		for (DataElement<?> rDataElement : rDataElements)
+		{
+			boolean bNewRow = !rDataElement.hasFlag(SAME_ROW);
+
+			if (!bHasOptions && rDataElement.isOptional())
+			{
+				bHasOptions = true;
+				nExtraColumns++;
+			}
+
+			if (!bHasLabels &&
+				bNewRow &&
+				!(rDataElement.hasFlag(HIDE_LABEL) ||
+				  rDataElement.hasFlag(HEADER_LABEL)))
+			{
+				bHasLabels = true;
+				nExtraColumns++;
+			}
+
+			if (bNewRow)
+			{
+				nElementColumns = Math.max(nElementColumns, nRowElementColumns);
+
+				nRowElementColumns = 0;
+			}
+
+			nRowElementColumns += rDataElement.getIntProperty(COLUMN_SPAN, 1);
+		}
+
+		// repeat comparison for the last row
+		nElementColumns = Math.max(nElementColumns, nRowElementColumns);
+
+		// always return at least 1 column in the case of no data elements
+		return Math.max(nElementColumns + nExtraColumns, 1);
+	}
+
+	/***************************************
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -335,7 +388,8 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	{
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,
-							  new GridLayout(calcLayoutColumns(), true));
+							  new GridLayout(calcLayoutColumns(aDataElements),
+											 true));
 
 		return aContainerBuilder;
 	}
@@ -408,56 +462,6 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	{
 		addLabel(StyleData.DEFAULT, "", null);
 		getDataElementsLayout().addCellStyle(getContainer(), CSS.gfEmptyCell());
-	}
-
-	/***************************************
-	 * Calculates the column count for the panel layout from the data elements.
-	 *
-	 * @return The new layout
-	 */
-	private int calcLayoutColumns()
-	{
-		int nExtraColumns	   = 0;
-		int nRowElementColumns = 0;
-
-		nElementColumns = 0;
-		bHasOptions     = false;
-		bHasLabels	    = false;
-
-		for (DataElement<?> rDataElement : aDataElements)
-		{
-			boolean bNewRow = !rDataElement.hasFlag(SAME_ROW);
-
-			if (!bHasOptions && rDataElement.isOptional())
-			{
-				bHasOptions = true;
-				nExtraColumns++;
-			}
-
-			if (!bHasLabels &&
-				bNewRow &&
-				!(rDataElement.hasFlag(HIDE_LABEL) ||
-				  rDataElement.hasFlag(HEADER_LABEL)))
-			{
-				bHasLabels = true;
-				nExtraColumns++;
-			}
-
-			if (bNewRow)
-			{
-				nElementColumns = Math.max(nElementColumns, nRowElementColumns);
-
-				nRowElementColumns = 0;
-			}
-
-			nRowElementColumns += rDataElement.getIntProperty(COLUMN_SPAN, 1);
-		}
-
-		// repeat comparison for the last row
-		nElementColumns = Math.max(nElementColumns, nRowElementColumns);
-
-		// always return at least 1 column in the case of no data elements
-		return Math.max(nElementColumns + nExtraColumns, 1);
 	}
 
 	/***************************************

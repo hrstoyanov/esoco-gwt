@@ -24,8 +24,14 @@ import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.FillLayout;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.FormLayout;
+import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.layout.GroupLayout;
 import de.esoco.ewt.style.StyleData;
+
+import de.esoco.lib.property.UserInterfaceProperties;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 
 /********************************************************************
@@ -37,6 +43,18 @@ import de.esoco.ewt.style.StyleData;
  */
 public class DataElementLayoutPanelManager extends DataElementListPanelManager
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final Set<ListDisplayMode> ROW_DISPLAY_MODES =
+		EnumSet.of(ListDisplayMode.FORM, ListDisplayMode.GROUP);
+
+	private static final StyleData DATA_ELEMENT_ROW_STYLE =
+		addStyles(StyleData.DEFAULT, "DataElementRow");
+
+	//~ Instance fields --------------------------------------------------------
+
+	private ContainerBuilder<Panel> aRowBuilder = this;
+
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -55,9 +73,21 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void addComponents()
+	protected void buildDataElementUI(
+		DataElementUI<?> aDataElementUI,
+		StyleData		 rStyle)
 	{
-		super.addComponents();
+		if (ROW_DISPLAY_MODES.contains(getDisplayMode()))
+		{
+			if (!aDataElementUI.getDataElement()
+				.hasFlag(UserInterfaceProperties.SAME_ROW))
+			{
+				aRowBuilder =
+					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());
+			}
+		}
+
+		aDataElementUI.buildUserInterface(aRowBuilder, rStyle);
 	}
 
 	/***************************************
@@ -69,25 +99,24 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		StyleData			rStyleData,
 		ListDisplayMode		eDisplayMode)
 	{
-		ContainerBuilder<Panel> aPanelBuilder;
+		GenericLayout rLayout;
 
 		switch (eDisplayMode)
 		{
+			case FILL:
+				rLayout = new FillLayout();
+				break;
+
 			case FLOW:
-				aPanelBuilder = rBuilder.addPanel(rStyleData, new FlowLayout());
+				rLayout = new FlowLayout();
 				break;
 
 			case FORM:
-				aPanelBuilder = rBuilder.addPanel(rStyleData, new FormLayout());
+				rLayout = new FormLayout();
 				break;
 
 			case GROUP:
-				aPanelBuilder =
-					rBuilder.addPanel(rStyleData, new GroupLayout());
-				break;
-
-			case FILL:
-				aPanelBuilder = rBuilder.addPanel(rStyleData, new FillLayout());
+				rLayout = new GroupLayout();
 				break;
 
 			default:
@@ -95,6 +124,6 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 												eDisplayMode);
 		}
 
-		return aPanelBuilder;
+		return rBuilder.addPanel(rStyleData, rLayout);
 	}
 }

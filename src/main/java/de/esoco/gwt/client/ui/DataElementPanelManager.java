@@ -289,29 +289,6 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
-	 * Returns the component that represents the content of this instance. The
-	 * default implementation returns the same as {@link #getPanel()} but
-	 * subclasses that redefine the content creation can override this method to
-	 * return a different component.
-	 *
-	 * @return The component of the manager content
-	 */
-	public Component getContentComponent()
-	{
-		return getPanel();
-	}
-
-	/***************************************
-	 * Returns the interactive input handler of this instance.
-	 *
-	 * @return The interactive input handler
-	 */
-	public final InteractiveInputHandler getInteractiveInputHandler()
-	{
-		return rInteractiveInputHandler;
-	}
-
-	/***************************************
 	 * Returns the root panel manager of this instance's hierarchy. If this
 	 * instance is already the root of the hierarchy (i.e. it has no parent) it
 	 * will be returned directly.

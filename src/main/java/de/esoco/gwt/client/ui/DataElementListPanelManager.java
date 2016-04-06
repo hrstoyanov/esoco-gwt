@@ -444,6 +444,16 @@ public abstract class DataElementListPanelManager
 	}
 
 	/***************************************
+	 * Returns the display mode of this panel.
+	 *
+	 * @return The display mode
+	 */
+	protected final ListDisplayMode getDisplayMode()
+	{
+		return eDisplayMode;
+	}
+
+	/***************************************
 	 * Prepares the child data elements that need to be displayed in this
 	 * instance.
 	 *
@@ -495,48 +505,5 @@ public abstract class DataElementListPanelManager
 		rPanelManager.updateFromDataElement(rNewDataElement,
 											rErrorMessages,
 											bUpdateUI);
-	}
-
-	//~ Inner Classes ----------------------------------------------------------
-
-	/********************************************************************
-	 * An internal data element list subclass that serves as a container for the
-	 * data elements in a row of a UI layout.
-	 *
-	 * @author eso
-	 */
-	private static class DataElementRow extends DataElementList
-	{
-		//~ Static fields/initializers -----------------------------------------
-
-		private static final long serialVersionUID = 1L;
-
-		//~ Constructors -------------------------------------------------------
-
-		/***************************************
-		 * Creates a new instance.
-		 *
-		 * @param sName The instance name
-		 */
-		public DataElementRow(String sName)
-		{
-			super(sName, null);
-
-			setProperty(LIST_DISPLAY_MODE, ListDisplayMode.FLOW);
-		}
-
-		//~ Methods ------------------------------------------------------------
-
-		/***************************************
-		 * Overriden to prevent an update of the parent of the child data
-		 * element.
-		 *
-		 * @see DataElementList#addElement(int, DataElement)
-		 */
-		@Override
-		public void addElement(int nIndex, DataElement<?> rElement)
-		{
-			getList().add(nIndex, rElement);
-		}
 	}
 }

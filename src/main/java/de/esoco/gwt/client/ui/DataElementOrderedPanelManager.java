@@ -61,15 +61,6 @@ public class DataElementOrderedPanelManager extends DataElementListPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void addComponents()
-	{
-		super.addComponents();
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,

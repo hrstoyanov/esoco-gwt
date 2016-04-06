@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,10 +68,9 @@ public abstract class DataElementListPanelManager
 	private DataElementList rDataElementList;
 	private ListDisplayMode eDisplayMode;
 
-	private DataElementInteractionHandler<DataElementList> aInteractionHandler;
+	private Map<String, DataElementUI<?>> aDataElementUIs;
 
-	private List<DataElementPanelManager> aPanelManagers =
-		new ArrayList<DataElementPanelManager>();
+	private DataElementInteractionHandler<DataElementList> aInteractionHandler;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -108,7 +108,7 @@ public abstract class DataElementListPanelManager
 		DataElementListPanelManager aPanelManager = null;
 		ListDisplayMode			    eDisplayMode  =
 			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.TABS);
+										 ListDisplayMode.GRID);
 
 		if (GROUP_DISPLAY_MODES.contains(eDisplayMode))
 		{
@@ -119,6 +119,11 @@ public abstract class DataElementListPanelManager
 		{
 			aPanelManager =
 				new DataElementOrderedPanelManager(rParent, rDataElementList);
+		}
+		else if (eDisplayMode == ListDisplayMode.GRID)
+		{
+			aPanelManager =
+				new DataElementGridPanelManager(rParent, rDataElementList);
 		}
 		else
 		{
@@ -132,82 +137,79 @@ public abstract class DataElementListPanelManager
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * @see DataElementPanelManager#addElementEventListener(EventType, EWTEventHandler)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void addElementEventListener(
-		EventType		eEventType,
+		EventType		rEventType,
 		EWTEventHandler rListener)
 	{
-		int nElementCount = rDataElementList.getElementCount();
-
-		for (int i = 0; i < nElementCount; i++)
+		for (DataElementUI<?> rDataElementUI : aDataElementUIs.values())
 		{
-			aPanelManagers.get(i)
-						  .addElementEventListener(eEventType, rListener);
+			rDataElementUI.addEventListener(rEventType, rListener);
 		}
 	}
 
 	/***************************************
-	 * @see DataElementPanelManager#addElementEventListener(DataElement,
-	 *      EventType, EWTEventHandler)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void addElementEventListener(DataElement<?>  rDataElement,
-										EventType		eEventType,
+										EventType		rEventType,
 										EWTEventHandler rListener)
 	{
-		int nIndex = rDataElementList.getElementIndex(rDataElement);
+		DataElementUI<?> rDataElementUI =
+			aDataElementUIs.get(rDataElement.getName());
 
-		if (nIndex >= 0)
+		if (rDataElementUI != null)
 		{
-			DataElementPanelManager rPanelManager = aPanelManagers.get(nIndex);
+			rDataElementUI.addEventListener(rEventType, rListener);
+		}
+		else
+		{
+			throw new IllegalArgumentException("Unknown data element: " +
+											   rDataElement);
+		}
+	}
 
-			if (rPanelManager instanceof DataElementListPanelManager)
+	/***************************************
+	 * @see DataElementPanelManager#collectInput()
+	 */
+	@Override
+	public void collectInput()
+	{
+		for (DataElementUI<?> rUI : aDataElementUIs.values())
+		{
+			if (rUI != null)
 			{
-				rPanelManager.addElementEventListener(eEventType, rListener);
+				rUI.collectInput();
 			}
 		}
 	}
 
 	/***************************************
-	 * Invokes {@link DataElementPanelManager#collectInput()} on the currently
-	 * selected group's panel manager.
-	 */
-	@Override
-	public void collectInput()
-	{
-		for (DataElementPanelManager rPanelManager : getPanelManagers())
-		{
-			rPanelManager.collectInput();
-		}
-	}
-
-	/***************************************
-	 * Overridden to dispose the child panel managers.
+	 * Overridden to dispose the existing data element UIs.
 	 *
-	 * @see de.esoco.gwt.client.ui.PanelManager#dispose()
+	 * @see DataElementPanelManager#dispose()
 	 */
 	@Override
 	public void dispose()
 	{
-		for (DataElementPanelManager rPanelManager : aPanelManagers)
+		for (DataElementUI<?> rUI : aDataElementUIs.values())
 		{
-			rPanelManager.dispose();
+			rUI.dispose();
 		}
 	}
 
 	/***************************************
-	 * Sets the enabled.
-	 *
-	 * @param bEnable The new enabled
+	 * @see DataElementPanelManager#enableInteraction(boolean)
 	 */
 	@Override
 	public void enableInteraction(boolean bEnable)
 	{
-		for (DataElementPanelManager rPanelManager : aPanelManagers)
+		for (DataElementUI<?> rUI : aDataElementUIs.values())
 		{
-			rPanelManager.enableInteraction(bEnable);
+			rUI.enableInteraction(bEnable);
 		}
 	}
 
@@ -218,28 +220,6 @@ public abstract class DataElementListPanelManager
 	public DataElement<?> findDataElement(String sName)
 	{
 		return rDataElementList.findChild(sName);
-	}
-
-	/***************************************
-	 * Returns the subordinate data element panel manager for a certain data
-	 * element of this instance.
-	 *
-	 * @param  rElement The element to return the panel manager for
-	 *
-	 * @return The matching panel manager or NULL if not found
-	 */
-	public DataElementPanelManager getChildPanelManager(DataElement<?> rElement)
-	{
-		int nIndex = rDataElementList.getElementIndex(rElement);
-
-		DataElementPanelManager rSubManager = null;
-
-		if (nIndex >= 0)
-		{
-			rSubManager = aPanelManagers.get(nIndex);
-		}
-
-		return rSubManager;
 	}
 
 	/***************************************
@@ -277,21 +257,30 @@ public abstract class DataElementListPanelManager
 	 * @see DataElementPanelManager#getDataElementUI(DataElement)
 	 */
 	@Override
-	public DataElementUI<?> getDataElementUI(DataElement<?> rDataElement)
+	public final DataElementUI<?> getDataElementUI(DataElement<?> rDataElement)
 	{
-		DataElementUI<?> rUI = null;
+		DataElementUI<?> rDataElementUI =
+			aDataElementUIs.get(rDataElement.getName());
 
-		for (DataElementPanelManager rPanelManager : aPanelManagers)
+		if (rDataElementUI == null)
 		{
-			rUI = rPanelManager.getDataElementUI(rDataElement);
-
-			if (rUI != null)
+			for (DataElementUI<?> rUI : aDataElementUIs.values())
 			{
-				break;
+				if (rUI instanceof DataElementListUI)
+				{
+					rDataElementUI =
+						((DataElementListUI) rUI).getPanelManager()
+												 .getDataElementUI(rDataElement);
+				}
+
+				if (rDataElementUI != null)
+				{
+					break;
+				}
 			}
 		}
 
-		return rUI;
+		return rDataElementUI;
 	}
 
 	/***************************************
@@ -302,8 +291,6 @@ public abstract class DataElementListPanelManager
 								   Map<String, String>  rErrorMessages,
 								   boolean				bUpdateUI)
 	{
-		int nIndex = 0;
-
 		if (rNewDataElements.size() != 1 ||
 			!(rNewDataElements.get(0) instanceof DataElementList))
 		{
@@ -331,17 +318,12 @@ public abstract class DataElementListPanelManager
 			new ArrayList<>(prepareChildDataElements(rDataElementList)
 							.keySet());
 
-		for (DataElementPanelManager rPanelManager : aPanelManagers)
+		Iterator<DataElementUI<?>> rUIs = aDataElementUIs.values().iterator();
+
+		for (DataElement<?> rNewElement : rOrderedElements)
 		{
-			DataElement<?> rDataElement = rOrderedElements.get(nIndex);
-
-			updateChildPanelManager(rPanelManager,
-									rDataElement,
-									rErrorMessages,
-									nIndex,
-									bUpdateUI);
-
-			nIndex++;
+			rUIs.next()
+				.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
 		}
 	}
 
@@ -351,11 +333,26 @@ public abstract class DataElementListPanelManager
 	@Override
 	public void updatePanel()
 	{
-		for (DataElementPanelManager rPanelManager : aPanelManagers)
+		for (DataElementUI<?> rElementUI : aDataElementUIs.values())
 		{
-			rPanelManager.updatePanel();
+			rElementUI.update();
 		}
 	}
+
+	/***************************************
+	 * Must be implemented by subclasses to create the panel in which the data
+	 * element user interfaces are placed.
+	 *
+	 * @param  rBuilder     The builder to create the panel with
+	 * @param  rStyleData   The style to create the panel with
+	 * @param  eDisplayMode The display mode of the data element list
+	 *
+	 * @return A container builder instance for the new panel
+	 */
+	protected abstract ContainerBuilder<? extends Panel> createPanel(
+		ContainerBuilder<?> rBuilder,
+		StyleData			rStyleData,
+		ListDisplayMode		eDisplayMode);
 
 	/***************************************
 	 * {@inheritDoc}
@@ -363,56 +360,49 @@ public abstract class DataElementListPanelManager
 	@Override
 	protected void addComponents()
 	{
-		int nPanelIndex = 0;
-
 		Map<DataElement<?>, StyleData> rDataElementStyles =
 			prepareChildDataElements(rDataElementList);
 
-		for (DataElement<?> rDataElement : rDataElementStyles.keySet())
-		{
-			DataElementPanelManager aPanelManager =
-				createDataElementPanel(rDataElement);
-
-			aPanelManagers.add(aPanelManager);
-		}
-
-		// all panels need to be defined before building to allow correct
-		// resolving of dependencies between data element UIs
 		for (Entry<DataElement<?>, StyleData> rElementStyle :
 			 rDataElementStyles.entrySet())
 		{
 			DataElement<?> rDataElement = rElementStyle.getKey();
-			StyleData	   rPanelStyle  = rElementStyle.getValue();
+			StyleData	   rStyle	    = rElementStyle.getValue();
 
-			DataElementPanelManager rPanelManager =
-				aPanelManagers.get(nPanelIndex++);
+			DataElementUI<?> aDataElementUI =
+				DataElementUIFactory.create(this, rDataElement);
 
-			buildPanel(rPanelManager, rDataElement, rPanelStyle);
+			if (!(rDataElement instanceof DataElementList))
+			{
+				String sElementStyle = aDataElementUI.getElementStyleName();
+
+				if (rDataElement.isImmutable())
+				{
+					sElementStyle = CSS.readonly() + " " + sElementStyle;
+				}
+
+				rStyle = addStyles(rStyle, CSS.gfDataElement(), sElementStyle);
+			}
+
+			buildDataElementUI(aDataElementUI, rStyle);
+
+			aDataElementUIs.put(rDataElement.getName(), aDataElementUI);
 		}
 
 		setupEventHandling();
 	}
 
 	/***************************************
-	 * Builds a certain panel manager in this instance.
+	 * Builds the user interface for a data element in this container.
 	 *
-	 * @param rPanelManager The panel manager to build
-	 * @param rDataElement  The associated data element
-	 * @param rPanelStyle   The panel style
+	 * @param aDataElementUI The element UI to build
+	 * @param rStyle         The style for the data element UI
 	 */
-	protected void buildPanel(DataElementPanelManager rPanelManager,
-							  DataElement<?>		  rDataElement,
-							  StyleData				  rPanelStyle)
+	protected void buildDataElementUI(
+		DataElementUI<?> aDataElementUI,
+		StyleData		 rStyle)
 	{
-		if (rPanelManager instanceof SingleDataElementManager)
-		{
-			rPanelStyle = addStyles(rPanelStyle, CSS.gfDataElement());
-		}
-
-		rPanelStyle =
-			DataElementUI.applyElementStyle(rDataElement, rPanelStyle);
-
-		build(rPanelManager, rPanelStyle);
+		aDataElementUI.buildUserInterface(this, rStyle);
 	}
 
 	/***************************************
@@ -426,53 +416,31 @@ public abstract class DataElementListPanelManager
 	{
 		ContainerBuilder<? extends Panel> aPanelBuilder = null;
 
+		aDataElementUIs =
+			new LinkedHashMap<>(rDataElementList.getElementCount());
+
 		rStyleData =
 			DataElementUI.applyElementStyle(rDataElementList, rStyleData);
 
-		aPanelManagers.clear();
+		eDisplayMode =
+			rDataElementList.getProperty(LIST_DISPLAY_MODE,
+										 ListDisplayMode.TABS);
 
-//		if (rDataElementList.getElementCount() > 1)
-		{
-			eDisplayMode =
-				rDataElementList.getProperty(LIST_DISPLAY_MODE,
-											 ListDisplayMode.TABS);
-
-			aPanelBuilder = createPanel(rBuilder, rStyleData, eDisplayMode);
-		}
-//		else
-//		{
-//			aPanelBuilder = rBuilder.addPanel(rStyleData, new FillLayout());
-//		}
+		aPanelBuilder = createPanel(rBuilder, rStyleData, eDisplayMode);
 
 		return (ContainerBuilder<Panel>) aPanelBuilder;
 	}
 
 	/***************************************
-	 * Must be implemented by subclasses to create the panel in which the data
-	 * element user interfaces are placed.
+	 * Returns the {@link DataElementUI} instances of this instance. The order
+	 * in the returned map corresponds to the order in which the UIs are
+	 * displayed.
 	 *
-	 * @param  rBuilder     The builder to create the panel with
-	 * @param  rStyleData   The style to create the panel with
-	 * @param  eDisplayMode The display mode of the data element list
-	 *
-	 * @return A container builder instance for the new panel
+	 * @return A ordered mapping from data element names to data element UIs
 	 */
-	protected ContainerBuilder<? extends Panel> createPanel(
-		ContainerBuilder<?> rBuilder,
-		StyleData			rStyleData,
-		ListDisplayMode		eDisplayMode)
+	protected final Map<String, DataElementUI<?>> getDataElementUIs()
 	{
-		return null;
-	}
-
-	/***************************************
-	 * Returns the panel managers of this instance.
-	 *
-	 * @return The panel managers
-	 */
-	protected final List<DataElementPanelManager> getPanelManagers()
-	{
-		return aPanelManagers;
+		return aDataElementUIs;
 	}
 
 	/***************************************
@@ -527,51 +495,6 @@ public abstract class DataElementListPanelManager
 		rPanelManager.updateFromDataElement(rNewDataElement,
 											rErrorMessages,
 											bUpdateUI);
-	}
-
-	/***************************************
-	 * Creates a new panel for a certain data element and returns the associated
-	 * panel manager.
-	 *
-	 * @param  rDataElement The selection data element for the mail to display
-	 *
-	 * @return
-	 */
-	private DataElementPanelManager createDataElementPanel(
-		DataElement<?> rDataElement)
-	{
-		DataElementPanelManager aPanelManager = null;
-
-		if (rDataElement instanceof DataElementList)
-		{
-			DataElementList rElementList = (DataElementList) rDataElement;
-
-			ListDisplayMode eListElementDisplayMode =
-				rDataElement.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.GRID);
-
-			if (eListElementDisplayMode == ListDisplayMode.GRID)
-			{
-				aPanelManager =
-					new DataElementGridPanelManager(this, rElementList);
-			}
-			else
-			{
-				aPanelManager = newInstance(this, rElementList);
-			}
-		}
-		else //if (eDisplayMode != null)
-		{
-			aPanelManager = new SingleDataElementManager(this, rDataElement);
-		}
-//		else
-//		{
-//			aElements	  = Arrays.<DataElement<?>>asList(rDataElement);
-//			aPanelManager =
-//				new DataElementGridPanelManager(this, sName, aElements);
-//		}
-
-		return aPanelManager;
 	}
 
 	//~ Inner Classes ----------------------------------------------------------

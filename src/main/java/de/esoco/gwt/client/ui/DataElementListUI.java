@@ -63,6 +63,17 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
+	 * Returns the {@link DataElementGridPanelManager} that is used for the
+	 * display of the {@link DataElementList} of this instance.
+	 *
+	 * @return The panel manager or NULL for none
+	 */
+	public final DataElementPanelManager getPanelManager()
+	{
+		return aListPanelManager;
+	}
+
+	/***************************************
 	 * Delegates the update to the child panel manager.
 	 *
 	 * @see DataElementUI#update()
@@ -100,17 +111,9 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 			rDataElementList.getProperty(LIST_DISPLAY_MODE,
 										 ListDisplayMode.GRID);
 
-		if (eDisplayMode == ListDisplayMode.GRID)
-		{
-			aListPanelManager =
-				new DataElementGridPanelManager(getParent(), rDataElementList);
-		}
-		else
-		{
-			aListPanelManager =
-				DataElementListPanelManager.newInstance(getParent(),
-														rDataElementList);
-		}
+		aListPanelManager =
+			DataElementListPanelManager.newInstance(getParent(),
+													rDataElementList);
 
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
@@ -144,17 +147,6 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		aListPanelManager.dispose();
 
 		super.dispose();
-	}
-
-	/***************************************
-	 * Returns the {@link DataElementGridPanelManager} that is used for the
-	 * display of the {@link DataElementList} of this instance.
-	 *
-	 * @return The panel manager or NULL for none
-	 */
-	final DataElementPanelManager getPanelManager()
-	{
-		return aListPanelManager;
 	}
 
 	/***************************************

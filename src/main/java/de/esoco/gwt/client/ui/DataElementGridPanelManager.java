@@ -18,6 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.DataElementList.ListDisplayMode;
 import de.esoco.data.element.ListDataElement;
 
 import de.esoco.ewt.UserInterfaceContext;
@@ -25,14 +26,11 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
-import de.esoco.ewt.event.EWTEventHandler;
-import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,8 +65,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
-	private List<DataElement<?>>		  aDataElements;
-	private Map<String, DataElementUI<?>> aDataElementUIs;
+	private List<DataElement<?>> aDataElements;
 
 	private boolean bHasOptions;
 	private boolean bHasLabels;
@@ -95,133 +92,12 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addElementEventListener(
-		EventType		rEventType,
-		EWTEventHandler rListener)
-	{
-		for (DataElementUI<?> rDataElementUI : aDataElementUIs.values())
-		{
-			rDataElementUI.addEventListener(rEventType, rListener);
-		}
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addElementEventListener(DataElement<?>  rDataElement,
-										EventType		rEventType,
-										EWTEventHandler rListener)
-	{
-		DataElementUI<?> rDataElementUI =
-			aDataElementUIs.get(rDataElement.getName());
-
-		if (rDataElementUI != null)
-		{
-			rDataElementUI.addEventListener(rEventType, rListener);
-		}
-		else
-		{
-			throw new IllegalArgumentException("Unknown data element: " +
-											   rDataElement);
-		}
-	}
-
-	/***************************************
-	 * @see DataElementPanelManager#collectInput()
-	 */
-	@Override
-	public void collectInput()
-	{
-		for (DataElementUI<?> rUI : aDataElementUIs.values())
-		{
-			if (rUI != null)
-			{
-				rUI.collectInput();
-			}
-		}
-	}
-
-	/***************************************
-	 * Overridden to dispose the existing data element UIs.
-	 *
-	 * @see DataElementPanelManager#dispose()
-	 */
-	@Override
-	public void dispose()
-	{
-		for (DataElementUI<?> rUI : aDataElementUIs.values())
-		{
-			rUI.dispose();
-		}
-	}
-
-	/***************************************
-	 * @see DataElementPanelManager#enableInteraction(boolean)
-	 */
-	@Override
-	public void enableInteraction(boolean bEnable)
-	{
-		for (DataElementUI<?> rUI : aDataElementUIs.values())
-		{
-			rUI.enableInteraction(bEnable);
-		}
-	}
-
-	/***************************************
-	 * Searches for a data element with a certain name in this manager's
-	 * hierarchy.
-	 *
-	 * @param  sName The name of the data element to search
-	 *
-	 * @return The matching data element or NULL if no such element exists
-	 */
-	@Override
-	public DataElement<?> findDataElement(String sName)
-	{
-		return DataElementList.findDataElement(sName, getDataElements());
-	}
-
-	/***************************************
 	 * @see DataElementPanelManager#getDataElements()
 	 */
 	@Override
 	public final Collection<DataElement<?>> getDataElements()
 	{
 		return aDataElements;
-	}
-
-	/***************************************
-	 * @see DataElementPanelManager#getDataElementUI(DataElement)
-	 */
-	@Override
-	public final DataElementUI<?> getDataElementUI(DataElement<?> rDataElement)
-	{
-		DataElementUI<?> rDataElementUI =
-			aDataElementUIs.get(rDataElement.getName());
-
-		if (rDataElementUI == null)
-		{
-			for (DataElementUI<?> rUI : aDataElementUIs.values())
-			{
-				if (rUI instanceof DataElementListUI)
-				{
-					rDataElementUI =
-						((DataElementListUI) rUI).getPanelManager()
-												 .getDataElementUI(rDataElement);
-				}
-
-				if (rDataElementUI != null)
-				{
-					break;
-				}
-			}
-		}
-
-		return rDataElementUI;
 	}
 
 	/***************************************
@@ -256,7 +132,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 			for (DataElement<?> rElement : aDataElements)
 			{
 				DataElementUI<?> rElementUI =
-					aDataElementUIs.get(rElement.getName());
+					getDataElementUIs().get(rElement.getName());
 
 				rElementUI.updateDataElement(rElement,
 											 rElementErrors,
@@ -309,18 +185,6 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 			super.updateFromDataElement(rNewDataElement,
 										rErrorMessages,
 										bUpdateUI);
-		}
-	}
-
-	/***************************************
-	 * @see PanelManager#updatePanel()
-	 */
-	@Override
-	public void updatePanel()
-	{
-		for (DataElementUI<?> rElementUI : aDataElementUIs.values())
-		{
-			rElementUI.update();
 		}
 	}
 
@@ -418,7 +282,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 
 			// element UI must be registered before building to allow
 			// cross-panel references of selection dependencies
-			aDataElementUIs.put(rDataElement.getName(), aElementUI);
+			getDataElementUIs().put(rDataElement.getName(), aElementUI);
 			aElementUI.buildUserInterface(this, aElementStyle);
 
 			if ("100%".equals(sWidth) && "100%".equals(sHeight))
@@ -464,9 +328,10 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected ContainerBuilder<Panel> createContainer(
+	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
-		StyleData			rStyleData)
+		StyleData			rStyleData,
+		ListDisplayMode		eDisplayMode)
 	{
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,
@@ -673,9 +538,6 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 											   ": No data elements");
 		}
 
-		int nCount = rDataElements.size();
-
-		aDataElements   = new ArrayList<DataElement<?>>(rDataElements);
-		aDataElementUIs = new LinkedHashMap<String, DataElementUI<?>>(nCount);
+		aDataElements = new ArrayList<DataElement<?>>(rDataElements);
 	}
 }

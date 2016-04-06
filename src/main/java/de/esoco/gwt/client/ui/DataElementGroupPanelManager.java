@@ -29,6 +29,7 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +91,10 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 
 		if (nSelectedElement >= 0)
 		{
-			getPanelManagers().get(nSelectedElement).collectInput();
+			DataElementUI<?> rDataElementUI =
+				getDataElementUI(nSelectedElement);
+
+			rDataElementUI.collectInput();
 		}
 	}
 
@@ -158,10 +162,10 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 
 		if (nSelectedElement >= 0)
 		{
-			DataElementPanelManager rPanelManager =
-				getPanelManagers().get(nSelectedElement);
+			DataElementUI<?> rDataElementUI =
+				getDataElementUI(nSelectedElement);
 
-			rPanelManager.updatePanel();
+			rDataElementUI.update();
 		}
 	}
 
@@ -178,17 +182,17 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void buildPanel(DataElementPanelManager rPanelManager,
-							  DataElement<?>		  rDataElement,
-							  StyleData				  rPanelStyle)
+	protected void buildDataElementUI(
+		DataElementUI<?> rDataElementUI,
+		StyleData		 rStyle)
 	{
-		super.buildPanel(rPanelManager, rDataElement, rPanelStyle);
+		super.buildDataElementUI(rDataElementUI, rStyle);
 
-		Component rElementComponent = rPanelManager.getContentComponent();
+		Component rElementComponent = rDataElementUI.getElementComponent();
 
 		String sLabel =
 			DataElementUI.getLabelText(getContext(),
-									   rDataElement,
+									   rDataElementUI.getDataElement(),
 									   sLabelPrefix);
 
 		aGroupPanel.addGroup(rElementComponent, sLabel, false);
@@ -274,5 +278,33 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 
 			aGroupPanel.setGroupTitle(nPanelIndex, sLabel);
 		}
+	}
+
+	/***************************************
+	 * Returns a value from a collection at a certain position, relative to the
+	 * iteration order. The first position is zero.
+	 *
+	 * @param  nIndex The position index
+	 *
+	 * @return The corresponding value
+	 *
+	 * @throws IndexOutOfBoundsException If the index is invalid for the
+	 *                                   collection
+	 */
+	private DataElementUI<?> getDataElementUI(int nIndex)
+	{
+		assert nIndex >= 0 && nIndex < getDataElementUIs().size();
+
+		Iterator<DataElementUI<?>> rUIs =
+			getDataElementUIs().values().iterator();
+
+		DataElementUI<?> rResult = null;
+
+		while (nIndex-- >= 0 && rUIs.hasNext())
+		{
+			rResult = rUIs.next();
+		}
+
+		return rResult;
 	}
 }

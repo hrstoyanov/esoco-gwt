@@ -108,7 +108,7 @@ public abstract class DataElementListPanelManager
 		DataElementListPanelManager aPanelManager = null;
 		ListDisplayMode			    eDisplayMode  =
 			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.GRID);
+										 ListDisplayMode.TABLE);
 
 		if (GROUP_DISPLAY_MODES.contains(eDisplayMode))
 		{
@@ -120,7 +120,7 @@ public abstract class DataElementListPanelManager
 			aPanelManager =
 				new DataElementOrderedPanelManager(rParent, rDataElementList);
 		}
-		else if (eDisplayMode == ListDisplayMode.GRID)
+		else if (eDisplayMode == ListDisplayMode.TABLE)
 		{
 			aPanelManager =
 				new DataElementGridPanelManager(rParent, rDataElementList);

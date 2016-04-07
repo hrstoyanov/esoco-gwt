@@ -146,7 +146,7 @@ public class DataElementUI<D extends DataElement<?>>
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
 	private static ListDisplayMode eButtonPanelDefaultLayout =
-		ListDisplayMode.GRID;
+		ListDisplayMode.TABLE;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -1132,7 +1132,7 @@ public class DataElementUI<D extends DataElement<?>>
 		sAddStyle += " " + CSS.gfButtonPanel();
 
 		GenericLayout aPanelLayout =
-			eDisplayMode == ListDisplayMode.GRID ? new GridLayout(nColumns)
+			eDisplayMode == ListDisplayMode.TABLE ? new GridLayout(nColumns)
 												 : new FlowLayout();
 
 		rBuilder =

@@ -109,7 +109,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 
 		ListDisplayMode eDisplayMode =
 			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.GRID);
+										 ListDisplayMode.TABLE);
 
 		aListPanelManager =
 			DataElementListPanelManager.newInstance(getParent(),
@@ -118,7 +118,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
 
-		if (eDisplayMode == ListDisplayMode.GRID)
+		if (eDisplayMode == ListDisplayMode.TABLE)
 		{
 			// DataElementListPanelManager performs event handling itself
 			setupInteractionHandling(rListPanel, false);

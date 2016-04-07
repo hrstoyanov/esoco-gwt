@@ -129,14 +129,14 @@ public abstract class DataElementPanelManager
 		{
 			ListDisplayMode eDisplayMode =
 				rDataElementList.getProperty(LIST_DISPLAY_MODE,
-											 ListDisplayMode.GRID);
+											 ListDisplayMode.TABLE);
 
 			aStyle.append(' ');
 
 			switch (eDisplayMode)
 			{
-				case GRID:
-					aStyle.append(CSS.gfDataElementGridPanel());
+				case TABLE:
+					aStyle.append(CSS.gfDataElementTablePanel());
 					break;
 
 				case FLOW:

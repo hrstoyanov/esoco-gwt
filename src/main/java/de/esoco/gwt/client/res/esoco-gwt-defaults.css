@@ -6,7 +6,7 @@
 @external .vertical;
 @external .horizontal;
 @external .gf-DataElement;
-@external .gf-DataElementGridPanel;
+@external .gf-DataElementTablePanel;
 @external .gf-DataElementLabel;
 @external .gf-DataElementHeader;
 @external .gf-EmptyCell;
@@ -32,39 +32,39 @@
 	color: #E84040;
 }
 
-.gf-DataElementGridPanel > tbody > tr > td {
+.gf-DataElementTablePanel > tbody > tr > td {
 	padding: 0.3em;
 	vertical-align: top;
 }
 
-.gf-DataElementGridPanel.EditTextActions {
+.gf-DataElementTablePanel.EditTextActions {
 	width: 100%;
 }
 
-.gf-DataElementGridPanel.EditTextActions > tbody > tr > td {
+.gf-DataElementTablePanel.EditTextActions > tbody > tr > td {
 	color: #555;
 	padding: 0;
 	text-align: right;
 	vertical-align: middle;
 }
 
-.gf-DataElementGridPanel > tbody > tr > td.gf-DataElementLabel {
+.gf-DataElementTablePanel > tbody > tr > td.gf-DataElementLabel {
 	vertical-align: middle;
 }
 
-.gf-DataElementGridPanel > tbody > tr > td.gf-EmptyCell {
+.gf-DataElementTablePanel > tbody > tr > td.gf-EmptyCell {
 	padding: 0;
 }
 
-.gf-DataElementGridPanel {
+.gf-DataElementTablePanel {
 	height: 100%;
 }
 
-.gf-DataElementGridPanel.ProcessStepFragment {
+.gf-DataElementTablePanel.ProcessStepFragment {
 	width: 100%;
 }
 
-.gf-DataElementGridPanel.EditEntityTagsFragment, td.SelectedEntityTags {
+.gf-DataElementTablePanel.EditEntityTagsFragment, td.SelectedEntityTags {
 	width: 100%;
 }
 

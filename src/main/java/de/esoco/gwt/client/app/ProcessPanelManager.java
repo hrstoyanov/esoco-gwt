@@ -511,8 +511,8 @@ public class ProcessPanelManager
 		if (rParams.size() == 1 &&
 			rFirstElement instanceof DataElementList &&
 			rFirstElement.getProperty(LIST_DISPLAY_MODE,
-									  ListDisplayMode.GRID) !=
-			ListDisplayMode.GRID)
+									  ListDisplayMode.TABLE) !=
+			ListDisplayMode.TABLE)
 		{
 			aPanelManager =
 				DataElementListPanelManager.newInstance(this,

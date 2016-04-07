@@ -304,26 +304,30 @@ public abstract class DataElementListPanelManager
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);
 
-		if (rNewDataElementList.getElementCount() !=
+		if (rNewDataElementList.getElementCount() ==
 			rDataElementList.getElementCount())
 		{
-			throw new IllegalArgumentException("Update has different element count");
+			// must be assigned before updating panel manager for correct lookup
+			// of data element dependencies
+			rDataElementList = rNewDataElementList;
+
+			List<DataElement<?>> rOrderedElements =
+				new ArrayList<>(prepareChildDataElements(rDataElementList)
+								.keySet());
+
+			Iterator<DataElementUI<?>> rUIs =
+				aDataElementUIs.values().iterator();
+
+			for (DataElement<?> rNewElement : rOrderedElements)
+			{
+				rUIs.next()
+					.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
+			}
 		}
-
-		// must be assigned before updating panel manager for correct lookup
-		// of data element dependencies
-		rDataElementList = rNewDataElementList;
-
-		List<DataElement<?>> rOrderedElements =
-			new ArrayList<>(prepareChildDataElements(rDataElementList)
-							.keySet());
-
-		Iterator<DataElementUI<?>> rUIs = aDataElementUIs.values().iterator();
-
-		for (DataElement<?> rNewElement : rOrderedElements)
+		else
 		{
-			rUIs.next()
-				.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
+			rDataElementList = rNewDataElementList;
+			rebuild();
 		}
 	}
 

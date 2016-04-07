@@ -804,7 +804,8 @@ public class DataElementUI<D extends DataElement<?>>
 			{
 				sValue = "#" + sValue;
 			}
-			else if ("+%".indexOf(sValue.charAt(0)) < 0)
+			else if (Component.COMPOUND_PROPERTY_CHARS.indexOf(sValue.charAt(0)) <
+					 0)
 			{
 				sValue = "%" + sValue;
 			}
@@ -1133,7 +1134,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		GenericLayout aPanelLayout =
 			eDisplayMode == ListDisplayMode.TABLE ? new GridLayout(nColumns)
-												 : new FlowLayout();
+												  : new FlowLayout();
 
 		rBuilder =
 			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),

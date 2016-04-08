@@ -33,6 +33,7 @@ import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.SingleSelection;
+import de.esoco.lib.text.TextConvert;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -131,50 +132,10 @@ public abstract class DataElementPanelManager
 				rDataElementList.getProperty(LIST_DISPLAY_MODE,
 											 ListDisplayMode.TABLE);
 
-			aStyle.append(' ');
-
-			switch (eDisplayMode)
-			{
-				case TABLE:
-					aStyle.append(CSS.gfDataElementTablePanel());
-					break;
-
-				case FLOW:
-					aStyle.append(CSS.gfDataElementFlowPanel());
-					break;
-
-				case FORM:
-					aStyle.append(CSS.gfDataElementFormPanel());
-					break;
-
-				case GROUP:
-					aStyle.append(CSS.gfDataElementGroupPanel());
-					break;
-
-				case FILL:
-					aStyle.append(CSS.gfDataElementFillPanel());
-					break;
-
-				case DOCK:
-					aStyle.append(CSS.gfDataElementDockPanel());
-					break;
-
-				case SPLIT:
-					aStyle.append(CSS.gfDataElementSplitPanel());
-					break;
-
-				case STACK:
-					aStyle.append(CSS.gfDataElementStackPanel());
-					break;
-
-				case TABS:
-					aStyle.append(CSS.gfDataElementTabsPanel());
-					break;
-
-				case DECK:
-					aStyle.append(CSS.gfDataElementDeckPanel());
-					break;
-			}
+			aStyle.append(" gf-DataElement");
+			aStyle.append(TextConvert.capitalizedIdentifier(eDisplayMode
+															.name()));
+			aStyle.append("Panel");
 		}
 
 		aStyle.append(' ');

@@ -3,17 +3,8 @@
 	
 }
 
-@external .gf-DataElementPanel, .gf-ButtonPanel;
-@external .gf-DataElementTablePanel, .gf-DataElementDockPanel;
-@external .gf-DataElementTabsPanel, .gf-DataElementGroupPanel;
-@external .gf-DataElementStackPanel, .gf-DataElementSplitPanel;
-@external .gf-DataElementDeckPanel, .gf-DataElementFormPanel;
-@external .gf-DataElementFlowPanel, .gf-DataElementFillPanel;
-@external .gf-DataElementListDialog;
-.gf-DataElementPanel, .gf-ButtonPanel, .gf-DataElementTablePanel, .gf-DataElementDockPanel,
-	.gf-DataElementTabsPanel, .gf-DataElementGroupPanel, .gf-DataElementStackPanel,
-	.gf-DataElementSplitPanel, .gf-DataElementDeckPanel, .gf-DataElementFormPanel,
-	.gf-DataElementFlowPanel, .gf-DataElementFillPanel, .gf-DataElementListDialog {
+@external .gf-DataElementPanel, .gf-ButtonPanel, .gf-DataElementListDialog;
+.gf-DataElementPanel, .gf-ButtonPanel, .gf-DataElementListDialog {
 	
 }
 

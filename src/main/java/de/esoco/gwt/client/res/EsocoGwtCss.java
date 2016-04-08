@@ -30,36 +30,6 @@ public interface EsocoGwtCss extends CssResource {
   @ClassName("gf-ButtonPanel")
   String gfButtonPanel();
   
-  @ClassName("gf-DataElementDockPanel")
-  String gfDataElementDockPanel();
-  
-  @ClassName("gf-DataElementTablePanel")
-  String gfDataElementTablePanel();
-  
-  @ClassName("gf-DataElementFillPanel")
-  String gfDataElementFillPanel();
-  
-  @ClassName("gf-DataElementFlowPanel")
-  String gfDataElementFlowPanel();
-  
-  @ClassName("gf-DataElementFormPanel")
-  String gfDataElementFormPanel();
-  
-  @ClassName("gf-DataElementGroupPanel")
-  String gfDataElementGroupPanel();
-
-  @ClassName("gf-DataElementSplitPanel")
-  String gfDataElementSplitPanel();
-  
-  @ClassName("gf-DataElementStackPanel")
-  String gfDataElementStackPanel();
-  
-  @ClassName("gf-DataElementTabsPanel")
-  String gfDataElementTabsPanel();
-
-  @ClassName("gf-DataElementDeckPanel")
-  String gfDataElementDeckPanel();
-  
   @ClassName("gf-EmptyCell")
   String gfEmptyCell();
   

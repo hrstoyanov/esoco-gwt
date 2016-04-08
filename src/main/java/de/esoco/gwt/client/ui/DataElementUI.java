@@ -1140,7 +1140,7 @@ public class DataElementUI<D extends DataElement<?>>
 			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),
 							  aPanelLayout);
 
-		final List<Button> aButtons =
+		final List<Component> aButtons =
 			createListButtons(rBuilder,
 							  rDataElement,
 							  rButtonLabels,
@@ -1164,14 +1164,14 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @return A list containing the buttons that have been created
 	 */
-	protected List<Button> createListButtons(ContainerBuilder<?> rBuilder,
-											 D					 rDataElement,
-											 List<String>		 rButtonLabels,
-											 ListStyle			 eListStyle,
-											 boolean			 bMultiselect)
+	protected List<Component> createListButtons(
+		ContainerBuilder<?> rBuilder,
+		D					rDataElement,
+		List<String>		rButtonLabels,
+		ListStyle			eListStyle,
+		boolean				bMultiselect)
 	{
-		final List<Button> aButtons =
-			new ArrayList<Button>(rButtonLabels.size());
+		final List<Component> aButtons = new ArrayList<>(rButtonLabels.size());
 
 		EWTEventHandler aButtonEventHandler =
 			new EWTEventHandler()
@@ -1190,8 +1190,8 @@ public class DataElementUI<D extends DataElement<?>>
 
 		for (String sValue : rButtonLabels)
 		{
-			String sText   = sValue;
-			Button aButton;
+			String    sText   = sValue;
+			Component aButton;
 
 			if (eListStyle == ListStyle.IMMEDIATE)
 			{
@@ -2122,7 +2122,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * @param rAllButtons The list of all buttons
 	 * @param rButton     The selected button
 	 */
-	void setButtonSelection(List<Button> rAllButtons, Button rButton)
+	void setButtonSelection(List<Component> rAllButtons, Button rButton)
 	{
 		boolean bSelected =
 			rButton instanceof Selectable ? ((Selectable) rButton).isSelected()

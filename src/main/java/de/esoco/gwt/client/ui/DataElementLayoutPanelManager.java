@@ -26,6 +26,7 @@ import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.FormLayout;
 import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.layout.GroupLayout;
+import de.esoco.ewt.layout.MenuLayout;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
@@ -123,7 +124,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 				break;
 
 			case MENU:
-				rLayout = new GroupLayout();
+				rLayout = new MenuLayout();
 				break;
 
 			default:

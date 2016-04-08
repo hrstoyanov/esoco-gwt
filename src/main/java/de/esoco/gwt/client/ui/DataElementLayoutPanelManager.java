@@ -46,7 +46,9 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	//~ Static fields/initializers ---------------------------------------------
 
 	private static final Set<ListDisplayMode> ROW_DISPLAY_MODES =
-		EnumSet.of(ListDisplayMode.FORM, ListDisplayMode.GROUP);
+		EnumSet.of(ListDisplayMode.GRID,
+				   ListDisplayMode.FORM,
+				   ListDisplayMode.GROUP);
 
 	private static final StyleData DATA_ELEMENT_ROW_STYLE =
 		addStyles(StyleData.DEFAULT, "DataElementRow");
@@ -108,6 +110,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 				break;
 
 			case FLOW:
+			case GRID:
 				rLayout = new FlowLayout();
 				break;
 
@@ -116,6 +119,10 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 				break;
 
 			case GROUP:
+				rLayout = new GroupLayout();
+				break;
+
+			case MENU:
 				rLayout = new GroupLayout();
 				break;
 

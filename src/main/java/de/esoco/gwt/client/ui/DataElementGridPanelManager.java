@@ -52,17 +52,6 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
  */
 public class DataElementGridPanelManager extends DataElementListPanelManager
 {
-	//~ Static fields/initializers ---------------------------------------------
-
-	private static final StyleData ELEMENT_STYLE =
-		addStyles(StyleData.DEFAULT, CSS.gfDataElement());
-
-	private static final StyleData ELEMENT_LABEL_STYLE =
-		addStyles(StyleData.DEFAULT, CSS.gfDataElementLabel());
-
-	private static final StyleData HEADER_LABEL_STYLE =
-		addStyles(StyleData.DEFAULT, CSS.gfDataElementHeader());
-
 	//~ Instance fields --------------------------------------------------------
 
 	private List<DataElement<?>> aDataElements;

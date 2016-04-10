@@ -30,9 +30,13 @@ import de.esoco.ewt.layout.MenuLayout;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
+import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
 
 import java.util.EnumSet;
 import java.util.Set;
+
+import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
+import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 
 
 /********************************************************************
@@ -80,17 +84,27 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		DataElementUI<?> aDataElementUI,
 		StyleData		 rStyle)
 	{
+		ContainerBuilder<Panel> rUIBuilder = aRowBuilder;
+
 		if (ROW_DISPLAY_MODES.contains(getDisplayMode()))
 		{
-			if (!aDataElementUI.getDataElement()
-				.hasFlag(UserInterfaceProperties.SAME_ROW))
+			if (!aDataElementUI.getDataElement().hasFlag(SAME_ROW))
 			{
 				aRowBuilder =
 					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());
 			}
+
+			if (!aDataElementUI.getDataElement().hasFlag(HIDE_LABEL))
+			{
+				rUIBuilder =
+					aRowBuilder.addPanel(StyleData.DEFAULT, new FlowLayout());
+				aDataElementUI.createElementLabel(rUIBuilder,
+												  ELEMENT_LABEL_STYLE.set(UserInterfaceProperties.LABEL_STYLE,
+																		  LabelStyle.FORM));
+			}
 		}
 
-		aDataElementUI.buildUserInterface(aRowBuilder, rStyle);
+		aDataElementUI.buildUserInterface(rUIBuilder, rStyle);
 	}
 
 	/***************************************

@@ -16,6 +16,7 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.client.ui;
 
+import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.DataElementList.ListDisplayMode;
 
@@ -31,6 +32,7 @@ import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
+import de.esoco.lib.text.TextConvert;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -60,7 +62,8 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
-	private ContainerBuilder<Panel> aRowBuilder = this;
+	private ContainerBuilder<Panel> aRowBuilder  = this;
+	private int					    nRowElements = 0;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -84,17 +87,22 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		DataElementUI<?> aDataElementUI,
 		StyleData		 rStyle)
 	{
-		ContainerBuilder<Panel> rUIBuilder = aRowBuilder;
+		DataElement<?>		    rDataElement = aDataElementUI.getDataElement();
+		ContainerBuilder<Panel> rUIBuilder   = aRowBuilder;
 
 		if (ROW_DISPLAY_MODES.contains(getDisplayMode()))
 		{
-			if (!aDataElementUI.getDataElement().hasFlag(SAME_ROW))
+			if (!rDataElement.hasFlag(SAME_ROW))
 			{
-				aRowBuilder =
+				aRowBuilder.getContainer().getWidget()
+						   .addStyleName("grid " +
+										 TextConvert.numberString(nRowElements));
+				aRowBuilder  =
 					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());
+				nRowElements = 0;
 			}
 
-			if (!aDataElementUI.getDataElement().hasFlag(HIDE_LABEL))
+			if (!rDataElement.hasFlag(HIDE_LABEL))
 			{
 				rUIBuilder =
 					aRowBuilder.addPanel(StyleData.DEFAULT, new FlowLayout());
@@ -105,6 +113,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		}
 
 		aDataElementUI.buildUserInterface(rUIBuilder, rStyle);
+		nRowElements++;
 	}
 
 	/***************************************

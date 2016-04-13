@@ -95,7 +95,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 			if (!rDataElement.hasFlag(SAME_ROW))
 			{
 				aRowBuilder.getContainer().getWidget()
-						   .addStyleName("grid " +
+						   .addStyleName("flex " +
 										 TextConvert.numberString(nRowElements));
 				aRowBuilder  =
 					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());

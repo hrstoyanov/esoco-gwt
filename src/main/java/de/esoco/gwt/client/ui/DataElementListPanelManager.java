@@ -304,8 +304,9 @@ public abstract class DataElementListPanelManager
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);
 
-		if (rNewDataElementList.getElementCount() ==
-			rDataElementList.getElementCount())
+		if (rNewDataElementList.getName().equals(rDataElementList.getName()) &&
+			containsSameElements(rNewDataElementList.getElements(),
+								 rDataElementList.getElements()))
 		{
 			// must be assigned before updating panel manager for correct lookup
 			// of data element dependencies

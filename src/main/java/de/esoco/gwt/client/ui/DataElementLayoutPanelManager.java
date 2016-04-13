@@ -102,10 +102,16 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 				nRowElements = 0;
 			}
 
-			if (!rDataElement.hasFlag(HIDE_LABEL))
+			rUIBuilder =
+				aRowBuilder.addPanel(StyleData.DEFAULT, new FlowLayout());
+
+			if (rDataElement.hasFlag(HIDE_LABEL))
 			{
-				rUIBuilder =
-					aRowBuilder.addPanel(StyleData.DEFAULT, new FlowLayout());
+				// add an empty label to prevent layout errors
+				rUIBuilder.addLabel(StyleData.DEFAULT, "&nbsp;", null);
+			}
+			else
+			{
 				aDataElementUI.createElementLabel(rUIBuilder,
 												  ELEMENT_LABEL_STYLE.set(UserInterfaceProperties.LABEL_STYLE,
 																		  LabelStyle.FORM));

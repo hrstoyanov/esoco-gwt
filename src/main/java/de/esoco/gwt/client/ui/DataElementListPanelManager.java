@@ -390,7 +390,6 @@ public abstract class DataElementListPanelManager
 			}
 
 			buildDataElementUI(aDataElementUI, rStyle);
-
 			aDataElementUIs.put(rDataElement.getName(), aDataElementUI);
 		}
 

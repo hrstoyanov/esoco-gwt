@@ -83,6 +83,18 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void addComponents()
+	{
+		super.addComponents();
+
+		// set style of last (or only) row
+		setRowStyle();
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected void buildDataElementUI(
 		DataElementUI<?> aDataElementUI,
 		StyleData		 rStyle)
@@ -94,9 +106,8 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		{
 			if (!rDataElement.hasFlag(SAME_ROW))
 			{
-				aRowBuilder.getContainer().getWidget()
-						   .addStyleName("flex " +
-										 TextConvert.numberString(nRowElements));
+				setRowStyle();
+
 				aRowBuilder  =
 					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());
 				nRowElements = 0;
@@ -162,5 +173,18 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		}
 
 		return rBuilder.addPanel(rStyleData, rLayout);
+	}
+
+	/***************************************
+	 * Sets the style of a completed row of data elements.
+	 */
+	protected void setRowStyle()
+	{
+		if (nRowElements > 0 && ROW_DISPLAY_MODES.contains(getDisplayMode()))
+		{
+			aRowBuilder.getContainer().getWidget()
+					   .addStyleName("flex " +
+									 TextConvert.numberString(nRowElements));
+		}
 	}
 }

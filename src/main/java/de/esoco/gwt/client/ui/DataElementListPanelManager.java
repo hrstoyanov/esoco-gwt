@@ -19,7 +19,6 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.DataElementList.ListDisplayMode;
-
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.event.EWTEventHandler;
@@ -328,6 +327,7 @@ public abstract class DataElementListPanelManager
 		else
 		{
 			rDataElementList = rNewDataElementList;
+			aDataElementUIs.clear();
 			rebuild();
 		}
 	}

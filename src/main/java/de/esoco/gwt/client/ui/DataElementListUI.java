@@ -157,7 +157,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 						   Map<String, String> rElementErrors,
 						   boolean			   bUpdateUI)
 	{
-		super.updateDataElement(rNewElement, rElementErrors, bUpdateUI);
+		// always use FALSE to not update UI before data element is updated
+		super.updateDataElement(rNewElement, rElementErrors, false);
 
 		if (aListPanelManager != null)
 		{

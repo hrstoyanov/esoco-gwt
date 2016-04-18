@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -526,7 +526,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	public void handleLogout(DataElement<?> rIgnored)
 		throws AuthenticationException
 	{
-		removeSession(getThreadLocalRequest().getSession());
+		logoutCurrentUser();
 	}
 
 	/***************************************
@@ -543,6 +543,15 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 		{
 			rContext.setService(this);
 		}
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void logoutCurrentUser()
+	{
+		removeSession(getThreadLocalRequest().getSession());
 	}
 
 	/***************************************

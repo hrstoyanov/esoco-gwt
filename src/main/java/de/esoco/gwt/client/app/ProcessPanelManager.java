@@ -59,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
@@ -136,7 +137,8 @@ public class ProcessPanelManager
 	private DataElement<?> rInteractionElement     = null;
 	private boolean		   bInteractionActionEvent;
 
-	private Map<String, DataElementListView> aViews = Collections.emptyMap();
+	private Map<String, DataElementListView> aProcessViews =
+		Collections.emptyMap();
 
 	private HandlerRegistration rUiInspectorEventHandler = null;
 
@@ -206,11 +208,27 @@ public class ProcessPanelManager
 	}
 
 	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void dispose()
+	{
+		for (DataElementListView rView : aProcessViews.values())
+		{
+			rView.hide();
+		}
+
+		super.dispose();
+	}
+
+	/***************************************
 	 * @see CommandResultHandler#handleCommandResult(DataElement)
 	 */
 	@Override
 	public void handleCommandResult(ProcessState rNewState)
 	{
+		GWT.log("handleCommandResult: " + rNewState);
+
 		boolean bFinishProcess =
 			rProcessState != null && rProcessState.isFinalStep();
 
@@ -383,7 +401,7 @@ public class ProcessPanelManager
 
 			lockUserInterface();
 
-			for (DataElementListView rView : aViews.values())
+			for (DataElementListView rView : aProcessViews.values())
 			{
 				rView.collectInput();
 			}
@@ -890,7 +908,7 @@ public class ProcessPanelManager
 		for (DataElementList rViewParam : rViewParams)
 		{
 			String			    sViewName = rViewParam.getName();
-			DataElementListView aView     = aViews.remove(sViewName);
+			DataElementListView aView     = aProcessViews.remove(sViewName);
 
 			if (aView != null && aView.isVisible())
 			{
@@ -906,12 +924,12 @@ public class ProcessPanelManager
 		}
 
 		// close views that are no longer listed
-		for (DataElementListView rOldView : aViews.values())
+		for (DataElementListView rOldView : aProcessViews.values())
 		{
 			rOldView.hide();
 		}
 
-		aViews = aNewViews;
+		aProcessViews = aNewViews;
 	}
 
 	/***************************************

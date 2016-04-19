@@ -58,12 +58,16 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 				   ListDisplayMode.GROUP);
 
 	private static final StyleData DATA_ELEMENT_ROW_STYLE =
-		addStyles(StyleData.DEFAULT, "DataElementRow");
+		addStyles(StyleData.DEFAULT, "gfDataElementRow");
+
+	private static final StyleData DATA_ELEMENT_WRAPPER_STYLE =
+		addStyles(StyleData.DEFAULT, "gfDataElementWrapper");
 
 	//~ Instance fields --------------------------------------------------------
 
-	private ContainerBuilder<Panel> aRowBuilder  = this;
-	private int					    nRowElements = 0;
+	private ContainerBuilder<Panel> aRowBuilder;
+	private int					    nRowElements;
+	private boolean				    bBuildGrid;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -85,9 +89,13 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	@Override
 	protected void addComponents()
 	{
+		aRowBuilder  = this;
+		nRowElements = 0;
+		bBuildGrid   = ROW_DISPLAY_MODES.contains(getDisplayMode());
+
 		super.addComponents();
 
-		// set style of last (or only) row
+		// set style of the last or only row
 		setRowStyle();
 	}
 
@@ -102,27 +110,27 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		DataElement<?>		    rDataElement = aDataElementUI.getDataElement();
 		ContainerBuilder<Panel> rUIBuilder   = aRowBuilder;
 
-		if (ROW_DISPLAY_MODES.contains(getDisplayMode()))
+		boolean bNewRow   = !rDataElement.hasFlag(SAME_ROW);
+		boolean bAddLabel = !rDataElement.hasFlag(HIDE_LABEL);
+
+		if (bBuildGrid)
 		{
-			if (!rDataElement.hasFlag(SAME_ROW))
+			if (bNewRow)
 			{
 				setRowStyle();
 
 				aRowBuilder  =
 					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());
+				rUIBuilder   = aRowBuilder;
 				nRowElements = 0;
 			}
 
-			rUIBuilder =
-				aRowBuilder.addPanel(StyleData.DEFAULT, new FlowLayout());
+			if (bAddLabel)
+			{
+				rUIBuilder =
+					aRowBuilder.addPanel(DATA_ELEMENT_WRAPPER_STYLE,
+										 new FlowLayout());
 
-			if (rDataElement.hasFlag(HIDE_LABEL))
-			{
-				// add an empty label to prevent layout errors
-				rUIBuilder.addLabel(StyleData.DEFAULT, "&nbsp;", null);
-			}
-			else
-			{
 				aDataElementUI.createElementLabel(rUIBuilder,
 												  ELEMENT_LABEL_STYLE.set(UserInterfaceProperties.LABEL_STYLE,
 																		  LabelStyle.FORM));
@@ -180,7 +188,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	 */
 	protected void setRowStyle()
 	{
-		if (nRowElements > 0 && ROW_DISPLAY_MODES.contains(getDisplayMode()))
+		if (nRowElements > 0 && bBuildGrid)
 		{
 			aRowBuilder.getContainer().getWidget()
 					   .addStyleName("flex " +

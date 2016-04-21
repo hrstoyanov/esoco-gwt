@@ -59,7 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
@@ -227,8 +226,6 @@ public class ProcessPanelManager
 	@Override
 	public void handleCommandResult(ProcessState rNewState)
 	{
-		GWT.log("handleCommandResult: " + rNewState);
-
 		boolean bFinishProcess =
 			rProcessState != null && rProcessState.isFinalStep();
 

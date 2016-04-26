@@ -166,5 +166,10 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 													rElementErrors,
 													bUpdateUI);
 		}
+
+		if (bUpdateUI)
+		{
+			update();
+		}
 	}
 }

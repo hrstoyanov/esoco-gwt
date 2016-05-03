@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,12 @@
 // limitations under the License.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.lib.property;
+
+import de.esoco.data.element.DataElement;
+import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.DataSetDataElement;
+import de.esoco.data.element.DateDataElement;
+import de.esoco.data.element.DateListDataElement;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
@@ -33,8 +39,14 @@ public class PropertyName_CustomFieldSerializer
 
 	static
 	{
+		// initializes property name instances defined in this classes
 		StandardProperties.init();
 		UserInterfaceProperties.init();
+		DataElement.init();
+		DataElementList.init();
+		DateDataElement.init();
+		DateListDataElement.init();
+		DataSetDataElement.init();
 	}
 
 	//~ Static methods ---------------------------------------------------------

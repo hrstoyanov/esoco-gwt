@@ -18,7 +18,7 @@ package de.esoco.gwt.client.app;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
@@ -61,7 +61,7 @@ import java.util.Map;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
+import static de.esoco.data.element.DataElementList.LAYOUT;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
@@ -525,9 +525,9 @@ public class ProcessPanelManager
 
 		if (rParams.size() == 1 &&
 			rFirstElement instanceof DataElementList &&
-			rFirstElement.getProperty(LIST_DISPLAY_MODE,
-									  ListDisplayMode.TABLE) !=
-			ListDisplayMode.TABLE)
+			rFirstElement.getProperty(LAYOUT,
+									  Layout.TABLE) !=
+			Layout.TABLE)
 		{
 			aPanelManager =
 				DataElementListPanelManager.newInstance(this,

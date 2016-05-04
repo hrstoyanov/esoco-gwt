@@ -18,7 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
@@ -27,7 +27,7 @@ import de.esoco.ewt.style.StyleData;
 
 import java.util.Map;
 
-import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
+import static de.esoco.data.element.DataElementList.LAYOUT;
 
 
 /********************************************************************
@@ -107,9 +107,9 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		DataElementList rDataElementList = getDataElement();
 		Panel		    rListPanel		 = null;
 
-		ListDisplayMode eDisplayMode =
-			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.TABLE);
+		Layout eDisplayMode =
+			rDataElementList.getProperty(LAYOUT,
+										 Layout.TABLE);
 
 		aListPanelManager =
 			DataElementListPanelManager.newInstance(getParent(),
@@ -118,7 +118,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
 
-		if (eDisplayMode == ListDisplayMode.TABLE)
+		if (eDisplayMode == Layout.TABLE)
 		{
 			// DataElementListPanelManager performs event handling itself
 			setupInteractionHandling(rListPanel, false);

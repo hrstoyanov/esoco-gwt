@@ -21,7 +21,7 @@ import de.esoco.data.element.BooleanDataElement;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElement.Flag;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 import de.esoco.data.element.DataSetDataElement;
 import de.esoco.data.element.DateDataElement;
 import de.esoco.data.element.EntityDataElement;
@@ -1759,8 +1759,8 @@ public class DataElementFactory
 
 			if (aChildElements.size() > 1)
 			{
-				aChildList.setProperty(DataElementList.LIST_DISPLAY_MODE,
-									   ListDisplayMode.TABS);
+				aChildList.setProperty(DataElementList.LAYOUT,
+									   Layout.TABS);
 			}
 
 			aAttrElements.add(aChildList);

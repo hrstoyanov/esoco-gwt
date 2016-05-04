@@ -18,7 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
@@ -196,7 +196,7 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		ListDisplayMode		eDisplayMode)
+		Layout		eDisplayMode)
 	{
 		ContainerBuilder<? extends GroupPanel> aPanelBuilder;
 

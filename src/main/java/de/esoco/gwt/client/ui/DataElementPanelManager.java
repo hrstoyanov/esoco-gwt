@@ -18,7 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
+import static de.esoco.data.element.DataElementList.LAYOUT;
 
 import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
@@ -137,9 +137,9 @@ public abstract class DataElementPanelManager
 		StringBuilder aStyle = new StringBuilder(CSS.gfDataElementPanel());
 
 		{
-			ListDisplayMode eDisplayMode =
-				rDataElementList.getProperty(LIST_DISPLAY_MODE,
-											 ListDisplayMode.TABLE);
+			Layout eDisplayMode =
+				rDataElementList.getProperty(LAYOUT,
+											 Layout.TABLE);
 
 			aStyle.append(" gf-DataElement");
 			aStyle.append(TextConvert.capitalizedIdentifier(eDisplayMode

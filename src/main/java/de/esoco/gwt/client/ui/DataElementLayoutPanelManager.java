@@ -18,7 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Panel;
@@ -44,7 +44,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 /********************************************************************
  * A panel manager for {@link DataElementList} instances that places the child
  * data elements of the data element list in a layout that is defined by the
- * {@link ListDisplayMode} of the data element list.
+ * {@link Layout} of the data element list.
  *
  * @author eso
  */
@@ -52,10 +52,10 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final Set<ListDisplayMode> ROW_DISPLAY_MODES =
-		EnumSet.of(ListDisplayMode.GRID,
-				   ListDisplayMode.FORM,
-				   ListDisplayMode.GROUP);
+	private static final Set<Layout> ROW_DISPLAY_MODES =
+		EnumSet.of(Layout.GRID,
+				   Layout.FORM,
+				   Layout.GROUP);
 
 	private static final StyleData DATA_ELEMENT_ROW_STYLE =
 		addStyles(StyleData.DEFAULT, "gfDataElementRow");
@@ -148,7 +148,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	protected ContainerBuilder<Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		ListDisplayMode		eDisplayMode)
+		Layout		eDisplayMode)
 	{
 		GenericLayout rLayout;
 

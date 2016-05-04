@@ -18,7 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.element.StringDataElement;
@@ -145,8 +145,8 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
-	private static ListDisplayMode eButtonPanelDefaultLayout =
-		ListDisplayMode.TABLE;
+	private static Layout eButtonPanelDefaultLayout =
+		Layout.TABLE;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -258,7 +258,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @return The default layout mode
 	 */
-	public static ListDisplayMode getButtonPanelDefaultLayout()
+	public static Layout getButtonPanelDefaultLayout()
 	{
 		return eButtonPanelDefaultLayout;
 	}
@@ -317,7 +317,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @param eLayoutMode The new button panel default layout mode
 	 */
-	public static void setButtonPanelDefaultLayout(ListDisplayMode eLayoutMode)
+	public static void setButtonPanelDefaultLayout(Layout eLayoutMode)
 	{
 		eButtonPanelDefaultLayout = eLayoutMode;
 	}
@@ -1124,8 +1124,8 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
-		ListDisplayMode eDisplayMode =
-			rDataElement.getProperty(DataElementList.LIST_DISPLAY_MODE,
+		Layout eDisplayMode =
+			rDataElement.getProperty(DataElementList.LAYOUT,
 									 eButtonPanelDefaultLayout);
 
 		String sAddStyle = rStyle.getProperty(WEB_ADDITIONAL_STYLES, "");
@@ -1133,7 +1133,7 @@ public class DataElementUI<D extends DataElement<?>>
 		sAddStyle += " " + CSS.gfButtonPanel();
 
 		GenericLayout aPanelLayout =
-			eDisplayMode == ListDisplayMode.TABLE ? new GridLayout(nColumns)
+			eDisplayMode == Layout.TABLE ? new GridLayout(nColumns)
 												  : new FlowLayout();
 
 		rBuilder =

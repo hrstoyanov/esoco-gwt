@@ -18,7 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ListDisplayMode;
+import de.esoco.data.element.DataElementList.Layout;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.event.EWTEventHandler;
@@ -36,13 +36,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static de.esoco.data.element.DataElementList.LIST_DISPLAY_MODE;
+import static de.esoco.data.element.DataElementList.LAYOUT;
 
 
 /********************************************************************
  * A panel manager subclass that displays the children of data element lists as
- * defined by the property {@link DataElementList#LIST_DISPLAY_MODE}. The
- * default mode is {@link ListDisplayMode#TABS TABS}. The groups will be in the
+ * defined by the property {@link DataElementList#LAYOUT}. The
+ * default mode is {@link Layout#TABS TABS}. The groups will be in the
  * same order as the data elements in the {@link DataElementList} received by
  * the constructor. If the list contains a single data element no groups will be
  * created, only a single data element panel manager.
@@ -54,18 +54,18 @@ public abstract class DataElementListPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final Set<ListDisplayMode> ORDERED_DISPLAY_MODES =
-		EnumSet.of(ListDisplayMode.DOCK, ListDisplayMode.SPLIT);
+	private static final Set<Layout> ORDERED_DISPLAY_MODES =
+		EnumSet.of(Layout.DOCK, Layout.SPLIT);
 
-	private static final Set<ListDisplayMode> GROUP_DISPLAY_MODES =
-		EnumSet.of(ListDisplayMode.TABS,
-				   ListDisplayMode.STACK,
-				   ListDisplayMode.DECK);
+	private static final Set<Layout> GROUP_DISPLAY_MODES =
+		EnumSet.of(Layout.TABS,
+				   Layout.STACK,
+				   Layout.DECK);
 
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementList rDataElementList;
-	private ListDisplayMode eDisplayMode;
+	private Layout eDisplayMode;
 
 	private Map<String, DataElementUI<?>> aDataElementUIs;
 
@@ -92,7 +92,7 @@ public abstract class DataElementListPanelManager
 
 	/***************************************
 	 * Factory method that creates a new subclass instance based on the {@link
-	 * ListDisplayMode} of the data element list argument.
+	 * Layout} of the data element list argument.
 	 *
 	 * @param  rParent          The parent panel manager
 	 * @param  rDataElementList The list of data elements to be handled by the
@@ -105,9 +105,9 @@ public abstract class DataElementListPanelManager
 		DataElementList    rDataElementList)
 	{
 		DataElementListPanelManager aPanelManager = null;
-		ListDisplayMode			    eDisplayMode  =
-			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.TABLE);
+		Layout			    eDisplayMode  =
+			rDataElementList.getProperty(LAYOUT,
+										 Layout.TABLE);
 
 		if (GROUP_DISPLAY_MODES.contains(eDisplayMode))
 		{
@@ -119,7 +119,7 @@ public abstract class DataElementListPanelManager
 			aPanelManager =
 				new DataElementOrderedPanelManager(rParent, rDataElementList);
 		}
-		else if (eDisplayMode == ListDisplayMode.TABLE)
+		else if (eDisplayMode == Layout.TABLE)
 		{
 			aPanelManager =
 				new DataElementGridPanelManager(rParent, rDataElementList);
@@ -357,7 +357,7 @@ public abstract class DataElementListPanelManager
 	protected abstract ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		ListDisplayMode		eDisplayMode);
+		Layout		eDisplayMode);
 
 	/***************************************
 	 * {@inheritDoc}
@@ -427,8 +427,8 @@ public abstract class DataElementListPanelManager
 			DataElementUI.applyElementStyle(rDataElementList, rStyleData);
 
 		eDisplayMode =
-			rDataElementList.getProperty(LIST_DISPLAY_MODE,
-										 ListDisplayMode.TABS);
+			rDataElementList.getProperty(LAYOUT,
+										 Layout.TABS);
 
 		aPanelBuilder = createPanel(rBuilder, rStyleData, eDisplayMode);
 
@@ -452,7 +452,7 @@ public abstract class DataElementListPanelManager
 	 *
 	 * @return The display mode
 	 */
-	protected final ListDisplayMode getDisplayMode()
+	protected final Layout getDisplayMode()
 	{
 		return eDisplayMode;
 	}

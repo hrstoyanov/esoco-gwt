@@ -145,8 +145,7 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
-	private static Layout eButtonPanelDefaultLayout =
-		Layout.TABLE;
+	private static Layout eButtonPanelDefaultLayout = Layout.TABLE;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -815,6 +814,26 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Creates the style data for buttons.
+	 *
+	 * @param  rDataElement The data element to determine the buttons style for
+	 *
+	 * @return The button style
+	 */
+	protected StyleData createButtonStyle(D rDataElement)
+	{
+		StyleData   rButtonStyle = StyleData.DEFAULT;
+		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
+
+		if (eContentType == ContentType.HYPERLINK)
+		{
+			rButtonStyle = rButtonStyle.setFlags(StyleFlag.HYPERLINK);
+		}
+
+		return rButtonStyle;
+	}
+
+	/***************************************
 	 * This method can be overridden by subclasses to create the user interface
 	 * for a data element that is either immutable or for display only. The
 	 * default implementation creates a label with the string-converted value of
@@ -1124,7 +1143,7 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
-		Layout eDisplayMode =
+		Layout eLayout =
 			rDataElement.getProperty(DataElementList.LAYOUT,
 									 eButtonPanelDefaultLayout);
 
@@ -1132,13 +1151,17 @@ public class DataElementUI<D extends DataElement<?>>
 
 		sAddStyle += " " + CSS.gfButtonPanel();
 
-		GenericLayout aPanelLayout =
-			eDisplayMode == Layout.TABLE ? new GridLayout(nColumns)
-												  : new FlowLayout();
+		if (eLayout != Layout.MENU)
+		{
+			// insert menu buttons directly into enclosing panels
+			GenericLayout aPanelLayout =
+				eLayout == Layout.TABLE ? new GridLayout(nColumns)
+										: new FlowLayout();
 
-		rBuilder =
-			rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),
-							  aPanelLayout);
+			rBuilder =
+				rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),
+								  aPanelLayout);
+		}
 
 		final List<Component> aButtons =
 			createListButtons(rBuilder,
@@ -1185,8 +1208,9 @@ public class DataElementUI<D extends DataElement<?>>
 
 		String sDisabled = rDataElement.getProperty(DISABLED_ELEMENTS, "");
 
-		StyleData rButtonStyle = StyleData.DEFAULT;
-		int		  nValueIndex  = 0;
+		StyleData rButtonStyle = createButtonStyle(rDataElement);
+
+		int nValueIndex = 0;
 
 		for (String sValue : rButtonLabels)
 		{

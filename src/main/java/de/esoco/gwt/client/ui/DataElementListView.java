@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ViewDisplayType;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
@@ -28,10 +27,12 @@ import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.UserInterfaceProperties.ViewDisplayType;
+
 import java.util.Collection;
 import java.util.Map;
 
-import static de.esoco.data.element.DataElementList.VIEW_DISPLAY_TYPE;
+import static de.esoco.lib.property.UserInterfaceProperties.VIEW_DISPLAY_TYPE;
 
 
 /********************************************************************

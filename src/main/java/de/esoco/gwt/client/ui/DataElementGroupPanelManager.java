@@ -18,8 +18,6 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.Layout;
-
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.GroupPanel;
@@ -28,7 +26,7 @@ import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
-
+import de.esoco.lib.property.UserInterfaceProperties;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -196,7 +194,7 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout		eDisplayMode)
+		UserInterfaceProperties.Layout		eDisplayMode)
 	{
 		ContainerBuilder<? extends GroupPanel> aPanelBuilder;
 

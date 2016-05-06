@@ -19,8 +19,6 @@ package de.esoco.gwt.server;
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.ViewDisplayType;
-
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityRelationTypes;
@@ -36,7 +34,6 @@ import de.esoco.gwt.shared.ServiceException;
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.UserInterfaceProperties;
-
 import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
 import de.esoco.process.ProcessDefinition;
@@ -497,7 +494,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				ViewFragment aViewFragment =
 					new ViewFragment("UI_INSPECTOR",
 									 new EditInteractionParameters(rParams),
-									 ViewDisplayType.VIEW);
+									 UserInterfaceProperties.ViewDisplayType.VIEW);
 
 				aViewFragment.show(((FragmentInteraction) rInteractionStep)
 								   .getRootFragment());

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import de.esoco.data.element.BooleanDataElement;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElement.Flag;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.Layout;
 import de.esoco.data.element.DataSetDataElement;
 import de.esoco.data.element.DateDataElement;
 import de.esoco.data.element.EntityDataElement;
@@ -76,6 +75,7 @@ import de.esoco.lib.property.MutableProperties;
 import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.ContentType;
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
 import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
 
@@ -128,6 +128,7 @@ import static de.esoco.lib.expression.StringFunctions.format;
 import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.UserInterfaceProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.UserInterfaceProperties.HIERARCHICAL;
+import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
 import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
 import static de.esoco.lib.property.UserInterfaceProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.UserInterfaceProperties.VALUE_RESOURCE_PREFIX;
@@ -1572,7 +1573,7 @@ public class DataElementFactory
 		Collection<?> rAllowedValues =
 			rRelation != null ? rRelation.get(ALLOWED_VALUES) : null;
 
-		Set<DataElement.Flag> rFlags =
+		Set<Flag> rFlags =
 			isInputType(rObject, rType) ? DataElement.INPUT_FLAGS
 										: DataElement.DISPLAY_FLAGS;
 
@@ -1759,8 +1760,7 @@ public class DataElementFactory
 
 			if (aChildElements.size() > 1)
 			{
-				aChildList.setProperty(DataElementList.LAYOUT,
-									   Layout.TABS);
+				aChildList.setProperty(LAYOUT, Layout.TABS);
 			}
 
 			aAttrElements.add(aChildList);

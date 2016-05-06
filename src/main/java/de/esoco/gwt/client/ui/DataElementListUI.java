@@ -18,16 +18,17 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.style.StyleData;
 
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
+
 import java.util.Map;
 
-import static de.esoco.data.element.DataElementList.LAYOUT;
+import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
 
 
 /********************************************************************
@@ -108,8 +109,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		Panel		    rListPanel		 = null;
 
 		Layout eDisplayMode =
-			rDataElementList.getProperty(LAYOUT,
-										 Layout.TABLE);
+			rDataElementList.getProperty(LAYOUT, Layout.TABLE);
 
 		aListPanelManager =
 			DataElementListPanelManager.newInstance(getParent(),

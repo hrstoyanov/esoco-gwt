@@ -18,7 +18,6 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.Layout;
 import de.esoco.data.element.ListDataElement;
 
 import de.esoco.ewt.UserInterfaceContext;
@@ -28,7 +27,7 @@ import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
-
+import de.esoco.lib.property.UserInterfaceProperties;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -205,7 +204,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 				rDataElement.hasFlag(HEADER_LABEL);
 
 			boolean isChildViewElement =
-				rDataElement.hasProperty(DataElementList.VIEW_DISPLAY_TYPE);
+				rDataElement.hasProperty(UserInterfaceProperties.VIEW_DISPLAY_TYPE);
 
 			int nExtraColumns = bNewRow && bHideLabel && bHasLabels ? 1 : 0;
 
@@ -373,7 +372,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout		eDisplayMode)
+		UserInterfaceProperties.Layout		eDisplayMode)
 	{
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,

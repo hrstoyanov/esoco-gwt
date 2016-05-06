@@ -18,7 +18,6 @@ package de.esoco.gwt.client.app;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.DataElementList.Layout;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
@@ -54,6 +53,8 @@ import de.esoco.gwt.shared.ProcessState;
 import de.esoco.gwt.shared.ProcessState.ProcessExecutionMode;
 import de.esoco.gwt.shared.ServiceException;
 
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,12 +62,11 @@ import java.util.Map;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 
-import static de.esoco.data.element.DataElementList.LAYOUT;
-
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
+import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
 import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
 import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
 
@@ -525,9 +525,7 @@ public class ProcessPanelManager
 
 		if (rParams.size() == 1 &&
 			rFirstElement instanceof DataElementList &&
-			rFirstElement.getProperty(LAYOUT,
-									  Layout.TABLE) !=
-			Layout.TABLE)
+			rFirstElement.getProperty(LAYOUT, Layout.TABLE) != Layout.TABLE)
 		{
 			aPanelManager =
 				DataElementListPanelManager.newInstance(this,

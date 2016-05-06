@@ -18,15 +18,18 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
-import de.esoco.ewt.component.GroupPanel;
 import de.esoco.ewt.component.Panel;
+import de.esoco.ewt.component.SwitchPanel;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
+
 import de.esoco.lib.property.UserInterfaceProperties;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,20 +43,20 @@ import static de.esoco.lib.property.UserInterfaceProperties.CURRENT_SELECTION;
  *
  * @author eso
  */
-public class DataElementGroupPanelManager extends DataElementListPanelManager
+public class DataElementSwitchPanelManager extends DataElementListPanelManager
 	implements EWTEventHandler
 {
 	//~ Instance fields --------------------------------------------------------
 
-	private GroupPanel aGroupPanel;
-	private String     sLabelPrefix;
+	private SwitchPanel aSwitchPanel;
+	private String	    sLabelPrefix;
 
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
 	 * {@inheritDoc}
 	 */
-	public DataElementGroupPanelManager(
+	public DataElementSwitchPanelManager(
 		PanelManager<?, ?> rParent,
 		DataElementList    rDataElementList)
 	{
@@ -63,22 +66,22 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * Adds an event listener for group selection events. The listener will be
-	 * notified of an {@link EventType#SELECTION} event if a new display group
-	 * is selected. The source of the event will be the panel used by this panel
-	 * manager, not the manager itself. Not all grouping panels may support
+	 * Adds an event listener for page selection events. The listener will be
+	 * notified of an {@link EventType#SELECTION} event if a new layout page is
+	 * selected. The source of the event will be the panel used by this panel
+	 * manager, not the manager itself. Not all switching panels may support
 	 * listener registrations.
 	 *
-	 * @param rListener The listener to notify if a group is selected
+	 * @param rListener The listener to notify if a new page is selected
 	 */
-	public void addGroupSelectionListener(EWTEventHandler rListener)
+	public void addPageSelectionListener(EWTEventHandler rListener)
 	{
-		aGroupPanel.addEventListener(EventType.SELECTION, rListener);
+		aSwitchPanel.addEventListener(EventType.SELECTION, rListener);
 	}
 
 	/***************************************
 	 * Invokes {@link DataElementPanelManager#collectInput()} on the currently
-	 * selected group's panel manager.
+	 * selected page's panel manager.
 	 */
 	@Override
 	public void collectInput()
@@ -97,17 +100,17 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	}
 
 	/***************************************
-	 * Returns the index of the currently selected group element.
+	 * Returns the index of the currently selected page element.
 	 *
 	 * @return The selection index
 	 */
 	public int getSelectedElement()
 	{
-		return aGroupPanel.getSelectionIndex();
+		return aSwitchPanel.getSelectionIndex();
 	}
 
 	/***************************************
-	 * Handles the selection of a group (tab or stack).
+	 * Handles the selection of a page.
 	 *
 	 * @see EWTEventHandler#handleEvent(EWTEvent)
 	 */
@@ -118,13 +121,13 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	}
 
 	/***************************************
-	 * Sets the currently selected group.
+	 * Sets the currently selected page.
 	 *
-	 * @param nElement The index of the group to select
+	 * @param nElement The index of the page to select
 	 */
 	public void setSelectedElement(int nElement)
 	{
-		aGroupPanel.setSelection(nElement);
+		aSwitchPanel.setSelection(nElement);
 	}
 
 	/***************************************
@@ -184,7 +187,7 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 									   rDataElementUI.getDataElement(),
 									   sLabelPrefix);
 
-		aGroupPanel.addGroup(rElementComponent, sLabel, false);
+		aSwitchPanel.addPage(rElementComponent, sLabel, false);
 	}
 
 	/***************************************
@@ -192,11 +195,11 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 	 */
 	@Override
 	protected ContainerBuilder<? extends Panel> createPanel(
-		ContainerBuilder<?> rBuilder,
-		StyleData			rStyleData,
-		UserInterfaceProperties.Layout		eDisplayMode)
+		ContainerBuilder<?>			   rBuilder,
+		StyleData					   rStyleData,
+		UserInterfaceProperties.Layout eDisplayMode)
 	{
-		ContainerBuilder<? extends GroupPanel> aPanelBuilder;
+		ContainerBuilder<? extends SwitchPanel> aPanelBuilder;
 
 		switch (eDisplayMode)
 		{
@@ -220,7 +223,7 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 												eDisplayMode);
 		}
 
-		aGroupPanel = aPanelBuilder.getContainer();
+		aSwitchPanel = aPanelBuilder.getContainer();
 
 		return aPanelBuilder;
 	}
@@ -234,11 +237,11 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 		super.setupEventHandling();
 
 		@SuppressWarnings("boxing")
-		int nSelectedGroup =
+		int nSelectedPage =
 			getDataElementList().getProperty(CURRENT_SELECTION, 0);
 
-		setSelectedElement(nSelectedGroup);
-		aGroupPanel.addEventListener(EventType.SELECTION, this);
+		setSelectedElement(nSelectedPage);
+		aSwitchPanel.addEventListener(EventType.SELECTION, this);
 	}
 
 	/***************************************
@@ -265,7 +268,7 @@ public class DataElementGroupPanelManager extends DataElementListPanelManager
 										   rNewDataElement,
 										   sLabelPrefix);
 
-			aGroupPanel.setGroupTitle(nPanelIndex, sLabel);
+			aSwitchPanel.setPageTitle(nPanelIndex, sLabel);
 		}
 	}
 

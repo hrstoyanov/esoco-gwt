@@ -18,8 +18,10 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Panel;
+import de.esoco.ewt.layout.ContentLayout;
 import de.esoco.ewt.layout.FillLayout;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.FormLayout;
@@ -30,6 +32,7 @@ import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
 import de.esoco.lib.text.TextConvert;
 
 import java.util.EnumSet;
@@ -146,11 +149,11 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	protected ContainerBuilder<Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		UserInterfaceProperties.Layout		eDisplayMode)
+		Layout				eLayout)
 	{
 		GenericLayout rLayout;
 
-		switch (eDisplayMode)
+		switch (eLayout)
 		{
 			case FILL:
 				rLayout = new FillLayout();
@@ -173,9 +176,15 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 				rLayout = new MenuLayout();
 				break;
 
+			case HEADER:
+			case CONTENT:
+			case FOOTER:
+				rLayout = new ContentLayout(eLayout);
+				break;
+
 			default:
 				throw new IllegalStateException("Unsupported DataElementList mode " +
-												eDisplayMode);
+												eLayout);
 		}
 
 		return rBuilder.addPanel(rStyleData, rLayout);

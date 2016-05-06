@@ -59,7 +59,7 @@ public abstract class DataElementListPanelManager
 	private static final Set<Layout> ORDERED_LAYOUTS =
 		EnumSet.of(Layout.DOCK, Layout.SPLIT);
 
-	private static final Set<Layout> GROUP_LAYOUTS =
+	private static final Set<Layout> SWITCH_LAYOUTS =
 		EnumSet.of(Layout.TABS, Layout.STACK, Layout.DECK);
 
 	//~ Instance fields --------------------------------------------------------
@@ -108,10 +108,10 @@ public abstract class DataElementListPanelManager
 
 		Layout eLayout = rDataElementList.getProperty(LAYOUT, Layout.TABLE);
 
-		if (GROUP_LAYOUTS.contains(eLayout))
+		if (SWITCH_LAYOUTS.contains(eLayout))
 		{
 			aPanelManager =
-				new DataElementGroupPanelManager(rParent, rDataElementList);
+				new DataElementSwitchPanelManager(rParent, rDataElementList);
 		}
 		else if (ORDERED_LAYOUTS.contains(eLayout))
 		{

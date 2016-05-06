@@ -18,12 +18,15 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
-import de.esoco.lib.property.UserInterfaceProperties;
+
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -62,14 +65,14 @@ public class DataElementOrderedPanelManager extends DataElementListPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		UserInterfaceProperties.Layout		eDisplayMode)
+		Layout				eLayout)
 	{
 		ContainerBuilder<? extends Panel> aPanelBuilder;
 
 		assert getDataElementList().getElementCount() <= 3 : "Element count for " +
-			   eDisplayMode + " mode must be <= 3";
+			   eLayout + " mode must be <= 3";
 
-		switch (eDisplayMode)
+		switch (eLayout)
 		{
 			case DOCK:
 				aPanelBuilder =
@@ -81,8 +84,8 @@ public class DataElementOrderedPanelManager extends DataElementListPanelManager
 				break;
 
 			default:
-				throw new IllegalStateException("Unsupported DataElementList mode " +
-												eDisplayMode);
+				throw new IllegalStateException("Unsupported layout " +
+												eLayout);
 		}
 
 		return aPanelBuilder;

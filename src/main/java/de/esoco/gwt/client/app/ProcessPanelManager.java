@@ -78,7 +78,8 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
  * @author eso
  */
 public class ProcessPanelManager
-	extends GwtApplicationPanelManager<Panel, GwtApplicationPanelManager<?, ?>>
+	extends GwtApplicationPanelManager<Container,
+									   GwtApplicationPanelManager<?, ?>>
 	implements InteractiveInputHandler, CommandResultHandler<ProcessState>,
 			   EWTEventHandler
 {
@@ -112,6 +113,7 @@ public class ProcessPanelManager
 
 	private String  sProcessName;
 	private boolean bShowNavigationBar;
+	private boolean bRenderInline;
 
 	private DataElementPanelManager aParamPanelManager;
 
@@ -153,7 +155,7 @@ public class ProcessPanelManager
 		GwtApplicationPanelManager<?, ?> rParent,
 		String							 sProcessName)
 	{
-		this(rParent, sProcessName, true);
+		this(rParent, sProcessName, true, false);
 	}
 
 	/***************************************
@@ -162,17 +164,22 @@ public class ProcessPanelManager
 	 * @param rParent            The parent panel manager
 	 * @param sProcessName       The name of the process
 	 * @param bShowNavigationBar TRUE to show the process navigation bar at the
-	 *                           top, FALSE to hide it
+	 *                           top, FALSE to show only the process parameters
+	 * @param bRenderInline      TRUE to render the process UI in the parent
+	 *                           container, FALSE to create a separate panel
+	 *                           (may not be compatible with a navigation bar)
 	 */
 	public ProcessPanelManager(
 		GwtApplicationPanelManager<?, ?> rParent,
 		String							 sProcessName,
-		boolean							 bShowNavigationBar)
+		boolean							 bShowNavigationBar,
+		boolean							 bRenderInline)
 	{
 		super(rParent, CSS.gaProcessPanel());
 
 		this.sProcessName	    = sProcessName;
 		this.bShowNavigationBar = bShowNavigationBar;
+		this.bRenderInline	    = bRenderInline;
 	}
 
 	//~ Static methods ---------------------------------------------------------
@@ -434,11 +441,27 @@ public class ProcessPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected ContainerBuilder<Panel> createContainer(
+	@SuppressWarnings("unchecked")
+	protected ContainerBuilder<Container> createContainer(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData)
 	{
-		return rBuilder.addPanel(rStyleData, new DockLayout(false, false));
+		ContainerBuilder<? extends Container> rPanelBuilder;
+
+		if (bRenderInline)
+		{
+			rPanelBuilder = rBuilder;
+		}
+		else
+		{
+			rPanelBuilder =
+				rBuilder.addPanel(rStyleData,
+								  bShowNavigationBar
+								  ? new DockLayout(false, false)
+								  : new FillLayout());
+		}
+
+		return (ContainerBuilder<Container>) rPanelBuilder;
 	}
 
 	/***************************************
@@ -623,8 +646,9 @@ public class ProcessPanelManager
 
 				removeParameterPanel();
 
-				ContainerBuilder<Panel> aBuilder =
-					addPanel(PARAM_PANEL_STYLE, new FillLayout(true));
+				ContainerBuilder<? extends Container> aBuilder =
+					bRenderInline
+					? this : addPanel(PARAM_PANEL_STYLE, new FillLayout(true));
 
 				rParamPanel    = aBuilder.getContainer();
 				sPreviousStyle = sStepStyle;

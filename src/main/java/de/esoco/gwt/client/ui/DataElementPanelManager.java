@@ -21,7 +21,7 @@ import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
-import de.esoco.ewt.component.Panel;
+import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
@@ -53,7 +53,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY
  * @author eso
  */
 public abstract class DataElementPanelManager
-	extends PanelManager<Panel, PanelManager<?, ?>>
+	extends PanelManager<Container, PanelManager<?, ?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 

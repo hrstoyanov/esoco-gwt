@@ -20,6 +20,7 @@ import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
+import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
@@ -122,6 +123,11 @@ public abstract class DataElementListPanelManager
 		{
 			aPanelManager =
 				new DataElementGridPanelManager(rParent, rDataElementList);
+		}
+		else if (eLayout == Layout.INLINE)
+		{
+			aPanelManager =
+				new DataElementInlinePanelManager(rParent, rDataElementList);
 		}
 		else
 		{
@@ -413,11 +419,11 @@ public abstract class DataElementListPanelManager
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	protected ContainerBuilder<Panel> createContainer(
+	protected ContainerBuilder<Container> createContainer(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData)
 	{
-		ContainerBuilder<? extends Panel> aPanelBuilder = null;
+		ContainerBuilder<? extends Container> aPanelBuilder = null;
 
 		aDataElementUIs =
 			new LinkedHashMap<>(rDataElementList.getElementCount());
@@ -429,7 +435,7 @@ public abstract class DataElementListPanelManager
 
 		aPanelBuilder = createPanel(rBuilder, rStyleData, eLayout);
 
-		return (ContainerBuilder<Panel>) aPanelBuilder;
+		return (ContainerBuilder<Container>) aPanelBuilder;
 	}
 
 	/***************************************

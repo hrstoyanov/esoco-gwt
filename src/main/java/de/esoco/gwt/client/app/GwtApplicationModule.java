@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public abstract class GwtApplicationModule implements EWTModule
 	@Override
 	public View createModuleView(UserInterfaceContext rContext)
 	{
-		MainView aMainView = rContext.createMainView(ViewStyle.DEFAULT);
+		MainView aMainView = rContext.createMainView(getMainViewStyle());
 
 		ContainerBuilder<?> aMainViewBuilder =
 			new ContainerBuilder<View>(aMainView);
@@ -67,4 +67,15 @@ public abstract class GwtApplicationModule implements EWTModule
 	 */
 	protected abstract void createApplicationPanel(
 		ContainerBuilder<?> rBuilder);
+
+	/***************************************
+	 * Returns the view style for the main view of this module. May be
+	 * overridden to modify the default style {@link ViewStyle#FULL_SIZE}.
+	 *
+	 * @return
+	 */
+	protected ViewStyle getMainViewStyle()
+	{
+		return ViewStyle.FULL_SIZE;
+	}
 }

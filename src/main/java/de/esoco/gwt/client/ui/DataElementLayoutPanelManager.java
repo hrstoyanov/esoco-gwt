@@ -20,6 +20,7 @@ import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
+import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.ContentLayout;
 import de.esoco.ewt.layout.FillLayout;
@@ -66,9 +67,10 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
-	private ContainerBuilder<Panel> aRowBuilder;
-	private int					    nRowElements;
-	private boolean				    bBuildGrid;
+	private ContainerBuilder<? extends Container> aRowBuilder;
+
+	private int     nRowElements;
+	private boolean bBuildGrid;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -108,8 +110,9 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		DataElementUI<?> aDataElementUI,
 		StyleData		 rStyle)
 	{
-		DataElement<?>		    rDataElement = aDataElementUI.getDataElement();
-		ContainerBuilder<Panel> rUIBuilder   = aRowBuilder;
+		DataElement<?> rDataElement = aDataElementUI.getDataElement();
+
+		ContainerBuilder<? extends Container> rUIBuilder = aRowBuilder;
 
 		boolean bNewRow   = !rDataElement.hasFlag(SAME_ROW);
 		boolean bAddLabel = !rDataElement.hasFlag(HIDE_LABEL);

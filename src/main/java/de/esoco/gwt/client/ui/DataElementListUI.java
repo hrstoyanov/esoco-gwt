@@ -21,7 +21,7 @@ import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
-import de.esoco.ewt.component.Panel;
+import de.esoco.ewt.component.Container;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties.Layout;
@@ -106,7 +106,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		StyleData			rStyle)
 	{
 		DataElementList rDataElementList = getDataElement();
-		Panel		    rListPanel		 = null;
+		Container	    rListPanel		 = null;
 
 		Layout eDisplayMode =
 			rDataElementList.getProperty(LAYOUT, Layout.TABLE);

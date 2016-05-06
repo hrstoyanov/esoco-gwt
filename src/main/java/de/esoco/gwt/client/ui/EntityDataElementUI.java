@@ -21,6 +21,7 @@ import de.esoco.data.element.EntityDataElement;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
+import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.Tree;
 import de.esoco.ewt.event.EWTEvent;
@@ -115,11 +116,11 @@ public class EntityDataElementUI extends DataElementListUI
 	{
 		//~ Instance fields ----------------------------------------------------
 
-		private final PanelManager<Panel, PanelManager<?, ?>> rParentPanelManager;
-		private final ContainerBuilder<? extends Panel>		  rPanelBuilder;
-		private final StyleData								  rDetailStyle;
+		private final PanelManager<Container, PanelManager<?, ?>> rParentPanelManager;
+		private final ContainerBuilder<? extends Panel>			  rPanelBuilder;
+		private final StyleData									  rDetailStyle;
 
-		private PanelManager<Panel, PanelManager<?, ?>> aDetailPanelManager;
+		private PanelManager<Container, PanelManager<?, ?>> aDetailPanelManager;
 
 		//~ Constructors -------------------------------------------------------
 
@@ -132,9 +133,9 @@ public class EntityDataElementUI extends DataElementListUI
 		 *                            the tree panel
 		 */
 		public TreeDetailEventHandler(
-			PanelManager<Panel, PanelManager<?, ?>> rParentPanelManager,
-			ContainerBuilder<? extends Panel>		rPanelBuilder,
-			StyleData								rDetailStyle)
+			PanelManager<Container, PanelManager<?, ?>> rParentPanelManager,
+			ContainerBuilder<? extends Panel>			rPanelBuilder,
+			StyleData									rDetailStyle)
 		{
 			this.rParentPanelManager = rParentPanelManager;
 			this.rPanelBuilder		 = rPanelBuilder;

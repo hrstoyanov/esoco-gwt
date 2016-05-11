@@ -29,6 +29,7 @@ import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +48,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
 
 
 /********************************************************************
- * A panel manager that organizes data elements in a grid layout.
+ * A panel manager that organizes data elements in a table layout.
  *
  * @author eso
  */
@@ -372,9 +373,9 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	 */
 	@Override
 	protected ContainerBuilder<? extends Panel> createPanel(
-		ContainerBuilder<?>			   rBuilder,
-		StyleData					   rStyleData,
-		UserInterfaceProperties.Layout eDisplayMode)
+		ContainerBuilder<?> rBuilder,
+		StyleData			rStyleData,
+		Layout				eLayout)
 	{
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,

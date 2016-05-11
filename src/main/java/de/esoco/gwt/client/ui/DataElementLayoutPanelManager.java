@@ -22,13 +22,7 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
-import de.esoco.ewt.layout.ContentLayout;
-import de.esoco.ewt.layout.FillLayout;
 import de.esoco.ewt.layout.FlowLayout;
-import de.esoco.ewt.layout.FormLayout;
-import de.esoco.ewt.layout.GenericLayout;
-import de.esoco.ewt.layout.GroupLayout;
-import de.esoco.ewt.layout.MenuLayout;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
@@ -154,43 +148,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 		StyleData			rStyleData,
 		Layout				eLayout)
 	{
-		GenericLayout rLayout;
-
-		switch (eLayout)
-		{
-			case FILL:
-				rLayout = new FillLayout();
-				break;
-
-			case FLOW:
-			case GRID:
-				rLayout = new FlowLayout();
-				break;
-
-			case FORM:
-				rLayout = new FormLayout();
-				break;
-
-			case GROUP:
-				rLayout = new GroupLayout();
-				break;
-
-			case MENU:
-				rLayout = new MenuLayout();
-				break;
-
-			case HEADER:
-			case CONTENT:
-			case FOOTER:
-				rLayout = new ContentLayout(eLayout);
-				break;
-
-			default:
-				throw new IllegalStateException("Unsupported DataElementList mode " +
-												eLayout);
-		}
-
-		return rBuilder.addPanel(rStyleData, rLayout);
+		return rBuilder.addPanel(rStyleData, eLayout);
 	}
 
 	/***************************************

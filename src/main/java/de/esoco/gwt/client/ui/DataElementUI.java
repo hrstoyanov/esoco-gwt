@@ -61,6 +61,7 @@ import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.ContentType;
 import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
+import de.esoco.lib.property.UserInterfaceProperties.Layout;
 import de.esoco.lib.property.UserInterfaceProperties.ListStyle;
 import de.esoco.lib.text.TextConvert;
 
@@ -143,7 +144,8 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
-	private static UserInterfaceProperties.Layout eButtonPanelDefaultLayout = UserInterfaceProperties.Layout.TABLE;
+	private static UserInterfaceProperties.Layout eButtonPanelDefaultLayout =
+		UserInterfaceProperties.Layout.TABLE;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -314,7 +316,8 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @param eLayoutMode The new button panel default layout mode
 	 */
-	public static void setButtonPanelDefaultLayout(UserInterfaceProperties.Layout eLayoutMode)
+	public static void setButtonPanelDefaultLayout(
+		UserInterfaceProperties.Layout eLayoutMode)
 	{
 		eButtonPanelDefaultLayout = eLayoutMode;
 	}
@@ -1149,11 +1152,11 @@ public class DataElementUI<D extends DataElement<?>>
 
 		sAddStyle += " " + CSS.gfButtonPanel();
 
-		if (eLayout != UserInterfaceProperties.Layout.MENU)
+		// insert menu buttons directly into enclosing panels
+		if (eLayout != Layout.MENU)
 		{
-			// insert menu buttons directly into enclosing panels
 			GenericLayout aPanelLayout =
-				eLayout == UserInterfaceProperties.Layout.TABLE ? new GridLayout(nColumns)
+				eLayout == Layout.TABLE ? new GridLayout(nColumns)
 										: new FlowLayout();
 
 			rBuilder =

@@ -69,12 +69,10 @@ public class DataElementOrderedPanelManager extends DataElementListPanelManager
 	{
 		ContainerBuilder<? extends Panel> aPanelBuilder;
 
-		assert getDataElementList().getElementCount() <= 3 : "Element count for " +
-			   eLayout + " mode must be <= 3";
-
 		switch (eLayout)
 		{
 			case DOCK:
+				assert getDataElementList().getElementCount() <= 3 : "Element count for DOCK layout mode must be <= 3";
 				aPanelBuilder =
 					rBuilder.addPanel(rStyleData, new DockLayout(true, false));
 				break;

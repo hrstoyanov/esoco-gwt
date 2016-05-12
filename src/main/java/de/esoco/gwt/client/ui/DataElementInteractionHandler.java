@@ -20,7 +20,7 @@ import de.esoco.data.element.DataElement;
 
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
-import de.esoco.ewt.component.TextComponent;
+import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
@@ -194,7 +194,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	{
 		Set<EventType> rEventTypes = EnumSet.noneOf(EventType.class);
 
-		if (aComponent instanceof TextComponent)
+		if (aComponent instanceof TextControl)
 		{
 			if (eInputMode == InteractiveInputMode.CONTINUOUS ||
 				eInputMode == InteractiveInputMode.BOTH)

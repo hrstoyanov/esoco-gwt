@@ -20,7 +20,7 @@ import de.esoco.data.element.BigDecimalDataElement;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
-import de.esoco.ewt.component.TextComponent;
+import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.style.StyleData;
 
 import java.math.BigDecimal;
@@ -81,7 +81,7 @@ public class BigDecimalDataElementUI
 		Component			  rComponent,
 		BigDecimalDataElement rDataElement)
 	{
-		String     sText  = ((TextComponent) rComponent).getText();
+		String     sText  = ((TextControl) rComponent).getText();
 		BigDecimal rValue;
 
 		try
@@ -114,10 +114,10 @@ public class BigDecimalDataElementUI
 	 * Overridden to first invoke the input constraint conversion.
 	 *
 	 * @see #convertInputConstraintToLocale(BigDecimalDataElement)
-	 * @see DataElementUI#updateTextComponent(TextComponent)
+	 * @see DataElementUI#updateTextComponent(TextControl)
 	 */
 	@Override
-	protected void updateTextComponent(TextComponent rTextComponent)
+	protected void updateTextComponent(TextControl rTextComponent)
 	{
 		convertInputConstraintToLocale(getDataElement());
 		super.updateTextComponent(rTextComponent);

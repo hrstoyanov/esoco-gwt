@@ -40,7 +40,7 @@ import de.esoco.ewt.component.ListControl;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.component.TextArea;
-import de.esoco.ewt.component.TextComponent;
+import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.component.TextField;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
@@ -579,9 +579,9 @@ public class DataElementUI<D extends DataElement<?>>
 						updateButtons(rValues, bAllowedValuesChanged);
 					}
 				}
-				else if (aElementComponent instanceof TextComponent)
+				else if (aElementComponent instanceof TextControl)
 				{
-					updateTextComponent((TextComponent) aElementComponent);
+					updateTextComponent((TextControl) aElementComponent);
 				}
 
 				transferDataElementValueToComponent(rDataElement,
@@ -1414,7 +1414,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @return The new component
 	 */
-	protected TextComponent createTextInputComponent(
+	protected TextControl createTextInputComponent(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle,
 		D					rDataElement,
@@ -1423,7 +1423,7 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		int nRows = rDataElement.getIntProperty(ROWS, 1);
 
-		TextComponent aTextComponent;
+		TextControl aTextComponent;
 
 		if (nRows > 1 || nRows == -1)
 		{
@@ -1978,11 +1978,11 @@ public class DataElementUI<D extends DataElement<?>>
 			// ignore parsing errors TODO: check if obsolete
 		}
 
-		if (rComponent instanceof TextComponent &&
+		if (rComponent instanceof TextControl &&
 			rDataElement.hasProperty(CARET_POSITION))
 		{
 			rDataElement.setProperty(CARET_POSITION,
-									 ((TextComponent) rComponent)
+									 ((TextControl) rComponent)
 									 .getCaretPosition());
 		}
 	}
@@ -1993,7 +1993,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @param rTextComponent The component to update
 	 */
-	protected void updateTextComponent(TextComponent rTextComponent)
+	protected void updateTextComponent(TextControl rTextComponent)
 	{
 		String sConstraint  = rDataElement.getProperty(INPUT_CONSTRAINT, null);
 		String sPlaceholder = rDataElement.getProperty(PLACEHOLDER, null);

@@ -25,6 +25,7 @@ import de.esoco.data.element.EntityDataElement;
 import de.esoco.data.element.IntegerDataElement;
 import de.esoco.data.element.PeriodDataElement;
 import de.esoco.data.element.SelectionDataElement;
+import de.esoco.data.validate.HasValueList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,6 +110,10 @@ public class DataElementUIFactory
 		else if (rElement instanceof DataElementList)
 		{
 			aUI = new DataElementListUI();
+		}
+		else if (rElement.getValidator() instanceof HasValueList<?>)
+		{
+			aUI = new ValueListDataElementUI();
 		}
 		else
 		{

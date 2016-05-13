@@ -154,10 +154,10 @@ public class DataElementUI<D extends DataElement<?>>
 
 	private Label     aElementLabel;
 	private Component aElementComponent;
-	private String    sToolTip			  = null;
-	private String    sHiddenLabelHint    = null;
-	private String    sTemporaryTextStore = null;
-	private CheckBox  rOptionalCheckBox   = null;
+	private String    sToolTip		    = null;
+	private String    sHiddenLabelHint  = null;
+	private String    sTextClipboard    = null;
+	private CheckBox  rOptionalCheckBox = null;
 
 	private boolean bInteractionEnabled = true;
 	private boolean bUIEnabled		    = true;
@@ -855,11 +855,11 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Creates the standard input component to edit the value of a data element
-	 * that has no list validator. Can be overridden by subclasses to modify the
-	 * standard UI. The default implementation creates either an instance of
-	 * {@link TextField} or, if the string representation of the element's value
-	 * contains multiple lines, a {@link TextArea}.
+	 * Creates the input component to edit the value of a data element. Can be
+	 * overridden by subclasses to modify the standard UI. The default
+	 * implementation typically creates a {@link TextField} or a {@link
+	 * TextArea} but depending on the content type of the data element other
+	 * components may be created.
 	 *
 	 * @param  rBuilder     The builder to add the input component with
 	 * @param  rStyle       The style data for the component
@@ -1606,7 +1606,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (rEvent.getType() == EventType.KEY_PRESSED)
 		{
-			sTemporaryTextStore = null;
+			sTextClipboard = null;
 
 			if (rModifiers == ModifierKeys.CTRL)
 			{
@@ -1618,7 +1618,7 @@ public class DataElementUI<D extends DataElement<?>>
 						String sPhoneNumber =
 							getPhoneNumber(rField.getParent());
 
-						sTemporaryTextStore = sText;
+						sTextClipboard = sText;
 						rField.setText(sPhoneNumber);
 						rField.setSelection(0, sPhoneNumber.length());
 					}
@@ -1632,7 +1632,7 @@ public class DataElementUI<D extends DataElement<?>>
 				switch (eKeyCode)
 				{
 					case X:
-						if (sTemporaryTextStore != null)
+						if (sTextClipboard != null)
 						{
 							setPhoneNumber(rNumberFields, "");
 						}
@@ -1640,10 +1640,10 @@ public class DataElementUI<D extends DataElement<?>>
 						break;
 
 					case C:
-						if (sTemporaryTextStore != null)
+						if (sTextClipboard != null)
 						{
-							// restore original text after cut or copy
-							rField.setText(sTemporaryTextStore);
+							// restore original text after copy
+							rField.setText(sTextClipboard);
 						}
 
 						break;

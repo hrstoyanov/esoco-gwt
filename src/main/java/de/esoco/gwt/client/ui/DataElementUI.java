@@ -18,9 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.ListDataElement;
-import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.element.StringDataElement;
-import de.esoco.data.validate.HasValueList;
 import de.esoco.data.validate.ListValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
@@ -30,13 +28,11 @@ import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Button;
 import de.esoco.ewt.component.CheckBox;
-import de.esoco.ewt.component.ComboBox;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Control;
 import de.esoco.ewt.component.FileChooser;
 import de.esoco.ewt.component.Label;
-import de.esoco.ewt.component.ListControl;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.component.TextArea;
@@ -54,7 +50,6 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
-import de.esoco.lib.property.Selectable;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.ContentType;
@@ -65,12 +60,9 @@ import de.esoco.lib.text.TextConvert;
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -769,26 +761,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Creates the style data for buttons.
-	 *
-	 * @param  rDataElement The data element to determine the buttons style for
-	 *
-	 * @return The button style
-	 */
-	protected StyleData createButtonStyle(D rDataElement)
-	{
-		StyleData   rButtonStyle = StyleData.DEFAULT;
-		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
-
-		if (eContentType == ContentType.HYPERLINK)
-		{
-			rButtonStyle = rButtonStyle.setFlags(StyleFlag.HYPERLINK);
-		}
-
-		return rButtonStyle;
-	}
-
-	/***************************************
 	 * This method can be overridden by subclasses to create the user interface
 	 * for a data element that is either immutable or for display only. The
 	 * default implementation creates a label with the string-converted value of
@@ -1284,97 +1256,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Returns an array with the indices of the currently selected values. The
-	 * returned array may be empty but will never be NULL. The index values will
-	 * be sorted in ascending order.
-	 *
-	 * @param  rContext
-	 * @param  rDataElement The data element to read the current values from
-	 * @param  rAllValues   The list of all values to calculate the selection
-	 *                      indexes from
-	 *
-	 * @return The indices of the currently selected values
-	 */
-	protected int[] getCurrentSelection(UserInterfaceContext rContext,
-										D					 rDataElement,
-										List<String>		 rAllValues)
-	{
-		List<?> rCurrentValues;
-		int[]   aCurrentValueIndexes = null;
-		int     i					 = 0;
-
-		if (rDataElement instanceof ListDataElement)
-		{
-			rCurrentValues = ((ListDataElement<?>) rDataElement).getElements();
-		}
-		else
-		{
-			Object rValue = rDataElement.getValue();
-
-			rCurrentValues =
-				rValue != null ? Arrays.asList(rValue)
-							   : Collections.emptyList();
-		}
-
-		aCurrentValueIndexes = new int[rCurrentValues.size()];
-
-		for (Object rValue : rCurrentValues)
-		{
-			String sValue =
-				rContext.expandResource(convertValueToString(rDataElement,
-															 rValue));
-
-			int nIndex = rAllValues.indexOf(sValue);
-
-			if (nIndex >= 0)
-			{
-				aCurrentValueIndexes[i++] = nIndex;
-			}
-		}
-
-		Arrays.sort(aCurrentValueIndexes);
-
-		return aCurrentValueIndexes;
-	}
-
-	/***************************************
-	 * Returns the display values for a list from a value list. If the list
-	 * values are resource IDs they will be converted accordingly. If the data
-	 * element has the flag {@link UserInterfaceProperties#SORT} set and the
-	 * values are of the type {@link Comparable} the returned list will be
-	 * sorted by their natural order.
-	 *
-	 * @param  rContext     The user interface context for resource expansion
-	 * @param  rDataElement The data element
-	 *
-	 * @return The resulting list of display values
-	 */
-	protected List<String> getListValues(
-		UserInterfaceContext rContext,
-		D					 rDataElement)
-	{
-		Validator<?> rValidator = rDataElement.getValidator();
-
-		List<?>		 rRawValues  = ((HasValueList<?>) rValidator).getValues();
-		List<String> aListValues = new ArrayList<String>();
-
-		for (Object rValue : rRawValues)
-		{
-			String sValue = convertValueToString(rDataElement, rValue);
-
-			aListValues.add(rContext.expandResource(sValue));
-		}
-
-		if (rDataElement.hasFlag(UserInterfaceProperties.SORT) &&
-			aListValues.size() > 1)
-		{
-			Collections.sort(aListValues);
-		}
-
-		return aListValues;
-	}
-
-	/***************************************
 	 * Returns the enabled state of this UIs component(s).
 	 *
 	 * @return The current enabled state
@@ -1489,32 +1370,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Sets the values and the selection of a {@link ListControl} component.
-	 *
-	 * @param  rListControl      The component
-	 * @param  rValues           The values
-	 * @param  rCurrentSelection The current selection
-	 *
-	 * @return
-	 */
-	protected ListControl setListControlValues(ListControl  rListControl,
-											   List<String> rValues,
-											   int[]		rCurrentSelection)
-	{
-		for (String sValue : rValues)
-		{
-			rListControl.add(sValue);
-		}
-
-		if (rCurrentSelection != null)
-		{
-			rListControl.setSelection(rCurrentSelection);
-		}
-
-		return rListControl;
-	}
-
-	/***************************************
 	 * Initializes the handling of interaction events for a certain component if
 	 * necessary.
 	 *
@@ -1601,22 +1456,7 @@ public class DataElementUI<D extends DataElement<?>>
 		Component rComponent,
 		D		  rDataElement)
 	{
-		if (rComponent instanceof ComboBox &&
-			rDataElement instanceof ListDataElement)
-		{
-			Set<String> rValues = ((ComboBox) rComponent).getValues();
-
-			@SuppressWarnings("unchecked")
-			ListDataElement<String> rListDataElement =
-				(ListDataElement<String>) rDataElement;
-
-			// update validator to allow new values entered into the combo box
-			((StringListValidator) rListDataElement.getValidator()).getValues()
-																   .addAll(rValues);
-			rListDataElement.clear();
-			rListDataElement.addAll(rValues);
-		}
-		else if (rComponent instanceof FileChooser)
+		if (rComponent instanceof FileChooser)
 		{
 			rDataElement.setStringValue(((FileChooser) rComponent)
 										.getFilename());
@@ -1624,10 +1464,6 @@ public class DataElementUI<D extends DataElement<?>>
 		else if (rComponent instanceof TextAttribute)
 		{
 			transferTextInput((TextAttribute) rComponent, rDataElement);
-		}
-		else if (rComponent instanceof ListControl)
-		{
-			setListSelection(rComponent, rDataElement);
 		}
 		else if (rComponent instanceof Panel)
 		{
@@ -1858,27 +1694,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Sets the value of the data element from the selection of a button in a
-	 * discrete style list component.
-	 *
-	 * @param rAllButtons The list of all buttons
-	 * @param rButton     The selected button
-	 */
-	void setButtonSelection(List<Component> rAllButtons, Button rButton)
-	{
-		boolean bSelected =
-			rButton instanceof Selectable ? ((Selectable) rButton).isSelected()
-										  : false;
-
-		List<?> rValues =
-			((HasValueList<?>) rDataElement.getValidator()).getValues();
-
-		Object rButtonValue = rValues.get(rAllButtons.indexOf(rButton));
-
-		setDataElementValueFromList(rButtonValue, bSelected);
-	}
-
-	/***************************************
 	 * Package-internal method to update the data element of this instance.
 	 *
 	 * @param rNewElement    The new data element
@@ -1958,109 +1773,6 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		return sPhoneNumber;
-	}
-
-	/***************************************
-	 * Sets a value from a list control to the data element of this instance.
-	 *
-	 * @param rValue The value to set
-	 * @param bAdd   TRUE to add the value in a {@link ListDataElement}, FALSE
-	 *               to remove
-	 */
-	@SuppressWarnings("unchecked")
-	private void setDataElementValueFromList(Object rValue, boolean bAdd)
-	{
-		if (rDataElement instanceof ListDataElement)
-		{
-			ListDataElement<Object> rList =
-				(ListDataElement<Object>) rDataElement;
-
-			if (bAdd)
-			{
-				rList.addElement(rValue);
-			}
-			else
-			{
-				rList.removeElement(rValue);
-			}
-		}
-		else
-		{
-			((DataElement<Object>) rDataElement).setValue(rValue);
-		}
-	}
-
-	/***************************************
-	 * Sets the selection for data elements that are based on a list validator.
-	 *
-	 * @param rComponent   The component to read the input from
-	 * @param rDataElement The data element to set the value of
-	 */
-	private void setListSelection(Component rComponent, D rDataElement)
-	{
-		ListControl rList = (ListControl) rComponent;
-
-		if (rDataElement instanceof SelectionDataElement)
-		{
-			String sSelection = Integer.toString(rList.getSelectionIndex());
-
-			((SelectionDataElement) rDataElement).setValue(sSelection);
-		}
-		else if (rDataElement instanceof ListDataElement)
-		{
-			int[] rSelection = rList.getSelectionIndices();
-
-			((ListDataElement<?>) rDataElement).clear();
-
-			for (int nIndex : rSelection)
-			{
-				setListSelection(rList.getItem(nIndex), true);
-			}
-		}
-		else
-		{
-			setListSelection(rList.getSelectedItem(), true);
-		}
-	}
-
-	/***************************************
-	 * Sets the selection for data elements that are based on a list validator.
-	 *
-	 * @param sSelection The string value of the selection to set
-	 * @param bAdd       TRUE to add a value to a list data element, FALSE to
-	 *                   remove
-	 */
-	@SuppressWarnings("unchecked")
-	private void setListSelection(String sSelection, boolean bAdd)
-	{
-		UserInterfaceContext rContext = aElementComponent.getContext();
-
-		List<?> rValues =
-			((HasValueList<?>) rDataElement.getValidator()).getValues();
-
-		if (sSelection == null)
-		{
-			if (!(rDataElement instanceof ListDataElement))
-			{
-				((DataElement<Object>) rDataElement).setValue(null);
-			}
-		}
-		else
-		{
-			for (Object rValue : rValues)
-			{
-				String sValue =
-					rContext.expandResource(convertValueToString(rDataElement,
-																 rValue));
-
-				if (sSelection.equals(sValue))
-				{
-					setDataElementValueFromList(rValue, bAdd);
-
-					break;
-				}
-			}
-		}
 	}
 
 	/***************************************

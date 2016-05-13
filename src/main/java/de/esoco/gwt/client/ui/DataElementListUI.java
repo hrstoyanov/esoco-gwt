@@ -64,7 +64,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
-	 * Returns the {@link DataElementGridPanelManager} that is used for the
+	 * Returns the {@link DataElementTablePanelManager} that is used for the
 	 * display of the {@link DataElementList} of this instance.
 	 *
 	 * @return The panel manager or NULL for none
@@ -95,7 +95,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
-	 * Overridden to create a child {@link DataElementGridPanelManager} for the
+	 * Overridden to create a child {@link DataElementTablePanelManager} for the
 	 * data element list.
 	 *
 	 * @see DataElementUI#buildDataElementUI(ContainerBuilder, StyleData)

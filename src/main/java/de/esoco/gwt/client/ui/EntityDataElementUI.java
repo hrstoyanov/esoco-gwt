@@ -171,7 +171,7 @@ public class EntityDataElementUI extends DataElementListUI
 				if (rElement instanceof EntityDataElement)
 				{
 					aDetailPanelManager =
-						new DataElementGridPanelManager(rParentPanelManager,
+						new DataElementTablePanelManager(rParentPanelManager,
 														rElement);
 
 					aDetailPanelManager.buildIn(rPanelBuilder, rDetailStyle);

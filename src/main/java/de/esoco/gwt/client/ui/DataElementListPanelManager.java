@@ -122,7 +122,7 @@ public abstract class DataElementListPanelManager
 		else if (eLayout == Layout.TABLE)
 		{
 			aPanelManager =
-				new DataElementGridPanelManager(rParent, rDataElementList);
+				new DataElementTablePanelManager(rParent, rDataElementList);
 		}
 		else if (eLayout == Layout.INLINE)
 		{

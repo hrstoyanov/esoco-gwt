@@ -40,7 +40,7 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.client.ui.CommandResultHandler;
-import de.esoco.gwt.client.ui.DataElementGridPanelManager;
+import de.esoco.gwt.client.ui.DataElementTablePanelManager;
 import de.esoco.gwt.client.ui.DataElementListPanelManager;
 import de.esoco.gwt.client.ui.DataElementListView;
 import de.esoco.gwt.client.ui.DataElementPanelManager;
@@ -571,7 +571,7 @@ public class ProcessPanelManager
 			rParamDataElements.setProperty(RESOURCE_ID, sName);
 
 			aPanelManager =
-				new DataElementGridPanelManager(this, rParamDataElements);
+				new DataElementTablePanelManager(this, rParamDataElements);
 		}
 
 		StyleData aPanelStyle =

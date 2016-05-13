@@ -52,7 +52,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
  *
  * @author eso
  */
-public class DataElementGridPanelManager extends DataElementListPanelManager
+public class DataElementTablePanelManager extends DataElementListPanelManager
 {
 	//~ Instance fields --------------------------------------------------------
 
@@ -71,7 +71,7 @@ public class DataElementGridPanelManager extends DataElementListPanelManager
 	 * @param rDataElementList sName A name for this instance that will be set
 	 *                         as an additional GWT style name
 	 */
-	public DataElementGridPanelManager(
+	public DataElementTablePanelManager(
 		PanelManager<?, ?> rParent,
 		DataElementList    rDataElementList)
 	{

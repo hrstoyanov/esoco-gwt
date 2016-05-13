@@ -57,6 +57,7 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
+import static de.esoco.lib.property.UserInterfaceProperties.BUTTON_STYLE;
 import static de.esoco.lib.property.UserInterfaceProperties.COLUMNS;
 import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.UserInterfaceProperties.DISABLED_ELEMENTS;
@@ -195,8 +196,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	 */
 	private StyleData createButtonStyle(DataElement<?> rDataElement)
 	{
-		StyleData   rButtonStyle = StyleData.DEFAULT;
 		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
+		StyleData   rButtonStyle =
+			StyleData.DEFAULT.set(BUTTON_STYLE,
+								  rDataElement.getProperty(BUTTON_STYLE, null));
 
 		if (eContentType == ContentType.HYPERLINK)
 		{

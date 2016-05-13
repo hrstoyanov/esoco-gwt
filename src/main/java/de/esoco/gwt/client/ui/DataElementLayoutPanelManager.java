@@ -48,13 +48,13 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final Set<UserInterfaceProperties.Layout> ROW_DISPLAY_MODES =
+	private static final Set<UserInterfaceProperties.Layout> GRID_LAYOUTS =
 		EnumSet.of(UserInterfaceProperties.Layout.GRID,
 				   UserInterfaceProperties.Layout.FORM,
 				   UserInterfaceProperties.Layout.GROUP);
 
-	private static final StyleData DATA_ELEMENT_ROW_STYLE =
-		addStyles(StyleData.DEFAULT, "gfDataElementRow");
+	private static final StyleData LAYOUT_ROW_STYLE =
+		addStyles(StyleData.DEFAULT, "gfLayoutRow");
 
 	private static final StyleData DATA_ELEMENT_WRAPPER_STYLE =
 		addStyles(StyleData.DEFAULT, "gfDataElementWrapper");
@@ -88,7 +88,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 	{
 		aRowBuilder  = this;
 		nRowElements = 0;
-		bBuildGrid   = ROW_DISPLAY_MODES.contains(getLayout());
+		bBuildGrid   = GRID_LAYOUTS.contains(getLayout());
 
 		super.addComponents();
 
@@ -117,8 +117,7 @@ public class DataElementLayoutPanelManager extends DataElementListPanelManager
 			{
 				setRowStyle();
 
-				aRowBuilder  =
-					addPanel(DATA_ELEMENT_ROW_STYLE, new FlowLayout());
+				aRowBuilder  = addPanel(LAYOUT_ROW_STYLE, Layout.GRID_ROW);
 				rUIBuilder   = aRowBuilder;
 				nRowElements = 0;
 			}

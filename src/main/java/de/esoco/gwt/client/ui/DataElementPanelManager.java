@@ -22,7 +22,6 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
-import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
@@ -33,6 +32,7 @@ import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.SingleSelection;
+import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.Layout;
 import de.esoco.lib.text.TextConvert;
 
@@ -78,6 +78,11 @@ public abstract class DataElementPanelManager
 
 	private static final Set<Layout> SWITCH_LAYOUTS =
 		EnumSet.of(Layout.TABS, Layout.STACK, Layout.DECK);
+
+	private static final Set<UserInterfaceProperties.Layout> GRID_LAYOUTS =
+		EnumSet.of(UserInterfaceProperties.Layout.GRID,
+				   UserInterfaceProperties.Layout.FORM,
+				   UserInterfaceProperties.Layout.GROUP);
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -161,7 +166,17 @@ public abstract class DataElementPanelManager
 
 		Layout eLayout = rDataElementList.getProperty(LAYOUT, Layout.TABLE);
 
-		if (SWITCH_LAYOUTS.contains(eLayout))
+		if (eLayout == Layout.TABLE)
+		{
+			aPanelManager =
+				new DataElementTablePanelManager(rParent, rDataElementList);
+		}
+		else if (eLayout == Layout.INLINE)
+		{
+			aPanelManager =
+				new DataElementInlinePanelManager(rParent, rDataElementList);
+		}
+		else if (SWITCH_LAYOUTS.contains(eLayout))
 		{
 			aPanelManager =
 				new DataElementSwitchPanelManager(rParent, rDataElementList);
@@ -171,15 +186,10 @@ public abstract class DataElementPanelManager
 			aPanelManager =
 				new DataElementOrderedPanelManager(rParent, rDataElementList);
 		}
-		else if (eLayout == Layout.TABLE)
+		else if (GRID_LAYOUTS.contains(eLayout))
 		{
 			aPanelManager =
-				new DataElementTablePanelManager(rParent, rDataElementList);
-		}
-		else if (eLayout == Layout.INLINE)
-		{
-			aPanelManager =
-				new DataElementInlinePanelManager(rParent, rDataElementList);
+				new DataElementGridPanelManager(rParent, rDataElementList);
 		}
 		else
 		{
@@ -544,7 +554,7 @@ public abstract class DataElementPanelManager
 	 *
 	 * @return A container builder instance for the new panel
 	 */
-	protected abstract ContainerBuilder<? extends Panel> createPanel(
+	protected abstract ContainerBuilder<?> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
 		Layout				eLayout);

@@ -16,25 +16,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.client.ui;
 
-import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
-import de.esoco.ewt.component.Container;
-import de.esoco.ewt.component.Panel;
-import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.UserInterfaceProperties;
-import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
 import de.esoco.lib.property.UserInterfaceProperties.Layout;
-import de.esoco.lib.text.TextConvert;
-
-import java.util.EnumSet;
-import java.util.Set;
-
-import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
-import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 
 
 /********************************************************************
@@ -46,26 +33,6 @@ import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
  */
 public class DataElementLayoutPanelManager extends DataElementPanelManager
 {
-	//~ Static fields/initializers ---------------------------------------------
-
-	private static final Set<UserInterfaceProperties.Layout> GRID_LAYOUTS =
-		EnumSet.of(UserInterfaceProperties.Layout.GRID,
-				   UserInterfaceProperties.Layout.FORM,
-				   UserInterfaceProperties.Layout.GROUP);
-
-	private static final StyleData LAYOUT_ROW_STYLE =
-		addStyles(StyleData.DEFAULT, "gfLayoutRow");
-
-	private static final StyleData DATA_ELEMENT_WRAPPER_STYLE =
-		addStyles(StyleData.DEFAULT, "gfDataElementWrapper");
-
-	//~ Instance fields --------------------------------------------------------
-
-	private ContainerBuilder<? extends Container> aRowBuilder;
-
-	private int     nRowElements;
-	private boolean bBuildGrid;
-
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -84,82 +51,10 @@ public class DataElementLayoutPanelManager extends DataElementPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void addComponents()
-	{
-		aRowBuilder  = this;
-		nRowElements = 0;
-		bBuildGrid   = GRID_LAYOUTS.contains(getLayout());
-
-		super.addComponents();
-
-		// set style of the last or only row
-		setRowStyle();
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void buildDataElementUI(
-		DataElementUI<?> aDataElementUI,
-		StyleData		 rStyle)
-	{
-		DataElement<?> rDataElement = aDataElementUI.getDataElement();
-
-		ContainerBuilder<? extends Container> rUIBuilder = aRowBuilder;
-
-		boolean bNewRow   = !rDataElement.hasFlag(SAME_ROW);
-		boolean bAddLabel = !rDataElement.hasFlag(HIDE_LABEL);
-
-		if (bBuildGrid)
-		{
-			if (bNewRow)
-			{
-				setRowStyle();
-
-				aRowBuilder  = addPanel(LAYOUT_ROW_STYLE, Layout.GRID_ROW);
-				rUIBuilder   = aRowBuilder;
-				nRowElements = 0;
-			}
-
-			if (bAddLabel)
-			{
-				rUIBuilder =
-					aRowBuilder.addPanel(DATA_ELEMENT_WRAPPER_STYLE,
-										 new FlowLayout());
-
-				aDataElementUI.createElementLabel(rUIBuilder,
-												  ELEMENT_LABEL_STYLE.set(UserInterfaceProperties.LABEL_STYLE,
-																		  LabelStyle.FORM));
-			}
-		}
-
-		aDataElementUI.buildUserInterface(rUIBuilder, rStyle);
-		nRowElements++;
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected ContainerBuilder<Panel> createPanel(
-		ContainerBuilder<?> rBuilder,
-		StyleData			rStyleData,
-		Layout				eLayout)
+	protected ContainerBuilder<?> createPanel(ContainerBuilder<?> rBuilder,
+											  StyleData			  rStyleData,
+											  Layout			  eLayout)
 	{
 		return rBuilder.addPanel(rStyleData, eLayout);
-	}
-
-	/***************************************
-	 * Sets the style of a completed row of data elements.
-	 */
-	protected void setRowStyle()
-	{
-		if (nRowElements > 0 && bBuildGrid)
-		{
-			aRowBuilder.getContainer().getWidget()
-					   .addStyleName("flex " +
-									 TextConvert.numberString(nRowElements));
-		}
 	}
 }

@@ -42,7 +42,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.WIDTH;
  *
  * @author eso
  */
-public class DataElementOrderedPanelManager extends DataElementListPanelManager
+public class DataElementOrderedPanelManager extends DataElementPanelManager
 {
 	//~ Constructors -----------------------------------------------------------
 

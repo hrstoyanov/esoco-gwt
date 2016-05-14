@@ -43,7 +43,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.CURRENT_SELECTION;
  *
  * @author eso
  */
-public class DataElementSwitchPanelManager extends DataElementListPanelManager
+public class DataElementSwitchPanelManager extends DataElementPanelManager
 	implements EWTEventHandler
 {
 	//~ Instance fields --------------------------------------------------------

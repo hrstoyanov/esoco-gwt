@@ -52,7 +52,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
  *
  * @author eso
  */
-public class DataElementTablePanelManager extends DataElementListPanelManager
+public class DataElementTablePanelManager extends DataElementPanelManager
 {
 	//~ Instance fields --------------------------------------------------------
 

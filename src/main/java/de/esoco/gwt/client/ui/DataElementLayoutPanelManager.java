@@ -44,7 +44,7 @@ import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
  *
  * @author eso
  */
-public class DataElementLayoutPanelManager extends DataElementListPanelManager
+public class DataElementLayoutPanelManager extends DataElementPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 

@@ -31,7 +31,7 @@ import de.esoco.lib.property.UserInterfaceProperties.Layout;
  *
  * @author eso
  */
-public class DataElementInlinePanelManager extends DataElementListPanelManager
+public class DataElementInlinePanelManager extends DataElementPanelManager
 {
 	//~ Constructors -----------------------------------------------------------
 

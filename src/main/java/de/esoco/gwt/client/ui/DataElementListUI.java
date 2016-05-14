@@ -112,8 +112,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 			rDataElementList.getProperty(LAYOUT, Layout.TABLE);
 
 		aListPanelManager =
-			DataElementListPanelManager.newInstance(getParent(),
-													rDataElementList);
+			DataElementPanelManager.newInstance(getParent(), rDataElementList);
 
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();

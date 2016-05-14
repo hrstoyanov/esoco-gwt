@@ -40,11 +40,10 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.client.ui.CommandResultHandler;
-import de.esoco.gwt.client.ui.DataElementTablePanelManager;
-import de.esoco.gwt.client.ui.DataElementListPanelManager;
 import de.esoco.gwt.client.ui.DataElementListView;
 import de.esoco.gwt.client.ui.DataElementPanelManager;
 import de.esoco.gwt.client.ui.DataElementPanelManager.InteractiveInputHandler;
+import de.esoco.gwt.client.ui.DataElementTablePanelManager;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
 import de.esoco.gwt.shared.ProcessDescription;
@@ -551,9 +550,9 @@ public class ProcessPanelManager
 			rFirstElement.getProperty(LAYOUT, Layout.TABLE) != Layout.TABLE)
 		{
 			aPanelManager =
-				DataElementListPanelManager.newInstance(this,
-														(DataElementList)
-														rFirstElement);
+				DataElementPanelManager.newInstance(this,
+													(DataElementList)
+													rFirstElement);
 		}
 		else
 		{

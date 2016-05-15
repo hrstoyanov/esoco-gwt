@@ -50,6 +50,7 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.ContentType;
@@ -88,6 +89,8 @@ import static de.esoco.lib.property.UserInterfaceProperties.FORMAT;
 import static de.esoco.lib.property.UserInterfaceProperties.HAS_IMAGES;
 import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDDEN;
+import static de.esoco.lib.property.UserInterfaceProperties.ICON;
+import static de.esoco.lib.property.UserInterfaceProperties.ICON_SIZE;
 import static de.esoco.lib.property.UserInterfaceProperties.INPUT_CONSTRAINT;
 import static de.esoco.lib.property.UserInterfaceProperties.LABEL;
 import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
@@ -134,6 +137,9 @@ public class DataElementUI<D extends DataElement<?>>
 
 	private static UserInterfaceProperties.Layout eButtonPanelDefaultLayout =
 		Layout.TABLE;
+
+	private static final PropertyName<?>[] STYLE_PROPERTIES =
+		new PropertyName<?>[] { CSS_STYLES, MIME_TYPE, ICON, ICON_SIZE };
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -187,24 +193,11 @@ public class DataElementUI<D extends DataElement<?>>
 		DataElement<?> rDataElement,
 		StyleData	   rStyle)
 	{
-		String sStyle    = rDataElement.getProperty(STYLE, null);
-		String sMimeType = rDataElement.getProperty(MIME_TYPE, null);
-
-		Map<String, String> rCss = rDataElement.getProperty(CSS_STYLES, null);
-
-		if (rCss != null)
-		{
-			rStyle = rStyle.set(CSS_STYLES, rCss);
-		}
+		String sStyle = rDataElement.getProperty(STYLE, null);
 
 		if (sStyle != null)
 		{
 			rStyle = rStyle.append(WEB_ADDITIONAL_STYLES, sStyle);
-		}
-
-		if (sMimeType != null)
-		{
-			rStyle = rStyle.set(MIME_TYPE, sMimeType);
 		}
 
 		if (rDataElement.hasProperty(WIDTH))
@@ -236,6 +229,8 @@ public class DataElementUI<D extends DataElement<?>>
 		{
 			rStyle = rStyle.setFlags(StyleFlag.RESOURCE);
 		}
+
+		rStyle = rStyle.withProperties(rDataElement, STYLE_PROPERTIES);
 
 		return rStyle;
 	}

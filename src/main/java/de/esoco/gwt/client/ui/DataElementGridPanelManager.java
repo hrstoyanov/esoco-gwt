@@ -20,16 +20,22 @@ import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
-import de.esoco.ewt.component.Container;
-import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
 import de.esoco.lib.property.UserInterfaceProperties.Layout;
-import de.esoco.lib.text.TextConvert;
+import de.esoco.lib.property.UserInterfaceProperties.RelativeSize;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static de.esoco.lib.property.UserInterfaceProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
+import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
+import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
+import static de.esoco.lib.property.UserInterfaceProperties.RELATIVE_WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 
 
@@ -44,17 +50,16 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final StyleData LAYOUT_ROW_STYLE =
-		addStyles(StyleData.DEFAULT, "gfLayoutRow");
+	private static final StyleData FORM_LABEL_STYLE =
+		ELEMENT_LABEL_STYLE.set(LABEL_STYLE, LabelStyle.FORM);
 
-	private static final StyleData DATA_ELEMENT_WRAPPER_STYLE =
-		addStyles(StyleData.DEFAULT, "gfDataElementWrapper");
+	private static GridFormatterFactory rGridFormatterFactory =
+		new DefaultGridFormatterFactory();
 
 	//~ Instance fields --------------------------------------------------------
 
-	private ContainerBuilder<? extends Container> aRowBuilder;
-
-	private int nRowElements;
+	private Map<DataElementUI<?>, StyleData> aCurrentRow =
+		new LinkedHashMap<>();
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -68,6 +73,19 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		super(rParent, rDataElementList);
 	}
 
+	//~ Static methods ---------------------------------------------------------
+
+	/***************************************
+	 * A global configuration method to set the grid formatter for all
+	 * grid-based panels.
+	 *
+	 * @param rFactory rFormatter The global grid formatter
+	 */
+	public static void setGridFormatterFactory(GridFormatterFactory rFactory)
+	{
+		rGridFormatterFactory = rFactory;
+	}
+
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
@@ -76,13 +94,71 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	@Override
 	protected void addComponents()
 	{
-		aRowBuilder  = this;
-		nRowElements = 0;
-
 		super.addComponents();
 
-		// set style of the last or only row
-		setRowStyle();
+		// build last row
+		buildCurrentRow();
+	}
+
+	/***************************************
+	 * Sets the style of a completed row of data elements.
+	 */
+	protected void buildCurrentRow()
+	{
+		GridFormatter aGridFormatter =
+			rGridFormatterFactory.createGridFormatter(getDataElementList());
+
+		ContainerBuilder<?> aRowBuilder   = this;
+		boolean			    bFirstElement = true;
+
+		for (Entry<DataElementUI<?>, StyleData> rUiAndStyle :
+			 aCurrentRow.entrySet())
+		{
+			DataElementUI<?> rUI    = rUiAndStyle.getKey();
+			StyleData		 rStyle = rUiAndStyle.getValue();
+
+			Layout eElementLayout =
+				rUI.getDataElement().getProperty(LAYOUT, null);
+
+			if (eElementLayout == Layout.GRID_ROW && aCurrentRow.size() == 1)
+			{
+				rStyle =
+					aGridFormatter.applyRowStyle(aCurrentRow.keySet(), rStyle);
+			}
+			else if (bFirstElement)
+			{
+				StyleData rRowStyle =
+					aGridFormatter.applyRowStyle(aCurrentRow.keySet(),
+												 StyleData.DEFAULT);
+
+				aRowBuilder   = addPanel(rRowStyle, Layout.GRID_ROW);
+				bFirstElement = false;
+			}
+
+			ContainerBuilder<?> rUiBuilder = aRowBuilder;
+
+			boolean bAddLabel = !rUI.getDataElement().hasFlag(HIDE_LABEL);
+
+			if (bAddLabel || eElementLayout != Layout.GRID_COLUMN)
+			{
+				StyleData aColumnStyle =
+					aGridFormatter.applyColumnStyle(rUI, StyleData.DEFAULT);
+
+				rUiBuilder =
+					aRowBuilder.addPanel(aColumnStyle, Layout.GRID_COLUMN);
+
+				if (bAddLabel)
+				{
+					rUI.createElementLabel(rUiBuilder, FORM_LABEL_STYLE);
+				}
+			}
+			else if (eElementLayout != Layout.GRID_ROW)
+			{
+				rStyle = aGridFormatter.applyColumnStyle(rUI, rStyle);
+			}
+
+			rUI.buildUserInterface(rUiBuilder, rStyle);
+		}
 	}
 
 	/***************************************
@@ -93,47 +169,185 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		DataElementUI<?> aDataElementUI,
 		StyleData		 rStyle)
 	{
-		DataElement<?> rDataElement = aDataElementUI.getDataElement();
-
-		ContainerBuilder<? extends Container> rUIBuilder = aRowBuilder;
-
-		boolean bNewRow   = !rDataElement.hasFlag(SAME_ROW);
-		boolean bAddLabel = !rDataElement.hasFlag(HIDE_LABEL);
-
-		if (bNewRow)
+		if (!aDataElementUI.getDataElement().hasFlag(SAME_ROW))
 		{
-			setRowStyle();
-
-			aRowBuilder  = addPanel(LAYOUT_ROW_STYLE, Layout.GRID_ROW);
-			rUIBuilder   = aRowBuilder;
-			nRowElements = 0;
+			buildCurrentRow();
+			aCurrentRow.clear();
 		}
 
-		if (bAddLabel)
-		{
-			rUIBuilder =
-				aRowBuilder.addPanel(DATA_ELEMENT_WRAPPER_STYLE,
-									 new FlowLayout());
-
-			aDataElementUI.createElementLabel(rUIBuilder,
-											  ELEMENT_LABEL_STYLE.set(UserInterfaceProperties.LABEL_STYLE,
-																	  LabelStyle.FORM));
-		}
-
-		aDataElementUI.buildUserInterface(rUIBuilder, rStyle);
-		nRowElements++;
+		aCurrentRow.put(aDataElementUI, rStyle);
 	}
 
-	/***************************************
-	 * Sets the style of a completed row of data elements.
+	//~ Inner Interfaces -------------------------------------------------------
+
+	/********************************************************************
+	 * An interface for factories that create instances of {@link
+	 * GridFormatter}.
+	 *
+	 * @author eso
 	 */
-	protected void setRowStyle()
+	public static interface GridFormatterFactory
 	{
-		if (nRowElements > 0)
+		//~ Methods ------------------------------------------------------------
+
+		/***************************************
+		 * Creates a new grid formatter instance.
+		 *
+		 * @param  rGridElement The data element to create the formatter for
+		 *
+		 * @return The new grid formatter
+		 */
+		public GridFormatter createGridFormatter(DataElementList rGridElement);
+	}
+
+	//~ Inner Classes ----------------------------------------------------------
+
+	/********************************************************************
+	 * A {@link GridFormatter} implementation that uses a fixed column count for
+	 * the grid size calculation.
+	 *
+	 * @author eso
+	 */
+	public static class ColumnCountGridFormatter extends GridFormatter
+	{
+		//~ Instance fields ----------------------------------------------------
+
+		private int    nGridColumns;
+		private String sPrefix;
+
+		private int nRowElementCount;
+
+		//~ Constructors -------------------------------------------------------
+
+		/***************************************
+		 * Creates a new instance.
+		 *
+		 * @param nGridColumns The number of grid columns
+		 * @param sPrefix      The prefix for column styles
+		 */
+		public ColumnCountGridFormatter(int nGridColumns, String sPrefix)
 		{
-			aRowBuilder.getContainer().getWidget()
-					   .addStyleName("flex " +
-									 TextConvert.numberString(nRowElements));
+			this.nGridColumns = nGridColumns;
+			this.sPrefix	  = sPrefix;
+		}
+
+		//~ Methods ------------------------------------------------------------
+
+		/***************************************
+		 * {@inheritDoc}
+		 */
+		@Override
+		public StyleData applyColumnStyle(
+			DataElementUI<?> rColumUI,
+			StyleData		 rColumnStyle)
+		{
+			DataElement<?> rDataElement = rColumUI.getDataElement();
+
+			@SuppressWarnings("boxing")
+			int nElementColumns = rDataElement.getProperty(COLUMN_SPAN, -1);
+
+			if (nElementColumns == -1)
+			{
+				RelativeSize eRelativeWidth =
+					rDataElement.getProperty(RELATIVE_WIDTH, null);
+
+				nElementColumns =
+					nGridColumns /
+					(eRelativeWidth != null ? eRelativeWidth.ordinal() + 1
+											: nRowElementCount);
+			}
+
+			rColumnStyle = addStyles(rColumnStyle, sPrefix + nElementColumns);
+
+			return rColumnStyle;
+		}
+
+		/***************************************
+		 * {@inheritDoc}
+		 */
+		@Override
+		public StyleData applyRowStyle(
+			Collection<DataElementUI<?>> rRowUIs,
+			StyleData					 rRowStyle)
+		{
+			nRowElementCount = rRowUIs.size();
+
+			return super.applyRowStyle(rRowUIs, rRowStyle);
+		}
+	}
+
+	/********************************************************************
+	 * A default grid formatter factory that returns instances of {@link
+	 * GridFormatter} which returns the input styles unchanged.
+	 *
+	 * @author eso
+	 */
+	public static class DefaultGridFormatterFactory
+		implements GridFormatterFactory
+	{
+		//~ Methods ------------------------------------------------------------
+
+		/***************************************
+		 * {@inheritDoc}
+		 */
+		@Override
+		public GridFormatter createGridFormatter(DataElementList rGridElement)
+		{
+			return new GridFormatter();
+		}
+	}
+
+	/********************************************************************
+	 * An interface that defines the formatting of grid data elements. Can be
+	 * subclassed by an UI extension to provide the formatting for it's grid
+	 * layout mechanism. The row style method will always be invoked first and
+	 * then the column style method for each column UI. Therefore
+	 * implementations may cache aggregated data from the row style invocation
+	 * to refer to it during the column formatting.
+	 *
+	 * @author eso
+	 */
+	public static class GridFormatter
+	{
+		//~ Methods ------------------------------------------------------------
+
+		/***************************************
+		 * This method will be invoked to apply the style of a column in the
+		 * grid layout to the given style data. The default implementation
+		 * simply returns the original style object.
+		 *
+		 * @param  rColumUI     The data element UI of the column
+		 * @param  rColumnStyle The original column style to apply the layout
+		 *                      styles to
+		 *
+		 * @return The row style data (a new instance if modified as {@link
+		 *         StyleData} is immutable)
+		 */
+		public StyleData applyColumnStyle(
+			DataElementUI<?> rColumUI,
+			StyleData		 rColumnStyle)
+		{
+			return rColumnStyle;
+		}
+
+		/***************************************
+		 * This method will be invoked to apply the style of a row in the grid
+		 * layout to the given style data. The default implementation simply
+		 * returns the original style object.
+		 *
+		 * @param  rRowUIs   The data element UIs for the data elements in the
+		 *                   row
+		 * @param  rRowStyle The original row style to apply the layout styles
+		 *                   to
+		 *
+		 * @return The row style data (a new instance if modified as {@link
+		 *         StyleData} is immutable)
+		 */
+		public StyleData applyRowStyle(
+			Collection<DataElementUI<?>> rRowUIs,
+			StyleData					 rRowStyle)
+		{
+			return rRowStyle;
 		}
 	}
 }

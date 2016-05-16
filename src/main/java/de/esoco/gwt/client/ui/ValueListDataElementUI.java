@@ -40,12 +40,11 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
-
+import de.esoco.lib.property.ContentType;
+import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.ListStyle;
 import de.esoco.lib.property.Selectable;
 import de.esoco.lib.property.UserInterfaceProperties;
-import de.esoco.lib.property.UserInterfaceProperties.ContentType;
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
-import de.esoco.lib.property.UserInterfaceProperties.ListStyle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,12 +56,12 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
+import static de.esoco.lib.property.LayoutProperties.COLUMNS;
+import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.UserInterfaceProperties.BUTTON_STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.COLUMNS;
 import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.UserInterfaceProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.UserInterfaceProperties.LIST_STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.ROWS;
 
 
 /********************************************************************
@@ -257,7 +256,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	{
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
-		UserInterfaceProperties.Layout eLayout =
+		Layout eLayout =
 			rDataElement.getProperty(UserInterfaceProperties.LAYOUT,
 									 getButtonPanelDefaultLayout());
 

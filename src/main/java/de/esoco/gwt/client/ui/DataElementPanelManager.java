@@ -31,9 +31,8 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.SingleSelection;
-import de.esoco.lib.property.UserInterfaceProperties;
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
 import de.esoco.lib.text.TextConvert;
 
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
+import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
 
@@ -79,10 +78,8 @@ public abstract class DataElementPanelManager
 	private static final Set<Layout> SWITCH_LAYOUTS =
 		EnumSet.of(Layout.TABS, Layout.STACK, Layout.DECK);
 
-	private static final Set<UserInterfaceProperties.Layout> GRID_LAYOUTS =
-		EnumSet.of(UserInterfaceProperties.Layout.GRID,
-				   UserInterfaceProperties.Layout.FORM,
-				   UserInterfaceProperties.Layout.GROUP);
+	private static final Set<Layout> GRID_LAYOUTS =
+		EnumSet.of(Layout.GRID, Layout.FORM, Layout.GROUP);
 
 	//~ Instance fields --------------------------------------------------------
 

@@ -21,21 +21,20 @@ import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.style.StyleData;
-
-import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
-import de.esoco.lib.property.UserInterfaceProperties.RelativeSize;
+import de.esoco.lib.property.LabelStyle;
+import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.RelativeSize;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static de.esoco.lib.property.UserInterfaceProperties.COLUMN_SPAN;
+import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
+import static de.esoco.lib.property.LayoutProperties.LAYOUT;
+import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
 import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
-import static de.esoco.lib.property.UserInterfaceProperties.RELATIVE_WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 
 

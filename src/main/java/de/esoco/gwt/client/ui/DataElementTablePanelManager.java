@@ -28,21 +28,21 @@ import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 
+import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.UserInterfaceProperties;
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static de.esoco.lib.property.UserInterfaceProperties.COLUMN_SPAN;
+import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
+import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
+import static de.esoco.lib.property.LayoutProperties.HTML_WIDTH;
+import static de.esoco.lib.property.LayoutProperties.ROW_SPAN;
 import static de.esoco.lib.property.UserInterfaceProperties.HEADER_LABEL;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
-import static de.esoco.lib.property.UserInterfaceProperties.HTML_HEIGHT;
-import static de.esoco.lib.property.UserInterfaceProperties.HTML_WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.INITIAL_FOCUS;
-import static de.esoco.lib.property.UserInterfaceProperties.ROW_SPAN;
 import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
 import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
 

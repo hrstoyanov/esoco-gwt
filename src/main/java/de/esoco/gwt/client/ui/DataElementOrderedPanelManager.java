@@ -25,14 +25,14 @@ import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
+import de.esoco.lib.property.Layout;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
+import static de.esoco.lib.property.LayoutProperties.HEIGHT;
+import static de.esoco.lib.property.LayoutProperties.WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.VERTICAL;
-import static de.esoco.lib.property.UserInterfaceProperties.WIDTH;
 
 
 /********************************************************************

@@ -25,8 +25,7 @@ import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.ProgressBar;
 import de.esoco.ewt.component.Spinner;
 import de.esoco.ewt.style.StyleData;
-
-import de.esoco.lib.property.UserInterfaceProperties.ContentType;
+import de.esoco.lib.property.ContentType;
 
 import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
 

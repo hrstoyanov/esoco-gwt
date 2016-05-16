@@ -26,10 +26,9 @@ import de.esoco.ewt.component.DateField;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
-
+import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.DateAttribute;
-import de.esoco.lib.property.UserInterfaceProperties.ContentType;
-import de.esoco.lib.property.UserInterfaceProperties.InteractiveInputMode;
+import de.esoco.lib.property.InteractiveInputMode;
 
 import java.util.Collections;
 import java.util.Date;

@@ -24,9 +24,8 @@ import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
-
+import de.esoco.lib.property.InteractiveInputMode;
 import de.esoco.lib.property.SingleSelection;
-import de.esoco.lib.property.UserInterfaceProperties.InteractiveInputMode;
 
 import java.util.EnumSet;
 import java.util.List;

@@ -34,6 +34,7 @@ import de.esoco.gwt.shared.ServiceException;
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.UserInterfaceProperties;
+import de.esoco.lib.property.ViewDisplayType;
 import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
 import de.esoco.process.ProcessDefinition;
@@ -494,7 +495,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				ViewFragment aViewFragment =
 					new ViewFragment("UI_INSPECTOR",
 									 new EditInteractionParameters(rParams),
-									 UserInterfaceProperties.ViewDisplayType.VIEW);
+									 ViewDisplayType.VIEW);
 
 				aViewFragment.show(((FragmentInteraction) rInteractionStep)
 								   .getRootFragment());

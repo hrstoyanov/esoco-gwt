@@ -49,13 +49,12 @@ import de.esoco.ewt.style.StyleFlag;
 
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
-
+import de.esoco.lib.property.ContentType;
+import de.esoco.lib.property.LabelStyle;
+import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
-import de.esoco.lib.property.UserInterfaceProperties.ContentType;
-import de.esoco.lib.property.UserInterfaceProperties.LabelStyle;
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
 import de.esoco.lib.text.TextConvert;
 
 import java.math.BigDecimal;
@@ -78,8 +77,11 @@ import static de.esoco.data.element.DataElement.ITEM_RESOURCE_PREFIX;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
+import static de.esoco.lib.property.LayoutProperties.COLUMNS;
+import static de.esoco.lib.property.LayoutProperties.HEIGHT;
+import static de.esoco.lib.property.LayoutProperties.ROWS;
+import static de.esoco.lib.property.LayoutProperties.WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.CARET_POSITION;
-import static de.esoco.lib.property.UserInterfaceProperties.COLUMNS;
 import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.UserInterfaceProperties.CSS_STYLES;
 import static de.esoco.lib.property.UserInterfaceProperties.DISABLED;
@@ -87,7 +89,6 @@ import static de.esoco.lib.property.UserInterfaceProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.UserInterfaceProperties.EDITABLE;
 import static de.esoco.lib.property.UserInterfaceProperties.FORMAT;
 import static de.esoco.lib.property.UserInterfaceProperties.HAS_IMAGES;
-import static de.esoco.lib.property.UserInterfaceProperties.HEIGHT;
 import static de.esoco.lib.property.UserInterfaceProperties.HIDDEN;
 import static de.esoco.lib.property.UserInterfaceProperties.ICON;
 import static de.esoco.lib.property.UserInterfaceProperties.ICON_SIZE;
@@ -101,14 +102,12 @@ import static de.esoco.lib.property.UserInterfaceProperties.NO_WRAP;
 import static de.esoco.lib.property.UserInterfaceProperties.PLACEHOLDER;
 import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE;
 import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
-import static de.esoco.lib.property.UserInterfaceProperties.ROWS;
 import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
 import static de.esoco.lib.property.UserInterfaceProperties.TOOLTIP;
 import static de.esoco.lib.property.UserInterfaceProperties.URL;
 import static de.esoco.lib.property.UserInterfaceProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.UserInterfaceProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.UserInterfaceProperties.VERTICAL;
-import static de.esoco.lib.property.UserInterfaceProperties.WIDTH;
 import static de.esoco.lib.property.UserInterfaceProperties.WRAP;
 
 
@@ -135,8 +134,7 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
-	private static UserInterfaceProperties.Layout eButtonPanelDefaultLayout =
-		Layout.TABLE;
+	private static Layout eButtonPanelDefaultLayout = Layout.TABLE;
 
 	private static final PropertyName<?>[] STYLE_PROPERTIES =
 		new PropertyName<?>[] { CSS_STYLES, MIME_TYPE, ICON, ICON_SIZE };
@@ -240,7 +238,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @return The default layout mode
 	 */
-	public static UserInterfaceProperties.Layout getButtonPanelDefaultLayout()
+	public static Layout getButtonPanelDefaultLayout()
 	{
 		return eButtonPanelDefaultLayout;
 	}
@@ -299,8 +297,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @param eLayoutMode The new button panel default layout mode
 	 */
-	public static void setButtonPanelDefaultLayout(
-		UserInterfaceProperties.Layout eLayoutMode)
+	public static void setButtonPanelDefaultLayout(Layout eLayoutMode)
 	{
 		eButtonPanelDefaultLayout = eLayoutMode;
 	}

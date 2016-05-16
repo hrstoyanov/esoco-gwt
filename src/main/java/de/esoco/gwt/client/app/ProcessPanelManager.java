@@ -52,7 +52,7 @@ import de.esoco.gwt.shared.ProcessState;
 import de.esoco.gwt.shared.ProcessState.ProcessExecutionMode;
 import de.esoco.gwt.shared.ServiceException;
 
-import de.esoco.lib.property.UserInterfaceProperties.Layout;
+import de.esoco.lib.property.Layout;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
-import static de.esoco.lib.property.UserInterfaceProperties.LAYOUT;
+import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
 import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
 

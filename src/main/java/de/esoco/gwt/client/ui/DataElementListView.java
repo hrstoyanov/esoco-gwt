@@ -26,13 +26,12 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
-
-import de.esoco.lib.property.UserInterfaceProperties.ViewDisplayType;
+import de.esoco.lib.property.ViewDisplayType;
 
 import java.util.Collection;
 import java.util.Map;
 
-import static de.esoco.lib.property.UserInterfaceProperties.VIEW_DISPLAY_TYPE;
+import static de.esoco.lib.property.LayoutProperties.VIEW_DISPLAY_TYPE;
 
 
 /********************************************************************

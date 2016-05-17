@@ -40,6 +40,7 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
+
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.ListStyle;
@@ -56,12 +57,12 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
+import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
-import static de.esoco.lib.property.UserInterfaceProperties.BUTTON_STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
-import static de.esoco.lib.property.UserInterfaceProperties.DISABLED_ELEMENTS;
-import static de.esoco.lib.property.UserInterfaceProperties.LIST_STYLE;
+import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
+import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
+import static de.esoco.lib.property.StyleProperties.LIST_STYLE;
 
 
 /********************************************************************
@@ -71,8 +72,26 @@ import static de.esoco.lib.property.UserInterfaceProperties.LIST_STYLE;
  * @author eso
  */
 public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
+	implements EWTEventHandler
 {
+	//~ Instance fields --------------------------------------------------------
+
+	private List<Component> aListButtons;
+
 	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * Handles the action event for list buttons.
+	 *
+	 * @see EWTEventHandler#handleEvent(EWTEvent)
+	 */
+	@Override
+	public void handleEvent(EWTEvent rEvent)
+	{
+		setButtonSelection(getDataElement(),
+						   aListButtons,
+						   (Button) rEvent.getSource());
+	}
 
 	/***************************************
 	 * {@inheritDoc}
@@ -277,10 +296,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		}
 
 		final List<Component> aButtons =
-			createListButtons(rBuilder,
-							  rDataElement,
-							  rButtonLabels,
-							  eListStyle);
+			createListButtons(rBuilder, rButtonLabels, eListStyle);
 
 		applyCurrentSelection(rCurrentSelection, aButtons);
 
@@ -291,36 +307,22 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	 * Creates buttons for a list of labels.
 	 *
 	 * @param  rBuilder      The builder to create the buttons with
-	 * @param  rDataElement  The data element to create the buttons from
 	 * @param  rButtonLabels The labels of the buttons to create
 	 * @param  eListStyle    The list style of the buttons
 	 *
 	 * @return A list containing the buttons that have been created
 	 */
-	private List<Component> createListButtons(
-		ContainerBuilder<?>  rBuilder,
-		final DataElement<?> rDataElement,
-		List<String>		 rButtonLabels,
-		ListStyle			 eListStyle)
+	private List<Component> createListButtons(ContainerBuilder<?> rBuilder,
+											  List<String>		  rButtonLabels,
+											  ListStyle			  eListStyle)
 	{
-		final List<Component> aButtons = new ArrayList<>(rButtonLabels.size());
+		DataElement<?> rDataElement = getDataElement();
+		StyleData	   rButtonStyle = createButtonStyle(rDataElement);
+		boolean		   bMultiselect = rDataElement instanceof ListDataElement;
+		String		   sDisabled    =
+			rDataElement.getProperty(DISABLED_ELEMENTS, "");
 
-		EWTEventHandler aButtonEventHandler =
-			new EWTEventHandler()
-			{
-				@Override
-				public void handleEvent(EWTEvent rEvent)
-				{
-					setButtonSelection(rDataElement,
-									   aButtons,
-									   (Button) rEvent.getSource());
-				}
-			};
-
-		String  sDisabled    = rDataElement.getProperty(DISABLED_ELEMENTS, "");
-		boolean bMultiselect = rDataElement instanceof ListDataElement;
-
-		StyleData rButtonStyle = createButtonStyle(rDataElement);
+		aListButtons = new ArrayList<>(rButtonLabels.size());
 
 		int nValueIndex = 0;
 
@@ -359,11 +361,11 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 				aButton.setEnabled(false);
 			}
 
-			aButton.addEventListener(EventType.ACTION, aButtonEventHandler);
-			aButtons.add(aButton);
+			aButton.addEventListener(EventType.ACTION, this);
+			aListButtons.add(aButton);
 		}
 
-		return aButtons;
+		return aListButtons;
 	}
 
 	/***************************************
@@ -767,10 +769,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 				rContainer.clear();
 
 				rButtons =
-					createListButtons(aBuilder,
-									  rDataElement,
-									  rButtonLabels,
-									  eListStyle);
+					createListButtons(aBuilder, rButtonLabels, eListStyle);
 
 				setupInteractionHandling(rContainer, true);
 			}

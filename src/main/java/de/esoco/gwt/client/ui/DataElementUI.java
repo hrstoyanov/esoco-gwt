@@ -49,6 +49,7 @@ import de.esoco.ewt.style.StyleFlag;
 
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
+
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
@@ -77,38 +78,40 @@ import static de.esoco.data.element.DataElement.ITEM_RESOURCE_PREFIX;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
+import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.ContentProperties.FORMAT;
+import static de.esoco.lib.property.ContentProperties.ICON;
+import static de.esoco.lib.property.ContentProperties.ICON_ALIGNMENT;
+import static de.esoco.lib.property.ContentProperties.ICON_COLOR;
+import static de.esoco.lib.property.ContentProperties.ICON_SIZE;
+import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
+import static de.esoco.lib.property.ContentProperties.LABEL;
+import static de.esoco.lib.property.ContentProperties.MIME_TYPE;
+import static de.esoco.lib.property.ContentProperties.NO_RESOURCE_PREFIX;
+import static de.esoco.lib.property.ContentProperties.PLACEHOLDER;
+import static de.esoco.lib.property.ContentProperties.RESOURCE;
+import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
+import static de.esoco.lib.property.ContentProperties.TOOLTIP;
+import static de.esoco.lib.property.ContentProperties.URL;
+import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.LayoutProperties.WIDTH;
-import static de.esoco.lib.property.UserInterfaceProperties.CARET_POSITION;
-import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
-import static de.esoco.lib.property.UserInterfaceProperties.CSS_STYLES;
-import static de.esoco.lib.property.UserInterfaceProperties.DISABLED;
-import static de.esoco.lib.property.UserInterfaceProperties.DISABLED_ELEMENTS;
-import static de.esoco.lib.property.UserInterfaceProperties.EDITABLE;
-import static de.esoco.lib.property.UserInterfaceProperties.FORMAT;
-import static de.esoco.lib.property.UserInterfaceProperties.HAS_IMAGES;
-import static de.esoco.lib.property.UserInterfaceProperties.HIDDEN;
-import static de.esoco.lib.property.UserInterfaceProperties.ICON;
-import static de.esoco.lib.property.UserInterfaceProperties.ICON_SIZE;
-import static de.esoco.lib.property.UserInterfaceProperties.INPUT_CONSTRAINT;
-import static de.esoco.lib.property.UserInterfaceProperties.LABEL;
-import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.MIME_TYPE;
-import static de.esoco.lib.property.UserInterfaceProperties.NO_INTERACTION_LOCK;
-import static de.esoco.lib.property.UserInterfaceProperties.NO_RESOURCE_PREFIX;
-import static de.esoco.lib.property.UserInterfaceProperties.NO_WRAP;
-import static de.esoco.lib.property.UserInterfaceProperties.PLACEHOLDER;
-import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE;
-import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
-import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.TOOLTIP;
-import static de.esoco.lib.property.UserInterfaceProperties.URL;
-import static de.esoco.lib.property.UserInterfaceProperties.VALUE_CHANGED;
-import static de.esoco.lib.property.UserInterfaceProperties.VALUE_RESOURCE_PREFIX;
-import static de.esoco.lib.property.UserInterfaceProperties.VERTICAL;
-import static de.esoco.lib.property.UserInterfaceProperties.WRAP;
+import static de.esoco.lib.property.StateProperties.CARET_POSITION;
+import static de.esoco.lib.property.StateProperties.DISABLED;
+import static de.esoco.lib.property.StateProperties.HIDDEN;
+import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
+import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
+import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
+import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
+import static de.esoco.lib.property.StyleProperties.EDITABLE;
+import static de.esoco.lib.property.StyleProperties.HAS_IMAGES;
+import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
+import static de.esoco.lib.property.StyleProperties.NO_WRAP;
+import static de.esoco.lib.property.StyleProperties.STYLE;
+import static de.esoco.lib.property.StyleProperties.VERTICAL;
+import static de.esoco.lib.property.StyleProperties.WRAP;
 
 
 /********************************************************************
@@ -137,7 +140,10 @@ public class DataElementUI<D extends DataElement<?>>
 	private static Layout eButtonPanelDefaultLayout = Layout.TABLE;
 
 	private static final PropertyName<?>[] STYLE_PROPERTIES =
-		new PropertyName<?>[] { CSS_STYLES, MIME_TYPE, ICON, ICON_SIZE };
+		new PropertyName<?>[]
+		{
+			CSS_STYLES, MIME_TYPE, ICON, ICON_SIZE, ICON_COLOR, ICON_ALIGNMENT
+		};
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };

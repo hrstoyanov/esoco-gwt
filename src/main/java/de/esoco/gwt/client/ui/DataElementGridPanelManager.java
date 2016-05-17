@@ -21,6 +21,7 @@ import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.style.StyleData;
+
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.RelativeSize;
@@ -33,9 +34,9 @@ import java.util.Map.Entry;
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
-import static de.esoco.lib.property.UserInterfaceProperties.HIDE_LABEL;
-import static de.esoco.lib.property.UserInterfaceProperties.LABEL_STYLE;
-import static de.esoco.lib.property.UserInterfaceProperties.SAME_ROW;
+import static de.esoco.lib.property.LayoutProperties.SAME_ROW;
+import static de.esoco.lib.property.StyleProperties.HIDE_LABEL;
+import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 
 
 /********************************************************************
@@ -250,10 +251,14 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 				RelativeSize eRelativeWidth =
 					rDataElement.getProperty(RELATIVE_WIDTH, null);
 
-				nElementColumns =
-					nGridColumns /
-					(eRelativeWidth != null ? eRelativeWidth.ordinal() + 1
-											: nRowElementCount);
+				if (eRelativeWidth != null)
+				{
+					nElementColumns = eRelativeWidth.calcSize(nGridColumns);
+				}
+				else
+				{
+					nElementColumns = nGridColumns / nRowElementCount;
+				}
 			}
 
 			rColumnStyle = addStyles(rColumnStyle, sPrefix + nElementColumns);

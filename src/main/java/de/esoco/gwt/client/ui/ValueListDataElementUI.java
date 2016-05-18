@@ -44,6 +44,7 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.ListStyle;
+import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.Selectable;
 import de.esoco.lib.property.UserInterfaceProperties;
 
@@ -58,6 +59,9 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.ContentProperties.ICON_ALIGNMENT;
+import static de.esoco.lib.property.ContentProperties.ICON_COLOR;
+import static de.esoco.lib.property.ContentProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
@@ -74,6 +78,14 @@ import static de.esoco.lib.property.StyleProperties.LIST_STYLE;
 public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	implements EWTEventHandler
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final PropertyName<?>[] BUTTON_STYLE_PROPERTIES =
+		new PropertyName<?>[]
+		{
+			BUTTON_STYLE, ICON_SIZE, ICON_COLOR, ICON_ALIGNMENT
+		};
+
 	//~ Instance fields --------------------------------------------------------
 
 	private List<Component> aListButtons;
@@ -214,12 +226,12 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	 */
 	private StyleData createButtonStyle(DataElement<?> rDataElement)
 	{
-		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
-		StyleData   rButtonStyle =
-			StyleData.DEFAULT.set(BUTTON_STYLE,
-								  rDataElement.getProperty(BUTTON_STYLE, null));
+		StyleData rButtonStyle =
+			StyleData.DEFAULT.withProperties(rDataElement,
+											 BUTTON_STYLE_PROPERTIES);
 
-		if (eContentType == ContentType.HYPERLINK)
+		if (rDataElement.getProperty(CONTENT_TYPE, null) ==
+			ContentType.HYPERLINK)
 		{
 			rButtonStyle = rButtonStyle.setFlags(StyleFlag.HYPERLINK);
 		}

@@ -43,6 +43,7 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.KeyCode;
 import de.esoco.ewt.event.ModifierKeys;
+import de.esoco.ewt.graphics.Image;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
@@ -744,7 +745,8 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (sValue.length() > 0 && bImageValue)
 		{
-			if (sValue.startsWith("data:"))
+			if (sValue.charAt(1) == Image.IMAGE_PREFIX_SEPARATOR &&
+				sValue.charAt(0) == Image.IMAGE_DATA_PREFIX)
 			{
 				sValue = "#" + sValue;
 			}

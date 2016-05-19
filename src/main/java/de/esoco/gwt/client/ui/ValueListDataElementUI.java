@@ -59,13 +59,13 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
-import static de.esoco.lib.property.ContentProperties.ICON_ALIGNMENT;
-import static de.esoco.lib.property.ContentProperties.ICON_COLOR;
-import static de.esoco.lib.property.ContentProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
+import static de.esoco.lib.property.StyleProperties.ICON_ALIGNMENT;
+import static de.esoco.lib.property.StyleProperties.ICON_COLOR;
+import static de.esoco.lib.property.StyleProperties.ICON_SIZE;
 import static de.esoco.lib.property.StyleProperties.LIST_STYLE;
 
 

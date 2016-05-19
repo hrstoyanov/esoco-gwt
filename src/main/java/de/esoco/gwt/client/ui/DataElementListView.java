@@ -26,6 +26,7 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
+
 import de.esoco.lib.property.ViewDisplayType;
 
 import java.util.Collection;

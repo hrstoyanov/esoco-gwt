@@ -65,9 +65,9 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
+import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
-import static de.esoco.lib.property.UserInterfaceProperties.RESOURCE_ID;
-import static de.esoco.lib.property.UserInterfaceProperties.STYLE;
+import static de.esoco.lib.property.StyleProperties.STYLE;
 
 
 /********************************************************************

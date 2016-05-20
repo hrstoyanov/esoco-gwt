@@ -133,7 +133,7 @@ public class DataElementUI<D extends DataElement<?>>
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";
 
 	/** The default suffix for label strings. */
-	protected static final String LABEL_SUFFIX = ":";
+	protected static String sLabelSuffix = ":";
 
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
@@ -243,7 +243,9 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Returns the default layout mode used for button panels.
 	 *
-	 * @return The default layout mode
+	 * @return   The default layout mode
+	 *
+	 * @category Configuration
 	 */
 	public static Layout getButtonPanelDefaultLayout()
 	{
@@ -302,11 +304,26 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Sets the default layout mode to be used for button panels.
 	 *
-	 * @param eLayoutMode The new button panel default layout mode
+	 * @param    eLayoutMode The new button panel default layout mode
+	 *
+	 * @category Configuration
 	 */
 	public static void setButtonPanelDefaultLayout(Layout eLayoutMode)
 	{
 		eButtonPanelDefaultLayout = eLayoutMode;
+	}
+
+	/***************************************
+	 * Configuration method to sets the suffix to be added to UI labels
+	 * (default: ':').
+	 *
+	 * @param    sSuffix The new label suffix (NULL or empty to disable)
+	 *
+	 * @category Configuration
+	 */
+	public static final void setLabelSuffix(String sSuffix)
+	{
+		sLabelSuffix = sSuffix;
 	}
 
 	/***************************************
@@ -1718,7 +1735,7 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Checks whether the {@link #LABEL_SUFFIX} needs to be appended to the
+	 * Checks whether the {@link #sLabelSuffix} needs to be appended to the
 	 * given label.
 	 *
 	 * @param  sLabel The label text
@@ -1728,10 +1745,11 @@ public class DataElementUI<D extends DataElement<?>>
 	private String appendLabelSuffix(String sLabel)
 	{
 		if (sLabel != null &&
+			sLabelSuffix != null &&
 			sLabel.length() > 0 &&
 			"#%+".indexOf(sLabel.charAt(0)) == -1)
 		{
-			sLabel += LABEL_SUFFIX;
+			sLabel += sLabelSuffix;
 		}
 
 		return sLabel;

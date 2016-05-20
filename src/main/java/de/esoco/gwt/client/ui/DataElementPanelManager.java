@@ -47,8 +47,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
-import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY;
-import static de.esoco.lib.property.UserInterfaceProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
+import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY;
+import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
 
 
 /********************************************************************

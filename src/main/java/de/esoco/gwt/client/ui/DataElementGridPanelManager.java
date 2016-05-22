@@ -129,7 +129,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			{
 				StyleData rRowStyle =
 					aGridFormatter.applyRowStyle(aCurrentRow.keySet(),
-												 StyleData.DEFAULT);
+												 StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES,
+																	   "valign-wrapper"));
 
 				aRowBuilder   = addPanel(rRowStyle, Layout.GRID_ROW);
 				bFirstElement = false;

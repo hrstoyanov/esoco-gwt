@@ -23,6 +23,7 @@ import de.esoco.data.validate.HasValueList;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
 
+import de.esoco.ewt.EWT;
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Button;
@@ -33,7 +34,6 @@ import de.esoco.ewt.component.ListControl;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
-import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
@@ -298,9 +298,18 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		// insert menu buttons directly into enclosing panels
 		if (eLayout != Layout.MENU)
 		{
-			GenericLayout aPanelLayout =
-				eLayout == Layout.TABLE ? new GridLayout(nColumns)
-										: new FlowLayout();
+			GenericLayout aPanelLayout;
+
+			if (eLayout == Layout.TABLE)
+			{
+				aPanelLayout = new GridLayout(nColumns);
+			}
+			else
+			{
+				aPanelLayout =
+					EWT.getLayoutFactory()
+					   .createLayout(rBuilder.getContainer(), rStyle, eLayout);
+			}
 
 			rBuilder =
 				rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),

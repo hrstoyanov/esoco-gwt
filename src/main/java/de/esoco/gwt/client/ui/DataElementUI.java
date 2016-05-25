@@ -484,11 +484,19 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Returns the style name for this UI's data element.
 	 *
-	 * @return
+	 * @return The style name for this element (empty if no style should be
+	 *         used)
 	 */
 	public String getElementStyleName()
 	{
-		return rDataElement.getResourceId();
+		String sStyleName = rDataElement.getResourceId();
+
+		if (sStyleName.startsWith("__"))
+		{
+			sStyleName = "";
+		}
+
+		return sStyleName;
 	}
 
 	/***************************************

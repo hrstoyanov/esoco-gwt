@@ -58,6 +58,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 
 	//~ Instance fields --------------------------------------------------------
 
+	private GridFormatter aGridFormatter;
+
 	private Map<DataElementUI<?>, StyleData> aCurrentRow =
 		new LinkedHashMap<>();
 
@@ -94,10 +96,15 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	@Override
 	protected void addComponents()
 	{
+		aGridFormatter =
+			rGridFormatterFactory.createGridFormatter(getDataElementList());
+
 		super.addComponents();
 
 		// build last row
 		buildCurrentRow();
+
+		aGridFormatter = null;
 	}
 
 	/***************************************
@@ -105,9 +112,6 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	 */
 	protected void buildCurrentRow()
 	{
-		GridFormatter aGridFormatter =
-			rGridFormatterFactory.createGridFormatter(getDataElementList());
-
 		ContainerBuilder<?> aRowBuilder   = this;
 		boolean			    bFirstElement = true;
 
@@ -216,7 +220,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		private int    nGridColumns;
 		private String sPrefix;
 
-		private int nRowElementCount;
+		private int   nCurrentColumn;
+		private int[] aColumnWidths;
 
 		//~ Constructors -------------------------------------------------------
 
@@ -242,29 +247,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			DataElementUI<?> rColumUI,
 			StyleData		 rColumnStyle)
 		{
-			DataElement<?> rDataElement = rColumUI.getDataElement();
-
-			@SuppressWarnings("boxing")
-			int nElementColumns = rDataElement.getProperty(COLUMN_SPAN, -1);
-
-			if (nElementColumns == -1)
-			{
-				RelativeSize eRelativeWidth =
-					rDataElement.getProperty(RELATIVE_WIDTH, null);
-
-				if (eRelativeWidth != null)
-				{
-					nElementColumns = eRelativeWidth.calcSize(nGridColumns);
-				}
-				else
-				{
-					nElementColumns = nGridColumns / nRowElementCount;
-				}
-			}
-
-			rColumnStyle = addStyles(rColumnStyle, sPrefix + nElementColumns);
-
-			return rColumnStyle;
+			return addStyles(rColumnStyle,
+							 sPrefix + aColumnWidths[nCurrentColumn++]);
 		}
 
 		/***************************************
@@ -275,7 +259,68 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			Collection<DataElementUI<?>> rRowUIs,
 			StyleData					 rRowStyle)
 		{
-			nRowElementCount = rRowUIs.size();
+			nCurrentColumn = 0;
+			aColumnWidths  = new int[rRowUIs.size()];
+
+			int nRemainingWidth = nGridColumns;
+			int nUnsetColumns   = 0;
+			int nColumn		    = 0;
+
+			for (DataElementUI<?> rColumnUI : rRowUIs)
+			{
+				DataElement<?> rDataElement = rColumnUI.getDataElement();
+
+				@SuppressWarnings("boxing")
+				int nElementWidth = rDataElement.getProperty(COLUMN_SPAN, -1);
+
+				if (nElementWidth == -1)
+				{
+					RelativeSize eRelativeWidth =
+						rDataElement.getProperty(RELATIVE_WIDTH, null);
+
+					if (eRelativeWidth != null)
+					{
+						nElementWidth = eRelativeWidth.calcSize(nGridColumns);
+					}
+					else
+					{
+						nUnsetColumns++;
+					}
+				}
+
+				aColumnWidths[nColumn++] = nElementWidth;
+
+				if (nElementWidth > 0)
+				{
+					nRemainingWidth -= nElementWidth;
+				}
+			}
+
+			int nUnsetWidth =
+				nRemainingWidth / (nUnsetColumns > 0 ? nUnsetColumns : 1);
+
+			nColumn = 0;
+
+			for (DataElementUI<?> rColumnUI : rRowUIs)
+			{
+				int nWidth = aColumnWidths[nColumn];
+
+				if (nWidth < 0)
+				{
+					if (--nUnsetColumns == 0)
+					{
+						nWidth = nRemainingWidth;
+					}
+					else
+					{
+						nWidth = nUnsetWidth;
+					}
+
+					nRemainingWidth -= nUnsetWidth;
+				}
+
+				aColumnWidths[nColumn++] = nWidth;
+			}
 
 			return super.applyRowStyle(rRowUIs, rRowStyle);
 		}
@@ -303,7 +348,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	}
 
 	/********************************************************************
-	 * An interface that defines the formatting of grid data elements. Can be
+	 * An class that defines the formatting of grid data elements. Can be
 	 * subclassed by an UI extension to provide the formatting for it's grid
 	 * layout mechanism. The row style method will always be invoked first and
 	 * then the column style method for each column UI. Therefore

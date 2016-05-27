@@ -88,7 +88,6 @@ import static de.esoco.lib.property.ContentProperties.MIME_TYPE;
 import static de.esoco.lib.property.ContentProperties.NO_RESOURCE_PREFIX;
 import static de.esoco.lib.property.ContentProperties.PLACEHOLDER;
 import static de.esoco.lib.property.ContentProperties.RESOURCE;
-import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.ContentProperties.TOOLTIP;
 import static de.esoco.lib.property.ContentProperties.URL;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
@@ -253,6 +252,19 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Returns the style name for this a data element.
+	 *
+	 * @param  rDataElement The data element
+	 *
+	 * @return The style name for this element (empty if no style should be
+	 *         used)
+	 */
+	public static String getElementStyleName(DataElement<?> rDataElement)
+	{
+		return rDataElement.getResourceId();
+	}
+
+	/***************************************
 	 * Returns the resource ID prefix for a value item of a certain data
 	 * element.
 	 *
@@ -344,7 +356,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (sLabel == null)
 		{
-			sLabel = rDataElement.getProperty(RESOURCE_ID, null);
+			sLabel = getElementStyleName(rDataElement);
 
 			if (sLabel == null)
 			{
@@ -489,14 +501,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	public String getElementStyleName()
 	{
-		String sStyleName = rDataElement.getResourceId();
-
-		if (sStyleName.startsWith("__"))
-		{
-			sStyleName = "";
-		}
-
-		return sStyleName;
+		return getElementStyleName(rDataElement);
 	}
 
 	/***************************************

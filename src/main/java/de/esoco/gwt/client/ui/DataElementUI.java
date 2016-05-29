@@ -100,6 +100,7 @@ import static de.esoco.lib.property.StateProperties.DISABLED;
 import static de.esoco.lib.property.StateProperties.HIDDEN;
 import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
+import static de.esoco.lib.property.StyleProperties.ALIGNMENT;
 import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.StyleProperties.EDITABLE;
@@ -142,7 +143,8 @@ public class DataElementUI<D extends DataElement<?>>
 	private static final PropertyName<?>[] STYLE_PROPERTIES =
 		new PropertyName<?>[]
 		{
-			CSS_STYLES, MIME_TYPE, ICON, ICON_SIZE, ICON_COLOR, ICON_ALIGNMENT
+			CSS_STYLES, MIME_TYPE, ALIGNMENT, ICON, ICON_SIZE, ICON_COLOR,
+			ICON_ALIGNMENT
 		};
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
@@ -1721,6 +1723,17 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		this.rPanelManager = rParent;
 		this.rDataElement  = rElement;
+	}
+
+	/***************************************
+	 * Updates the base style of this instance. Can be used by subclasses to add
+	 * implementation-specific styles.
+	 *
+	 * @param rBaseStyle The new base style
+	 */
+	final void setBaseStyle(StyleData rBaseStyle)
+	{
+		this.rBaseStyle = rBaseStyle;
 	}
 
 	/***************************************

@@ -291,9 +291,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			rDataElement.getProperty(UserInterfaceProperties.LAYOUT,
 									 getButtonPanelDefaultLayout());
 
-		String sAddStyle = rStyle.getProperty(WEB_ADDITIONAL_STYLES, "");
-
-		sAddStyle += " " + EsocoGwtResources.INSTANCE.css().gfButtonPanel();
+		rStyle =
+			rStyle.append(WEB_ADDITIONAL_STYLES,
+						  EsocoGwtResources.INSTANCE.css().gfButtonPanel());
+		setBaseStyle(rStyle);
 
 		// insert menu buttons directly into enclosing panels
 		if (eLayout != Layout.MENU)
@@ -311,9 +312,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 					   .createLayout(rBuilder.getContainer(), rStyle, eLayout);
 			}
 
-			rBuilder =
-				rBuilder.addPanel(rStyle.set(WEB_ADDITIONAL_STYLES, sAddStyle),
-								  aPanelLayout);
+			rBuilder = rBuilder.addPanel(rStyle, aPanelLayout);
 		}
 
 		final List<Component> aButtons =
@@ -440,6 +439,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		if (rDataElement instanceof ListDataElement)
 		{
 			rStyle = rStyle.setFlags(StyleFlag.MULTISELECT);
+			setBaseStyle(rStyle);
 		}
 
 		switch (eListStyle)

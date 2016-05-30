@@ -19,6 +19,7 @@ package de.esoco.gwt.server;
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityRelationTypes;
@@ -35,6 +36,7 @@ import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.ViewDisplayType;
+
 import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
 import de.esoco.process.ProcessDefinition;
@@ -65,6 +67,7 @@ import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
 import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
 
 import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
+import static de.esoco.process.ProcessRelationTypes.AUTO_UPDATE;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_HEIGHT;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_WIDTH;
 import static de.esoco.process.ProcessRelationTypes.DETAIL_STEP;
@@ -771,7 +774,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			aStepFlags.add(ProcessStateFlag.ROLLBACK);
 		}
 
-		if (rInteractionStep.hasFlag(AUTO_CONTINUE))
+		if (rInteractionStep.hasFlag(AUTO_CONTINUE) ||
+			rInteractionStep.hasFlag(AUTO_UPDATE))
 		{
 			aStepFlags.add(ProcessStateFlag.AUTO_CONTINUE);
 		}

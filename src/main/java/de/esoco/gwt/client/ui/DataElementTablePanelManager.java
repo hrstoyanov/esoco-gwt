@@ -502,7 +502,12 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 			sStyle += " " + sAddStyle;
 		}
 
-		rLayout.addCellStyle(rContainer, sStyle.trim());
+		sStyle = sStyle.trim();
+
+		if (sStyle.length() > 0)
+		{
+			rLayout.addCellStyle(rContainer, sStyle);
+		}
 
 		return nColSpan;
 	}

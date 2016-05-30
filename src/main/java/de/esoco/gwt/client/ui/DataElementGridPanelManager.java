@@ -299,9 +299,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			int nUnsetWidth =
 				nRemainingWidth / (nUnsetColumns > 0 ? nUnsetColumns : 1);
 
-			nColumn = 0;
-
-			for (DataElementUI<?> rColumnUI : rRowUIs)
+			for (nColumn = 0; nColumn < aColumnWidths.length; nColumn++)
 			{
 				int nWidth = aColumnWidths[nColumn];
 
@@ -319,7 +317,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 					nRemainingWidth -= nUnsetWidth;
 				}
 
-				aColumnWidths[nColumn++] = nWidth;
+				aColumnWidths[nColumn] = nWidth;
 			}
 
 			return super.applyRowStyle(rRowUIs, rRowStyle);

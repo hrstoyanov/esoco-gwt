@@ -143,8 +143,8 @@ public class DataElementUI<D extends DataElement<?>>
 	private static final PropertyName<?>[] STYLE_PROPERTIES =
 		new PropertyName<?>[]
 		{
-			CSS_STYLES, MIME_TYPE, ALIGNMENT, ICON, ICON_SIZE, ICON_COLOR,
-			ICON_ALIGNMENT
+			CSS_STYLES, MIME_TYPE, ALIGNMENT, HAS_IMAGES, ICON, ICON_SIZE,
+			ICON_COLOR, ICON_ALIGNMENT
 		};
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
@@ -166,10 +166,11 @@ public class DataElementUI<D extends DataElement<?>>
 
 	private Label     aElementLabel;
 	private Component aElementComponent;
+	private CheckBox  rOptionalCheckBox = null;
 	private String    sToolTip		    = null;
 	private String    sHiddenLabelHint  = null;
 	private String    sTextClipboard    = null;
-	private CheckBox  rOptionalCheckBox = null;
+	private boolean   bHasError		    = false;
 
 	private boolean bInteractionEnabled = true;
 	private boolean bUIEnabled		    = true;
@@ -681,11 +682,9 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void checkElementError(Map<String, String> rElementErrors)
 	{
-		String sErrorMessage = null;
-
 		if (rElementErrors != null)
 		{
-			sErrorMessage = rElementErrors.get(rDataElement.getName());
+			String sErrorMessage = rElementErrors.get(rDataElement.getName());
 
 			if (sErrorMessage != null)
 			{
@@ -694,9 +693,9 @@ public class DataElementUI<D extends DataElement<?>>
 					sErrorMessage = "$msg" + sErrorMessage;
 				}
 			}
-		}
 
-		setErrorMessage(sErrorMessage);
+			setErrorMessage(sErrorMessage);
+		}
 	}
 
 	/***************************************
@@ -1357,6 +1356,8 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void setErrorMessage(String sMessage)
 	{
+		bHasError = (sMessage != null);
+
 		Widget rWidget = aElementComponent.getWidget();
 
 		if (sMessage == null)
@@ -1447,8 +1448,10 @@ public class DataElementUI<D extends DataElement<?>>
 				!(rComponent instanceof SelectableButton ||
 				  rDataElement instanceof ListDataElement))
 			{
-				rComponent.setProperties(convertValueToString(rDataElement,
-															  rDataElement));
+				String sValue =
+					convertValueToString(rDataElement, rDataElement);
+
+				rComponent.setProperties(sValue);
 			}
 		}
 		else if (eContentType == ContentType.PHONE_NUMBER)
@@ -1754,10 +1757,14 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (bUpdateUI)
 		{
-			update();
-		}
+			if (bHasError)
+			{
+				setErrorMessage(null);
+			}
 
-		checkElementError(rElementErrors);
+			update();
+			checkElementError(rElementErrors);
+		}
 	}
 
 	/***************************************

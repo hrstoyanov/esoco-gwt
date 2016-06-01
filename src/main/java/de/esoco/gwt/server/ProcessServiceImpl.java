@@ -312,17 +312,19 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				rProcessMap.remove(rId);
 			}
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			try
 			{
 				rProcessState =
 					createProcessState(rDescription, rProcess, false);
 			}
-			catch (StorageException eStorage)
+			catch (Exception eSecondary)
 			{
-				// should normally not occur. If it does then just fall through
-				// to standard exception handling
+				// should normally not occur. If it does then log and fall
+				// through to standard exception handling
+				Log.error("Could not create exception process state",
+						  eSecondary);
 			}
 
 			ServiceException eService = wrapException(e, rProcessState);
@@ -409,12 +411,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * information about the invalid parameters.
 	 *
 	 * @param  e             The exception to handle
-	 * @param  rProcessState
+	 * @param  rProcessState The current process state
 	 *
 	 * @return The resulting {@link ServiceException}
 	 */
 	protected ServiceException wrapException(
-		Exception    e,
+		Throwable    e,
 		ProcessState rProcessState)
 	{
 		ServiceException eResult;

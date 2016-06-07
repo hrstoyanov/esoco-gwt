@@ -103,6 +103,8 @@ import static de.esoco.lib.property.StateProperties.DISABLED;
 import static de.esoco.lib.property.StateProperties.HIDDEN;
 import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
+import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
+import static de.esoco.lib.property.StyleProperties.CHECK_BOX_STYLE;
 import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.StyleProperties.EDITABLE;
@@ -146,7 +148,8 @@ public class DataElementUI<D extends DataElement<?>>
 		new PropertyName<?>[]
 		{
 			CSS_STYLES, MIME_TYPE, MULTI_SELECTION, TEXT_ALIGN, HAS_IMAGES,
-			ICON, ICON_SIZE, ICON_COLOR, ICON_ALIGN, LIST_LAYOUT_STYLE
+			ICON, ICON_SIZE, ICON_COLOR, ICON_ALIGN, BUTTON_STYLE,
+			CHECK_BOX_STYLE, LIST_LAYOUT_STYLE
 		};
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =

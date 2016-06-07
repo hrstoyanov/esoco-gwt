@@ -54,8 +54,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.core.client.GWT;
-
 import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
@@ -66,6 +64,7 @@ import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
+import static de.esoco.lib.property.StyleProperties.CHECK_BOX_STYLE;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.StyleProperties.ICON_COLOR;
 import static de.esoco.lib.property.StyleProperties.LIST_STYLE;
@@ -85,7 +84,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	private static final PropertyName<?>[] BUTTON_STYLE_PROPERTIES =
 		new PropertyName<?>[]
 		{
-			BUTTON_STYLE, ICON_SIZE, ICON_COLOR, ICON_ALIGN
+			BUTTON_STYLE, CHECK_BOX_STYLE, ICON_SIZE, ICON_COLOR, ICON_ALIGN
 		};
 
 	//~ Instance fields --------------------------------------------------------
@@ -195,8 +194,6 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	{
 		int nComponent	    = 0;
 		int nSelectionIndex = 0;
-
-		GWT.log("SEL FOR " + getDataElement().getName() + ": " + rSelection);
 
 		if (rSelection != null && rSelection.length > 0)
 		{

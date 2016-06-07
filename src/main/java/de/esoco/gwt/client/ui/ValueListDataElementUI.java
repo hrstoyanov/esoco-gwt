@@ -54,6 +54,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
+
 import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
@@ -191,27 +193,44 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		int[]					  rSelection,
 		List<? extends Component> rComponents)
 	{
-		int nSelectable     = 0;
+		int nComponent	    = 0;
 		int nSelectionIndex = 0;
+
+		GWT.log("SEL FOR " + getDataElement().getName() + ": " + rSelection);
 
 		if (rSelection != null && rSelection.length > 0)
 		{
 			for (Component rComponent : rComponents)
 			{
-				if (rComponent instanceof Selectable)
+				if (rComponent instanceof Selectable ||
+					rComponent instanceof Button)
 				{
 					boolean bSelected =
 						nSelectionIndex < rSelection.length &&
-						nSelectable == rSelection[nSelectionIndex];
+						nComponent == rSelection[nSelectionIndex];
 
-					((Selectable) rComponent).setSelected(bSelected);
+					if (rComponent instanceof Selectable)
+					{
+						((Selectable) rComponent).setSelected(bSelected);
+					}
+					else
+					{
+						if (bSelected)
+						{
+							rComponent.addStyleName(CSS.gfActive());
+						}
+						else
+						{
+							rComponent.removeStyleName(CSS.gfActive());
+						}
+					}
 
 					if (bSelected)
 					{
 						++nSelectionIndex;
 					}
 
-					nSelectable++;
+					nComponent++;
 				}
 			}
 		}
@@ -445,19 +464,15 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		switch (eListStyle)
 		{
 			case LIST:
+			case DROP_DOWN:
 
-				ListControl aList = createList(rBuilder, rStyle, rDataElement);
+				ListControl aList =
+					eListStyle == ListStyle.LIST
+					? createList(rBuilder, rStyle, rDataElement)
+					: rBuilder.addListBox(rStyle);
 
 				setListControlValues(aList, rValues, rCurrentSelection);
 				aComponent = aList;
-				break;
-
-			case DROP_DOWN:
-
-				ListControl aListBox = rBuilder.addListBox(rStyle);
-
-				setListControlValues(aListBox, rValues, rCurrentSelection);
-				aComponent = aListBox;
 				break;
 
 			case EDITABLE:
@@ -578,9 +593,11 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 		for (Object rValue : rRawValues)
 		{
-			String sValue = convertValueToString(rDataElement, rValue);
+			String sValue =
+				rContext.expandResource(convertValueToString(rDataElement,
+															 rValue));
 
-			aListValues.add(rContext.expandResource(sValue));
+			aListValues.add(sValue);
 		}
 
 		if (rDataElement.hasFlag(UserInterfaceProperties.SORT) &&

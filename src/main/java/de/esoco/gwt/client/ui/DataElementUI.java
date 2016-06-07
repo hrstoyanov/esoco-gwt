@@ -129,7 +129,7 @@ public class DataElementUI<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
+	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	/** The default prefix for label resource IDs. */
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";

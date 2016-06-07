@@ -1,5 +1,5 @@
-@external .error, .readonly, .vertical, .horizontal;
-.error, .readonly, .horizontal, .vertical {
+@external .error, .readonly, .vertical, .horizontal, .gf-Active;
+.error, .readonly, .horizontal, .vertical, .gf-Active {
 	
 }
 

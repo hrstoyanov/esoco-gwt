@@ -12,6 +12,9 @@ public interface EsocoGwtCss extends CssResource {
   
   String vertical();
 
+  @ClassName("gf-Active")
+  String gfActive();
+
   @ClassName("gf-DataElement")
   String gfDataElement();
   

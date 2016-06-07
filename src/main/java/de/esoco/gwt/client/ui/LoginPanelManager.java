@@ -195,8 +195,15 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 						  "$lblPassword",
 						  null);
 
-		return rBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
-									 "");
+		TextField aPasswordField =
+			rBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
+								  "");
+
+		rBuilder.addButton(StyleData.DEFAULT.setFlags(StyleFlag.HYPERLINK),
+						   "Registrieren",
+						   null);
+
+		return aPasswordField;
 	}
 
 	/***************************************

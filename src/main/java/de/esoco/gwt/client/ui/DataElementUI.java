@@ -93,10 +93,12 @@ import static de.esoco.lib.property.ContentProperties.URL;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.HEIGHT;
+import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.LayoutProperties.TEXT_ALIGN;
+import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.WIDTH;
 import static de.esoco.lib.property.StateProperties.CARET_POSITION;
 import static de.esoco.lib.property.StateProperties.DISABLED;
@@ -147,9 +149,10 @@ public class DataElementUI<D extends DataElement<?>>
 	private static final PropertyName<?>[] STYLE_PROPERTIES =
 		new PropertyName<?>[]
 		{
-			CSS_STYLES, MIME_TYPE, MULTI_SELECTION, TEXT_ALIGN, HAS_IMAGES,
-			ICON, ICON_SIZE, ICON_COLOR, ICON_ALIGN, BUTTON_STYLE,
-			CHECK_BOX_STYLE, LIST_LAYOUT_STYLE
+			CSS_STYLES, MIME_TYPE, MULTI_SELECTION, TEXT_ALIGN,
+			HORIZONTAL_ALIGN, VERTICAL_ALIGN, HAS_IMAGES, ICON, ICON_SIZE,
+			ICON_COLOR, ICON_ALIGN, BUTTON_STYLE, CHECK_BOX_STYLE,
+			LIST_LAYOUT_STYLE
 		};
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =

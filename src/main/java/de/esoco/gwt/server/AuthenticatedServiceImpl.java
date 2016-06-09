@@ -876,6 +876,10 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 											 .getMimeType());
 					writeDownloadDataToResponse(rResponse, rDownloadData);
 				}
+				catch (Exception e)
+				{
+					Log.error("Processing of download request failed", e);
+				}
 				finally
 				{
 					if (rDownloadData.isRemoveAfterDownload())

@@ -60,9 +60,11 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
+import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
+import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
 import static de.esoco.lib.property.StyleProperties.CHECK_BOX_STYLE;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
@@ -84,7 +86,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	private static final PropertyName<?>[] BUTTON_STYLE_PROPERTIES =
 		new PropertyName<?>[]
 		{
-			BUTTON_STYLE, CHECK_BOX_STYLE, ICON_SIZE, ICON_COLOR, ICON_ALIGN
+			BUTTON_STYLE, CHECK_BOX_STYLE, ICON_SIZE, ICON_COLOR,
+			HORIZONTAL_ALIGN, VERTICAL_ALIGN, ICON_ALIGN
 		};
 
 	//~ Instance fields --------------------------------------------------------
@@ -313,7 +316,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		setBaseStyle(rStyle);
 
 		// insert menu buttons directly into enclosing panels
-		if (eLayout != Layout.MENU)
+		if (eLayout != Layout.MENU && eLayout != Layout.INLINE)
 		{
 			GenericLayout aPanelLayout;
 

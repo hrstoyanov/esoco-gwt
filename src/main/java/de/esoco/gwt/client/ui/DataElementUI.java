@@ -54,7 +54,6 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
-import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.text.TextConvert;
@@ -81,10 +80,8 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.ContentProperties.FORMAT;
-import static de.esoco.lib.property.ContentProperties.ICON;
 import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
 import static de.esoco.lib.property.ContentProperties.LABEL;
-import static de.esoco.lib.property.ContentProperties.MIME_TYPE;
 import static de.esoco.lib.property.ContentProperties.NO_RESOURCE_PREFIX;
 import static de.esoco.lib.property.ContentProperties.PLACEHOLDER;
 import static de.esoco.lib.property.ContentProperties.RESOURCE;
@@ -93,28 +90,17 @@ import static de.esoco.lib.property.ContentProperties.URL;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.HEIGHT;
-import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
-import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
-import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
-import static de.esoco.lib.property.LayoutProperties.TEXT_ALIGN;
-import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.WIDTH;
 import static de.esoco.lib.property.StateProperties.CARET_POSITION;
 import static de.esoco.lib.property.StateProperties.DISABLED;
 import static de.esoco.lib.property.StateProperties.HIDDEN;
 import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
-import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
-import static de.esoco.lib.property.StyleProperties.CHECK_BOX_STYLE;
-import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.StyleProperties.EDITABLE;
 import static de.esoco.lib.property.StyleProperties.HAS_IMAGES;
-import static de.esoco.lib.property.StyleProperties.ICON_COLOR;
 import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
-import static de.esoco.lib.property.StyleProperties.LIST_LAYOUT_STYLE;
-import static de.esoco.lib.property.StyleProperties.MULTI_SELECTION;
 import static de.esoco.lib.property.StyleProperties.NO_WRAP;
 import static de.esoco.lib.property.StyleProperties.STYLE;
 import static de.esoco.lib.property.StyleProperties.VERTICAL;
@@ -145,15 +131,6 @@ public class DataElementUI<D extends DataElement<?>>
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
 	private static Layout eButtonPanelDefaultLayout = Layout.TABLE;
-
-	private static final PropertyName<?>[] STYLE_PROPERTIES =
-		new PropertyName<?>[]
-		{
-			CSS_STYLES, MIME_TYPE, MULTI_SELECTION, TEXT_ALIGN,
-			HORIZONTAL_ALIGN, VERTICAL_ALIGN, HAS_IMAGES, ICON, ICON_SIZE,
-			ICON_COLOR, ICON_ALIGN, BUTTON_STYLE, CHECK_BOX_STYLE,
-			LIST_LAYOUT_STYLE
-		};
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -245,7 +222,9 @@ public class DataElementUI<D extends DataElement<?>>
 			rStyle = rStyle.setFlags(StyleFlag.RESOURCE);
 		}
 
-		rStyle = rStyle.withProperties(rDataElement, STYLE_PROPERTIES);
+		rStyle =
+			rStyle.withProperties(rDataElement,
+								  rDataElement.getPropertyNames());
 
 		return rStyle;
 	}

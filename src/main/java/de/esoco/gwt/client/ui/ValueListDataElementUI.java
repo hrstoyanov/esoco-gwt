@@ -50,6 +50,7 @@ import de.esoco.lib.property.UserInterfaceProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -83,12 +84,14 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final PropertyName<?>[] BUTTON_STYLE_PROPERTIES =
-		new PropertyName<?>[]
-		{
-			BUTTON_STYLE, CHECK_BOX_STYLE, ICON_SIZE, ICON_COLOR,
-			HORIZONTAL_ALIGN, VERTICAL_ALIGN, ICON_ALIGN
-		};
+	private static final Collection<PropertyName<?>> BUTTON_STYLE_PROPERTIES =
+		Arrays.<PropertyName<?>>asList(BUTTON_STYLE,
+									   CHECK_BOX_STYLE,
+									   ICON_SIZE,
+									   ICON_COLOR,
+									   HORIZONTAL_ALIGN,
+									   VERTICAL_ALIGN,
+									   ICON_ALIGN);
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -310,15 +313,16 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			rDataElement.getProperty(UserInterfaceProperties.LAYOUT,
 									 getButtonPanelDefaultLayout());
 
-		rStyle =
-			rStyle.append(WEB_ADDITIONAL_STYLES,
-						  EsocoGwtResources.INSTANCE.css().gfButtonPanel());
-		setBaseStyle(rStyle);
-
 		// insert menu buttons directly into enclosing panels
 		if (eLayout != Layout.MENU && eLayout != Layout.INLINE)
 		{
 			GenericLayout aPanelLayout;
+
+			rStyle =
+				rStyle.append(WEB_ADDITIONAL_STYLES,
+							  EsocoGwtResources.INSTANCE.css().gfButtonPanel());
+
+			setBaseStyle(rStyle);
 
 			if (eLayout == Layout.TABLE)
 			{
@@ -339,7 +343,9 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 		applyCurrentSelection(rCurrentSelection, aButtons);
 
-		return rBuilder.getContainer();
+		Container rComponent = rBuilder.getContainer();
+
+		return rComponent;
 	}
 
 	/***************************************

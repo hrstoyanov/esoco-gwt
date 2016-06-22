@@ -262,23 +262,19 @@ public class ProcessPanelManager
 			else
 			{
 				processUpdated(this, rProcessState);
+				setTitle(rProcessState.getName());
+				buildParameterPanel(null);
 
 				if (rInteractionElement != null)
 				{
 					handleDeferredInteraction(rInteractionElement,
 											  bInteractionActionEvent);
 				}
-				else
+				else if (bAutoContinue && !bPauseAutoContinue)
 				{
-					setTitle(rProcessState.getName());
-					buildParameterPanel(null);
-
-					if (bAutoContinue && !bPauseAutoContinue)
-					{
-						executeProcess(ProcessExecutionMode.EXECUTE,
-									   rProcessState,
-									   true);
-					}
+					executeProcess(ProcessExecutionMode.EXECUTE,
+								   rProcessState,
+								   true);
 				}
 			}
 

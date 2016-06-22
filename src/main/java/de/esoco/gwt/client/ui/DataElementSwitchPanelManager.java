@@ -27,13 +27,14 @@ import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
+
 import de.esoco.lib.property.Layout;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static de.esoco.lib.property.UserInterfaceProperties.CURRENT_SELECTION;
+import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 
 
 /********************************************************************
@@ -181,12 +182,9 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		Component rElementComponent = rDataElementUI.getElementComponent();
 
-		String sLabel =
-			DataElementUI.getLabelText(getContext(),
-									   rDataElementUI.getDataElement(),
-									   sLabelPrefix);
-
-		aSwitchPanel.addPage(rElementComponent, sLabel, false);
+		aSwitchPanel.addPage(rElementComponent,
+							 getPageTitle(rDataElementUI.getDataElement()),
+							 false);
 	}
 
 	/***************************************
@@ -194,9 +192,9 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	 */
 	@Override
 	protected ContainerBuilder<? extends Panel> createPanel(
-		ContainerBuilder<?>			   rBuilder,
-		StyleData					   rStyleData,
-		Layout eDisplayMode)
+		ContainerBuilder<?> rBuilder,
+		StyleData			rStyleData,
+		Layout				eDisplayMode)
 	{
 		ContainerBuilder<? extends SwitchPanel> aPanelBuilder;
 
@@ -213,7 +211,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 				break;
 
 			case DECK:
-				sLabelPrefix  = "$dck";
+				sLabelPrefix  = null;
 				aPanelBuilder = rBuilder.addDeckPanel(rStyleData);
 				break;
 
@@ -262,12 +260,12 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		if (bUpdateUI)
 		{
-			String sLabel =
-				DataElementUI.getLabelText(getContext(),
-										   rNewDataElement,
-										   sLabelPrefix);
+			DataElementUI.getLabelText(getContext(),
+									   rNewDataElement,
+									   sLabelPrefix);
 
-			aSwitchPanel.setPageTitle(nPanelIndex, sLabel);
+			aSwitchPanel.setPageTitle(nPanelIndex,
+									  getPageTitle(rNewDataElement));
 		}
 	}
 
@@ -297,5 +295,20 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 		}
 
 		return rResult;
+	}
+
+	/***************************************
+	 * Returns the switch panel page title for a certain data element.
+	 *
+	 * @param  rDataElement The data element to create the title for
+	 *
+	 * @return The page title string
+	 */
+	private String getPageTitle(DataElement<?> rDataElement)
+	{
+		return sLabelPrefix != null
+			   ? DataElementUI.getLabelText(getContext(),
+											rDataElement,
+											sLabelPrefix) : "";
 	}
 }

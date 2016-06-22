@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -495,13 +494,13 @@ public abstract class DataElementPanelManager
 				new ArrayList<>(prepareChildDataElements(rDataElementList)
 								.keySet());
 
-			Iterator<DataElementUI<?>> rUIs =
-				aDataElementUIs.values().iterator();
+			int nIndex = 0;
 
-			for (DataElement<?> rNewElement : rOrderedElements)
+			for (DataElementUI<?> rUI : aDataElementUIs.values())
 			{
-				rUIs.next()
-					.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
+				DataElement<?> rNewElement = rOrderedElements.get(nIndex++);
+
+				rUI.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
 			}
 		}
 		else

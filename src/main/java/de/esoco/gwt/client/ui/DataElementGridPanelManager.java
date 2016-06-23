@@ -22,6 +22,7 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.style.StyleData;
 
+import de.esoco.lib.property.Alignment;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.RelativeSize;
@@ -31,10 +32,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gwt.core.shared.GWT;
+
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
 import static de.esoco.lib.property.LayoutProperties.SAME_ROW;
+import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.StyleProperties.HIDE_LABEL;
 import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 
@@ -53,6 +57,14 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	private static final StyleData FORM_LABEL_STYLE =
 		ELEMENT_LABEL_STYLE.set(LABEL_STYLE, LabelStyle.FORM);
 
+	private static final StyleData ROW_VALIGN_CENTER_STYLE =
+		StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES,
+							  CSS.valignCenter());
+
+	private static final StyleData ROW_VALIGN_BOTTOM_STYLE =
+		StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES,
+							  CSS.valignBottom());
+
 	private static GridFormatterFactory rGridFormatterFactory =
 		new DefaultGridFormatterFactory();
 
@@ -62,6 +74,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 
 	private Map<DataElementUI<?>, StyleData> aCurrentRow =
 		new LinkedHashMap<>();
+
+	private StyleData aRowStyle = StyleData.DEFAULT;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -133,7 +147,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			{
 				StyleData rRowStyle =
 					aGridFormatter.applyRowStyle(aCurrentRow.keySet(),
-												 StyleData.DEFAULT);
+												 aRowStyle);
 
 				aRowBuilder   = addPanel(rRowStyle, Layout.GRID_ROW);
 				bFirstElement = false;
@@ -180,6 +194,33 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		}
 
 		aCurrentRow.put(aDataElementUI, rStyle);
+	}
+
+	/***************************************
+	 * Overridden to check the container style for vertical alignment.
+	 *
+	 * @see DataElementLayoutPanelManager#createPanel(ContainerBuilder,StyleData,
+	 *      Layout)
+	 */
+	@Override
+	protected ContainerBuilder<?> createPanel(ContainerBuilder<?> rBuilder,
+											  StyleData			  rStyle,
+											  Layout			  eLayout)
+	{
+		Alignment eVAlign = rStyle.getProperty(VERTICAL_ALIGN, null);
+
+		if (eVAlign == Alignment.CENTER)
+		{
+			aRowStyle = ROW_VALIGN_CENTER_STYLE;
+		}
+		else if (eVAlign == Alignment.END)
+		{
+			aRowStyle = ROW_VALIGN_BOTTOM_STYLE;
+		}
+
+		GWT.log(">>>>>>ROW STYLE: " + aRowStyle);
+
+		return super.createPanel(rBuilder, rStyle, eLayout);
 	}
 
 	//~ Inner Interfaces -------------------------------------------------------

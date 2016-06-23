@@ -38,3 +38,13 @@
 	.ga-ProcessParamPanel, .ga-ProcessSummaryPanel, .ga-ErrorMessage {
 	
 }
+
+@external .valign-center, .valign-bottom;
+.valign-center {
+    align-items: center;
+    display: flex;
+}
+.valign-bottom {
+    align-items: end;
+    display: flex;
+}

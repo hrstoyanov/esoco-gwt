@@ -32,8 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gwt.core.shared.GWT;
-
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
@@ -217,8 +215,6 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		{
 			aRowStyle = ROW_VALIGN_BOTTOM_STYLE;
 		}
-
-		GWT.log(">>>>>>ROW STYLE: " + aRowStyle);
 
 		return super.createPanel(rBuilder, rStyle, eLayout);
 	}

@@ -87,8 +87,6 @@ public abstract class DataElementPanelManager
 
 	private Map<String, DataElementUI<?>> aDataElementUIs;
 
-	private DataElementInteractionHandler<DataElementList> aInteractionHandler;
-
 	private InteractiveInputHandler rInteractiveInputHandler = null;
 	private boolean				    bHandlingSelectionEvent  = false;
 
@@ -770,7 +768,7 @@ public abstract class DataElementPanelManager
 	 */
 	protected void setupEventHandling()
 	{
-		aInteractionHandler =
+		DataElementInteractionHandler<DataElementList> aInteractionHandler =
 			new DataElementInteractionHandler<>(this, rDataElementList);
 
 		aInteractionHandler.setupEventHandling(getContainer(), false);

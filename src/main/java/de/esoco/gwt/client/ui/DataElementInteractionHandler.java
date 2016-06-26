@@ -24,6 +24,7 @@ import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
+
 import de.esoco.lib.property.InteractiveInputMode;
 import de.esoco.lib.property.SingleSelection;
 
@@ -33,7 +34,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.Timer;
 
-import static de.esoco.lib.property.UserInterfaceProperties.INTERACTIVE_INPUT_MODE;
+import static de.esoco.lib.property.StateProperties.INTERACTIVE_INPUT_MODE;
 
 
 /********************************************************************
@@ -107,39 +108,35 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	@Override
 	public void handleEvent(EWTEvent rEvent)
 	{
-		EventType     eEventType   = rEvent.getType();
-		final boolean bActionEvent = (eEventType == EventType.ACTION);
+		EventType eEventType = rEvent.getType();
 
-		// only cause interactions if event is not caused by the parent's
-		// interactive input handler to prevent recursion
-		if ((eInteractiveInputMode == InteractiveInputMode.CONTINUOUS ||
-			 eInteractiveInputMode == InteractiveInputMode.BOTH ||
-			 bActionEvent))
+		final boolean bActionEvent =
+			(eEventType == EventType.ACTION ||
+			 eEventType == EventType.FOCUS_LOST);
+
+		if (aInputEventTimer != null)
 		{
-			if (aInputEventTimer != null)
-			{
-				aInputEventTimer.cancel();
-			}
-
-			aInputEventTimer =
-				new Timer()
-				{
-					@Override
-					public void run()
-					{
-						rPanelManager.getRootDataElementPanelManager()
-									 .collectInput();
-						rPanelManager.handleInteractiveInput(rDataElement,
-															 bActionEvent);
-					}
-				};
-
-			boolean bLongDelay =
-				(eInteractiveInputMode == InteractiveInputMode.CONTINUOUS &&
-				 eEventType == EventType.KEY_RELEASED);
-
-			aInputEventTimer.schedule(bLongDelay ? 250 : 50);
+			aInputEventTimer.cancel();
 		}
+
+		aInputEventTimer =
+			new Timer()
+			{
+				@Override
+				public void run()
+				{
+					rPanelManager.getRootDataElementPanelManager()
+								 .collectInput();
+					rPanelManager.handleInteractiveInput(rDataElement,
+														 bActionEvent);
+				}
+			};
+
+		boolean bLongDelay =
+			(eInteractiveInputMode == InteractiveInputMode.CONTINUOUS &&
+			 eEventType == EventType.KEY_RELEASED);
+
+		aInputEventTimer.schedule(bLongDelay ? 250 : 50);
 	}
 
 	/***************************************
@@ -155,10 +152,9 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		boolean   bOnContainerChildren)
 	{
 		eInteractiveInputMode =
-			rDataElement.getProperty(INTERACTIVE_INPUT_MODE,
-									 InteractiveInputMode.NONE);
+			rDataElement.getProperty(INTERACTIVE_INPUT_MODE, null);
 
-		if (eInteractiveInputMode != InteractiveInputMode.NONE)
+		if (eInteractiveInputMode != null)
 		{
 			if (bOnContainerChildren && rComponent instanceof Container)
 			{
@@ -206,6 +202,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 				eInputMode == InteractiveInputMode.BOTH)
 			{
 				rEventTypes.add(EventType.ACTION);
+				rEventTypes.add(EventType.FOCUS_LOST);
 			}
 		}
 		else if (aComponent instanceof SingleSelection)

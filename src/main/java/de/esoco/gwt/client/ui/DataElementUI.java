@@ -160,8 +160,6 @@ public class DataElementUI<D extends DataElement<?>>
 	private boolean bInteractionEnabled = true;
 	private boolean bUIEnabled		    = true;
 
-	private DataElementInteractionHandler<D> aInteractionHandler;
-
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -1401,7 +1399,7 @@ public class DataElementUI<D extends DataElement<?>>
 		Component rComponent,
 		boolean   bOnContainerChildren)
 	{
-		aInteractionHandler =
+		DataElementInteractionHandler<D> aInteractionHandler =
 			createInteractionHandler(rPanelManager, rDataElement);
 
 		aInteractionHandler.setupEventHandling(rComponent,

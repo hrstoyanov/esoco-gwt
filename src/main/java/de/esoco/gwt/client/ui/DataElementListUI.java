@@ -82,6 +82,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void update()
 	{
+//		GWT.log("UPDATE: " + getDataElement().getName());
+
 		String sAddStyle = aListPanelManager.getStyleName();
 
 		StyleData rNewStyle =

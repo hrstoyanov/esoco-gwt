@@ -75,9 +75,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
-	 * Updates the child panel manager with the current style and properties.
-	 * The children will NOT be updated because that has be done already in
-	 * {@link #updateDataElement(DataElement, Map, boolean)}
+	 * Updates the child panel manager with the current style and properties and
+	 * the data element UIs of all children.
 	 *
 	 * @see DataElementUI#update()
 	 */
@@ -158,7 +157,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 						   Map<String, String> rElementErrors,
 						   boolean			   bUpdateUI)
 	{
-		// always use FALSE to not update UI before data element is updated
+		// always use FALSE to not update UI before data element is updated;
+		// UI update will be done in the update() method
 		super.updateDataElement(rNewElement, rElementErrors, false);
 
 		if (aListPanelManager != null)

@@ -28,6 +28,8 @@ import de.esoco.lib.property.Layout;
 
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
+
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 
 
@@ -75,14 +77,16 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
-	 * Delegates the update to the child panel manager.
+	 * Updates the child panel manager with the current style and properties.
+	 * The children will NOT be updated because that has be done already in
+	 * {@link #updateDataElement(DataElement, Map, boolean)}
 	 *
 	 * @see DataElementUI#update()
 	 */
 	@Override
 	public void update()
 	{
-//		GWT.log("UPDATE: " + getDataElement().getName());
+		GWT.log("UPDATE " + getDataElement().getName());
 
 		String sAddStyle = aListPanelManager.getStyleName();
 
@@ -165,7 +169,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		{
 			aListPanelManager.updateFromDataElement(rNewElement,
 													rElementErrors,
-													bUpdateUI);
+													false);
 		}
 
 		if (bUpdateUI)

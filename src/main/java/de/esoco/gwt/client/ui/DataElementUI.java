@@ -1740,16 +1740,17 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		rDataElement = (D) rNewElement;
 
+		if (bHasError)
+		{
+			setErrorMessage(null);
+		}
+
 		if (bUpdateUI)
 		{
-			if (bHasError)
-			{
-				setErrorMessage(null);
-			}
-
 			update();
-			checkElementError(rElementErrors);
 		}
+
+		checkElementError(rElementErrors);
 	}
 
 	/***************************************

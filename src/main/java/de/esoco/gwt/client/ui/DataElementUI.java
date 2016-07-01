@@ -607,7 +607,7 @@ public class DataElementUI<D extends DataElement<?>>
 			aElementComponent.setVisible(bVisible);
 			rPanelManager.setElementVisibility(this, bVisible);
 
-			if (sToolTip != null && sToolTip.length() > 0)
+			if (!bHasError && sToolTip != null && sToolTip.length() > 0)
 			{
 				aElementComponent.setToolTip(sToolTip);
 			}

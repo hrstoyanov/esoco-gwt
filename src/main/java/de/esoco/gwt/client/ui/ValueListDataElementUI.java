@@ -55,12 +55,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.core.client.GWT;
+
 import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
+import static de.esoco.lib.property.LayoutProperties.FLOAT;
 import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
@@ -91,7 +94,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 									   ICON_COLOR,
 									   HORIZONTAL_ALIGN,
 									   VERTICAL_ALIGN,
-									   ICON_ALIGN);
+									   ICON_ALIGN,
+									   FLOAT);
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -313,8 +317,11 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			rDataElement.getProperty(UserInterfaceProperties.LAYOUT,
 									 getButtonPanelDefaultLayout());
 
-		// insert menu buttons directly into enclosing panels
-		if (eLayout != Layout.MENU && eLayout != Layout.INLINE)
+		// inline inserts buttons directly into enclosing panels
+		// TODO: return not the parent container from this method as this
+		// causes problems in some configurations as button style updates
+		// will then modify the container
+		if (eLayout != Layout.INLINE)
 		{
 			GenericLayout aPanelLayout;
 
@@ -336,6 +343,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			}
 
 			rBuilder = rBuilder.addPanel(rStyle, aPanelLayout);
+		}
+		else
+		{
+			GWT.log("INLINE: " + rDataElement);
 		}
 
 		final List<Component> aButtons =

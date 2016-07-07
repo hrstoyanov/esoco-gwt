@@ -55,8 +55,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.core.client.GWT;
-
 import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
@@ -343,10 +341,6 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			}
 
 			rBuilder = rBuilder.addPanel(rStyle, aPanelLayout);
-		}
-		else
-		{
-			GWT.log("INLINE: " + rDataElement);
 		}
 
 		final List<Component> aButtons =

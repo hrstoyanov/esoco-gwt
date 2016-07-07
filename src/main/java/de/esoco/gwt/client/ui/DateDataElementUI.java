@@ -16,6 +16,7 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.client.ui;
 
+import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DateDataElement;
 import de.esoco.data.element.DateDataElement.DateInputType;
 
@@ -26,6 +27,7 @@ import de.esoco.ewt.component.DateField;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
+
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.DateAttribute;
 import de.esoco.lib.property.InteractiveInputMode;
@@ -39,8 +41,8 @@ import java.util.Set;
 
 import static de.esoco.data.element.DateDataElement.DATE_INPUT_TYPE;
 
-import static de.esoco.lib.property.UserInterfaceProperties.COLUMNS;
-import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 
 
 /********************************************************************
@@ -64,6 +66,28 @@ public class DateDataElementUI extends DataElementUI<DateDataElement>
 	}
 
 	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * @see DataElementUI#convertValueToString(DataElement, Object)
+	 */
+	@Override
+	protected String convertValueToString(
+		DataElement<?> rDataElement,
+		Object		   rValue)
+	{
+		String sValue;
+
+		if (rValue == null)
+		{
+			sValue = "&nbsp";
+		}
+		else
+		{
+			sValue = super.convertValueToString(rDataElement, rValue);
+		}
+
+		return sValue;
+	}
 
 	/***************************************
 	 * {@inheritDoc}

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -255,7 +255,9 @@ public abstract class AuthenticationPanelManager<C extends Container,
 		{
 			UserInterfaceContext rContext = getContext();
 
-			aLoginDialog = rContext.createDialog(null, ViewStyle.MODAL);
+			aLoginDialog =
+				rContext.createDialog(getContainer().getView(),
+									  ViewStyle.MODAL);
 
 			ContainerBuilder<View> aDialogBuilder =
 				new ContainerBuilder<View>(aLoginDialog);

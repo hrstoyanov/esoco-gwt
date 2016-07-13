@@ -136,7 +136,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			(eInteractiveInputMode == InteractiveInputMode.CONTINUOUS &&
 			 eEventType == EventType.KEY_RELEASED);
 
-		aInputEventTimer.schedule(bLongDelay ? 250 : 50);
+		aInputEventTimer.schedule(bLongDelay ? 500 : 50);
 	}
 
 	/***************************************

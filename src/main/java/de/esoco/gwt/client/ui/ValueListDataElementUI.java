@@ -60,6 +60,7 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.LayoutProperties.BUTTON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.FLOAT;
 import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
@@ -87,6 +88,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 	private static final Collection<PropertyName<?>> BUTTON_STYLE_PROPERTIES =
 		Arrays.<PropertyName<?>>asList(BUTTON_STYLE,
+									   BUTTON_SIZE,
 									   CHECK_BOX_STYLE,
 									   ICON_SIZE,
 									   ICON_COLOR,

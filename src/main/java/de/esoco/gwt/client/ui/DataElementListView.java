@@ -27,11 +27,15 @@ import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.Alignment;
 import de.esoco.lib.property.ViewDisplayType;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
+import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.VIEW_DISPLAY_TYPE;
 
 
@@ -43,6 +47,11 @@ import static de.esoco.lib.property.LayoutProperties.VIEW_DISPLAY_TYPE;
  */
 public class DataElementListView
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static Set<ViewStyle.Flag> aDefaultViewFlags =
+		EnumSet.noneOf(ViewStyle.Flag.class);
+
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementListUI aViewUI;
@@ -63,6 +72,19 @@ public class DataElementListView
 		aViewUI =
 			(DataElementListUI) DataElementUIFactory.create(rParent,
 															rViewElement);
+	}
+
+	//~ Static methods ---------------------------------------------------------
+
+	/***************************************
+	 * Sets the default view style flags for new views.
+	 *
+	 * @param rDefaultViewFlags The default view style flags
+	 */
+	public static final void setDefaultViewFlags(
+		Set<ViewStyle.Flag> rDefaultViewFlags)
+	{
+		aDefaultViewFlags = EnumSet.copyOf(rDefaultViewFlags);
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -150,32 +172,50 @@ public class DataElementListView
 	{
 		DataElementList		   rDataElementList = aViewUI.getDataElement();
 		UserInterfaceContext   rContext		    = rParentView.getContext();
+		ViewStyle			   rViewStyle	    = ViewStyle.DEFAULT;
 		ContainerBuilder<View> aViewBuilder     = null;
 		View				   aPanelView	    = null;
 
+		Set<ViewStyle.Flag> aViewFlags = EnumSet.copyOf(aDefaultViewFlags);
+
 		String sDialogStyle =
 			EsocoGwtResources.INSTANCE.css().gfDataElementListDialog();
+
+		if (eViewType == ViewDisplayType.MODAL_VIEW ||
+			eViewType == ViewDisplayType.MODAL_DIALOG)
+		{
+			rViewStyle = ViewStyle.MODAL;
+		}
+
+		if (rDataElementList.hasProperty(VERTICAL_ALIGN))
+		{
+			if (rDataElementList.getProperty(VERTICAL_ALIGN, null) ==
+				Alignment.END)
+			{
+				aViewFlags.add(ViewStyle.Flag.BOTTOM);
+			}
+			else
+			{
+				aViewFlags.remove(ViewStyle.Flag.BOTTOM);
+			}
+		}
+
+		if (!aViewFlags.isEmpty())
+		{
+			rViewStyle = rViewStyle.withFlags(aViewFlags);
+		}
 
 		switch (eViewType)
 		{
 			case DIALOG:
 			case MODAL_DIALOG:
-				aPanelView =
-					rContext.createDialog(rParentView,
-										  eViewType ==
-										  ViewDisplayType.MODAL_DIALOG
-										  ? ViewStyle.MODAL
-										  : ViewStyle.DEFAULT);
+				aPanelView = rContext.createDialog(rParentView, rViewStyle);
+
 				break;
 
 			case VIEW:
 			case MODAL_VIEW:
-				aPanelView =
-					rContext.createChildView(rParentView,
-											 eViewType ==
-											 ViewDisplayType.MODAL_VIEW
-											 ? ViewStyle.MODAL
-											 : ViewStyle.DEFAULT);
+				aPanelView = rContext.createChildView(rParentView, rViewStyle);
 				break;
 		}
 

@@ -699,10 +699,17 @@ public class ProcessPanelManager
 			aTitleLabel.setVisible(false);
 		}
 
-		ContainerBuilder<Panel> aBuilder =
-			addPanel(SUMMARY_PANEL_STYLE, new FillLayout(true));
+		if (bRenderInline)
+		{
+			addLabel(StyleData.DEFAULT, sMessage, null);
+		}
+		else
+		{
+			ContainerBuilder<Panel> aBuilder =
+				addPanel(SUMMARY_PANEL_STYLE, new FillLayout(true));
 
-		aBuilder.addLabel(SUMMARY_LABEL_STYLE, sMessage, null);
+			aBuilder.addLabel(SUMMARY_LABEL_STYLE, sMessage, null);
+		}
 	}
 
 	/***************************************
@@ -951,7 +958,12 @@ public class ProcessPanelManager
 	 */
 	private void removeParameterPanel()
 	{
-		if (rParamPanel != null)
+		if (bRenderInline)
+		{
+			getContainer().clear();
+			aParamPanelManager = null;
+		}
+		else if (rParamPanel != null)
 		{
 			removeComponent(rParamPanel);
 			rParamPanel = null;

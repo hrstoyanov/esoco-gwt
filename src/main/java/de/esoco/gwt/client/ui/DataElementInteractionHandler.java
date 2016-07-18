@@ -25,16 +25,17 @@ import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 
-import de.esoco.lib.property.InteractiveInputMode;
+import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.SingleSelection;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.Timer;
 
-import static de.esoco.lib.property.StateProperties.INTERACTIVE_INPUT_MODE;
+import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
 
 
 /********************************************************************
@@ -48,9 +49,9 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 {
 	//~ Instance fields --------------------------------------------------------
 
-	private DataElementPanelManager rPanelManager;
-	private D					    rDataElement;
-	private InteractiveInputMode    eInteractiveInputMode;
+	private DataElementPanelManager   rPanelManager;
+	private D						  rDataElement;
+	private Set<InteractionEventType> rEventTypes;
 
 	private Timer aInputEventTimer;
 
@@ -83,16 +84,6 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Returns the interactive input mode.
-	 *
-	 * @return The interactive input mode
-	 */
-	public final InteractiveInputMode getInteractiveInputMode()
-	{
-		return eInteractiveInputMode;
-	}
-
-	/***************************************
 	 * Returns the panel manager.
 	 *
 	 * @return The panel manager
@@ -110,9 +101,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	{
 		EventType eEventType = rEvent.getType();
 
-		final boolean bActionEvent =
-			(eEventType == EventType.ACTION ||
-			 eEventType == EventType.FOCUS_LOST);
+		final InteractionEventType eInteractionEventType =
+			mapToInteractionEventType(eEventType);
 
 		if (aInputEventTimer != null)
 		{
@@ -128,12 +118,12 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 					rPanelManager.getRootDataElementPanelManager()
 								 .collectInput();
 					rPanelManager.handleInteractiveInput(rDataElement,
-														 bActionEvent);
+														 eInteractionEventType);
 				}
 			};
 
 		boolean bLongDelay =
-			(eInteractiveInputMode == InteractiveInputMode.CONTINUOUS &&
+			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 eEventType == EventType.KEY_RELEASED);
 
 		aInputEventTimer.schedule(bLongDelay ? 500 : 50);
@@ -151,10 +141,12 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		Component rComponent,
 		boolean   bOnContainerChildren)
 	{
-		eInteractiveInputMode =
-			rDataElement.getProperty(INTERACTIVE_INPUT_MODE, null);
+		rEventTypes =
+			rDataElement.getProperty(INTERACTION_EVENT_TYPES,
+									 Collections
+									 .<InteractionEventType>emptySet());
 
-		if (eInteractiveInputMode != null)
+		if (!rEventTypes.isEmpty())
 		{
 			if (bOnContainerChildren && rComponent instanceof Container)
 			{
@@ -163,58 +155,57 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 
 				for (Component rChild : rComponents)
 				{
-					registerEventHandler(rChild, eInteractiveInputMode);
+					registerEventHandler(rChild, rEventTypes);
 				}
 			}
 			else
 			{
-				registerEventHandler(rComponent, eInteractiveInputMode);
+				registerEventHandler(rComponent, rEventTypes);
 			}
 		}
 	}
 
 	/***************************************
-	 * Returns the event types that need to be handles for interactions of the
-	 * given component in a certain interactive input mode. Can be overridden by
-	 * subclasses
+	 * Maps the interaction event types to the corresponding GEWT event types
+	 * for a certain component.
 	 *
-	 * @param  aComponent The component
-	 * @param  eInputMode The interactive input mode
+	 * @param  aComponent             The component
+	 * @param  rInteractionEventTypes The interaction event types to map
 	 *
-	 * @return
+	 * @return The mapped GEWT event types
 	 */
 	protected Set<EventType> getInteractionEventTypes(
-		Component				   aComponent,
-		final InteractiveInputMode eInputMode)
+		Component				  aComponent,
+		Set<InteractionEventType> rInteractionEventTypes)
 	{
 		Set<EventType> rEventTypes = EnumSet.noneOf(EventType.class);
 
 		if (aComponent instanceof TextControl)
 		{
-			if (eInputMode == InteractiveInputMode.CONTINUOUS ||
-				eInputMode == InteractiveInputMode.BOTH)
+			if (rInteractionEventTypes.contains(InteractionEventType.UPDATE))
 			{
 				rEventTypes.add(EventType.VALUE_CHANGED);
 				rEventTypes.add(EventType.KEY_RELEASED);
 			}
 
-			if (eInputMode == InteractiveInputMode.ACTION ||
-				eInputMode == InteractiveInputMode.BOTH)
+			if (rInteractionEventTypes.contains(InteractionEventType.ACTION))
 			{
 				rEventTypes.add(EventType.ACTION);
+			}
+
+			if (rInteractionEventTypes.contains(InteractionEventType.FOCUS_LOST))
+			{
 				rEventTypes.add(EventType.FOCUS_LOST);
 			}
 		}
 		else if (aComponent instanceof SingleSelection)
 		{
-			if (eInputMode == InteractiveInputMode.CONTINUOUS ||
-				eInputMode == InteractiveInputMode.BOTH)
+			if (rInteractionEventTypes.contains(InteractionEventType.UPDATE))
 			{
 				rEventTypes.add(EventType.SELECTION);
 			}
 
-			if (eInputMode == InteractiveInputMode.ACTION ||
-				eInputMode == InteractiveInputMode.BOTH)
+			if (rInteractionEventTypes.contains(InteractionEventType.ACTION))
 			{
 				rEventTypes.add(EventType.ACTION);
 			}
@@ -228,20 +219,48 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Maps a GWT event type to the corresponding interaction event type.
+	 *
+	 * @param  eEventType The event type to map
+	 *
+	 * @return The matching interaction event type
+	 */
+	protected InteractionEventType mapToInteractionEventType(
+		EventType eEventType)
+	{
+		InteractionEventType eInteractionEventType;
+
+		if (eEventType == EventType.ACTION)
+		{
+			eInteractionEventType = InteractionEventType.ACTION;
+		}
+		else if (eEventType == EventType.FOCUS_LOST)
+		{
+			eInteractionEventType = InteractionEventType.FOCUS_LOST;
+		}
+		else
+		{
+			eInteractionEventType = InteractionEventType.UPDATE;
+		}
+
+		return eInteractionEventType;
+	}
+
+	/***************************************
 	 * Registers an event listener for the handling of interactive input events
 	 * with the given component.
 	 *
-	 * @param aComponent The component
-	 * @param eInputMode The input mode
+	 * @param aComponent  The component
+	 * @param rEventTypes The event types to register the event handlers for
 	 */
 	protected void registerEventHandler(
-		Component				   aComponent,
-		final InteractiveInputMode eInputMode)
+		Component				  aComponent,
+		Set<InteractionEventType> rEventTypes)
 	{
-		for (EventType rEventType :
-			 getInteractionEventTypes(aComponent, eInputMode))
+		for (EventType eEventType :
+			 getInteractionEventTypes(aComponent, rEventTypes))
 		{
-			aComponent.addEventListener(rEventType, this);
+			aComponent.addEventListener(eEventType, this);
 		}
 	}
 }

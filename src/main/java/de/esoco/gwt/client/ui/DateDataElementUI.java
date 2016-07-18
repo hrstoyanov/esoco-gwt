@@ -30,7 +30,7 @@ import de.esoco.ewt.style.StyleFlag;
 
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.DateAttribute;
-import de.esoco.lib.property.InteractiveInputMode;
+import de.esoco.lib.property.InteractionEventType;
 
 import java.util.Collections;
 import java.util.Date;
@@ -240,8 +240,8 @@ public class DateDataElementUI extends DataElementUI<DateDataElement>
 		 */
 		@Override
 		protected Set<EventType> getInteractionEventTypes(
-			Component			 aComponent,
-			InteractiveInputMode eInputMode)
+			Component				  aComponent,
+			Set<InteractionEventType> rInteractionEventTypes)
 		{
 			return EnumSet.of(EventType.VALUE_CHANGED);
 		}

@@ -34,6 +34,7 @@ import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.logging.Log;
+import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.ViewDisplayType;
 
@@ -76,6 +77,7 @@ import static de.esoco.process.ProcessRelationTypes.FINAL_STEP;
 import static de.esoco.process.ProcessRelationTypes.IMMEDIATE_INTERACTION;
 import static de.esoco.process.ProcessRelationTypes.INTERACTION_PARAMS;
 import static de.esoco.process.ProcessRelationTypes.INTERACTIVE_INPUT_ACTION_EVENT;
+import static de.esoco.process.ProcessRelationTypes.INTERACTIVE_INPUT_EVENT_TYPE;
 import static de.esoco.process.ProcessRelationTypes.INTERACTIVE_INPUT_PARAM;
 import static de.esoco.process.ProcessRelationTypes.OPTIONAL_PROCESS_INPUT_PARAMS;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_ID;
@@ -899,12 +901,19 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 				if (rInteractionParam == null)
 				{
-					throw new IllegalArgumentException("Unknown interaction parameter: " +
-													   rInteractionParam);
+					throw new IllegalStateException("Unknown interaction parameter: " +
+													rInteractionParam);
 				}
 
+				InteractionEventType eEventType =
+					rProcessState.getInteractionEventType();
+
+				rProcess.setParameter(INTERACTIVE_INPUT_EVENT_TYPE, eEventType);
+
+				// for legacy code
 				rProcess.setParameter(INTERACTIVE_INPUT_ACTION_EVENT,
-									  rProcessState.isInteractionActionEvent());
+									  eEventType ==
+									  InteractionEventType.ACTION);
 			}
 			else
 			{

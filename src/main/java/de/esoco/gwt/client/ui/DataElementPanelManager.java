@@ -31,6 +31,7 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.SingleSelection;
 import de.esoco.lib.text.TextConvert;
@@ -714,19 +715,19 @@ public abstract class DataElementPanelManager
 	 * the child's data element UI.
 	 *
 	 * @param rDataElement The data element in which the event occurred
-	 * @param bActionEvent TRUE for an action event, FALSE for a continuous
-	 *                     (selection) event
+	 * @param eEventType   bActionEvent TRUE for an action event, FALSE for a
+	 *                     continuous (selection) event
 	 */
 	protected void handleInteractiveInput(
-		DataElement<?> rDataElement,
-		boolean		   bActionEvent)
+		DataElement<?>		 rDataElement,
+		InteractionEventType eEventType)
 	{
 		if (!bHandlingSelectionEvent)
 		{
 			if (rInteractiveInputHandler != null)
 			{
 				rInteractiveInputHandler.handleInteractiveInput(rDataElement,
-																bActionEvent);
+																eEventType);
 			}
 			else
 			{
@@ -735,7 +736,7 @@ public abstract class DataElementPanelManager
 				if (rParent instanceof DataElementPanelManager)
 				{
 					((DataElementPanelManager) rParent).handleInteractiveInput(rDataElement,
-																			   bActionEvent);
+																			   eEventType);
 				}
 			}
 		}
@@ -835,12 +836,12 @@ public abstract class DataElementPanelManager
 		 * Handles the occurrence of an interactive input event for a certain
 		 * data element.
 		 *
-		 * @param rDataElemen  The data element that caused the event
-		 * @param bActionEvent TRUE if the event was an action event
+		 * @param rDataElement The data element that caused the event
+		 * @param eEventType   The interaction event that occurred
 		 */
 		void handleInteractiveInput(
-			DataElement<?> rDataElemen,
-			boolean		   bActionEvent);
+			DataElement<?>		 rDataElement,
+			InteractionEventType eEventType);
 	}
 
 	//~ Inner Classes ----------------------------------------------------------

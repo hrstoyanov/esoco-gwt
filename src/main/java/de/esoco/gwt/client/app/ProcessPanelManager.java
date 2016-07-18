@@ -52,6 +52,7 @@ import de.esoco.gwt.shared.ProcessState;
 import de.esoco.gwt.shared.ProcessState.ProcessExecutionMode;
 import de.esoco.gwt.shared.ServiceException;
 
+import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.Layout;
 
 import java.util.Collections;
@@ -134,8 +135,8 @@ public class ProcessPanelManager
 	private boolean bCancelProcess     = false;
 	private boolean bCancelled		   = false;
 
-	private DataElement<?> rInteractionElement     = null;
-	private boolean		   bInteractionActionEvent;
+	private DataElement<?>		 rDeferredInteractionElement   = null;
+	private InteractionEventType eDeferredInteractionEventType;
 
 	private Map<String, DataElementListView> aProcessViews =
 		Collections.emptyMap();
@@ -265,10 +266,9 @@ public class ProcessPanelManager
 				setTitle(rProcessState.getName());
 				buildParameterPanel(null);
 
-				if (rInteractionElement != null)
+				if (rDeferredInteractionElement != null)
 				{
-					handleDeferredInteraction(rInteractionElement,
-											  bInteractionActionEvent);
+					handleDeferredInteraction();
 				}
 				else if (bAutoContinue && !bPauseAutoContinue)
 				{
@@ -385,18 +385,18 @@ public class ProcessPanelManager
 	@Override
 	public void handleInteractiveInput(
 		final DataElement<?> rDataElement,
-		boolean				 bActionEvent)
+		InteractionEventType eEventType)
 	{
 		if (isCommandExecuting())
 		{
 			// save the last interaction UI to prevent loss of input by
 			// executing the process after the current handling ends
-			rInteractionElement     = rDataElement;
-			bInteractionActionEvent = bActionEvent;
+			rDeferredInteractionElement   = rDataElement;
+			eDeferredInteractionEventType = eEventType;
 		}
 		else
 		{
-			rInteractionElement = null;
+			rDeferredInteractionElement = null;
 
 			lockUserInterface();
 
@@ -405,7 +405,7 @@ public class ProcessPanelManager
 				rView.collectInput();
 			}
 
-			rProcessState.setInteractionElement(rDataElement, bActionEvent);
+			rProcessState.setInteractionElement(rDataElement, eEventType);
 			executeProcess(ProcessExecutionMode.EXECUTE, rProcessState, true);
 		}
 	}
@@ -859,14 +859,8 @@ public class ProcessPanelManager
 
 	/***************************************
 	 * Process a deferred interaction to prevent loss of input.
-	 *
-	 * @param rInteractionElement The data element that caused the interaction
-	 * @param bActionEvent        TRUE for an action event, FALSE for a
-	 *                            continuous (selection) event
 	 */
-	private void handleDeferredInteraction(
-		DataElement<?> rInteractionElement,
-		boolean		   bActionEvent)
+	private void handleDeferredInteraction()
 	{
 		List<DataElement<?>> rInteractionParams =
 			rProcessState.getInteractionParams();
@@ -874,7 +868,8 @@ public class ProcessPanelManager
 		aParamPanelManager.updateDataElements(rInteractionParams, null, false);
 		aParamPanelManager.collectInput();
 
-		handleInteractiveInput(rInteractionElement, bActionEvent);
+		handleInteractiveInput(rDeferredInteractionElement,
+							   eDeferredInteractionEventType);
 	}
 
 	/***************************************

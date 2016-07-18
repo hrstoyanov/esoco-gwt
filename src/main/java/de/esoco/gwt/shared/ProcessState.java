@@ -1,11 +1,25 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// GwtFramework source file
-// Copyright (c) 2015 by Elmar Sonnenschein / esoco GmbH
+// This file is a part of the 'esoco-gwt' project.
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.shared;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+
+import de.esoco.lib.property.InteractionEventType;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,7 +99,7 @@ public class ProcessState extends ProcessDescription
 	private List<DataElement<?>>  rInteractionParams;
 	private List<DataElementList> rViewParams;
 	private DataElement<?>		  rInteractionElement;
-	private boolean				  bInteractionActionEvent;
+	private InteractionEventType  eInteractionEventType;
 
 	private Set<ProcessStateFlag> rCurrentStepFlags =
 		Collections.<ProcessStateFlag>emptySet();
@@ -196,6 +210,17 @@ public class ProcessState extends ProcessDescription
 	}
 
 	/***************************************
+	 * Returns TRUE if an interaction event has been caused by an action event
+	 * or FALSE for a continuous selection event.
+	 *
+	 * @return TRUE for an action event, FALSE for a continuous selection event
+	 */
+	public final InteractionEventType getInteractionEventType()
+	{
+		return eInteractionEventType;
+	}
+
+	/***************************************
 	 * Returns the data elements that represent the interaction parameters of
 	 * the current process step.
 	 *
@@ -297,24 +322,12 @@ public class ProcessState extends ProcessDescription
 	}
 
 	/***************************************
-	 * Returns TRUE if an interaction event has been caused by an action event
-	 * or FALSE for a continuous selection event.
-	 *
-	 * @return TRUE for an action event, FALSE for a continuous selection event
-	 */
-	public final boolean isInteractionActionEvent()
-	{
-		return bInteractionActionEvent;
-	}
-
-	/***************************************
 	 * Sets the execution mode. This method is intended to be used by clients to
 	 * send the process execution mode to the server.
 	 *
 	 * @param rExecutionMode The new execution mode
 	 */
-	public final void setExecutionMode(
-		ProcessState.ProcessExecutionMode rExecutionMode)
+	public final void setExecutionMode(ProcessExecutionMode rExecutionMode)
 	{
 		this.rExecutionMode = rExecutionMode;
 	}
@@ -324,16 +337,15 @@ public class ProcessState extends ProcessDescription
 	 * during an interaction. The parameter is the data element for which the
 	 * event occurred.
 	 *
-	 * @param rElement     The data element that caused the interactive input
-	 *                     event or NULL to reset
-	 * @param bActionEvent TRUE for an action event, FALSE for a continuous
-	 *                     selection event
+	 * @param rElement   The data element that caused the interactive input
+	 *                   event or NULL to reset
+	 * @param eEventType bActionEvent The interaction event type
 	 */
 	public final void setInteractionElement(
-		DataElement<?> rElement,
-		boolean		   bActionEvent)
+		DataElement<?>		 rElement,
+		InteractionEventType eEventType)
 	{
-		rInteractionElement     = rElement;
-		bInteractionActionEvent = bActionEvent;
+		rInteractionElement   = rElement;
+		eInteractionEventType = eEventType;
 	}
 }

@@ -209,8 +209,11 @@ public class ProcessPanelManager
 	@Override
 	public void displayMessage(String sMessage, int nDisplayTime)
 	{
-		aMessageLabel.setVisible(true);
-		aMessageLabel.setText(sMessage);
+		if (aMessageLabel != null)
+		{
+			aMessageLabel.setVisible(true);
+			aMessageLabel.setText(sMessage);
+		}
 	}
 
 	/***************************************

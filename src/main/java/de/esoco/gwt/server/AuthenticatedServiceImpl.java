@@ -427,8 +427,47 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 * @throws ServiceException        If the authentication cannot be processed
 	 * @throws AuthenticationException If the authentication fails
 	 */
-	@SuppressWarnings("unchecked")
 	public DataElementList handleLogin(StringDataElement rLoginData)
+		throws AuthenticationException, ServiceException
+	{
+		return loginUser(rLoginData);
+	}
+
+	/***************************************
+	 * Handles the {@link AuthenticatedService#LOGOUT} command.
+	 *
+	 * @param  rIgnored Not used, should always be NULL
+	 *
+	 * @throws AuthenticationException If accessing the session data fails
+	 */
+	public void handleLogout(DataElement<?> rIgnored)
+		throws AuthenticationException
+	{
+		logoutCurrentUser();
+	}
+
+	/***************************************
+	 * @see CommandServiceImpl#init()
+	 */
+	@Override
+	public void init() throws ServletException
+	{
+		EntityManager.setSessionManager(this);
+
+		ServiceContext rContext = ServiceContext.getInstance();
+
+		if (rContext != null)
+		{
+			rContext.setService(this);
+		}
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public DataElementList loginUser(StringDataElement rLoginData)
 		throws AuthenticationException, ServiceException
 	{
 		String  sLoginName = rLoginData.getName();
@@ -448,7 +487,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 			}
 			else
 			{
-				throw new AuthenticationException("Invalid login name for role change");
+				throw new AuthenticationException("Re-login not allowed");
 			}
 		}
 		else
@@ -513,35 +552,6 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 			initUserData(aUserData, rUser, sLoginName);
 
 			return aUserData;
-		}
-	}
-
-	/***************************************
-	 * Handles the {@link AuthenticatedService#LOGOUT} command.
-	 *
-	 * @param  rIgnored Not used, should always be NULL
-	 *
-	 * @throws AuthenticationException If accessing the session data fails
-	 */
-	public void handleLogout(DataElement<?> rIgnored)
-		throws AuthenticationException
-	{
-		logoutCurrentUser();
-	}
-
-	/***************************************
-	 * @see CommandServiceImpl#init()
-	 */
-	@Override
-	public void init() throws ServletException
-	{
-		EntityManager.setSessionManager(this);
-
-		ServiceContext rContext = ServiceContext.getInstance();
-
-		if (rContext != null)
-		{
-			rContext.setService(this);
 		}
 	}
 

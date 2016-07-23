@@ -32,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gwt.core.client.GWT;
+
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
@@ -130,25 +132,27 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		for (Entry<DataElementUI<?>, StyleData> rUiAndStyle :
 			 aCurrentRow.entrySet())
 		{
-			DataElementUI<?> rUI    = rUiAndStyle.getKey();
-			StyleData		 rStyle = rUiAndStyle.getValue();
+			DataElementUI<?> rUI		   = rUiAndStyle.getKey();
+			StyleData		 rStyle		   = rUiAndStyle.getValue();
+			int				 nElementCount = aCurrentRow.size();
 
 			Layout eElementLayout =
 				rUI.getDataElement().getProperty(LAYOUT, null);
 
-			if (eElementLayout == Layout.GRID_ROW && aCurrentRow.size() == 1)
+			if (eElementLayout == Layout.GRID_ROW && nElementCount == 1)
 			{
 				rStyle =
 					aGridFormatter.applyRowStyle(aCurrentRow.keySet(), rStyle);
 			}
 			else if (bFirstElement)
 			{
+				bFirstElement = false;
+
 				StyleData rRowStyle =
 					aGridFormatter.applyRowStyle(aCurrentRow.keySet(),
 												 aRowStyle);
 
-				aRowBuilder   = addPanel(rRowStyle, Layout.GRID_ROW);
-				bFirstElement = false;
+				aRowBuilder = addPanel(rRowStyle, Layout.GRID_ROW);
 			}
 
 			ContainerBuilder<?> rUiBuilder = aRowBuilder;
@@ -165,11 +169,21 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 
 				if (bAddLabel)
 				{
-					rUI.createElementLabel(rUiBuilder, FORM_LABEL_STYLE);
+					String sLabel = rUI.createElementLabelString(getContext());
+
+					GWT.log("LABEL: " + sLabel);
+
+					if (sLabel.length() > 0)
+					{
+						rUI.createElementLabel(rUiBuilder,
+											   FORM_LABEL_STYLE,
+											   sLabel);
+					}
 				}
 			}
 			else if (eElementLayout != Layout.GRID_ROW)
 			{
+				// apply column count to elements with Layout GRID_COLUMN
 				rStyle = aGridFormatter.applyColumnStyle(rUI, rStyle);
 			}
 
@@ -254,7 +268,9 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		//~ Instance fields ----------------------------------------------------
 
 		private int    nGridColumns;
-		private String sPrefix;
+		private String sSmallPrefix;
+		private String sMediumPrefix;
+		private String sLargePrefix;
 
 		private int   nCurrentColumn;
 		private int[] aColumnWidths;
@@ -264,13 +280,20 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		/***************************************
 		 * Creates a new instance.
 		 *
-		 * @param nGridColumns The number of grid columns
-		 * @param sPrefix      The prefix for column styles
+		 * @param nGridColumns  The number of grid columns
+		 * @param sSmallPrefix  The prefix for small display column styles
+		 * @param sMediumPrefix The prefix for medium display column styles
+		 * @param sLargePrefix  The prefix for large display column styles
 		 */
-		public ColumnCountGridFormatter(int nGridColumns, String sPrefix)
+		public ColumnCountGridFormatter(int    nGridColumns,
+										String sSmallPrefix,
+										String sMediumPrefix,
+										String sLargePrefix)
 		{
-			this.nGridColumns = nGridColumns;
-			this.sPrefix	  = sPrefix;
+			this.nGridColumns  = nGridColumns;
+			this.sSmallPrefix  = sSmallPrefix;
+			this.sMediumPrefix = sMediumPrefix;
+			this.sLargePrefix  = sLargePrefix;
 		}
 
 		//~ Methods ------------------------------------------------------------
@@ -283,8 +306,18 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			DataElementUI<?> rColumUI,
 			StyleData		 rColumnStyle)
 		{
-			return addStyles(rColumnStyle,
-							 sPrefix + aColumnWidths[nCurrentColumn++]);
+			StringBuilder aColumnStyle = new StringBuilder();
+			int			  nColumnWidth = aColumnWidths[nCurrentColumn++];
+
+			aColumnStyle.append(sSmallPrefix)
+						.append(Math.min(nColumnWidth * 4, nGridColumns))
+						.append(' ');
+			aColumnStyle.append(sMediumPrefix)
+						.append(Math.min(nColumnWidth * 2, nGridColumns))
+						.append(' ');
+			aColumnStyle.append(sLargePrefix).append(nColumnWidth);
+
+			return addStyles(rColumnStyle, aColumnStyle.toString());
 		}
 
 		/***************************************

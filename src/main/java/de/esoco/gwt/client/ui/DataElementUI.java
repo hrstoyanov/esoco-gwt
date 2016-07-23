@@ -438,6 +438,18 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Creates the label string for the data element of this instance.
+	 *
+	 * @param  rContext The user interface context for resource expansion
+	 *
+	 * @return The Label string (may be emtpy but will never be null
+	 */
+	public String createElementLabelString(UserInterfaceContext rContext)
+	{
+		return appendLabelSuffix(getElementLabelText(rContext));
+	}
+
+	/***************************************
 	 * Returns the base style data object for this instance. This is the style
 	 * before applying any styles from the data element properties.
 	 *
@@ -930,19 +942,16 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Creates a label for this instance's data element with the given container
-	 * builder.
+	 * Creates a label with the given container builder.
 	 *
 	 * @param rBuilder The container builder to add the label with
 	 * @param rStyle   The default label style
+	 * @param sLabel   The label string
 	 */
-	protected void createElementLabel(
-		ContainerBuilder<?> rBuilder,
-		StyleData			rStyle)
+	protected void createElementLabel(ContainerBuilder<?> rBuilder,
+									  StyleData			  rStyle,
+									  String			  sLabel)
 	{
-		String sLabel =
-			appendLabelSuffix(getElementLabelText(rBuilder.getContext()));
-
 		aElementLabel = rBuilder.addLabel(rStyle, sLabel, null);
 	}
 

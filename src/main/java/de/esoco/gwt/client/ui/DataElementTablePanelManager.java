@@ -441,7 +441,9 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 			StyleData aElementLabelStyle =
 				addStyles(ELEMENT_LABEL_STYLE, sLabelCellStyle);
 
-			aElementUI.createElementLabel(this, aElementLabelStyle);
+			aElementUI.createElementLabel(this,
+										  aElementLabelStyle,
+										  aElementUI.createElementLabelString(getContext()));
 			addCellStyles(CSS.gfDataElementLabel(), sLabelCellStyle);
 		}
 	}

@@ -32,8 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gwt.core.client.GWT;
-
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
@@ -170,8 +168,6 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 				if (bAddLabel)
 				{
 					String sLabel = rUI.createElementLabelString(getContext());
-
-					GWT.log("LABEL: " + sLabel);
 
 					if (sLabel.length() > 0)
 					{

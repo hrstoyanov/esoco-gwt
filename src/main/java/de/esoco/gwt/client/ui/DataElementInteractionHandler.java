@@ -26,7 +26,6 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 
 import de.esoco.lib.property.InteractionEventType;
-import de.esoco.lib.property.SingleSelection;
 
 import java.util.Collections;
 import java.util.EnumSet;
@@ -198,7 +197,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 				rEventTypes.add(EventType.FOCUS_LOST);
 			}
 		}
-		else if (aComponent instanceof SingleSelection)
+		else
 		{
 			if (rInteractionEventTypes.contains(InteractionEventType.UPDATE))
 			{
@@ -209,10 +208,6 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			{
 				rEventTypes.add(EventType.ACTION);
 			}
-		}
-		else
-		{
-			rEventTypes.add(EventType.ACTION);
 		}
 
 		return rEventTypes;

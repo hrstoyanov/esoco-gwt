@@ -130,6 +130,7 @@ import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
+import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
 
@@ -812,15 +813,7 @@ public class DataElementFactory
 						convertValue(rTargetDatatype, rElement.getValue()));
 		}
 
-		if (rElement.hasProperty(CURRENT_SELECTION))
-		{
-			MutableProperties rProperties =
-				getDisplayProperties(rTarget.getRelation(rType));
-
-			rProperties.setProperty(CURRENT_SELECTION,
-									rElement.getProperty(CURRENT_SELECTION,
-														 null));
-		}
+		checkApplyProperties(rElement, rTarget, rType);
 	}
 
 	/***************************************
@@ -1410,6 +1403,36 @@ public class DataElementFactory
 
 		rTarget.set((RelationType<Entity>) rType, rEntity);
 		rRelation.annotate(DATA_ELEMENT, rDataElement);
+	}
+
+	/***************************************
+	 * Checks whether certain properties that have been received from the client
+	 * need to be applied to a parameter.
+	 *
+	 * @param rElement The data element from the client
+	 * @param rTarget  The relatable target to apply properties to
+	 * @param rType    The relation type to set the properties on
+	 */
+	private void checkApplyProperties(DataElement<?>  rElement,
+									  Relatable		  rTarget,
+									  RelationType<?> rType)
+	{
+		if (rElement.hasProperty(CURRENT_SELECTION))
+		{
+			Integer rSelection = rElement.getProperty(CURRENT_SELECTION, null);
+
+			getDisplayProperties(rTarget.getRelation(rType)).setProperty(CURRENT_SELECTION,
+																		 rSelection);
+		}
+
+		if (rElement.hasProperty(INTERACTION_EVENT_DATA))
+		{
+			String sEventData =
+				rElement.getProperty(INTERACTION_EVENT_DATA, null);
+
+			getDisplayProperties(rTarget.getRelation(rType)).setProperty(INTERACTION_EVENT_DATA,
+																		 sEventData);
+		}
 	}
 
 	/***************************************
@@ -2041,7 +2064,8 @@ public class DataElementFactory
 		}
 		else if (DataSet.class.isAssignableFrom(rDatatype))
 		{
-			rResult = new DataSetDataElement(sName, (DataSet<?>) rValue);
+			rResult =
+				new DataSetDataElement(sName, (DataSet<?>) rValue, rFlags);
 		}
 		else if (rDatatype.isEnum())
 		{

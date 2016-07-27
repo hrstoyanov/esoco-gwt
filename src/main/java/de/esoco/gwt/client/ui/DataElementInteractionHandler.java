@@ -34,6 +34,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.Timer;
 
+import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
 
 
@@ -98,7 +99,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	@Override
 	public void handleEvent(EWTEvent rEvent)
 	{
-		EventType eEventType = rEvent.getType();
+		EventType    eEventType = rEvent.getType();
+		final Object rEventData = rEvent.getElement();
 
 		final InteractionEventType eInteractionEventType =
 			mapToInteractionEventType(eEventType);
@@ -114,6 +116,12 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 				@Override
 				public void run()
 				{
+					if (rEventData != null)
+					{
+						rDataElement.setProperty(INTERACTION_EVENT_DATA,
+												 rEventData.toString());
+					}
+
 					rPanelManager.getRootDataElementPanelManager()
 								 .collectInput();
 					rPanelManager.handleInteractiveInput(rDataElement,
@@ -132,11 +140,16 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 * Initializes the handling of interactive input events for a certain
 	 * component if necessary.
 	 *
-	 * @param rComponent           The component to setup the input handling for
-	 * @param bOnContainerChildren TRUE to setup the input handling for the
-	 *                             children if the component is a container
+	 * @param  rComponent           The component to setup the input handling
+	 *                              for
+	 * @param  bOnContainerChildren TRUE to setup the input handling for the
+	 *                              children if the component is a container
+	 *
+	 * @return TRUE if the event handling has been initialized, FALSE if no
+	 *         event types have been registered and no event handling is
+	 *         necessary
 	 */
-	public void setupEventHandling(
+	public boolean setupEventHandling(
 		Component rComponent,
 		boolean   bOnContainerChildren)
 	{
@@ -145,7 +158,9 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 									 Collections
 									 .<InteractionEventType>emptySet());
 
-		if (!rEventTypes.isEmpty())
+		boolean bHasEventHandling = !rEventTypes.isEmpty();
+
+		if (bHasEventHandling)
 		{
 			if (bOnContainerChildren && rComponent instanceof Container)
 			{
@@ -162,6 +177,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 				registerEventHandler(rComponent, rEventTypes);
 			}
 		}
+
+		return bHasEventHandling;
 	}
 
 	/***************************************
@@ -257,5 +274,15 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		{
 			aComponent.addEventListener(eEventType, this);
 		}
+	}
+
+	/***************************************
+	 * Updates the data element to a new instance.
+	 *
+	 * @param rNewDataElement The new data element
+	 */
+	void updateDataElement(D rNewDataElement)
+	{
+		rDataElement = rNewDataElement;
 	}
 }

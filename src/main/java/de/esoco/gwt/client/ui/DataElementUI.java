@@ -160,6 +160,8 @@ public class DataElementUI<D extends DataElement<?>>
 	private boolean bInteractionEnabled = true;
 	private boolean bUIEnabled		    = true;
 
+	private DataElementInteractionHandler<D> aInteractionHandler;
+
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -1408,11 +1410,13 @@ public class DataElementUI<D extends DataElement<?>>
 		Component rComponent,
 		boolean   bOnContainerChildren)
 	{
-		DataElementInteractionHandler<D> aInteractionHandler =
+		DataElementInteractionHandler<D> aEventHandler =
 			createInteractionHandler(rPanelManager, rDataElement);
 
-		aInteractionHandler.setupEventHandling(rComponent,
-											   bOnContainerChildren);
+		if (aEventHandler.setupEventHandling(rComponent, bOnContainerChildren))
+		{
+			aInteractionHandler = aEventHandler;
+		}
 	}
 
 	/***************************************
@@ -1748,6 +1752,11 @@ public class DataElementUI<D extends DataElement<?>>
 						   boolean			   bUpdateUI)
 	{
 		rDataElement = (D) rNewElement;
+
+		if (aInteractionHandler != null)
+		{
+			aInteractionHandler.updateDataElement(rDataElement);
+		}
 
 		if (bHasError)
 		{

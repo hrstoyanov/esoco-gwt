@@ -91,6 +91,8 @@ public abstract class DataElementPanelManager
 	private InteractiveInputHandler rInteractiveInputHandler = null;
 	private boolean				    bHandlingSelectionEvent  = false;
 
+	private DataElementInteractionHandler<DataElementList> aInteractionHandler;
+
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -489,6 +491,11 @@ public abstract class DataElementPanelManager
 			// of data element dependencies
 			rDataElementList = rNewDataElementList;
 
+			if (aInteractionHandler != null)
+			{
+				aInteractionHandler.updateDataElement(rDataElementList);
+			}
+
 			List<DataElement<?>> rOrderedElements =
 				new ArrayList<>(prepareChildDataElements(rDataElementList)
 								.keySet());
@@ -769,10 +776,13 @@ public abstract class DataElementPanelManager
 	 */
 	protected void setupEventHandling()
 	{
-		DataElementInteractionHandler<DataElementList> aInteractionHandler =
+		DataElementInteractionHandler<DataElementList> aEventHandler =
 			new DataElementInteractionHandler<>(this, rDataElementList);
 
-		aInteractionHandler.setupEventHandling(getContainer(), false);
+		if (aEventHandler.setupEventHandling(getContainer(), false))
+		{
+			aInteractionHandler = aEventHandler;
+		}
 	}
 
 	/***************************************

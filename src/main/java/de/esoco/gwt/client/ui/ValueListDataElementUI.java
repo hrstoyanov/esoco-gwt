@@ -323,13 +323,14 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		// will then modify the container
 		if (eLayout != Layout.INLINE)
 		{
+			String		  sButtonPanelStyle =
+				EsocoGwtResources.INSTANCE.css().gfButtonPanel();
 			GenericLayout aPanelLayout;
 
-			rStyle =
-				rStyle.append(WEB_ADDITIONAL_STYLES,
-							  EsocoGwtResources.INSTANCE.css().gfButtonPanel());
+			rStyle = rStyle.append(WEB_ADDITIONAL_STYLES, sButtonPanelStyle);
 
-			setBaseStyle(rStyle);
+			setBaseStyle(getBaseStyle().append(WEB_ADDITIONAL_STYLES,
+											   sButtonPanelStyle));
 
 			if (eLayout == Layout.TABLE)
 			{
@@ -471,7 +472,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		if (rDataElement instanceof ListDataElement)
 		{
 			rStyle = rStyle.setFlags(StyleFlag.MULTISELECT);
-			setBaseStyle(rStyle);
+
+			setBaseStyle(getBaseStyle().setFlags(StyleFlag.MULTISELECT));
 		}
 
 		switch (eListStyle)

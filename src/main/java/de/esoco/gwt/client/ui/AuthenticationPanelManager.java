@@ -59,10 +59,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final String USER_NAME_COOKIE  = "_USER";
-	private static final String SESSION_ID_COOKIE = "_SID";
-
-	private static String sAuthenticationCookiePrefix = "";
+	private static String sCookiePrefix = "";
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -87,13 +84,13 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	//~ Static methods ---------------------------------------------------------
 
 	/***************************************
-	 * Returns the sCookiePrefix value.
+	 * Returns the authentication cookie prefix for the current application.
 	 *
-	 * @return The sCookiePrefix value
+	 * @return The cookie prefix
 	 */
 	public static String getAuthenticationCookiePrefix()
 	{
-		return sAuthenticationCookiePrefix;
+		return sCookiePrefix;
 	}
 
 	/***************************************
@@ -103,7 +100,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	 */
 	public static void setAuthenticationCookiePrefix(String sPrefix)
 	{
-		sAuthenticationCookiePrefix = sPrefix;
+		sCookiePrefix = sPrefix;
 	}
 
 	/***************************************
@@ -214,8 +211,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 		final LoginPanelManager aLoginPanelManager =
 			new LoginPanelManager(this,
 								  this,
-								  getAuthenticationCookiePrefix() +
-								  USER_NAME_COOKIE,
+								  getAuthenticationCookiePrefix(),
 								  bReauthenticate);
 
 		aLoginPanelManager.buildIn(aDialogBuilder, AlignedPosition.CENTER);

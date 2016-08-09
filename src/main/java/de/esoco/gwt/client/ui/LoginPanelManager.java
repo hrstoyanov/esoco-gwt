@@ -39,6 +39,7 @@ import de.esoco.gwt.shared.AuthenticatedService;
 import java.util.Date;
 
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
@@ -51,11 +52,18 @@ import com.google.gwt.user.datepicker.client.CalendarUtil;
 public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	implements EWTEventHandler
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final String USER_NAME_COOKIE  = "_USER";
+	private static final String SESSION_ID_COOKIE = "_SID";
+
 	//~ Instance fields --------------------------------------------------------
 
 	private final LoginHandler rLoginHandler;
-	private String			   sUserCookie;
 	private final boolean	   bReauthenticate;
+
+	private final String sUserCookie;
+	private final String sSessionCookie;
 
 	private TextField aUserField;
 	private TextField aPasswordField;
@@ -69,14 +77,16 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 */
 	public LoginPanelManager(PanelManager<?, ?> rParent,
 							 LoginHandler		rLoginHandler,
-							 String				sUserCookie,
+							 String				sCookiePrefix,
 							 boolean			bReauthenticate)
 	{
 		super(rParent, EsocoGwtResources.INSTANCE.css().gfLoginPanel());
 
 		this.rLoginHandler   = rLoginHandler;
-		this.sUserCookie     = sUserCookie;
 		this.bReauthenticate = bReauthenticate;
+
+		sUserCookie    = sCookiePrefix + USER_NAME_COOKIE;
+		sSessionCookie = sCookiePrefix + SESSION_ID_COOKIE;
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -265,6 +275,62 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	}
 
 	/***************************************
+	 * Creates a new data element containing the login data. The default
+	 * implementation creates a string data element with the user name as it's
+	 * name and the password as it's value. It also adds the user info created
+	 * by {@link #createLoginUserInfo()} as a property with the property name
+	 * {@link AuthenticatedService#LOGIN_USER_INFO} and an existing session ID
+	 * (from the session cookie) with the property {@link
+	 * AuthenticatedService#SESSION_ID}.
+	 *
+	 * @param  sUserName The login user name
+	 * @param  sPassword The login password
+	 *
+	 * @return The login data object
+	 */
+	protected StringDataElement createLoginData(
+		String sUserName,
+		String sPassword)
+	{
+		String			  sSessionId = Cookies.getCookie(sSessionCookie);
+		StringDataElement aLoginData =
+			new StringDataElement(sUserName, sPassword);
+
+		aLoginData.setProperty(AuthenticatedService.LOGIN_USER_INFO,
+							   createLoginUserInfo());
+
+		if (sSessionId != null)
+		{
+			aLoginData.setProperty(AuthenticatedService.SESSION_ID, sSessionId);
+		}
+
+		return aLoginData;
+	}
+
+	/***************************************
+	 * Creates an information string for the user that is currently logging in.
+	 *
+	 * @return The user info string
+	 */
+	protected String createLoginUserInfo()
+	{
+		StringBuilder aLoginUserInfo = new StringBuilder();
+
+		aLoginUserInfo.append("UserAgent: ");
+		aLoginUserInfo.append(Window.Navigator.getUserAgent());
+		aLoginUserInfo.append("\nApp: ");
+		aLoginUserInfo.append(Window.Navigator.getAppName());
+		aLoginUserInfo.append(" (");
+		aLoginUserInfo.append(Window.Navigator.getAppCodeName());
+		aLoginUserInfo.append(")\nVersion: ");
+		aLoginUserInfo.append(Window.Navigator.getAppVersion());
+		aLoginUserInfo.append("\nPlatform: ");
+		aLoginUserInfo.append(Window.Navigator.getPlatform());
+
+		return aLoginUserInfo.toString();
+	}
+
+	/***************************************
 	 * Handles login failures. There are two ways this method can be invoked.
 	 * This class first tries to connect to the server with user name and
 	 * password set to NULL to check for an existing authentication. If that
@@ -312,7 +378,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 			aPasswordField = null;
 		}
 
-		Cookies.setCookie(sUserCookie, sSessionID);
+		Cookies.setCookie(sSessionCookie, sSessionID);
 		rLoginHandler.loginSuccessful(rUserData);
 	}
 
@@ -331,12 +397,9 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 
 		setUserNameCookie(sUserName);
 
-		StringDataElement aLoginData =
-			AuthenticationPanelManager.createLoginData(sUserName, sPassword);
-
 		ServiceRegistry.getCommandService()
 					   .executeCommand(AuthenticatedService.LOGIN,
-									   aLoginData,
+									   createLoginData(sUserName, sPassword),
 			new AsyncCallback<DataElementList>()
 			{
 				@Override

@@ -155,22 +155,26 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 * Returns the session data for a request. This method first checks whether
 	 * the session is properly authenticated and throws an exception otherwise.
 	 *
-	 * @param  rRequest The session to return the session data for
+	 * @param  rRequest             The session to return the session data for
+	 * @param  bCheckAuthentication TRUE to throw an exception if no user is
+	 *                              authenticated for the current session
 	 *
 	 * @return The session data object
 	 *
 	 * @throws AuthenticationException If the session is not authenticated
 	 */
-	static SessionData getSessionData(HttpServletRequest rRequest)
-		throws AuthenticationException
+	static SessionData getSessionData(
+		HttpServletRequest rRequest,
+		boolean			   bCheckAuthentication) throws AuthenticationException
 	{
+		String sSessionId = rRequest.getSession().getId();
+
 		Map<String, SessionData> rSessionMap =
 			getSessionMap(rRequest.getServletContext());
 
-		SessionData rSessionData =
-			rSessionMap.get(rRequest.getSession().getId());
+		SessionData rSessionData = rSessionMap.get(sSessionId);
 
-		if (rSessionData == null)
+		if (rSessionData == null && bCheckAuthentication)
 		{
 			throw new AuthenticationException("User not authenticated");
 		}
@@ -345,7 +349,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	@Override
 	public SessionData getSessionData() throws AuthenticationException
 	{
-		return getSessionData(getThreadLocalRequest());
+		return getSessionData(true);
 	}
 
 	/***************************************
@@ -514,11 +518,11 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 			Map<String, SessionData> rSessionMap =
 				getSessionMap(getServletContext());
-			DataElementList			 aUserData;
 
-			HttpSession rSession     = getThreadLocalRequest().getSession();
-			String	    sSessionId   = rSession.getId();
-			SessionData rSessionData = rSessionMap.get(sSessionId);
+			HttpSession     rSession     = getThreadLocalRequest().getSession();
+			String		    sSessionId   = rSession.getId();
+			SessionData     rSessionData = rSessionMap.get(sSessionId);
+			DataElementList aUserData    = null;
 
 			String sPreviousSessionId =
 				rLoginData.getProperty(SESSION_ID, null);
@@ -539,16 +543,19 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 			if (rSessionData == null)
 			{
-				aUserData = new DataElementList("UserData", null);
-
-				rSessionData = new SessionData(rUser, sLoginName, aUserData);
-				rSessionMap.put(sSessionId, rSessionData);
+				rSessionData = createSessionData();
 			}
 			else
 			{
 				aUserData = rSessionData.get(SessionData.SESSION_USER_DATA);
 			}
 
+			if (aUserData == null)
+			{
+				aUserData = new DataElementList("UserData", null);
+			}
+
+			rSessionData.update(rUser, sLoginName, aUserData);
 			initUserData(aUserData, rUser, sLoginName);
 
 			return aUserData;
@@ -736,6 +743,8 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Overridden to only allow authentication commands if not authenticated.
+	 *
 	 * @see CommandServiceImpl#checkCommandExecution(Command, DataElement)
 	 */
 	@Override
@@ -749,6 +758,22 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 			// user is not authenticated
 			getSessionData();
 		}
+	}
+
+	/***************************************
+	 * Creates a new session data object and stores it in the current request's
+	 * session.
+	 *
+	 * @return The new session data instance
+	 */
+	protected SessionData createSessionData()
+	{
+		String	    sSessionId   = getThreadLocalRequest().getSession().getId();
+		SessionData rSessionData = new SessionData();
+
+		getSessionMap(getServletContext()).put(sSessionId, rSessionData);
+
+		return rSessionData;
 	}
 
 	/***************************************
@@ -883,7 +908,8 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 					addResponseHeader(rResponse, rDownloadData);
 					rResponse.setCharacterEncoding("UTF-8");
 					rResponse.setContentType(rDownloadData.getFileType()
-											 .getMimeType());
+											 .getMimeType()
+											 .getDefinition());
 					writeDownloadDataToResponse(rResponse, rDownloadData);
 				}
 				catch (Exception e)
@@ -1009,6 +1035,25 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Internal method to query the {@link SessionData} for the session of the
+	 * current request.
+	 *
+	 * @param  bCheckAuthentication TRUE to throw an exception if no user is
+	 *                              authenticated for the current session
+	 *
+	 * @return The session data (may be NULL if no session is available and the
+	 *         check authentication parameter is FALSE)
+	 *
+	 * @throws AuthenticationException If no session data is available and the
+	 *                                 check authentication parameter is TRUE
+	 */
+	SessionData getSessionData(boolean bCheckAuthentication)
+		throws AuthenticationException
+	{
+		return getSessionData(getThreadLocalRequest(), bCheckAuthentication);
+	}
+
+	/***************************************
 	 * adds the header to the {@link HttpServletResponse} based on information
 	 * taken from rDownloadData.
 	 *
@@ -1123,7 +1168,8 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 		HttpServletResponse rResponse,
 		DownloadData		rDownloadData) throws IOException
 	{
-		String sContentType = rDownloadData.getFileType().getMimeType();
+		String sContentType =
+			rDownloadData.getFileType().getMimeType().getDefinition();
 		Object rData	    = rDownloadData.createData();
 
 		if (rData != null)

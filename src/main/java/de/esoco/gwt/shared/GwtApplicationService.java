@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,12 +27,6 @@ import de.esoco.data.element.DataElementList;
 public interface GwtApplicationService extends ProcessService
 {
 	//~ Static fields/initializers ---------------------------------------------
-
-	/**
-	 * Name of the data element in the user data that contains the processes
-	 * that can be executed by the user. Type: {@link DataElementList}.
-	 */
-	public static final String APPLICATION_PROCESS = "ApplicationProcess";
 
 	/**
 	 * Name of the data element in the user data that contains the processes

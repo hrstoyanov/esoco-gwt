@@ -18,6 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.StringDataElement;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
@@ -33,6 +34,8 @@ import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
 
 import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 
 
 /********************************************************************
@@ -55,6 +58,9 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	public enum LoginMode { DIALOG, PAGE }
 
 	//~ Static fields/initializers ---------------------------------------------
+
+	private static final String USER_NAME_COOKIE  = "_USER";
+	private static final String SESSION_ID_COOKIE = "_SID";
 
 	private static String sAuthenticationCookiePrefix = "";
 
@@ -98,6 +104,63 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	public static void setAuthenticationCookiePrefix(String sPrefix)
 	{
 		sAuthenticationCookiePrefix = sPrefix;
+	}
+
+	/***************************************
+	 * Creates a new data element containing the login data. The default
+	 * implementation creates a string data element with the user name as it's
+	 * name and the password as it's value. It also adds the user info created
+	 * by {@link #createLoginUserInfo()} as a property with the property name
+	 * {@link AuthenticatedService#LOGIN_USER_INFO} and an existing session ID
+	 * (from the session cookie) with the property {@link
+	 * AuthenticatedService#SESSION_ID}.
+	 *
+	 * @param  sUserName The login user name
+	 * @param  sPassword The login password
+	 *
+	 * @return The login data object
+	 */
+	protected static StringDataElement createLoginData(
+		String sUserName,
+		String sPassword)
+	{
+		String			  sSessionId =
+			Cookies.getCookie(getAuthenticationCookiePrefix());
+		StringDataElement aLoginData =
+			new StringDataElement(sUserName, sPassword);
+
+		aLoginData.setProperty(AuthenticatedService.LOGIN_USER_INFO,
+							   createLoginUserInfo());
+
+		if (sSessionId != null)
+		{
+			aLoginData.setProperty(AuthenticatedService.SESSION_ID, sSessionId);
+		}
+
+		return aLoginData;
+	}
+
+	/***************************************
+	 * Creates an information string for the user that is currently logging in.
+	 *
+	 * @return The user info string
+	 */
+	protected static String createLoginUserInfo()
+	{
+		StringBuilder aLoginUserInfo = new StringBuilder();
+
+		aLoginUserInfo.append("UserAgent: ");
+		aLoginUserInfo.append(Window.Navigator.getUserAgent());
+		aLoginUserInfo.append("\nApp: ");
+		aLoginUserInfo.append(Window.Navigator.getAppName());
+		aLoginUserInfo.append(" (");
+		aLoginUserInfo.append(Window.Navigator.getAppCodeName());
+		aLoginUserInfo.append(")\nVersion: ");
+		aLoginUserInfo.append(Window.Navigator.getAppVersion());
+		aLoginUserInfo.append("\nPlatform: ");
+		aLoginUserInfo.append(Window.Navigator.getPlatform());
+
+		return aLoginUserInfo.toString();
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -151,7 +214,8 @@ public abstract class AuthenticationPanelManager<C extends Container,
 		final LoginPanelManager aLoginPanelManager =
 			new LoginPanelManager(this,
 								  this,
-								  getAuthenticationCookiePrefix(),
+								  getAuthenticationCookiePrefix() +
+								  USER_NAME_COOKIE,
 								  bReauthenticate);
 
 		aLoginPanelManager.buildIn(aDialogBuilder, AlignedPosition.CENTER);

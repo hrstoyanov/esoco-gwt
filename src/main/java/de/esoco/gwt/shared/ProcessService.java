@@ -28,6 +28,9 @@ public interface ProcessService extends StorageService
 {
 	//~ Static fields/initializers ---------------------------------------------
 
+	/** The name of the data element list containing the application process. */
+	public static final String APPLICATION_PROCESS = "ApplicationProcess";
+
 	/**
 	 * A {@link ProcessState} property containing the list of the entities that
 	 * are current locked by a process.

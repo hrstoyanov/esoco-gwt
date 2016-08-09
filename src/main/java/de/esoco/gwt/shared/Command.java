@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import de.esoco.data.element.DataElement;
 
 import java.io.Serializable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /********************************************************************
@@ -42,8 +42,8 @@ public class Command<T extends DataElement<?>, R extends DataElement<?>>
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Set<String> aCommandNameRegistry =
-		new HashSet<String>();
+	private static final Map<String, Command<?, ?>> aCommandRegistry =
+		new HashMap<>();
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -78,29 +78,32 @@ public class Command<T extends DataElement<?>, R extends DataElement<?>>
 	 *
 	 * @return A new command instance
 	 *
-	 * @throws NullPointerException     If the given name is NULL
-	 * @throws IllegalArgumentException If a command with the given name exists
+	 * @throws IllegalArgumentException If the given name is invalid or if a
+	 *                                  command with the given name exists
 	 *                                  already
 	 */
 	public static <T extends DataElement<?>, R extends DataElement<?>> Command<T, R> newInstance(
 		String sName)
 	{
-		if (sName == null)
+		if (sName == null || sName.length() == 0)
 		{
 			throw new NullPointerException("Name must not be NULL");
 		}
 
-		if (aCommandNameRegistry.contains(sName))
+		Command<T, R> aCommand;
+
+		if (aCommandRegistry.containsKey(sName))
 		{
 			throw new IllegalArgumentException("A command type with name " +
 											   sName + " exists already");
 		}
 		else
 		{
-			aCommandNameRegistry.add(sName);
+			aCommand = new Command<T, R>(sName);
+			aCommandRegistry.put(sName, aCommand);
 		}
 
-		return new Command<T, R>(sName);
+		return aCommand;
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -150,5 +153,24 @@ public class Command<T extends DataElement<?>, R extends DataElement<?>>
 	public String toString()
 	{
 		return "Command[" + sName + "]";
+	}
+
+	/***************************************
+	 * Returns the singleton command instance for the given name.
+	 *
+	 * @return The command instance for the given name
+	 *
+	 * @throws IllegalStateException If no matching command could be found
+	 */
+	Object readResolve()
+	{
+		Command<?, ?> rCommand = aCommandRegistry.get(sName);
+
+		if (rCommand == null)
+		{
+			throw new IllegalStateException("Undefined command: " + sName);
+		}
+
+		return rCommand;
 	}
 }

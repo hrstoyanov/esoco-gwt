@@ -19,12 +19,14 @@ package de.esoco.gwt.server;
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.element.StringDataElement;
 
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
+import de.esoco.gwt.shared.Command;
 import de.esoco.gwt.shared.ProcessDescription;
 import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ProcessState;
@@ -60,6 +62,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.servlet.ServletException;
+
 import org.obrel.core.RelationType;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
@@ -86,7 +90,6 @@ import static de.esoco.process.ProcessRelationTypes.PROCESS_LIST;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_LOCALE;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_SCHEDULER;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_STEP_STYLE;
-import static de.esoco.process.ProcessRelationTypes.PROCESS_USER;
 import static de.esoco.process.ProcessRelationTypes.RELOAD_CURRENT_STEP;
 import static de.esoco.process.ProcessRelationTypes.REQUIRED_PROCESS_INPUT_PARAMS;
 import static de.esoco.process.ProcessRelationTypes.VIEW_PARAMS;
@@ -201,6 +204,30 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void init() throws ServletException
+	{
+		super.init();
+
+		// property name not known to GWT serialization if not accessed once
+		SHOW_UI_INSPECTOR.getName();
+	}
+
+	/***************************************
+	 * @see StorageServiceImpl#loginUser(StringDataElement)
+	 */
+	@Override
+	public DataElementList loginUser(StringDataElement rLoginData)
+		throws AuthenticationException, ServiceException
+	{
+		DataElementList rUserData = super.loginUser(rLoginData);
+
+		return rUserData;
+	}
+
+	/***************************************
 	 * Resumes the execution of a background process if it is currently
 	 * suspended.
 	 *
@@ -241,6 +268,25 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Overridden to allow the execution of a self-authenticating application
+	 * process.
+	 *
+	 * @see ProcessServiceImpl#checkCommandExecution(Command, DataElement)
+	 */
+	@Override
+	protected <T extends DataElement<?>> void checkCommandExecution(
+		Command<T, ?> rCommand,
+		T			  rData) throws ServiceException
+	{
+		if (!hasProcessBasedAuthentication() ||
+			!rCommand.equals(EXECUTE_PROCESS) ||
+			!rData.getName().startsWith(APPLICATION_PROCESS))
+		{
+			super.checkCommandExecution(rCommand, rData);
+		}
+	}
+
+	/***************************************
 	 * Overridden to cancel any running processes of the current user.
 	 *
 	 * @see AuthenticatedServiceImpl#endSession(SessionData)
@@ -272,8 +318,18 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		Entity			   rReferenceEntity) throws AuthenticationException,
 													ServiceException
 	{
-		SessionData			 rSessionData = getSessionData();
-		ProcessExecutionMode eMode		  = ProcessExecutionMode.EXECUTE;
+		boolean bCheckAuthentication =
+			!hasProcessBasedAuthentication() ||
+			rDescription instanceof ProcessState;
+
+		SessionData rSessionData = getSessionData(bCheckAuthentication);
+
+		if (rSessionData == null)
+		{
+			rSessionData = createSessionData();
+		}
+
+		ProcessExecutionMode eMode = ProcessExecutionMode.EXECUTE;
 
 		Process		 rProcess	   = null;
 		Integer		 rId		   = null;
@@ -295,11 +351,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				eMode = rProcessState.getExecutionMode();
 				checkOpenUiInspector(rProcessState, rProcess);
 			}
-			else
-			{
-				// property name is not known to GWT serialization otherwise...
-				SHOW_UI_INSPECTOR.getName();
-			}
 
 			executeProcess(rProcess, eMode);
 
@@ -316,17 +367,20 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		}
 		catch (Throwable e)
 		{
-			try
+			if (rProcess != null)
 			{
-				rProcessState =
-					createProcessState(rDescription, rProcess, false);
-			}
-			catch (Exception eSecondary)
-			{
-				// should normally not occur. If it does then log and fall
-				// through to standard exception handling
-				Log.error("Could not create exception process state",
-						  eSecondary);
+				try
+				{
+					rProcessState =
+						createProcessState(rDescription, rProcess, false);
+				}
+				catch (Exception eSecondary)
+				{
+					// should normally not occur. If it does then log and fall
+					// through to standard exception handling
+					Log.error("Could not create exception process state",
+							  eSecondary);
+				}
 			}
 
 			ServiceException eService = wrapException(e, rProcessState);
@@ -379,6 +433,18 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Can be overridden by subclasses to indicate that their application
+	 * process handles the authentication instead of the application framework.
+	 * The default implementation always return FALSE.
+	 *
+	 * @return TRUE for process based authentication
+	 */
+	protected boolean hasProcessBasedAuthentication()
+	{
+		return false;
+	}
+
+	/***************************************
 	 * Initializes a new process and associates it with a reference entity if it
 	 * is not NULL. The default implementation does nothing.
 	 *
@@ -404,6 +470,21 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	protected void resetSessionData(SessionData rSessionData)
 	{
 		cancelActiveProcesses(rSessionData);
+	}
+
+	/***************************************
+	 * Can be invoked by subclasses to set the main application process. This
+	 * method should be invoked before any other process definitions are created
+	 * through {@link #createProcessDescriptions(Class, List)}.
+	 *
+	 * @param  rAppProcess The class of the main application process
+	 *
+	 * @return The description of the application process
+	 */
+	protected ProcessDescription setApplicationProcess(
+		Class<? extends ProcessDefinition> rAppProcess)
+	{
+		return createProcessDescriptions(rAppProcess, null);
 	}
 
 	/***************************************
@@ -572,14 +653,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		SessionData		  rSessionData) throws ProcessException
 	{
 		Process		   rProcess = ProcessManager.getProcess(rDefinition);
-		Entity		   rUser    = rSessionData.get(SessionData.SESSION_USER);
 		ServiceContext rContext = ServiceContext.getInstance();
 
 		rProcess.setParameter(SESSION_MANAGER, this);
 		rProcess.setParameter(EXTERNAL_SERVICE_ACCESS, this);
 		rProcess.setParameter(STORAGE_ADAPTER_REGISTRY, this);
 		rProcess.setParameter(PROCESS_SCHEDULER, rContext);
-		rProcess.setParameter(PROCESS_USER, rUser);
 		rProcess.setParameter(PROCESS_LOCALE,
 							  getThreadLocalRequest().getLocale());
 

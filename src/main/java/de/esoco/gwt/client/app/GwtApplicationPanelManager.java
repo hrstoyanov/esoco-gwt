@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -186,16 +186,14 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 	 * Executes the main application process that is stored in the user data
 	 * element with the name {@link GwtApplicationService#APPLICATION_PROCESS}.
 	 *
-	 * @param rUserData The user data to read the process from
+	 * @param sProcessName rUserData The user data to read the process from
 	 */
-	protected void executeApplicationProcess(DataElementList rUserData)
+	protected void executeApplicationProcess(String sProcessName)
 	{
-		DataElementList rAppProcess =
-			rUserData.getChildList(GwtApplicationService.APPLICATION_PROCESS);
+		sProcessName =
+			GwtApplicationService.APPLICATION_PROCESS + "/" + sProcessName;
 
-		executeProcess(GwtApplicationService.APPLICATION_PROCESS + "/" +
-					   rAppProcess.getElement(0).getName(),
-					   null);
+		executeProcess(sProcessName, null);
 	}
 
 	/***************************************
@@ -224,20 +222,25 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 		}
 		else
 		{
-			String sProcessPath = sProcessName;
+			ProcessDescription rProcessDescription;
 
-			if (!sProcessPath.startsWith(GwtApplicationService.APPLICATION_PROCESS))
+			if (sProcessName.startsWith(GwtApplicationService.APPLICATION_PROCESS))
 			{
-				sProcessPath =
-					GwtApplicationService.USER_PROCESSES + "/" + sProcessName;
+				rProcessDescription =
+					new ProcessDescription(sProcessName, null, 0, false);
 			}
-
-			ProcessDescription rProcessDescription =
-				(ProcessDescription) getUserData().getElementAt(sProcessPath);
-
-			if (rProcessDescription.isInputRequired())
+			else
 			{
-				rProcessDescription.setProcessInput(rProcessInput);
+				sProcessName =
+					GwtApplicationService.USER_PROCESSES + "/" + sProcessName;
+
+				rProcessDescription =
+					(ProcessDescription) getUserData().getElementAt(sProcessName);
+
+				if (rProcessDescription.isInputRequired())
+				{
+					rProcessDescription.setProcessInput(rProcessInput);
+				}
 			}
 
 			setClientSize(rProcessDescription);

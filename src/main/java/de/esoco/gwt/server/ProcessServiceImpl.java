@@ -90,6 +90,7 @@ import static de.esoco.process.ProcessRelationTypes.PROCESS_LIST;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_LOCALE;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_SCHEDULER;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_STEP_STYLE;
+import static de.esoco.process.ProcessRelationTypes.PROCESS_USER;
 import static de.esoco.process.ProcessRelationTypes.RELOAD_CURRENT_STEP;
 import static de.esoco.process.ProcessRelationTypes.REQUIRED_PROCESS_INPUT_PARAMS;
 import static de.esoco.process.ProcessRelationTypes.VIEW_PARAMS;
@@ -121,6 +122,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 	private static List<ProcessDefinition> aProcessDefinitions =
 		new ArrayList<ProcessDefinition>();
+
+	//~ Instance fields --------------------------------------------------------
+
+	private int nTestCounter = 0;
 
 	//~ Static methods ---------------------------------------------------------
 
@@ -323,6 +328,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			rDescription instanceof ProcessState;
 
 		SessionData rSessionData = getSessionData(bCheckAuthentication);
+
+		if (++nTestCounter % 6 == 0)
+		{
+			throw new AuthenticationException("TEST AUTH ERROR");
+		}
 
 		if (rSessionData == null)
 		{
@@ -653,12 +663,14 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		SessionData		  rSessionData) throws ProcessException
 	{
 		Process		   rProcess = ProcessManager.getProcess(rDefinition);
+		Entity		   rUser    = rSessionData.get(SessionData.SESSION_USER);
 		ServiceContext rContext = ServiceContext.getInstance();
 
 		rProcess.setParameter(SESSION_MANAGER, this);
 		rProcess.setParameter(EXTERNAL_SERVICE_ACCESS, this);
 		rProcess.setParameter(STORAGE_ADAPTER_REGISTRY, this);
 		rProcess.setParameter(PROCESS_SCHEDULER, rContext);
+		rProcess.setParameter(PROCESS_USER, rUser);
 		rProcess.setParameter(PROCESS_LOCALE,
 							  getThreadLocalRequest().getLocale());
 

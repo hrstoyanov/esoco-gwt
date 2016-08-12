@@ -15,8 +15,8 @@
 	
 }
 
-@external .gf-LoginPanel;
-.gf-LoginPanel {
+@external .gf-LoginDialog, .gf-LoginPanel;
+.gf-LoginDialog, .gf-LoginPanel {
 	
 }
 

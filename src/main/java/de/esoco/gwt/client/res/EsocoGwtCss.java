@@ -42,6 +42,9 @@ public interface EsocoGwtCss extends CssResource {
   @ClassName("gf-EmptyCell")
   String gfEmptyCell();
   
+  @ClassName("gf-LoginDialog")
+  String gfLoginDialog();
+  
   @ClassName("gf-LoginPanel")
   String gfLoginPanel();
   

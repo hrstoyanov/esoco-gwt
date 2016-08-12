@@ -491,7 +491,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 			}
 			else
 			{
-				throw new AuthenticationException("Re-login not allowed");
+				throw new AuthenticationException("ReLoginNotPossible");
 			}
 		}
 		else
@@ -535,8 +535,9 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 				if (rSessionData == null && rPreviousSessionData != null)
 				{
 					rSessionData = rPreviousSessionData;
-					rSessionMap.put(sSessionId, rSessionData);
 				}
+
+				rSessionMap.put(sSessionId, rSessionData);
 			}
 
 			rSession.setAttribute(LOGIN_NAME, sLoginName);

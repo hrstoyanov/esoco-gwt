@@ -63,9 +63,9 @@ public abstract class AuthenticationPanelManager<C extends Container,
 
 	//~ Instance fields --------------------------------------------------------
 
-	private Command<?, ?>		    rLastCommand;
-	private DataElement<?>		    rLastCommandData;
-	private CommandResultHandler<?> rLastCommandHandler;
+	private Command<?, ?>		    rPrevCommand;
+	private DataElement<?>		    rPrevCommandData;
+	private CommandResultHandler<?> rPrevCommandHandler;
 
 	private DialogView		  aLoginDialog;
 	private LoginPanelManager aLoginPanel;
@@ -175,37 +175,34 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	 * @see LoginHandler#loginSuccessful(DataElementList)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void loginSuccessful(DataElementList rUserData)
 	{
-		hideLoginPanel();
+		P rParent = getParent();
 
-		if (rLastCommand == AuthenticatedService.GET_USER_DATA)
+		if (rParent != null)
 		{
-			((CommandResultHandler<DataElementList>) rLastCommandHandler)
-			.handleCommandResult(rUserData);
+			// delegate the call to the parent so that the topmost panel manager
+			// handles the re-execution of the last command
+			rParent.loginSuccessful(rUserData);
 		}
 		else
 		{
-			executeCommand((Command<DataElement<?>, DataElement<?>>)
-						   rLastCommand,
-						   rLastCommandData,
-						   (CommandResultHandler<DataElement<?>>)
-						   rLastCommandHandler);
+			hideLoginPanel();
+			executePreviousCommand(rUserData);
 		}
 	}
 
 	/***************************************
 	 * Creates the login panel in the given container builder.
 	 *
-	 * @param  aDialogBuilder  The builder to create the login panel with
+	 * @param  rBuilder        The builder to create the login panel with
 	 * @param  bReauthenticate TRUE if the invocation is only for a
 	 *                         re-authentication of the current user
 	 *
 	 * @return The {@link LoginPanelManager} instance
 	 */
 	protected LoginPanelManager buildLoginPanel(
-		ContainerBuilder<?> aDialogBuilder,
+		ContainerBuilder<?> rBuilder,
 		boolean				bReauthenticate)
 	{
 		final LoginPanelManager aLoginPanelManager =
@@ -214,7 +211,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 								  getAuthenticationCookiePrefix(),
 								  bReauthenticate);
 
-		aLoginPanelManager.buildIn(aDialogBuilder, AlignedPosition.CENTER);
+		aLoginPanelManager.buildIn(rBuilder, AlignedPosition.CENTER);
 
 		return aLoginPanelManager;
 	}
@@ -241,6 +238,39 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	}
 
 	/***************************************
+	 * Creates a login panel and displays it in a dialog.
+	 *
+	 * @param rContext        The user interface context to display the dialog
+	 *                        in
+	 * @param bReauthenticate TRUE for a re-authentication of the current user
+	 */
+	protected void displayLoginDialog(
+		UserInterfaceContext rContext,
+		boolean				 bReauthenticate)
+	{
+		aLoginDialog =
+			rContext.createDialog(getContainer().getView(), ViewStyle.MODAL);
+
+		ContainerBuilder<View> aDialogBuilder =
+			new ContainerBuilder<View>(aLoginDialog);
+
+		aLoginDialog.getWidget().addStyleName(CSS.gfLoginDialog());
+		aLoginDialog.setTitle(bReauthenticate ? "$tiRepeatLogin" : "$tiLogin");
+
+		aLoginPanel = buildLoginPanel(aDialogBuilder, bReauthenticate);
+
+		aLoginDialog.pack();
+
+		Rectangle rScreen = rContext.getDefaultScreen().getClientArea();
+
+		rContext.displayView(aLoginDialog,
+							 rScreen.getX() + rScreen.getWidth() / 2,
+							 rScreen.getY() + rScreen.getHeight() / 3,
+							 AlignedPosition.CENTER,
+							 true);
+	}
+
+	/***************************************
 	 * Executes a certain command on the server.
 	 *
 	 * @param rCommand       The command to execute
@@ -257,11 +287,22 @@ public abstract class AuthenticationPanelManager<C extends Container,
 		T						rData,
 		CommandResultHandler<R> rResultHandler)
 	{
-		this.rLastCommand		 = rCommand;
-		this.rLastCommandData    = rData;
-		this.rLastCommandHandler = rResultHandler;
+		P rParent = getParent();
 
-		super.executeCommand(rCommand, rData, rResultHandler);
+		if (rParent != null)
+		{
+			// delegate the call to the parent so that the topmost panel manager
+			// handles the command execution and the storing of the last command
+			rParent.executeCommand(rCommand, rData, rResultHandler);
+		}
+		else
+		{
+			this.rPrevCommand		 = rCommand;
+			this.rPrevCommandData    = rData;
+			this.rPrevCommandHandler = rResultHandler;
+
+			super.executeCommand(rCommand, rData, rResultHandler);
+		}
 	}
 
 	/***************************************
@@ -304,36 +345,44 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	}
 
 	/***************************************
-	 * Will be invoked to perform a login if no user is authenticated currently.
+	 * Will be invoked to perform a login if no user is authenticated. The
+	 * default implementation will delegate the call to the parent or, if this
+	 * instance is the root panel (i.e. the parent is NULL) it will invoke
+	 * {@link #performLogin(boolean)}. Subclasses that want to modify the actual
+	 * login should therefore override the latter method.
 	 *
 	 * @param bReauthenticate TRUE if this is a re-authentication because of an
 	 *                        expired session
 	 */
-	protected void login(boolean bReauthenticate)
+	protected final void login(boolean bReauthenticate)
+	{
+		P rParent = getParent();
+
+		if (rParent != null)
+		{
+			rParent.login(bReauthenticate);
+		}
+		else
+		{
+			performLogin(bReauthenticate);
+		}
+	}
+
+	/***************************************
+	 * Performs a login of a user by displaying a login form that is typically
+	 * based on {@link LoginPanelManager} which will then execute the
+	 * server-side login.
+	 *
+	 * @param bReauthenticate TRUE if this is a re-authentication because of an
+	 *                        expired session
+	 */
+	protected void performLogin(boolean bReauthenticate)
 	{
 		if (eLoginMode == LoginMode.DIALOG)
 		{
 			UserInterfaceContext rContext = getContext();
 
-			aLoginDialog =
-				rContext.createDialog(getContainer().getView(),
-									  ViewStyle.MODAL);
-
-			ContainerBuilder<View> aDialogBuilder =
-				new ContainerBuilder<View>(aLoginDialog);
-
-			aLoginPanel = buildLoginPanel(aDialogBuilder, bReauthenticate);
-
-			aLoginDialog.setTitle("$tiLogin");
-			aLoginDialog.pack();
-
-			Rectangle rScreen = rContext.getDefaultScreen().getClientArea();
-
-			rContext.displayView(aLoginDialog,
-								 rScreen.getX() + rScreen.getWidth() / 2,
-								 rScreen.getY() + rScreen.getHeight() / 3,
-								 AlignedPosition.CENTER,
-								 true);
+			displayLoginDialog(rContext, bReauthenticate);
 
 			rContext.runLater(new Runnable()
 				{
@@ -383,5 +432,30 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	 */
 	protected void userAuthenticated(DataElementList rUserData)
 	{
+	}
+
+	/***************************************
+	 * Executes the previous command that had failed to execute because of an
+	 * authentication error.
+	 *
+	 * @param rUserData The user data received from the server after
+	 *                  authentication
+	 */
+	@SuppressWarnings("unchecked")
+	private void executePreviousCommand(DataElementList rUserData)
+	{
+		if (rPrevCommand == AuthenticatedService.GET_USER_DATA)
+		{
+			((CommandResultHandler<DataElementList>) rPrevCommandHandler)
+			.handleCommandResult(rUserData);
+		}
+		else
+		{
+			executeCommand((Command<DataElement<?>, DataElement<?>>)
+						   rPrevCommand,
+						   rPrevCommandData,
+						   (CommandResultHandler<DataElement<?>>)
+						   rPrevCommandHandler);
+		}
 	}
 }

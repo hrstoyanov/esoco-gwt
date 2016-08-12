@@ -143,7 +143,11 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 		aFailureMessage = addFailureMessageComponents(aBuilder);
 		aLoginButton    = addSubmitLoginComponents(aBuilder);
 
-		aUserField.addEventListener(EventType.ACTION, this);
+		if (aUserField != null)
+		{
+			aUserField.addEventListener(EventType.ACTION, this);
+		}
+
 		aPasswordField.addEventListener(EventType.ACTION, this);
 		aLoginButton.addEventListener(EventType.ACTION, this);
 		aFailureMessage.setVisible(false);

@@ -123,10 +123,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	private static List<ProcessDefinition> aProcessDefinitions =
 		new ArrayList<ProcessDefinition>();
 
-	//~ Instance fields --------------------------------------------------------
-
-	private int nTestCounter = 0;
-
 	//~ Static methods ---------------------------------------------------------
 
 	/***************************************
@@ -328,11 +324,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			rDescription instanceof ProcessState;
 
 		SessionData rSessionData = getSessionData(bCheckAuthentication);
-
-		if (++nTestCounter % 6 == 0)
-		{
-			throw new AuthenticationException("TEST AUTH ERROR");
-		}
 
 		if (rSessionData == null)
 		{

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,22 @@ public class AuthenticationException extends ServiceException
 	public AuthenticationException(String sMessage)
 	{
 		super(sMessage);
+	}
+
+	/***************************************
+	 * Creates a new instance that indicates whether a re-authentication of the
+	 * user is possible to continue an existing current session. The state can
+	 * be queried through the inherited {@link #isRecoverable()} method.
+	 *
+	 * @param sMessage                  The error message
+	 * @param bReAuthenticationPossible TRUE if the current user can be
+	 *                                  re-authenticated
+	 */
+	public AuthenticationException(
+		String  sMessage,
+		boolean bReAuthenticationPossible)
+	{
+		super(sMessage, bReAuthenticationPossible);
 	}
 
 	/***************************************

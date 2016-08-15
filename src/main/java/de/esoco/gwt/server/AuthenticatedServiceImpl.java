@@ -29,6 +29,7 @@ import de.esoco.data.element.StringDataElement;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityFunctions;
 import de.esoco.entity.EntityManager;
+import de.esoco.entity.ExtraAttributes;
 
 import de.esoco.gwt.shared.AuthenticatedService;
 import de.esoco.gwt.shared.AuthenticationException;
@@ -44,6 +45,8 @@ import de.esoco.lib.net.ExternalServiceAccess;
 import de.esoco.lib.net.ExternalServiceDefinition;
 import de.esoco.lib.net.ExternalServiceRequest;
 import de.esoco.lib.property.HasProperties;
+
+import de.esoco.storage.StorageException;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,6 +70,8 @@ import javax.servlet.http.HttpSession;
 import org.obrel.core.RelationType;
 import org.obrel.core.RelationTypes;
 
+import static de.esoco.data.SessionData.SESSION_START_TIME;
+
 import static org.obrel.core.RelationTypes.newMapType;
 import static org.obrel.core.RelationTypes.newSetType;
 
@@ -86,10 +91,14 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String DEFAULT_UPLOAD_URL = "upload";
+	/**
+	 * An extra attribute that defines the timeout for a user's authentication.
+	 */
+	public static final RelationType<Integer> AUTHENTICATION_TIMEOUT =
+		ExtraAttributes.newExtraAttribute();
 
-	private static final String DEFAULT_DOWNLOAD_URL = "srv/download/";
-
+	private static final String DEFAULT_UPLOAD_URL		   = "upload";
+	private static final String DEFAULT_DOWNLOAD_URL	   = "srv/download/";
 	private static final String DEFAULT_OAUTH_CALLBACK_URL = "/oauth";
 
 	private static final String ATTR_SESSION_CONTEXT = "ATTR_SESSION_CONTEXT";
@@ -97,13 +106,13 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	private static final RelationType<AuthorizationCallback> AUTHORIZATION_CALLBACK =
 		RelationTypes.newType();
 
-	private static final RelationType<Map<String, DownloadData>> SESSION_DOWNLOADS =
-		newMapType(false);
-
 	static final RelationType<Map<String, UploadHandler>> SESSION_UPLOADS =
 		newMapType(false);
 
-	static final RelationType<Set<ExternalService>> EXTERNAL_SERVICES =
+	private static final RelationType<Map<String, DownloadData>> SESSION_DOWNLOADS =
+		newMapType(false);
+
+	private static final RelationType<Set<ExternalService>> EXTERNAL_SERVICES =
 		newSetType(true);
 
 	private static int nNextUploadId = 1;
@@ -174,9 +183,9 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 		SessionData rSessionData = rSessionMap.get(sSessionId);
 
-		if (rSessionData == null && bCheckAuthentication)
+		if (bCheckAuthentication && rSessionData == null)
 		{
-			throw new AuthenticationException("User not authenticated");
+			throw new AuthenticationException("UserNotAuthenticated");
 		}
 
 		return rSessionData;
@@ -1051,7 +1060,15 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	SessionData getSessionData(boolean bCheckAuthentication)
 		throws AuthenticationException
 	{
-		return getSessionData(getThreadLocalRequest(), bCheckAuthentication);
+		SessionData rSessionData =
+			getSessionData(getThreadLocalRequest(), bCheckAuthentication);
+
+		if (rSessionData != null && bCheckAuthentication)
+		{
+			checkAuthenticationTimeout(rSessionData);
+		}
+
+		return rSessionData;
 	}
 
 	/***************************************
@@ -1070,6 +1087,47 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 						  rDownloadData.getFileName());
 
 		rResponse.addHeader("Content-Disposition", sHeader);
+	}
+
+	/***************************************
+	 * Checks whether the given session has reached the authentication timeout
+	 * of this application. The timeout must be set in the service configuration
+	 * returned by {@link #getServiceConfiguration()} in an extra attribute with
+	 * the type {@link #AUTHENTICATION_TIMEOUT}. If not set it defaults to zero
+	 * which disables the timeout.
+	 *
+	 * @param  rSessionData The session to check for the timeout
+	 *
+	 * @throws AuthenticationException If the session timeout has been reached
+	 */
+	@SuppressWarnings("boxing")
+	private void checkAuthenticationTimeout(SessionData rSessionData)
+		throws AuthenticationException
+	{
+		int nAuthenticationTimeout;
+
+		try
+		{
+			nAuthenticationTimeout =
+				getServiceConfiguration().getExtraAttribute(AUTHENTICATION_TIMEOUT,
+															0);
+		}
+		catch (StorageException e)
+		{
+			throw new IllegalStateException(e);
+		}
+
+		if (nAuthenticationTimeout > 0)
+		{
+			long nSessionTime = rSessionData.get(SESSION_START_TIME).getTime();
+
+			nSessionTime = (System.currentTimeMillis() - nSessionTime) / 1000;
+
+			if (nSessionTime > nAuthenticationTimeout)
+			{
+				throw new AuthenticationException("UserSessionExpired", true);
+			}
+		}
 	}
 
 	/***************************************

@@ -39,6 +39,7 @@ import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.ViewDisplayType;
+
 import de.esoco.process.FragmentInteraction;
 import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
@@ -50,6 +51,7 @@ import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
 import de.esoco.process.ViewFragment;
 import de.esoco.process.step.EditInteractionParameters;
+
 import de.esoco.storage.StorageException;
 
 import java.util.ArrayList;

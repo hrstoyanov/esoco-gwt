@@ -102,6 +102,18 @@ public class ServiceException extends Exception
 		this.rProcessState    = rProcessState;
 	}
 
+	/***************************************
+	 * A constructor for subclasses that need to indicate a recoverable state.
+	 *
+	 * @see #ServiceException(String)
+	 */
+	protected ServiceException(String sMessage, boolean bRecoverable)
+	{
+		this(sMessage);
+
+		this.bRecoverable = bRecoverable;
+	}
+
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************

@@ -71,6 +71,16 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	private LoginPanelManager aLoginPanel;
 	private LoginMode		  eLoginMode = LoginMode.DIALOG;
 
+	private CommandResultHandler<DataElementList> aGetUserDataResultHandler =
+		new CommandResultHandler<DataElementList>()
+		{
+			@Override
+			public void handleCommandResult(DataElementList rUserData)
+			{
+				userAuthenticated(rUserData);
+			}
+		};
+
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -227,14 +237,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	{
 		executeCommand(AuthenticatedService.GET_USER_DATA,
 					   null,
-			new CommandResultHandler<DataElementList>()
-			{
-				@Override
-				public void handleCommandResult(DataElementList rUserData)
-				{
-					userAuthenticated(rUserData);
-				}
-			});
+					   aGetUserDataResultHandler);
 	}
 
 	/***************************************
@@ -315,7 +318,8 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	{
 		if (rCaught instanceof AuthenticationException)
 		{
-			login(rCommand != AuthenticatedService.GET_USER_DATA);
+			login(rCommand != AuthenticatedService.GET_USER_DATA &&
+				  ((AuthenticationException) rCaught).isRecoverable());
 		}
 		else
 		{
@@ -378,6 +382,15 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	 */
 	protected void performLogin(boolean bReauthenticate)
 	{
+		if (!bReauthenticate)
+		{
+			// if no re-auth possible let the app start over by processing the
+			// initial get user data command
+			rPrevCommand	    = AuthenticatedService.GET_USER_DATA;
+			rPrevCommandData    = null;
+			rPrevCommandHandler = aGetUserDataResultHandler;
+		}
+
 		if (eLoginMode == LoginMode.DIALOG)
 		{
 			UserInterfaceContext rContext = getContext();

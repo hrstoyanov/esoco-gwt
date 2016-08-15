@@ -39,7 +39,7 @@ import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.property.ViewDisplayType;
-
+import de.esoco.process.FragmentInteraction;
 import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
 import de.esoco.process.ProcessDefinition;
@@ -48,10 +48,8 @@ import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
 import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
+import de.esoco.process.ViewFragment;
 import de.esoco.process.step.EditInteractionParameters;
-import de.esoco.process.step.FragmentInteraction;
-import de.esoco.process.step.ViewFragment;
-
 import de.esoco.storage.StorageException;
 
 import java.util.ArrayList;
@@ -65,6 +63,7 @@ import java.util.Set;
 import javax.servlet.ServletException;
 
 import org.obrel.core.RelationType;
+import org.obrel.type.MetaTypes;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
@@ -279,12 +278,61 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		Command<T, ?> rCommand,
 		T			  rData) throws ServiceException
 	{
-		if (!hasProcessBasedAuthentication() ||
+		if (!hasProcessAuthentication() ||
 			!rCommand.equals(EXECUTE_PROCESS) ||
 			!rData.getName().startsWith(APPLICATION_PROCESS))
 		{
 			super.checkCommandExecution(rCommand, rData);
 		}
+	}
+
+	/***************************************
+	 * Creates a dummy session in the case of process-based authentication that
+	 * is used until the user is authenticated by the process. If a session
+	 * timeout occurred during the execution of the authentication process step
+	 * the application process will be restarted so that it is available in the
+	 * session again.
+	 *
+	 * @param  rDescription     The process description of the application
+	 *                          process
+	 * @param  rReferenceEntity An optional reference entity
+	 *
+	 * @return A new unauthenticated session data object
+	 *
+	 * @throws ServiceException
+	 * @throws ProcessException
+	 * @throws StorageException
+	 */
+	@SuppressWarnings("boxing")
+	protected SessionData createProcessAuthenticationSession(
+		ProcessDescription rDescription,
+		Entity			   rReferenceEntity) throws StorageException,
+													ProcessException,
+													ServiceException
+	{
+		SessionData rSessionData = createSessionData();
+
+		if (rDescription instanceof ProcessState)
+		{
+			// if a session timeout occurs before authentication (i.e.
+			// in the login step of the application process) re-start
+			// the app process with a new process description
+			ProcessDescription aRestartDescription =
+				new ProcessDescription(rDescription);
+
+			Process aRestartProcess =
+				getProcess(aRestartDescription, rSessionData, rReferenceEntity);
+
+			// execute once for initialization, then continue with the original
+			// process state (with updated process ID) to perform the last
+			// interaction of the login step which had failed because of the
+			// session timeout
+			aRestartProcess.execute();
+			((ProcessState) rDescription).setProcessId(aRestartProcess
+													   .getParameter(PROCESS_ID));
+		}
+
+		return rSessionData;
 	}
 
 	/***************************************
@@ -320,28 +368,31 @@ public abstract class ProcessServiceImpl<E extends Entity>
 													ServiceException
 	{
 		boolean bCheckAuthentication =
-			!hasProcessBasedAuthentication() ||
-			rDescription instanceof ProcessState;
+			!hasProcessAuthentication() ||
+			rDescription.hasFlag(PROCESS_AUTHENTICATED);
 
 		SessionData rSessionData = getSessionData(bCheckAuthentication);
 
-		if (rSessionData == null)
-		{
-			rSessionData = createSessionData();
-		}
-
-		ProcessExecutionMode eMode = ProcessExecutionMode.EXECUTE;
-
-		Process		 rProcess	   = null;
-		Integer		 rId		   = null;
-		ProcessState rProcessState = null;
+		ProcessExecutionMode  eMode		    = ProcessExecutionMode.EXECUTE;
+		Process				  rProcess	    = null;
+		Integer				  rId		    = null;
+		ProcessState		  rProcessState = null;
+		Map<Integer, Process> rProcessMap   = null;
 
 		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
 
-		Map<Integer, Process> rProcessMap = rSessionData.get(USER_PROCESS_MAP);
-
 		try
 		{
+			// this can only happen in the case of process-based authentication
+			if (rSessionData == null)
+			{
+				rSessionData =
+					createProcessAuthenticationSession(rDescription,
+													   rReferenceEntity);
+			}
+
+			rProcessMap = rSessionData.get(USER_PROCESS_MAP);
+
 			rProcess = getProcess(rDescription, rSessionData, rReferenceEntity);
 			rId		 = rProcess.getParameter(PROCESS_ID);
 
@@ -440,7 +491,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 *
 	 * @return TRUE for process based authentication
 	 */
-	protected boolean hasProcessBasedAuthentication()
+	protected boolean hasProcessAuthentication()
 	{
 		return false;
 	}
@@ -721,6 +772,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 								 aViewElements,
 								 aFlags);
 
+			if (rProcess.hasFlagParameter(MetaTypes.AUTHENTICATED))
+			{
+				aProcessState.setFlag(PROCESS_AUTHENTICATED);
+			}
+
 			String sStyle = rInteractionStep.getParameter(PROCESS_STEP_STYLE);
 
 			if (sStyle != null)
@@ -809,6 +865,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	{
 		Process rProcess;
 
+		Map<Integer, Process> rUserProcessMap =
+			rSessionData.get(USER_PROCESS_MAP);
+
 		if (rDescription.getClass() == ProcessDescription.class)
 		{
 			ProcessDefinition rDefinition =
@@ -817,8 +876,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			rProcess = createProcess(rDefinition, rSessionData);
 
 			getSessionContext().get(PROCESS_LIST).add(rProcess);
-			rSessionData.get(USER_PROCESS_MAP)
-						.put(rProcess.getParameter(PROCESS_ID), rProcess);
+			rUserProcessMap.put(rProcess.getParameter(PROCESS_ID), rProcess);
 
 			initProcess(rProcess, rReferenceEntity);
 			setProcessInput(rProcess, rDescription.getProcessInput());
@@ -827,7 +885,14 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		{
 			ProcessState rProcessState = (ProcessState) rDescription;
 
-			rProcess = updateProcess(rProcessState, rSessionData);
+			rProcess = rUserProcessMap.get(rProcessState.getProcessId());
+
+			if (rProcess == null)
+			{
+				throw new IllegalStateException("NoProcessFound");
+			}
+
+			updateProcess(rProcess, rProcessState);
 		}
 		else
 		{
@@ -920,35 +985,20 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Returns the process that is associated with a certain process state after
-	 * updating it with the data received from the client in the state object.
-	 * Invoked from {@link #executeProcess(int, ProcessDescription)}.
+	 * Updates a process from a certain process state that has been received
+	 * from the client.
 	 *
-	 * @param  rProcessState The process state to update the associated process
-	 *                       from
-	 * @param  rSessionData  The data of the current session
-	 *
-	 * @return The process
+	 * @param  rProcess      The process to update
+	 * @param  rProcessState The process state to update the process from
 	 *
 	 * @throws AuthenticationException If the client is not authenticated
 	 * @throws StorageException        If a storage access fails
 	 * @throws IllegalStateException   If the process is NULL
 	 */
 	@SuppressWarnings("boxing")
-	private Process updateProcess(
-		ProcessState rProcessState,
-		SessionData  rSessionData) throws AuthenticationException,
-										  StorageException
+	private void updateProcess(Process rProcess, ProcessState rProcessState)
+		throws AuthenticationException, StorageException
 	{
-		Process rProcess =
-			rSessionData.get(USER_PROCESS_MAP)
-						.get(rProcessState.getProcessId());
-
-		if (rProcess == null)
-		{
-			throw new IllegalStateException("NoProcessFound");
-		}
-
 		ProcessExecutionMode eMode = rProcessState.getExecutionMode();
 
 		RelationType<?> rInteractionParam = null;
@@ -999,12 +1049,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			}
 			else
 			{
+				rProcess.deleteRelation(INTERACTIVE_INPUT_EVENT_TYPE);
 				rProcess.deleteRelation(INTERACTIVE_INPUT_ACTION_EVENT);
 			}
 		}
 
 		rProcess.setParameter(INTERACTIVE_INPUT_PARAM, rInteractionParam);
-
-		return rProcess;
 	}
 }

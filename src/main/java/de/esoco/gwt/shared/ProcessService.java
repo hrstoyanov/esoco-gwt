@@ -38,7 +38,14 @@ public interface ProcessService extends StorageService
 	public static final PropertyName<String> PROCESS_ENTITY_LOCKS =
 		PropertyName.newStringName("ProcessEntityLocks");
 
-	/** A flag used to show or hide the UI inspector view. */
+	/**
+	 * A process state flag that indicates if a process with process-based
+	 * authentication has already been authenticated.
+	 */
+	public static final PropertyName<Boolean> PROCESS_AUTHENTICATED =
+		PropertyName.newBooleanName("PROCESS_AUTHENTICATED");
+
+	/** A process state flag used to show or hide the UI inspector view. */
 	public static final PropertyName<Boolean> SHOW_UI_INSPECTOR =
 		PropertyName.newBooleanName("SHOW_UI_INSPECTOR");
 

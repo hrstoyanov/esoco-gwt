@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,22 +46,35 @@ public class ProcessDescription extends StringDataElement
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
+	 * Copy constructor for subclasses.
+	 *
+	 * @param rOther The other instance to copy the state of
+	 */
+	public ProcessDescription(ProcessDescription rOther)
+	{
+		this(rOther.getName(),
+			 rOther.getValue(),
+			 rOther.nId,
+			 rOther.bInputRequired);
+	}
+
+	/***************************************
 	 * Creates a new instance with certain attributes.
 	 *
 	 * @param sName          The process name
 	 * @param sDescription   The process description
-	 * @param nProcessId     The internal process definition ID
+	 * @param nId            The internal process definition ID
 	 * @param bInputRequired TRUE if the process can only be executed with an
 	 *                       input value
 	 */
 	public ProcessDescription(String  sName,
 							  String  sDescription,
-							  int	  nProcessId,
+							  int	  nId,
 							  boolean bInputRequired)
 	{
 		super(sName, sDescription, null, null);
 
-		this.nId		    = nProcessId;
+		this.nId		    = nId;
 		this.bInputRequired = bInputRequired;
 	}
 
@@ -70,19 +83,6 @@ public class ProcessDescription extends StringDataElement
 	 */
 	ProcessDescription()
 	{
-	}
-
-	/***************************************
-	 * Copy constructor for subclasses.
-	 *
-	 * @param rOther The other instance to copy the state of
-	 */
-	ProcessDescription(ProcessDescription rOther)
-	{
-		this(rOther.getName(),
-			 rOther.getValue(),
-			 rOther.nId,
-			 rOther.bInputRequired);
 	}
 
 	//~ Static methods ---------------------------------------------------------

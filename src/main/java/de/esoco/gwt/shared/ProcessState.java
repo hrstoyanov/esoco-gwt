@@ -233,7 +233,7 @@ public class ProcessState extends ProcessDescription
 	}
 
 	/***************************************
-	 * Returns the ID of the described process.
+	 * Returns the ID of the process.
 	 *
 	 * @return The process ID
 	 */
@@ -347,5 +347,15 @@ public class ProcessState extends ProcessDescription
 	{
 		rInteractionElement   = rElement;
 		eInteractionEventType = eEventType;
+	}
+
+	/***************************************
+	 * Updates the ID of the process.
+	 *
+	 * @param nProcessId The new process id
+	 */
+	public final void setProcessId(int nProcessId)
+	{
+		this.nProcessId = nProcessId;
 	}
 }

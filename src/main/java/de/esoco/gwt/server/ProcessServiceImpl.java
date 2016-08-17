@@ -54,6 +54,7 @@ import de.esoco.process.step.EditInteractionParameters;
 import de.esoco.storage.StorageException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -276,6 +277,40 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Checks whether the given process description is for an application
+	 * process and a corresponding process already exists in the given process
+	 * collection.
+	 *
+	 * @param  rDescription The application process description
+	 * @param  rProcesses   The processes to search
+	 *
+	 * @return The application process to re-use or NULL for none
+	 */
+	protected Process checkReuseExistingAppProcess(
+		ProcessDescription  rDescription,
+		Collection<Process> rProcesses)
+	{
+		String  sProcessName = rDescription.getName();
+		Process rProcess     = null;
+
+		if (sProcessName.startsWith(APPLICATION_PROCESS))
+		{
+			for (Process rExistingProcess : rProcesses)
+			{
+				if (sProcessName.endsWith(rExistingProcess.getName()))
+				{
+					rProcess = rExistingProcess;
+					System.out.printf("Re-using app process: %s\n", rProcess);
+
+					break;
+				}
+			}
+		}
+
+		return rProcess;
+	}
+
+	/***************************************
 	 * Creates a dummy session in the case of process-based authentication that
 	 * is used until the user is authenticated by the process. If a session
 	 * timeout occurred during the execution of the authentication process step
@@ -351,6 +386,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * @throws AuthenticationException If the user is not authenticated
 	 * @throws ServiceException        If the process execution fails
 	 */
+	@SuppressWarnings("boxing")
 	protected ProcessState executeProcess(
 		ProcessDescription rDescription,
 		Entity			   rReferenceEntity) throws AuthenticationException,
@@ -362,11 +398,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		SessionData rSessionData = getSessionData(bCheckAuthentication);
 
-		ProcessExecutionMode  eMode		    = ProcessExecutionMode.EXECUTE;
-		Process				  rProcess	    = null;
-		Integer				  rId		    = null;
-		ProcessState		  rProcessState = null;
-		Map<Integer, Process> rProcessMap   = null;
+		ProcessExecutionMode  eExecutionMode = ProcessExecutionMode.EXECUTE;
+		Process				  rProcess		 = null;
+		Integer				  rId			 = null;
+		ProcessState		  rProcessState  = null;
+		Map<Integer, Process> rProcessMap    = null;
 
 		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
 
@@ -381,24 +417,29 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			}
 
 			rProcessMap = rSessionData.get(USER_PROCESS_MAP);
+			rProcess    =
+				getProcess(rDescription, rSessionData, rReferenceEntity);
 
-			rProcess = getProcess(rDescription, rSessionData, rReferenceEntity);
-			rId		 = rProcess.getParameter(PROCESS_ID);
+			rId = rProcess.getParameter(PROCESS_ID);
 
 			if (rDescription instanceof ProcessState)
 			{
 				rProcessState = (ProcessState) rDescription;
 
-				eMode = rProcessState.getExecutionMode();
+				eExecutionMode = rProcessState.getExecutionMode();
 				checkOpenUiInspector(rProcessState, rProcess);
 			}
 
-			executeProcess(rProcess, eMode);
+			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
+			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
+
+			executeProcess(rProcess, eExecutionMode);
 
 			rProcessState =
 				createProcessState(rDescription,
 								   rProcess,
-								   eMode == ProcessExecutionMode.RELOAD);
+								   eExecutionMode ==
+								   ProcessExecutionMode.RELOAD);
 
 			if (rProcess.isFinished())
 			{
@@ -852,23 +893,37 @@ public abstract class ProcessServiceImpl<E extends Entity>
 							   Entity			  rReferenceEntity)
 		throws ProcessException, ServiceException, StorageException
 	{
-		Process rProcess;
+		Process rProcess = null;
 
 		Map<Integer, Process> rUserProcessMap =
 			rSessionData.get(USER_PROCESS_MAP);
 
 		if (rDescription.getClass() == ProcessDescription.class)
 		{
-			ProcessDefinition rDefinition =
-				aProcessDefinitions.get(rDescription.getDescriptionId());
+			// if the user reloads the browser windows the existing process can
+			// be re-used instead of creating a new one
+			rProcess =
+				checkReuseExistingAppProcess(rDescription,
+											 rUserProcessMap.values());
 
-			rProcess = createProcess(rDefinition, rSessionData);
+			if (rProcess != null)
+			{
+				// reload the current action if a process is re-used
+				rProcess.set(INTERACTIVE_INPUT_PARAM, RELOAD_CURRENT_STEP);
+			}
+			else
+			{
+				ProcessDefinition rDefinition =
+					aProcessDefinitions.get(rDescription.getDescriptionId());
 
-			getSessionContext().get(PROCESS_LIST).add(rProcess);
-			rUserProcessMap.put(rProcess.getParameter(PROCESS_ID), rProcess);
+				rProcess = createProcess(rDefinition, rSessionData);
 
-			initProcess(rProcess, rReferenceEntity);
-			setProcessInput(rProcess, rDescription.getProcessInput());
+				getSessionContext().get(PROCESS_LIST).add(rProcess);
+				rUserProcessMap.put(rProcess.getParameter(PROCESS_ID),
+									rProcess);
+				initProcess(rProcess, rReferenceEntity);
+				setProcessInput(rProcess, rDescription.getProcessInput());
+			}
 		}
 		else if (rDescription instanceof ProcessState)
 		{
@@ -888,9 +943,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			throw new IllegalArgumentException("Unknown process reference: " +
 											   rDescription);
 		}
-
-		rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
-		rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
 
 		return rProcess;
 	}

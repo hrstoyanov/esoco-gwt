@@ -19,7 +19,6 @@ package de.esoco.gwt.server;
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.StringDataElement;
 
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
@@ -215,18 +214,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		// property name not known to GWT serialization if not accessed once
 		SHOW_UI_INSPECTOR.getName();
-	}
-
-	/***************************************
-	 * @see StorageServiceImpl#loginUser(StringDataElement)
-	 */
-	@Override
-	public DataElementList loginUser(StringDataElement rLoginData)
-		throws AuthenticationException, ServiceException
-	{
-		DataElementList rUserData = super.loginUser(rLoginData);
-
-		return rUserData;
 	}
 
 	/***************************************

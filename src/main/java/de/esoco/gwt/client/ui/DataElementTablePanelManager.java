@@ -41,7 +41,6 @@ import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.HTML_WIDTH;
 import static de.esoco.lib.property.LayoutProperties.ROW_SPAN;
 import static de.esoco.lib.property.LayoutProperties.SAME_ROW;
-import static de.esoco.lib.property.StateProperties.INITIAL_FOCUS;
 import static de.esoco.lib.property.StyleProperties.HEADER_LABEL;
 import static de.esoco.lib.property.StyleProperties.HIDE_LABEL;
 import static de.esoco.lib.property.StyleProperties.STYLE;
@@ -307,8 +306,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 										  nExtraColumns);
 			}
 
-			if (rDataElement.hasFlag(INITIAL_FOCUS) ||
-				getParent() == null && !(bFocusSet || bImmutable))
+			if (getParent() == null && !(bFocusSet || bImmutable))
 			{
 				bFocusSet = aElementUI.requestFocus();
 			}

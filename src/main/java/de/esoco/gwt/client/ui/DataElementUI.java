@@ -94,6 +94,7 @@ import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.LayoutProperties.WIDTH;
 import static de.esoco.lib.property.StateProperties.CARET_POSITION;
 import static de.esoco.lib.property.StateProperties.DISABLED;
+import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.HIDDEN;
 import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
@@ -575,6 +576,12 @@ public class DataElementUI<D extends DataElement<?>>
 			if (rDataElement.hasFlag(VALUE_CHANGED))
 			{
 				updateValue();
+			}
+
+			if (rDataElement.hasFlag(FOCUSED))
+			{
+				requestFocus();
+				rDataElement.clearFlag(FOCUSED);
 			}
 
 			applyElementProperties();

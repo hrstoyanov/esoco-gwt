@@ -34,6 +34,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.Timer;
 
+import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
 
@@ -121,6 +122,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 						rDataElement.setProperty(INTERACTION_EVENT_DATA,
 												 rEventData.toString());
 					}
+
+					rDataElement.setFlag(FOCUSED);
 
 					rPanelManager.getRootDataElementPanelManager()
 								 .collectInput();

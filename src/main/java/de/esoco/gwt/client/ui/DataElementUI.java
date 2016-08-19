@@ -54,6 +54,7 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.text.TextConvert;
@@ -578,11 +579,7 @@ public class DataElementUI<D extends DataElement<?>>
 				updateValue();
 			}
 
-			if (rDataElement.hasFlag(FOCUSED))
-			{
-				requestFocus();
-				rDataElement.clearFlag(FOCUSED);
-			}
+			checkRequestFocus();
 
 			applyElementProperties();
 			aElementComponent.applyStyle(applyElementStyle(rDataElement,
@@ -674,6 +671,7 @@ public class DataElementUI<D extends DataElement<?>>
 			}
 
 			setEnabled(rOptionalCheckBox == null);
+			checkRequestFocus();
 		}
 
 		return aElementComponent;
@@ -701,6 +699,19 @@ public class DataElementUI<D extends DataElement<?>>
 			}
 
 			setErrorMessage(sErrorMessage);
+		}
+	}
+
+	/***************************************
+	 * Checks whether the data element has the {@link StateProperties#FOCUSED}
+	 * flag and if so sets the input focus on the element component.
+	 */
+	protected void checkRequestFocus()
+	{
+		if (rDataElement.hasFlag(FOCUSED))
+		{
+			requestFocus();
+			rDataElement.clearFlag(FOCUSED);
 		}
 	}
 

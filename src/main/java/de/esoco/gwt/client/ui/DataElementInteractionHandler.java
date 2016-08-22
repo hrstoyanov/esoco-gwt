@@ -98,14 +98,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleEvent(EWTEvent rEvent)
+	public void handleEvent(final EWTEvent rEvent)
 	{
-		EventType    eEventType = rEvent.getType();
-		final Object rEventData = rEvent.getElement();
-
-		final InteractionEventType eInteractionEventType =
-			mapToInteractionEventType(eEventType);
-
 		if (aInputEventTimer != null)
 		{
 			aInputEventTimer.cancel();
@@ -117,26 +111,15 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 				@Override
 				public void run()
 				{
-					if (rEventData != null)
-					{
-						rDataElement.setProperty(INTERACTION_EVENT_DATA,
-												 rEventData.toString());
-					}
-
-					rDataElement.setFlag(FOCUSED);
-
-					rPanelManager.getRootDataElementPanelManager()
-								 .collectInput();
-					rPanelManager.handleInteractiveInput(rDataElement,
-														 eInteractionEventType);
+					processEvent(rEvent);
 				}
 			};
 
 		boolean bLongDelay =
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
-			 eEventType == EventType.KEY_RELEASED);
+			 rEvent.getType() == EventType.KEY_RELEASED);
 
-		aInputEventTimer.schedule(bLongDelay ? 500 : 50);
+		aInputEventTimer.schedule(bLongDelay ? 400 : 50);
 	}
 
 	/***************************************
@@ -259,6 +242,40 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		}
 
 		return eInteractionEventType;
+	}
+
+	/***************************************
+	 * Processes a certain event and forwards it to the panel manager for
+	 * interaction handling.
+	 *
+	 * @param rEvent The GEWT event that occurred
+	 */
+	protected void processEvent(EWTEvent rEvent)
+	{
+		EventType eEventType = rEvent.getType();
+		Object    rEventData = rEvent.getElement();
+
+		InteractionEventType eInteractionEventType =
+			mapToInteractionEventType(eEventType);
+
+		if (rEventData != null)
+		{
+			rDataElement.setProperty(INTERACTION_EVENT_DATA,
+									 rEventData.toString());
+		}
+
+		// VALUE_CHANGED will occur if a text field looses focus
+		if (rEvent.getType() != EventType.VALUE_CHANGED ||
+			!(rEvent.getSource() instanceof TextControl))
+		{
+			// this is needed to re-establish the input focus in certain
+			// browsers (Webkit, IE)
+			rDataElement.setFlag(FOCUSED);
+		}
+
+		rPanelManager.getRootDataElementPanelManager().collectInput();
+		rPanelManager.handleInteractiveInput(rDataElement,
+											 eInteractionEventType);
 	}
 
 	/***************************************

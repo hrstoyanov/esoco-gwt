@@ -35,7 +35,7 @@ import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
-import de.esoco.gwt.client.ui.CommandResultHandler;
+import de.esoco.gwt.client.ui.DefaultCommandResultHandler;
 import de.esoco.gwt.shared.AuthenticatedService;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -319,7 +319,7 @@ public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPane
 	{
 		executeCommand(AuthenticatedService.LOGOUT,
 					   null,
-			new CommandResultHandler<DataElement<?>>()
+			new DefaultCommandResultHandler<DataElement<?>>(this)
 			{
 				@Override
 				public void handleCommandResult(DataElement<?> rResult)

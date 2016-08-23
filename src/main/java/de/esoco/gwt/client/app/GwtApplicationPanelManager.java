@@ -30,7 +30,7 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 
 import de.esoco.gwt.client.ui.AuthenticationPanelManager;
-import de.esoco.gwt.client.ui.CommandResultHandler;
+import de.esoco.gwt.client.ui.DefaultCommandResultHandler;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
 import de.esoco.gwt.shared.ProcessDescription;
@@ -247,7 +247,7 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 
 			executeCommand(GwtApplicationService.EXECUTE_PROCESS,
 						   rProcessDescription,
-				new CommandResultHandler<ProcessState>()
+				new DefaultCommandResultHandler<ProcessState>(this)
 				{
 					@Override
 					public void handleCommandResult(ProcessState rProcessState)

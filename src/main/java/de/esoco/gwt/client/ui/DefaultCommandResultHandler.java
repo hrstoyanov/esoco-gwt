@@ -17,31 +17,43 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
+
 import de.esoco.gwt.shared.Command;
 
 
 /********************************************************************
- * This interface must be implement to handle the result of executing a command.
+ * A default command result handler implementation that forwards failures to the
+ * method {@link PanelManager#handleCommandFailure(Command, Throwable)}.
  *
  * @author eso
  */
-public interface CommandResultHandler<T extends DataElement<?>>
+public abstract class DefaultCommandResultHandler<T extends DataElement<?>>
+	implements CommandResultHandler<T>
 {
+	//~ Instance fields --------------------------------------------------------
+
+	private PanelManager<?, ?> rPanelManager;
+
+	//~ Constructors -----------------------------------------------------------
+
+	/***************************************
+	 * Creates a new instance.
+	 *
+	 * @param rPanelManager The panel manager this instance belongs to
+	 */
+	public DefaultCommandResultHandler(PanelManager<?, ?> rPanelManager)
+	{
+		this.rPanelManager = rPanelManager;
+	}
+
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * handles a command failure.
-	 *
-	 * @param rCommand The failed command
-	 * @param rCaught  The exception that occurred
+	 * {@inheritDoc}
 	 */
-	public void handleCommandFailure(Command<?, ?> rCommand, Throwable rCaught);
-
-	/***************************************
-	 * Handles the result of a successful command execution.
-	 *
-	 * @param rResult The data element that has been returned by the command
-	 */
-	public void handleCommandResult(T rResult);
-
+	@Override
+	public void handleCommandFailure(Command<?, ?> rCommand, Throwable rCaught)
+	{
+		rPanelManager.handleCommandFailure(rCommand, rCaught);
+	}
 }

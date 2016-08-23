@@ -69,6 +69,8 @@ public abstract class PanelManager<C extends Container,
 {
 	//~ Static fields/initializers ---------------------------------------------
 
+	// ~ Static fields/initializers
+	// ---------------------------------------------
 	/** Shortcut constant to access the framework CSS */
 	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
@@ -81,19 +83,15 @@ public abstract class PanelManager<C extends Container,
 	private static final StyleData TOOLBAR_VERTICAL_BACKGROUND_STYLE =
 		AlignedPosition.LEFT.set(WEB_ADDITIONAL_STYLES,
 								 CSS.gfToolbarBack() + " " + CSS.vertical());
-
-	private static final StyleData HORIZONTAL_TOOLBAR_STYLE =
+	private static final StyleData HORIZONTAL_TOOLBAR_STYLE			 =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES,
 							  CSS.gfToolbar() + " " + CSS.horizontal());
-
-	private static final StyleData VERTICAL_TOOLBAR_STYLE =
+	private static final StyleData VERTICAL_TOOLBAR_STYLE			 =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES,
 							  CSS.gfToolbar() + " " + CSS.vertical());
-
-	private static final StyleData TOOLBAR_BUTTON_STYLE =
+	private static final StyleData TOOLBAR_BUTTON_STYLE				 =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES, CSS.gfToolButton());
-
-	private static final StyleData TOOLBAR_SEPARATOR_STYLE =
+	private static final StyleData TOOLBAR_SEPARATOR_STYLE			 =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES, CSS.gfToolSeparator());
 
 	static
@@ -103,13 +101,16 @@ public abstract class PanelManager<C extends Container,
 
 	//~ Instance fields --------------------------------------------------------
 
+	// ~ Instance fields
+	// --------------------------------------------------------
 	private final P		 rParent;
 	private final String sStyleName;
-	private int     nToolbarColumns;
-	private int     nNextToolbarColumn  = 0;
-	private boolean bIsToolbarSeparator = true;
-
-	private boolean bCommandExecuting = false;
+	private int			 nToolbarColumns;
+	private int			 nNextToolbarColumn  = 0;
+	private boolean		 bIsToolbarSeparator = true;
+	private boolean		 bCommandExecuting   = false;
+	// ~ Constructors
+	// -----------------------------------------------------------
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -124,6 +125,8 @@ public abstract class PanelManager<C extends Container,
 		this.rParent    = rParent;
 		this.sStyleName = sPanelStyle;
 	}
+	// ~ Static methods
+	// ---------------------------------------------------------
 
 	//~ Static methods ---------------------------------------------------------
 
@@ -149,6 +152,8 @@ public abstract class PanelManager<C extends Container,
 
 		return rStyleData;
 	}
+	// ~ Methods
+	// ----------------------------------------------------------------
 
 	//~ Methods ----------------------------------------------------------------
 
@@ -319,7 +324,6 @@ public abstract class PanelManager<C extends Container,
 			rToolbarBuilder.addButton(TOOLBAR_BUTTON_STYLE, null, rImage);
 
 		aButton.setToolTip(sToolTip);
-
 		bIsToolbarSeparator = false;
 		nNextToolbarColumn++;
 
@@ -417,9 +421,8 @@ public abstract class PanelManager<C extends Container,
 				public void onFailure(Throwable rCaught)
 				{
 					bCommandExecuting = false;
-					handleCommandFailure(rCommand, rCaught);
+					rResultHandler.handleCommandFailure(rCommand, rCaught);
 				}
-
 				@Override
 				public void onSuccess(R rResult)
 				{

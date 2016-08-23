@@ -33,7 +33,6 @@ import de.esoco.gwt.shared.AuthenticatedService;
 import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
@@ -322,7 +321,6 @@ public abstract class AuthenticationPanelManager<C extends Container,
 			this.rPrevCommandData    = rData;
 			this.rPrevCommandHandler = rResultHandler;
 
-			GWT.log("EXEC: " + rResultHandler.getClass().getName());
 			super.executeCommand(rCommand, rData, rResultHandler);
 		}
 	}

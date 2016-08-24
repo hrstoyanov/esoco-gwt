@@ -99,7 +99,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 	//~ Instance fields --------------------------------------------------------
 
-	private List<Component> aListButtons;
+	private List<Button> aListButtons;
 
 	//~ Methods ----------------------------------------------------------------
 
@@ -167,24 +167,25 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	@Override
 	protected void updateValue()
 	{
-		Component    rElementComponent = getElementComponent();
-		List<String> rValues		   =
-			getListValues(rElementComponent.getContext(), getDataElement());
+		Component	   rComponent   = getElementComponent();
+		DataElement<?> rDataElement = getDataElement();
+		List<String>   rValues	    =
+			getListValues(rComponent.getContext(), rDataElement);
 
 		boolean bAllowedValuesChanged =
-			getDataElement().hasFlag(ALLOWED_VALUES_CHANGED);
+			rDataElement.hasFlag(ALLOWED_VALUES_CHANGED);
 
-		if (rElementComponent instanceof ListControl)
+		if (rComponent instanceof ListControl)
 		{
 			updateList(rValues, bAllowedValuesChanged);
 		}
-		else if (rElementComponent instanceof ComboBox)
+		else if (rComponent instanceof ComboBox)
 		{
-			updateComboBox((ComboBox) rElementComponent,
+			updateComboBox((ComboBox) rComponent,
 						   rValues,
 						   bAllowedValuesChanged);
 		}
-		else if (rElementComponent instanceof Container)
+		else if (rComponent instanceof Container)
 		{
 			updateButtons(rValues, bAllowedValuesChanged);
 		}
@@ -346,14 +347,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			rBuilder = rBuilder.addPanel(rStyle, aPanelLayout);
 		}
 
-		final List<Component> aButtons =
-			createListButtons(rBuilder, rButtonLabels, eListStyle);
+		aListButtons = createListButtons(rBuilder, rButtonLabels, eListStyle);
+		applyCurrentSelection(rCurrentSelection, aListButtons);
 
-		applyCurrentSelection(rCurrentSelection, aButtons);
-
-		Container rComponent = rBuilder.getContainer();
-
-		return rComponent;
+		return rBuilder.getContainer();
 	}
 
 	/***************************************
@@ -365,9 +362,9 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	 *
 	 * @return A list containing the buttons that have been created
 	 */
-	private List<Component> createListButtons(ContainerBuilder<?> rBuilder,
-											  List<String>		  rButtonLabels,
-											  ListStyle			  eListStyle)
+	private List<Button> createListButtons(ContainerBuilder<?> rBuilder,
+										   List<String>		   rButtonLabels,
+										   ListStyle		   eListStyle)
 	{
 		DataElement<?> rDataElement = getDataElement();
 		StyleData	   rButtonStyle = createButtonStyle(rDataElement);
@@ -375,14 +372,14 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		String		   sDisabled    =
 			rDataElement.getProperty(DISABLED_ELEMENTS, "");
 
-		aListButtons = new ArrayList<>(rButtonLabels.size());
+		List<Button> aButtons = new ArrayList<>(rButtonLabels.size());
 
 		int nValueIndex = 0;
 
 		for (String sValue : rButtonLabels)
 		{
-			String    sText   = sValue;
-			Component aButton;
+			String sText   = sValue;
+			Button aButton;
 
 			if (eListStyle == ListStyle.IMMEDIATE)
 			{
@@ -415,10 +412,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			}
 
 			aButton.addEventListener(EventType.ACTION, this);
-			aListButtons.add(aButton);
+			aButtons.add(aButton);
 		}
 
-		return aListButtons;
+		return aButtons;
 	}
 
 	/***************************************
@@ -632,9 +629,9 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	 * @param rAllButtons  The list of all buttons
 	 * @param rButton      The selected button
 	 */
-	private void setButtonSelection(DataElement<?>  rDataElement,
-									List<Component> rAllButtons,
-									Button			rButton)
+	private void setButtonSelection(DataElement<?> rDataElement,
+									List<Button>   rAllButtons,
+									Button		   rButton)
 	{
 		boolean bSelected =
 			rButton instanceof Selectable ? ((Selectable) rButton).isSelected()
@@ -793,20 +790,15 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	{
 		Container rContainer = (Container) getElementComponent();
 
-		List<? extends Component> rButtons = rContainer.getComponents();
-
 		if (bButtonsChanged)
 		{
-			if (rButtons.size() == rButtonLabels.size())
+			if (aListButtons.size() == rButtonLabels.size())
 			{
 				int nIndex = 0;
 
-				for (Component rChild : rButtons)
+				for (Button rButton : aListButtons)
 				{
-					if (rChild instanceof Button)
-					{
-						((Button) rChild).setProperties(rButtonLabels.get(nIndex++));
-					}
+					rButton.setProperties(rButtonLabels.get(nIndex++));
 				}
 			}
 			else
@@ -819,9 +811,12 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 				ListStyle eListStyle =
 					getListStyle(rDataElement, rButtonLabels);
 
-				rContainer.clear();
+				for (Button rButton : aListButtons)
+				{
+					rContainer.removeComponent(rButton);
+				}
 
-				rButtons =
+				aListButtons =
 					createListButtons(aBuilder, rButtonLabels, eListStyle);
 
 				setupInteractionHandling(rContainer, true);
@@ -833,7 +828,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 								getDataElement(),
 								rButtonLabels);
 
-		applyCurrentSelection(rCurrentSelection, rButtons);
+		applyCurrentSelection(rCurrentSelection, aListButtons);
 	}
 
 	/***************************************

@@ -28,6 +28,7 @@ import de.esoco.ewt.style.ViewStyle;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.Alignment;
+import de.esoco.lib.property.StandardProperties;
 import de.esoco.lib.property.ViewDisplayType;
 
 import java.util.Collection;
@@ -219,8 +220,15 @@ public class DataElementListView
 				break;
 		}
 
+		String sViewTitle = "$ti" +
+							rDataElementList.getResourceId();
+
+		sViewTitle =
+			rDataElementList.getProperty(StandardProperties.TITLE, sViewTitle);
+
 		aViewBuilder = new ContainerBuilder<View>(aPanelView);
-		aPanelView.setTitle("$ti" + rDataElementList.getResourceId());
+
+		aPanelView.setTitle(sViewTitle);
 		aPanelView.applyStyle(StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES,
 													sDialogStyle));
 

@@ -937,6 +937,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			}
 
 			updateProcess(rProcess, rProcessState);
+
+			if (hasProcessAuthentication())
+			{
+				initProcess(rProcess, rReferenceEntity);
+			}
 		}
 		else
 		{

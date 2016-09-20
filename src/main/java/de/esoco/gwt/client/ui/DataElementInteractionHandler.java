@@ -171,18 +171,18 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 * Maps the interaction event types to the corresponding GEWT event types
 	 * for a certain component.
 	 *
-	 * @param  aComponent             The component
+	 * @param  rComponent             The component
 	 * @param  rInteractionEventTypes The interaction event types to map
 	 *
 	 * @return The mapped GEWT event types
 	 */
 	protected Set<EventType> getInteractionEventTypes(
-		Component				  aComponent,
+		Component				  rComponent,
 		Set<InteractionEventType> rInteractionEventTypes)
 	{
 		Set<EventType> rEventTypes = EnumSet.noneOf(EventType.class);
 
-		if (aComponent instanceof TextControl)
+		if (rComponent instanceof TextControl)
 		{
 			if (rInteractionEventTypes.contains(InteractionEventType.UPDATE))
 			{
@@ -264,8 +264,9 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 									 rEventData.toString());
 		}
 
-		// VALUE_CHANGED will occur if a text field looses focus
-		if (rEvent.getType() != EventType.VALUE_CHANGED ||
+		// VALUE_CHANGED can occur if a text field looses focus
+		if ((eEventType != EventType.VALUE_CHANGED &&
+			 eEventType != EventType.FOCUS_LOST) ||
 			!(rEvent.getSource() instanceof TextControl))
 		{
 			// this is needed to re-establish the input focus in certain
@@ -273,9 +274,13 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			rDataElement.setFlag(FOCUSED);
 		}
 
-		rPanelManager.getRootDataElementPanelManager().collectInput();
-		rPanelManager.handleInteractiveInput(rDataElement,
-											 eInteractionEventType);
+		if (eEventType != EventType.KEY_RELEASED ||
+			hasValueChanged((TextControl) rEvent.getSource()))
+		{
+			rPanelManager.getRootDataElementPanelManager().collectInput();
+			rPanelManager.handleInteractiveInput(rDataElement,
+												 eInteractionEventType);
+		}
 	}
 
 	/***************************************
@@ -304,5 +309,18 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	void updateDataElement(D rNewDataElement)
 	{
 		rDataElement = rNewDataElement;
+	}
+
+	/***************************************
+	 * Checks whether the value of a text control component has changed compared
+	 * to the data element.
+	 *
+	 * @param  rTextControl The component to check
+	 *
+	 * @return TRUE if the value has changed
+	 */
+	private boolean hasValueChanged(TextControl rTextControl)
+	{
+		return !rTextControl.getText().equals(rDataElement.getValue());
 	}
 }

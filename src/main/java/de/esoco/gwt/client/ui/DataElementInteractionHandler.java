@@ -119,7 +119,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 rEvent.getType() == EventType.KEY_RELEASED);
 
-		aInputEventTimer.schedule(bLongDelay ? 400 : 50);
+		aInputEventTimer.schedule(bLongDelay ? 750 : 50);
 	}
 
 	/***************************************

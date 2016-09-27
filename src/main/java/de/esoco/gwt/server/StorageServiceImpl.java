@@ -41,6 +41,8 @@ import de.esoco.lib.model.DataModel;
 import de.esoco.storage.StorageException;
 import de.esoco.storage.StorageManager;
 
+import java.math.BigDecimal;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -174,8 +176,8 @@ public abstract class StorageServiceImpl<E extends Entity>
 
 			for (String sValue : rRow)
 			{
-				Object			 rValue  = null;
 				ColumnDefinition rColumn = rColumns.get(nColumn++);
+				Object			 rValue  = null;
 
 				if (sValue != null)
 				{
@@ -186,6 +188,10 @@ public abstract class StorageServiceImpl<E extends Entity>
 					else if (rColumn.getDatatype().endsWith("Date"))
 					{
 						rValue = new Date(Long.parseLong(sValue));
+					}
+					else if (rColumn.getDatatype().endsWith("BigDecimal"))
+					{
+						rValue = new BigDecimal(sValue);
 					}
 					else
 					{

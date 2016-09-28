@@ -300,7 +300,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				if (sProcessName.endsWith(rExistingProcess.getName()))
 				{
 					rProcess = rExistingProcess;
-					System.out.printf("Re-using app process: %s\n", rProcess);
 
 					break;
 				}

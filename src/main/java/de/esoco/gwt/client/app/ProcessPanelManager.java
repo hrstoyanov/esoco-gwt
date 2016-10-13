@@ -670,30 +670,8 @@ public class ProcessPanelManager
 
 	private void buildSummaryPanel(Throwable eException)
 	{
-		String sMessage;
-
-		if (eException != null)
-		{
-			String sExceptionMessage = eException.getMessage();
-			String sCauseMessage     = null;
-
-			if (eException instanceof ServiceException)
-			{
-				sCauseMessage =
-					((ServiceException) eException).getCauseMessage();
-			}
-
-			sMessage = "$${$msgProcessError}<p>" + sExceptionMessage;
-
-			if (sCauseMessage != null)
-			{
-				sMessage += "<p>" + sCauseMessage;
-			}
-		}
-		else
-		{
-			sMessage = "$msgProcessSuccess";
-		}
+		String sMessage =
+			(eException != null ? "$msgProcessError" : "$msgProcessSuccess");
 
 		removeParameterPanel();
 

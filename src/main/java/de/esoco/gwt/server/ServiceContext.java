@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -366,6 +366,13 @@ public abstract class ServiceContext extends RelatedObject
 			rProcessRunner.stop();
 		}
 	}
+
+	/***************************************
+	 * Must be implemented by subclasses to return the application name.
+	 *
+	 * @return The application name
+	 */
+	protected abstract String getApplicationName();
 
 	/***************************************
 	 * Returns the process runner for the given process description or NULL if

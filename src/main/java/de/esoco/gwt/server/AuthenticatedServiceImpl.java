@@ -518,8 +518,9 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 		{
 			if (!bReLogin)
 			{
-				Log.infof("[LOGIN] User %s authenticated\n%s",
+				Log.infof("[LOGIN] User %s authenticated in %s\n%s",
 						  rUser,
+						  ServiceContext.getInstance().getApplicationName(),
 						  rLoginData.getProperty(LOGIN_USER_INFO, ""));
 			}
 

@@ -1,19 +1,13 @@
 rootProject.name = "esoco-gwt"
 
-include ':esoco-common'
-project(':esoco-common').projectDir = new File('../esoco-common')
+def baseProjects = [':esoco-common',':objectrelations',':esoco-lib',
+					':esoco-storage',':esoco-business',':gewt']
 
-include ':objectrelations'
-project(':objectrelations').projectDir = new File('../objectrelations')
+baseProjects.each { projectName ->
+	def projectDir = new File("../${projectName.substring(1)}")
 
-include ':esoco-lib'
-project(':esoco-lib').projectDir = new File('../esoco-lib')
-
-include ':esoco-storage'
-project(':esoco-storage').projectDir = new File('../esoco-storage')
-
-include ':esoco-business'
-project(':esoco-business').projectDir = new File('../esoco-business')
-
-include ':gewt'
-project(':gewt').projectDir = new File('../gewt')
+	if (projectDir.exists()) {
+		include projectName
+		project(projectName).projectDir = projectDir
+	}
+}

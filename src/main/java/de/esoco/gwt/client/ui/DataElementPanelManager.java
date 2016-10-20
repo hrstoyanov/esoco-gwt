@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,6 +34,7 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.SingleSelection;
+import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.text.TextConvert;
 
 import java.util.ArrayList;
@@ -612,9 +613,9 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
-	 * When a {@link DataElement#SELECTION_DEPENDENCY} property exists in the
-	 * given data element the corresponding event handling is initialized for
-	 * all concerned data elements.
+	 * When a {@link StateProperties#SELECTION_DEPENDENCY} property exists in
+	 * the given data element the corresponding event handling is initialized
+	 * for all concerned data elements.
 	 *
 	 * @param rRootManager The root manager to search for dependent elements
 	 * @param rDataElement The data element to check for dependencies

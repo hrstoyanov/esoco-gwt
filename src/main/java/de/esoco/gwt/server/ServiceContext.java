@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -264,7 +264,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ProcessScheduler#removeScheduleProcess(Entity)
+	 * @see ProcessScheduler#removeScheduleProcess(String)
 	 */
 	@Override
 	public void removeScheduleProcess(String sEntityId)
@@ -295,7 +295,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ProcessScheduler#resumeScheduleProcess(Integer)
+	 * @see ProcessScheduler#resumeScheduleProcess(String)
 	 */
 	@Override
 	public void resumeScheduleProcess(String sEntityId)
@@ -310,7 +310,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ProcessScheduler#runScheduleProcessNow(Entity)
+	 * @see ProcessScheduler#runScheduleProcessNow(String)
 	 */
 	@Override
 	public void runScheduleProcessNow(String sEntityId)
@@ -354,7 +354,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ProcessScheduler#suspendScheduleProcess(int)
+	 * @see ProcessScheduler#suspendScheduleProcess(String)
 	 */
 	@Override
 	public void suspendScheduleProcess(String sEntityId)

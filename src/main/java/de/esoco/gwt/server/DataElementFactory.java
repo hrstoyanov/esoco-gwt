@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -249,8 +249,6 @@ public class DataElementFactory
 	 *                           descriptions for entity attributes
 	 *
 	 * @return A new data element for the selection of an entity
-	 *
-	 * @throws ServiceException If initializing the query fails
 	 */
 	public static SelectionDataElement createSelectionDataElement(
 		String									sName,
@@ -968,14 +966,13 @@ public class DataElementFactory
 	 * Creates a new {@link SelectionDataElement} for the selection of a entity
 	 * data element from a list of entities.
 	 *
-	 * @param  sName             The name of the element
-	 * @param  rMetaData         A relatable object containing the meta data for
-	 *                           the element to create
-	 * @param  rCurrentEntityId  sCurrentValue The current selection or NULL for
-	 *                           none
-	 * @param  nCurrentSelection
-	 * @param  rEntities         The entities to select from
-	 * @param  rAttributes       The entity attributes to display
+	 * @param  sName            The name of the element
+	 * @param  rMetaData        A relatable object containing the meta data for
+	 *                          the element to create
+	 * @param  rCurrentEntityId sCurrentValue The current selection or NULL for
+	 *                          none
+	 * @param  rEntities        The entities to select from
+	 * @param  rAttributes      The entity attributes to display
 	 *
 	 * @return A new data element for the selection of an entity
 	 *
@@ -985,7 +982,6 @@ public class DataElementFactory
 		String							  sName,
 		Relatable						  rMetaData,
 		Integer							  rCurrentEntityId,
-		int								  nCurrentSelection,
 		List<Entity>					  rEntities,
 		List<Function<? super Entity, ?>> rAttributes) throws StorageException
 	{
@@ -1931,7 +1927,6 @@ public class DataElementFactory
 			return createEntitySelectionElement(sName,
 												rRelation,
 												rEntityId,
-												nCurrentSelection,
 												rAllowedEntities,
 												rAttributes);
 		}

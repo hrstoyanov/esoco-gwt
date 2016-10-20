@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,13 +32,13 @@ import java.util.Map;
 
 import static de.esoco.lib.property.LayoutProperties.HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.WIDTH;
-import static de.esoco.lib.property.UserInterfaceProperties.VERTICAL;
+import static de.esoco.lib.property.StyleProperties.VERTICAL;
 
 
 /********************************************************************
  * A panel manager for {@link DataElementList} instances that places the child
  * data elements of the data element list in a layout that is defined by the
- * {@link UserInterfaceProperties.Layout} of the data element list.
+ * {@link Layout} of the data element list.
  *
  * @author eso
  */

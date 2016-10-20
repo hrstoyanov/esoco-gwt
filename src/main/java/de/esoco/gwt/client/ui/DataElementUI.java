@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,12 +51,12 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.ContentProperties;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.property.TextAttribute;
-import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.text.TextConvert;
 
 import java.math.BigDecimal;
@@ -234,9 +234,7 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Returns the default layout mode used for button panels.
 	 *
-	 * @return   The default layout mode
-	 *
-	 * @category Configuration
+	 * @return The default layout mode
 	 */
 	public static Layout getButtonPanelDefaultLayout()
 	{
@@ -308,9 +306,7 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Sets the default layout mode to be used for button panels.
 	 *
-	 * @param    eLayoutMode The new button panel default layout mode
-	 *
-	 * @category Configuration
+	 * @param eLayoutMode The new button panel default layout mode
 	 */
 	public static void setButtonPanelDefaultLayout(Layout eLayoutMode)
 	{
@@ -321,9 +317,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * Configuration method to sets the suffix to be added to UI labels
 	 * (default: ':').
 	 *
-	 * @param    sSuffix The new label suffix (NULL or empty to disable)
-	 *
-	 * @category Configuration
+	 * @param sSuffix The new label suffix (NULL or empty to disable)
 	 */
 	public static final void setLabelSuffix(String sSuffix)
 	{
@@ -645,8 +639,8 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Builds the UI for a data element. Depending on the immutable state of the
 	 * data element it invokes either {@link #createInputUI(ContainerBuilder,
-	 * StyleData)} or {@link #createDisplayUI(ContainerBuilder, StyleData,
-	 * DataElement)}.
+	 * StyleData, DataElement)} or {@link #createDisplayUI(ContainerBuilder,
+	 * StyleData, DataElement)}.
 	 *
 	 * @param  rBuilder The container builder to create the components with
 	 * @param  rStyle   The style data for display components
@@ -1019,9 +1013,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * The list values will be read from the validator, converted with the above
 	 * method, and finally expanded as resources. The creation of these
 	 * components is handled by {@link #createEditComponent(ContainerBuilder,
-	 * StyleData, DataElement)} and {@link
-	 * #createSelectionComponent(ContainerBuilder, StyleData, DataElement,
-	 * HasValueList)}, respectively.
+	 * StyleData, DataElement)}.
 	 *
 	 * @param  rBuilder     The container builder to create the components with
 	 * @param  rInputStyle  The default style data for the input components
@@ -1267,10 +1259,10 @@ public class DataElementUI<D extends DataElement<?>>
 
 	/***************************************
 	 * Formats a date value from a data element. If the data element has the
-	 * property {@link UserInterfaceProperties#FORMAT} this format string will
-	 * be used to format the date value. Else a standard format will be used and
-	 * if the property {@link UserInterfaceProperties#DATE_TIME} is set the
-	 * resulting string will contain time and date values.
+	 * property {@link ContentProperties#FORMAT} this format string will be used
+	 * to format the date value. Else the property {@link
+	 * ContentProperties#CONTENT_TYPE} is queried for the date and/or time
+	 * content type.
 	 *
 	 * @param  rDataElement The data element the value has been read from
 	 * @param  rDate        The date value of the data element
@@ -1495,10 +1487,11 @@ public class DataElementUI<D extends DataElement<?>>
 	 * data element is not immutable.
 	 *
 	 * <p>The default implementation expects either a text field or a list as
-	 * created by {@link #createInputUI(ContainerBuilder, StyleData)}. In the
-	 * first case it invokes the {@link DataElement#setStringValue(String)}
-	 * method with the field value. For a list the selected value will be read
-	 * from the element's list validator.</p>
+	 * created by {@link #createInputUI(ContainerBuilder, StyleData,
+	 * DataElement)}. In the first case it invokes the {@link
+	 * DataElement#setStringValue(String)} method with the field value. For a
+	 * list the selected value will be read from the element's list
+	 * validator.</p>
 	 *
 	 * @param rComponent   The component to read the input from
 	 * @param rDataElement The data element to set the value of

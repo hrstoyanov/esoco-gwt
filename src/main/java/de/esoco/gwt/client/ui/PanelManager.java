@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,14 +24,12 @@ import de.esoco.ewt.component.Button;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
-import de.esoco.ewt.layout.EdgeLayout;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.gwt.client.ServiceCallback;
 import de.esoco.gwt.client.ServiceRegistry;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
@@ -47,13 +45,6 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
  * The base class for objects that create and manage a panel. A Subclass must
  * implement the method {@link #createContainer(ContainerBuilder, StyleData)} to
  * create and build the managed panel with the desired layout.
- *
- * <p>This base class also implements the {@link ServiceCallback} interface so
- * that instances can be used directly for invocations of service methods. The
- * {@link #handleError(Throwable)} method implements the standard error handling
- * while the implementation of the method {@link #onSuccess(Object)} always
- * throws an exception. The processing of successful service callbacks must
- * always be provided by subclasses.</p>
  *
  * <p>The generic type parameters allow subclasses to define the types of the
  * panel container (C) they build their contents in and of the parent panel
@@ -249,10 +240,7 @@ public abstract class PanelManager<C extends Container,
 	/***************************************
 	 * Create a standard button toolbar panel. The toolbar panel will have the
 	 * style {@link EsocoGwtCss#gfToolbar()} and the enclosing (background)
-	 * panel will have the argument style. To achieve a standard appearance of
-	 * toolbars applications can set the {@link #DEFAULT_TOOLBAR_BACKGROUND}
-	 * style name on the given style or use NULL for a default style with top
-	 * alignment in an {@link EdgeLayout}.
+	 * panel will have the argument style.
 	 *
 	 * @param  rBuilder         The builder to build the toolbar with
 	 * @param  rBackgroundStyle The style of the background or NULL for the
@@ -306,8 +294,8 @@ public abstract class PanelManager<C extends Container,
 
 	/***************************************
 	 * Create a standard toolbar button. The builder should be one that has been
-	 * returned by {@link #addToolbar(ContainerBuilder, boolean)}. The button
-	 * will have the style {@link EsocoGwtCss#gfToolButton()}.
+	 * returned by {@link #addToolbar(ContainerBuilder, StyleData, StyleData,
+	 * int)}. The button will have the style {@link EsocoGwtCss#gfToolButton()}.
 	 *
 	 * @param  rToolbarBuilder The toolbar panel builder to create the button
 	 *                         with

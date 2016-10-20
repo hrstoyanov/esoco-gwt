@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -583,7 +583,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * @see SessionManager#prepareDownload(String, String, Object)
+	 * @see SessionManager#prepareDownload(DownloadData)
 	 */
 	@Override
 	public String prepareDownload(DownloadData rData) throws Exception
@@ -855,9 +855,9 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 	/***************************************
 	 * This method can be overridden by subclasses that need to provide
-	 * additional informations in the user data that is sent back to the client
-	 * by {@link #connect(String, String)}. Subclasses must always invoke the
-	 * superclass method to inherit the standard user data.
+	 * additional informations in the user data that is sent back to the client.
+	 * Subclasses must always invoke the superclass method to inherit the
+	 * standard user data.
 	 *
 	 * <p>Because it is possible for clients to re-login with different
 	 * parameters implementations should always expect the user data element to

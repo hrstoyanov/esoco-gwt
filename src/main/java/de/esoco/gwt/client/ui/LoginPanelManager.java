@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -342,10 +342,6 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 * will be used to create the login components to query for the user login.
 	 * The builder reference will then be set to NULL.
 	 *
-	 * <p>If the builder reference is NULL an invalid user name and/or password
-	 * has been used to connect and only an error message will be displayed (by
-	 * invoking {@link WorkflowPanelManager#handleError(Throwable)}).</p>
-	 *
 	 * @param rCaught The exception that occurred
 	 */
 	protected void handleLoginFailure(Throwable rCaught)
@@ -357,11 +353,9 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 
 	/***************************************
 	 * Handles a successful authentication by invoking the login method {@link
-	 * LoginHandler#loginSuccesful()}.
+	 * LoginHandler#loginSuccessful(DataElementList)}.
 	 *
-	 * @param rUserData The user data instance returned by the call to the
-	 *                  service method {@link WorkflowService#connect(String,
-	 *                  String)}
+	 * @param rUserData The user data instance returned by the service
 	 */
 	protected void handleLoginSuccess(DataElementList rUserData)
 	{

@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -190,7 +190,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * Handles the {@link WorkflowService#EXECUTE_PROCESS} command.
+	 * Handles the {@link ProcessService#EXECUTE_PROCESS} command.
 	 *
 	 * @param  rDescription The description of the process to execute
 	 *
@@ -481,8 +481,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Performs the actual invocation of a process execution method. Will be
-	 * invoked by {@link #executeProcess(int, ProcessDescription)}.
+	 * Performs the actual invocation of a process execution method.
 	 *
 	 * @param  rProcess The process to execute
 	 * @param  eMode    The execution mode

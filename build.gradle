@@ -46,6 +46,8 @@ gwt {
     gwtVersion='2.7.0'
 }
 
+jar { from sourceSets.main.allSource }
+
 task sourceJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource

@@ -186,7 +186,6 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		{
 			if (rInteractionEventTypes.contains(InteractionEventType.UPDATE))
 			{
-				rEventTypes.add(EventType.VALUE_CHANGED);
 				rEventTypes.add(EventType.KEY_RELEASED);
 			}
 

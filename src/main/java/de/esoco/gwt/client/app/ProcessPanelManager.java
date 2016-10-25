@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -500,6 +500,11 @@ public class ProcessPanelManager
 		{
 			aParamPanelManager.enableInteraction(false);
 		}
+
+		for (DataElementListView rView : aProcessViews.values())
+		{
+			rView.enableInteraction(false);
+		}
 	}
 
 	/***************************************
@@ -978,12 +983,22 @@ public class ProcessPanelManager
 	 */
 	private void setUserInterfaceState()
 	{
+		boolean bHasState =
+			rProcessState != null && !rProcessState.isFinished();
+
+		if (aParamPanelManager != null)
+		{
+			aParamPanelManager.enableInteraction(bHasState);
+		}
+
+		for (DataElementListView rView : aProcessViews.values())
+		{
+			rView.enableInteraction(bHasState);
+		}
+
 		if (bShowNavigationBar)
 		{
 			UserInterfaceContext rContext = getContext();
-
-			boolean bHasState =
-				rProcessState != null && !rProcessState.isFinished();
 
 			String sNextImage;
 			String sNextToolTip;
@@ -1012,11 +1027,6 @@ public class ProcessPanelManager
 			aNextButton.setEnabled(!bAutoContinue && !bCancelled &&
 								   !(bHasState &&
 									 rProcessState.hasImmedidateInteraction()));
-
-			if (aParamPanelManager != null)
-			{
-				aParamPanelManager.enableInteraction(bHasState);
-			}
 		}
 	}
 }

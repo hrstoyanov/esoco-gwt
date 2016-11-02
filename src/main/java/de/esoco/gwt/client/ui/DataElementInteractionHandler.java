@@ -187,6 +187,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			if (rInteractionEventTypes.contains(InteractionEventType.UPDATE))
 			{
 				rEventTypes.add(EventType.KEY_RELEASED);
+				rEventTypes.add(EventType.VALUE_CHANGED);
 			}
 
 			if (rInteractionEventTypes.contains(InteractionEventType.ACTION))
@@ -253,6 +254,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	{
 		EventType eEventType = rEvent.getType();
 		Object    rEventData = rEvent.getElement();
+		Object    rSource    = rEvent.getSource();
 
 		InteractionEventType eInteractionEventType =
 			mapToInteractionEventType(eEventType);
@@ -266,15 +268,16 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		// VALUE_CHANGED can occur if a text field looses focus
 		if ((eEventType != EventType.VALUE_CHANGED &&
 			 eEventType != EventType.FOCUS_LOST) ||
-			!(rEvent.getSource() instanceof TextControl))
+			!(rSource instanceof TextControl))
 		{
 			// this is needed to re-establish the input focus in certain
 			// browsers (Webkit, IE)
 			rDataElement.setFlag(FOCUSED);
 		}
 
-		if (eEventType != EventType.KEY_RELEASED ||
-			hasValueChanged((TextControl) rEvent.getSource()))
+		if ((eEventType != EventType.KEY_RELEASED &&
+			 eEventType != EventType.VALUE_CHANGED) ||
+			hasValueChanged((TextControl) rSource))
 		{
 			rPanelManager.getRootDataElementPanelManager().collectInput();
 			rPanelManager.handleInteractiveInput(rDataElement,

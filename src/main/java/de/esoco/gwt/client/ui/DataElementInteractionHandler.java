@@ -18,6 +18,7 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 
+import de.esoco.ewt.component.ComboBox;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.TextControl;
@@ -323,6 +324,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 */
 	private boolean hasValueChanged(TextControl rTextControl)
 	{
-		return !rTextControl.getText().equals(rDataElement.getValue());
+		return rTextControl instanceof ComboBox ||
+			   !rTextControl.getText().equals(rDataElement.getValue());
 	}
 }

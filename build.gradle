@@ -36,7 +36,7 @@ dependencies {
 		compile project(':gewt')
 	}
 	else {
-		compile 'de.esoco:gewt:1.+'
+		compile 'de.esoco:gewt:1.0.+'
 	}
     
     testCompile 'junit:junit:4.+'

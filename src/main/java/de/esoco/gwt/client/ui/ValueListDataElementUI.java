@@ -167,6 +167,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	@Override
 	protected void updateValue()
 	{
+		super.updateValue();
+
 		Component	   rComponent   = getElementComponent();
 		DataElement<?> rDataElement = getDataElement();
 		List<String>   rValues	    =

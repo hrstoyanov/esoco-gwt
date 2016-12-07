@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -47,6 +47,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
+import static de.esoco.lib.property.LayoutProperties.HTML_WIDTH;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
@@ -600,16 +602,44 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
+	 * Applies the UI properties of a data element to the UI component.
+	 *
+	 * @param rElementUI The data element UI to apply the properties to
+	 */
+	protected void applyElementProperties(DataElementUI<?> rElementUI)
+	{
+		Component rComponent = rElementUI.getElementComponent();
+
+		if (rComponent != null)
+		{
+			DataElement<?> rElement = rElementUI.getDataElement();
+			String		   sWidth   = rElement.getProperty(HTML_WIDTH, null);
+			String		   sHeight  = rElement.getProperty(HTML_HEIGHT, null);
+
+			if (sWidth != null)
+			{
+				rComponent.setWidth(sWidth);
+			}
+
+			if (sHeight != null)
+			{
+				rComponent.setHeight(sHeight);
+			}
+		}
+	}
+
+	/***************************************
 	 * Builds the user interface for a data element in this container.
 	 *
-	 * @param aDataElementUI The element UI to build
+	 * @param rDataElementUI The element UI to build
 	 * @param rStyle         The style for the data element UI
 	 */
 	protected void buildDataElementUI(
-		DataElementUI<?> aDataElementUI,
+		DataElementUI<?> rDataElementUI,
 		StyleData		 rStyle)
 	{
-		aDataElementUI.buildUserInterface(this, rStyle);
+		rDataElementUI.buildUserInterface(this, rStyle);
+		applyElementProperties(rDataElementUI);
 	}
 
 	/***************************************

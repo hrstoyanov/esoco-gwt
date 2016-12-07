@@ -28,6 +28,8 @@ import de.esoco.lib.property.Layout;
 
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
+
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 
 
@@ -118,9 +120,14 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
 
+		if (eDisplayMode == Layout.GRID)
+		{
+			GWT.log("GRID");
+		}
+
 		if (eDisplayMode == Layout.TABLE)
 		{
-			// DataElementListPanelManager performs event handling itself
+			// DataElementPanelManager performs event handling for other cases
 			setupInteractionHandling(rListPanel, false);
 		}
 

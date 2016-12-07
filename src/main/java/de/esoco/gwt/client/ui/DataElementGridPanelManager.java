@@ -182,6 +182,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			}
 
 			rUI.buildUserInterface(rUiBuilder, rStyle);
+			applyElementProperties(rUI);
 		}
 	}
 
@@ -226,7 +227,4 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 
 		return super.createPanel(rBuilder, rStyle, eLayout);
 	}
-
-	//~ Inner Classes ----------------------------------------------------------
-
 }

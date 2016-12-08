@@ -15,7 +15,7 @@ apply plugin: 'java'
 apply plugin: 'osgi'
 
 project.group   = 'de.esoco'
-project.version = '1.1.0'
+project.version = '1.1.1'
 
 sourceCompatibility = 1.7
 
@@ -28,7 +28,7 @@ dependencies {
 		compile project(':esoco-business')
 	}
 	else {
-		compile 'de.esoco:esoco-business:1.1.+'
+		compile 'de.esoco:esoco-business:1.1.1'
 	}
     
  	if (project(':gewt').getProjectDir().exists()) {

@@ -60,6 +60,7 @@ import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.ContentProperties.NULL_VALUE;
 import static de.esoco.lib.property.LayoutProperties.BUTTON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.COLUMNS;
 import static de.esoco.lib.property.LayoutProperties.FLOAT;
@@ -546,11 +547,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 		for (Object rValue : rCurrentValues)
 		{
-			String sValue =
-				rContext.expandResource(convertValueToString(rDataElement,
-															 rValue));
-
-			int nIndex = rAllValues.indexOf(sValue);
+			String sValue = convertValueToString(rDataElement, rValue);
+			int    nIndex = rAllValues.indexOf(rContext.expandResource(sValue));
 
 			if (nIndex >= 0)
 			{
@@ -600,24 +598,28 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		UserInterfaceContext rContext,
 		DataElement<?>		 rDataElement)
 	{
-		Validator<?> rValidator = rDataElement.getValidator();
-
+		Validator<?> rValidator  = rDataElement.getValidator();
 		List<?>		 rRawValues  = ((HasValueList<?>) rValidator).getValues();
 		List<String> aListValues = new ArrayList<String>();
 
 		for (Object rValue : rRawValues)
 		{
-			String sValue =
-				rContext.expandResource(convertValueToString(rDataElement,
-															 rValue));
+			String sValue = convertValueToString(rDataElement, rValue);
 
-			aListValues.add(sValue);
+			aListValues.add(rContext.expandResource(sValue));
 		}
 
 		if (rDataElement.hasFlag(UserInterfaceProperties.SORT) &&
 			aListValues.size() > 1)
 		{
 			Collections.sort(aListValues);
+		}
+
+		String sNullValue = rDataElement.getProperty(NULL_VALUE, null);
+
+		if (sNullValue != null)
+		{
+			aListValues.add(sNullValue);
 		}
 
 		return aListValues;
@@ -755,7 +757,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		List<?> rValues =
 			((HasValueList<?>) rDataElement.getValidator()).getValues();
 
-		if (sSelection == null)
+		if (sSelection == null ||
+			sSelection == rDataElement.getProperty(NULL_VALUE, null))
 		{
 			if (!(rDataElement instanceof ListDataElement))
 			{

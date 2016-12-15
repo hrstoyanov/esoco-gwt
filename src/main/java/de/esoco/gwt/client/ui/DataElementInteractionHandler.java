@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -278,7 +278,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 
 		if ((eEventType != EventType.KEY_RELEASED &&
 			 eEventType != EventType.VALUE_CHANGED) ||
-			hasValueChanged((TextControl) rSource))
+			hasValueChanged(rSource))
 		{
 			rPanelManager.getRootDataElementPanelManager().collectInput();
 			rPanelManager.handleInteractiveInput(rDataElement,
@@ -315,16 +315,18 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Checks whether the value of a text control component has changed compared
-	 * to the data element.
+	 * Checks whether the value of an event source has changed compared to the
+	 * data element.
 	 *
-	 * @param  rTextControl The component to check
+	 * @param  rEventSource The event source to check
 	 *
 	 * @return TRUE if the value has changed
 	 */
-	private boolean hasValueChanged(TextControl rTextControl)
+	private boolean hasValueChanged(Object rEventSource)
 	{
-		return rTextControl instanceof ComboBox ||
-			   !rTextControl.getText().equals(rDataElement.getValue());
+		return rEventSource instanceof ComboBox ||
+			   !(rEventSource instanceof TextControl) ||
+			   !((TextControl) rEventSource).getText()
+											.equals(rDataElement.getValue());
 	}
 }

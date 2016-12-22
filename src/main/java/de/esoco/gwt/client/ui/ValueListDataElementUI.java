@@ -2,11 +2,11 @@
 // This file is a part of the 'esoco-gwt' project.
 // Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 3.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//		 http://www.apache.org/licenses/LICENSE-2.0
+//	  http://www.apache.org/licenses/LICENSE-3.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -209,40 +209,37 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		int nComponent	    = 0;
 		int nSelectionIndex = 0;
 
-		if (rSelection != null && rSelection.length > 0)
+		for (Component rComponent : rComponents)
 		{
-			for (Component rComponent : rComponents)
+			if (rComponent instanceof Selectable ||
+				rComponent instanceof Button)
 			{
-				if (rComponent instanceof Selectable ||
-					rComponent instanceof Button)
-				{
-					boolean bSelected =
-						nSelectionIndex < rSelection.length &&
-						nComponent == rSelection[nSelectionIndex];
+				boolean bSelected =
+					nSelectionIndex < rSelection.length &&
+					nComponent == rSelection[nSelectionIndex];
 
-					if (rComponent instanceof Selectable)
+				if (rComponent instanceof Selectable)
+				{
+					((Selectable) rComponent).setSelected(bSelected);
+				}
+				else
+				{
+					if (bSelected)
 					{
-						((Selectable) rComponent).setSelected(bSelected);
+						rComponent.addStyleName(CSS.gfActive());
 					}
 					else
 					{
-						if (bSelected)
-						{
-							rComponent.addStyleName(CSS.gfActive());
-						}
-						else
-						{
-							rComponent.removeStyleName(CSS.gfActive());
-						}
+						rComponent.removeStyleName(CSS.gfActive());
 					}
-
-					if (bSelected)
-					{
-						++nSelectionIndex;
-					}
-
-					nComponent++;
 				}
+
+				if (bSelected)
+				{
+					++nSelectionIndex;
+				}
+
+				nComponent++;
 			}
 		}
 	}
@@ -515,20 +512,20 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	 * returned array may be empty but will never be NULL. The index values will
 	 * be sorted in ascending order.
 	 *
-	 * @param  rContext
+	 * @param  rContext     The user interface context
 	 * @param  rDataElement The data element to read the current values from
 	 * @param  rAllValues   The list of all values to calculate the selection
 	 *                      indexes from
 	 *
-	 * @return The indices of the currently selected values
+	 * @return The indices of the currently selected values (may be empty but
+	 *         will never be NULL)
 	 */
 	private int[] getCurrentSelection(UserInterfaceContext rContext,
 									  DataElement<?>	   rDataElement,
 									  List<String>		   rAllValues)
 	{
 		List<?> rCurrentValues;
-		int[]   aCurrentValueIndexes = null;
-		int     i					 = 0;
+		int     i = 0;
 
 		if (rDataElement instanceof ListDataElement)
 		{
@@ -543,7 +540,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 							   : Collections.emptyList();
 		}
 
-		aCurrentValueIndexes = new int[rCurrentValues.size()];
+		int[] aCurrentValueIndexes = new int[rCurrentValues.size()];
 
 		for (Object rValue : rCurrentValues)
 		{

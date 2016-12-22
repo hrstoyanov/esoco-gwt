@@ -49,6 +49,13 @@ import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
 public class DataElementInteractionHandler<D extends DataElement<?>>
 	implements EWTEventHandler
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	/** The default delay for the handling of successive input events. */
+	public static final int DEFAULT_EVENT_HANDLING_DELAY = 750;
+
+	private static int nEventHandlingDelay = DEFAULT_EVENT_HANDLING_DELAY;
+
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementPanelManager   rPanelManager;
@@ -71,6 +78,20 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	{
 		this.rPanelManager = rPanelManager;
 		this.rDataElement  = rDataElement;
+	}
+
+	//~ Static methods ---------------------------------------------------------
+
+	/***************************************
+	 * Sets the event handling delay for the handling of successive input
+	 * events. Such events (like key presses) will only be evaluated after this
+	 * delay and only if no successive event of the same type occurred.
+	 *
+	 * @param nMilliSeconds The new event handling delay
+	 */
+	public static void setEventHandlingDelay(int nMilliSeconds)
+	{
+		nEventHandlingDelay = nMilliSeconds;
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -120,7 +141,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 rEvent.getType() == EventType.KEY_RELEASED);
 
-		aInputEventTimer.schedule(bLongDelay ? 750 : 50);
+		aInputEventTimer.schedule(bLongDelay ? nEventHandlingDelay : 50);
 	}
 
 	/***************************************

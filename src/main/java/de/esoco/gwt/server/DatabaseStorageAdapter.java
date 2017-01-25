@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -820,7 +820,6 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 * @throws StorageException If accessing the storage fails
 	 * @throws ServiceException If creating a result data object fails
 	 */
-	@SuppressWarnings("boxing")
 	private int executeQuery(Storage				 rStorage,
 							 QueryPredicate<Entity>  qEntities,
 							 int					 nStart,

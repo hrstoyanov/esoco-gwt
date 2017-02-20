@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,6 +60,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
@@ -251,37 +253,7 @@ public class ProcessPanelManager
 		}
 		else if (!bCancelled)
 		{
-			if (rProcessState.isFinished())
-			{
-				if (bFinishProcess)
-				{
-					processFinished(this, rProcessState);
-				}
-				else
-				{
-					setTitle(null);
-					buildSummaryPanel(null);
-				}
-			}
-			else
-			{
-				processUpdated(this, rProcessState);
-				setTitle(rProcessState.getName());
-				buildParameterPanel(null);
-
-				if (rDeferredInteractionElement != null)
-				{
-					handleDeferredInteraction();
-				}
-				else if (bAutoContinue && !bPauseAutoContinue)
-				{
-					executeProcess(ProcessExecutionMode.EXECUTE,
-								   rProcessState,
-								   true);
-				}
-			}
-
-			setUserInterfaceState();
+			update(bFinishProcess);
 		}
 	}
 
@@ -478,6 +450,56 @@ public class ProcessPanelManager
 		}
 
 		super.processFinished(rProcessPanelManager, rProcessState);
+	}
+
+	/***************************************
+	 * Updates the UI from the process state after an interaction.
+	 *
+	 * @param bFinishProcess TRUE if the process needs to be finished
+	 */
+	protected void update(boolean bFinishProcess)
+	{
+		if (rProcessState.isFinished())
+		{
+			if (bFinishProcess)
+			{
+				processFinished(this, rProcessState);
+			}
+			else
+			{
+				setTitle(null);
+				buildSummaryPanel(null);
+			}
+		}
+		else
+		{
+			processUpdated(this, rProcessState);
+			setTitle(rProcessState.getName());
+
+			// update after other UI updates (e.g. animations) have finished
+			Scheduler.get()
+					 .scheduleDeferred(new ScheduledCommand()
+				{
+					@Override
+					public void execute()
+					{
+						buildParameterPanel(null);
+
+						if (rDeferredInteractionElement != null)
+						{
+							handleDeferredInteraction();
+						}
+						else if (bAutoContinue && !bPauseAutoContinue)
+						{
+							executeProcess(ProcessExecutionMode.EXECUTE,
+										   rProcessState,
+										   true);
+						}
+					}
+				});
+		}
+
+		setUserInterfaceState();
 	}
 
 	/***************************************

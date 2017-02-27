@@ -396,6 +396,18 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Applies the current UI styles from the element style and other
+	 * properties.
+	 */
+	public void applyStyle()
+	{
+		aElementComponent.applyStyle(applyElementStyle(rDataElement,
+													   getBaseStyle()));
+		applyElementProperties();
+		enableComponent(bUIEnabled);
+	}
+
+	/***************************************
 	 * Builds the user interface for the data element. This method Invokes
 	 * {@link #buildDataElementUI(ContainerBuilder, StyleData)} which can be
 	 * overridden by subclasses to modify the default building if necessary.
@@ -573,13 +585,9 @@ public class DataElementUI<D extends DataElement<?>>
 				updateValue();
 			}
 
-			checkRequestFocus();
-
-			aElementComponent.applyStyle(applyElementStyle(rDataElement,
-														   getBaseStyle()));
-			enableComponent(bUIEnabled);
-			applyElementProperties();
+			applyStyle();
 			aElementComponent.repaint();
+			checkRequestFocus();
 		}
 	}
 

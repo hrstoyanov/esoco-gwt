@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	 * Adds the user interfaces for the data elements in this panel.
 	 */
 	@Override
-	protected void addComponents()
+	protected void buildElementUIs()
 	{
 		UserInterfaceContext rContext = getContext();
 		List<Label>			 aHeaders = null;

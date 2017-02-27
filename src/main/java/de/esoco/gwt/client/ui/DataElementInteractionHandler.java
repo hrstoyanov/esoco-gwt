@@ -1,12 +1,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,6 +35,7 @@ import java.util.Set;
 
 import com.google.gwt.user.client.Timer;
 
+import static de.esoco.lib.property.StateProperties.EVENT_HANDLING_DELAY;
 import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
@@ -51,16 +52,17 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	/** The default delay for the handling of successive input events. */
-	public static final int DEFAULT_EVENT_HANDLING_DELAY = 750;
+	/** The default delay for the handling of input events in milliseconds. */
+	private static final int DEFAULT_EVENT_HANDLING_DELAY = 10;
 
-	private static int nEventHandlingDelay = DEFAULT_EVENT_HANDLING_DELAY;
+	private static int nInputEventHandlingDelay = 750;
 
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementPanelManager   rPanelManager;
 	private D						  rDataElement;
 	private Set<InteractionEventType> rEventTypes;
+	private int						  nEventHandlingDelay;
 
 	private Timer aInputEventTimer;
 
@@ -78,6 +80,10 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	{
 		this.rPanelManager = rPanelManager;
 		this.rDataElement  = rDataElement;
+
+		nEventHandlingDelay =
+			rDataElement.getIntProperty(EVENT_HANDLING_DELAY,
+										DEFAULT_EVENT_HANDLING_DELAY);
 	}
 
 	//~ Static methods ---------------------------------------------------------
@@ -87,11 +93,11 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 * events. Such events (like key presses) will only be evaluated after this
 	 * delay and only if no successive event of the same type occurred.
 	 *
-	 * @param nMilliSeconds The new event handling delay
+	 * @param nMilliseconds The new event handling delay
 	 */
-	public static void setEventHandlingDelay(int nMilliSeconds)
+	public static void setInputEventHandlingDelay(int nMilliseconds)
 	{
-		nEventHandlingDelay = nMilliSeconds;
+		nInputEventHandlingDelay = nMilliseconds;
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -141,7 +147,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 rEvent.getType() == EventType.KEY_RELEASED);
 
-		aInputEventTimer.schedule(bLongDelay ? nEventHandlingDelay : 50);
+		aInputEventTimer.schedule(bLongDelay ? nInputEventHandlingDelay
+											 : nEventHandlingDelay);
 	}
 
 	/***************************************

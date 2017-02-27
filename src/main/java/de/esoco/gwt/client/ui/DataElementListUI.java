@@ -1,12 +1,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,8 +25,12 @@ import de.esoco.ewt.component.Container;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.StateProperties;
 
 import java.util.Map;
+
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 
@@ -83,16 +87,34 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void update()
 	{
-		String sAddStyle = aListPanelManager.getStyleName();
+		DataElementList rDataElement = getDataElement();
+		String		    sAddStyle    = aListPanelManager.getStyleName();
 
 		StyleData rNewStyle =
-			applyElementStyle(getDataElement(),
+			applyElementStyle(rDataElement,
 							  PanelManager.addStyles(getBaseStyle(),
 													 sAddStyle));
 
-		applyElementProperties();
+//		applyElementProperties();
+		applyStyle();
 		aListPanelManager.getPanel().applyStyle(rNewStyle);
-		aListPanelManager.updatePanel();
+
+		if (rDataElement.hasFlag(StateProperties.DEFERRED_UPDATE))
+		{
+			Scheduler.get()
+					 .scheduleDeferred(new ScheduledCommand()
+				{
+					@Override
+					public void execute()
+					{
+						aListPanelManager.updatePanel();
+					}
+				});
+		}
+		else
+		{
+			aListPanelManager.updatePanel();
+		}
 	}
 
 	/***************************************

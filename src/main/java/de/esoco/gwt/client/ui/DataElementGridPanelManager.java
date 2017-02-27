@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -101,23 +101,6 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void addComponents()
-	{
-		aGridFormatter =
-			rGridFormatterFactory.createGridFormatter(getDataElementList());
-
-		super.addComponents();
-
-		// build last row
-		buildCurrentRow();
-
-		aGridFormatter = null;
-	}
-
-	/***************************************
 	 * Sets the style of a completed row of data elements.
 	 */
 	protected void buildCurrentRow()
@@ -201,6 +184,23 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		}
 
 		aCurrentRow.put(aDataElementUI, rStyle);
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void buildElementUIs()
+	{
+		aGridFormatter =
+			rGridFormatterFactory.createGridFormatter(getDataElementList());
+
+		super.buildElementUIs();
+
+		// build last row
+		buildCurrentRow();
+
+		aGridFormatter = null;
 	}
 
 	/***************************************

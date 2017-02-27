@@ -60,8 +60,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
@@ -469,37 +467,28 @@ public class ProcessPanelManager
 			{
 				setTitle(null);
 				buildSummaryPanel(null);
+				setUserInterfaceState();
 			}
 		}
 		else
 		{
-			processUpdated(this, rProcessState);
+			processUpdated(ProcessPanelManager.this, rProcessState);
 			setTitle(rProcessState.getName());
+			buildParameterPanel(null);
 
-			// update after other UI updates (e.g. animations) have finished
-			Scheduler.get()
-					 .scheduleDeferred(new ScheduledCommand()
-				{
-					@Override
-					public void execute()
-					{
-						buildParameterPanel(null);
+			if (rDeferredInteractionElement != null)
+			{
+				handleDeferredInteraction();
+			}
+			else if (bAutoContinue && !bPauseAutoContinue)
+			{
+				executeProcess(ProcessExecutionMode.EXECUTE,
+							   rProcessState,
+							   true);
+			}
 
-						if (rDeferredInteractionElement != null)
-						{
-							handleDeferredInteraction();
-						}
-						else if (bAutoContinue && !bPauseAutoContinue)
-						{
-							executeProcess(ProcessExecutionMode.EXECUTE,
-										   rProcessState,
-										   true);
-						}
-					}
-				});
+			setUserInterfaceState();
 		}
-
-		setUserInterfaceState();
 	}
 
 	/***************************************

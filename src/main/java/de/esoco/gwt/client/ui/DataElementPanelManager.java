@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.HTML_WIDTH;
@@ -570,35 +573,22 @@ public abstract class DataElementPanelManager
 	@Override
 	protected void addComponents()
 	{
-		Map<DataElement<?>, StyleData> rDataElementStyles =
-			prepareChildDataElements(rDataElementList);
-
-		for (Entry<DataElement<?>, StyleData> rElementStyle :
-			 rDataElementStyles.entrySet())
+		if (rDataElementList.hasFlag(StateProperties.DEFERRED_UPDATE))
 		{
-			DataElement<?> rDataElement = rElementStyle.getKey();
-			StyleData	   rStyle	    = rElementStyle.getValue();
-
-			DataElementUI<?> aDataElementUI =
-				DataElementUIFactory.create(this, rDataElement);
-
-			if (!(rDataElement instanceof DataElementList))
-			{
-				String sElementStyle = aDataElementUI.getElementStyleName();
-
-				if (rDataElement.isImmutable())
+			Scheduler.get()
+					 .scheduleDeferred(new ScheduledCommand()
 				{
-					sElementStyle = CSS.readonly() + " " + sElementStyle;
-				}
-
-				rStyle = addStyles(rStyle, CSS.gfDataElement(), sElementStyle);
-			}
-
-			buildDataElementUI(aDataElementUI, rStyle);
-			aDataElementUIs.put(rDataElement.getName(), aDataElementUI);
+					@Override
+					public void execute()
+					{
+						buildElementUIs();
+					}
+				});
 		}
-
-		setupEventHandling();
+		else
+		{
+			buildElementUIs();
+		}
 	}
 
 	/***************************************
@@ -640,6 +630,43 @@ public abstract class DataElementPanelManager
 	{
 		rDataElementUI.buildUserInterface(this, rStyle);
 		applyElementProperties(rDataElementUI);
+	}
+
+	/***************************************
+	 * Builds and initializes the UIs for the data elements in this panel.
+	 * Invoked by {@link #addComponents()}.
+	 */
+	protected void buildElementUIs()
+	{
+		Map<DataElement<?>, StyleData> rDataElementStyles =
+			prepareChildDataElements(rDataElementList);
+
+		for (Entry<DataElement<?>, StyleData> rElementStyle :
+			 rDataElementStyles.entrySet())
+		{
+			DataElement<?> rDataElement = rElementStyle.getKey();
+			StyleData	   rStyle	    = rElementStyle.getValue();
+
+			DataElementUI<?> aDataElementUI =
+				DataElementUIFactory.create(this, rDataElement);
+
+			if (!(rDataElement instanceof DataElementList))
+			{
+				String sElementStyle = aDataElementUI.getElementStyleName();
+
+				if (rDataElement.isImmutable())
+				{
+					sElementStyle = CSS.readonly() + " " + sElementStyle;
+				}
+
+				rStyle = addStyles(rStyle, CSS.gfDataElement(), sElementStyle);
+			}
+
+			buildDataElementUI(aDataElementUI, rStyle);
+			aDataElementUIs.put(rDataElement.getName(), aDataElementUI);
+		}
+
+		setupEventHandling();
 	}
 
 	/***************************************
@@ -814,27 +841,6 @@ public abstract class DataElementPanelManager
 		{
 			aInteractionHandler = aEventHandler;
 		}
-	}
-
-	/***************************************
-	 * Updates a child panel manager with a new data element.
-	 *
-	 * @param rPanelManager   The panel manager to update
-	 * @param rNewDataElement The new data element
-	 * @param rErrorMessages  The optional error messages to be applied
-	 * @param nPanelIndex     The index of the current panel
-	 * @param bUpdateUI       TRUE if the UI needs to be updated
-	 */
-	protected void updateChildPanelManager(
-		DataElementPanelManager rPanelManager,
-		DataElement<?>			rNewDataElement,
-		Map<String, String>		rErrorMessages,
-		int						nPanelIndex,
-		boolean					bUpdateUI)
-	{
-		rPanelManager.updateFromDataElement(rNewDataElement,
-											rErrorMessages,
-											bUpdateUI);
 	}
 
 	/***************************************

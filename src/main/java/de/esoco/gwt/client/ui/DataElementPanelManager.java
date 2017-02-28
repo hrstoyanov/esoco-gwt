@@ -26,6 +26,7 @@ import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
+import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.gwt.client.res.EsocoGwtCss;
@@ -53,6 +54,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.HTML_WIDTH;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
+import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
 
@@ -303,6 +305,15 @@ public abstract class DataElementPanelManager
 	 */
 	public void collectInput()
 	{
+		GenericLayout rLayout = getContainer().getLayout();
+
+		if (rLayout instanceof SingleSelection)
+		{
+			int nSelection = ((SingleSelection) rLayout).getSelectionIndex();
+
+			rDataElementList.setProperty(CURRENT_SELECTION, nSelection);
+		}
+
 		for (DataElementUI<?> rUI : aDataElementUIs.values())
 		{
 			if (rUI != null)
@@ -521,6 +532,8 @@ public abstract class DataElementPanelManager
 			aDataElementUIs.clear();
 			rebuild();
 		}
+
+		applyElementSelection();
 	}
 
 	/***************************************
@@ -614,6 +627,26 @@ public abstract class DataElementPanelManager
 			if (sHeight != null)
 			{
 				rComponent.setHeight(sHeight);
+			}
+		}
+	}
+
+	/***************************************
+	 * Applies the current selection value in the data element of this instance
+	 * to it's container if it implements the {@link SingleSelection} interface.
+	 */
+	protected void applyElementSelection()
+	{
+		GenericLayout rLayout = getContainer().getLayout();
+
+		if (rLayout instanceof SingleSelection)
+		{
+			SingleSelection rSelectable = (SingleSelection) rLayout;
+
+			if (rDataElementList.hasProperty(CURRENT_SELECTION))
+			{
+				rSelectable.setSelection(rDataElementList.getIntProperty(CURRENT_SELECTION,
+																		 0));
 			}
 		}
 	}

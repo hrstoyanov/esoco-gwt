@@ -31,15 +31,14 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.lib.property.Layout;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 
 
 /********************************************************************
  * A panel manager for {@link DataElementList} instances that renders the child
- * elements of the list in visual groups (e.g. Tabs).
+ * elements of the list in distinct visual groups (e.g. Tabs) that can be
+ * switched between.
  *
  * @author eso
  */
@@ -128,29 +127,6 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	public void setSelectedElement(int nElement)
 	{
 		aSwitchPanel.setSelection(nElement);
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("boxing")
-	public void updateDataElements(List<DataElement<?>> rNewDataElements,
-								   Map<String, String>  rErrorMessages,
-								   boolean				bUpdateUI)
-	{
-		super.updateDataElements(rNewDataElements, rErrorMessages, bUpdateUI);
-
-		int nCurrentSelection = getSelectedElement();
-
-		Integer nNewSelection =
-			getDataElementList().getProperty(CURRENT_SELECTION,
-											 nCurrentSelection);
-
-		if (nCurrentSelection != nNewSelection)
-		{
-			setSelectedElement(nNewSelection);
-		}
 	}
 
 	/***************************************

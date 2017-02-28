@@ -113,6 +113,7 @@ public class ProcessPanelManager
 
 	private String  sProcessName;
 	private boolean bShowNavigationBar;
+	private boolean bDisableOnInteraction;
 	private boolean bRenderInline;
 
 	private DataElementPanelManager aParamPanelManager;
@@ -155,31 +156,37 @@ public class ProcessPanelManager
 		GwtApplicationPanelManager<?, ?> rParent,
 		String							 sProcessName)
 	{
-		this(rParent, sProcessName, true, false);
+		this(rParent, sProcessName, true, true, false);
 	}
 
 	/***************************************
 	 * Creates a new instance for a certain process.
 	 *
-	 * @param rParent            The parent panel manager
-	 * @param sProcessName       The name of the process
-	 * @param bShowNavigationBar TRUE to show the process navigation bar at the
-	 *                           top, FALSE to show only the process parameters
-	 * @param bRenderInline      TRUE to render the process UI in the parent
-	 *                           container, FALSE to create a separate panel
-	 *                           (may not be compatible with a navigation bar)
+	 * @param rParent               The parent panel manager
+	 * @param sProcessName          The name of the process
+	 * @param bShowNavigationBar    TRUE to show the process navigation bar at
+	 *                              the top, FALSE to show only the process
+	 *                              parameters
+	 * @param bDisableOnInteraction TRUE if the panel should be disabled while
+	 *                              an interaction event is processed
+	 * @param bRenderInline         TRUE to render the process UI in the parent
+	 *                              container, FALSE to create a separate panel
+	 *                              (may not be compatible with a navigation
+	 *                              bar)
 	 */
 	public ProcessPanelManager(
 		GwtApplicationPanelManager<?, ?> rParent,
 		String							 sProcessName,
 		boolean							 bShowNavigationBar,
+		boolean							 bDisableOnInteraction,
 		boolean							 bRenderInline)
 	{
 		super(rParent, CSS.gaProcessPanel());
 
-		this.sProcessName	    = sProcessName;
-		this.bShowNavigationBar = bShowNavigationBar;
-		this.bRenderInline	    = bRenderInline;
+		this.sProcessName		   = sProcessName;
+		this.bShowNavigationBar    = bShowNavigationBar;
+		this.bDisableOnInteraction = bDisableOnInteraction;
+		this.bRenderInline		   = bRenderInline;
 	}
 
 	//~ Static methods ---------------------------------------------------------
@@ -507,7 +514,7 @@ public class ProcessPanelManager
 			aReloadButton.setEnabled(false);
 		}
 
-		if (aParamPanelManager != null)
+		if (aParamPanelManager != null && bDisableOnInteraction)
 		{
 			aParamPanelManager.enableInteraction(false);
 		}

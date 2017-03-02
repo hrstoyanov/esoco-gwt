@@ -167,6 +167,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			rUI.buildUserInterface(rUiBuilder, rStyle);
 			applyElementProperties(rUI);
 		}
+
+		aCurrentRow.clear();
 	}
 
 	/***************************************
@@ -180,7 +182,6 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 		if (!aDataElementUI.getDataElement().hasFlag(SAME_ROW))
 		{
 			buildCurrentRow();
-			aCurrentRow.clear();
 		}
 
 		aCurrentRow.put(aDataElementUI, rStyle);

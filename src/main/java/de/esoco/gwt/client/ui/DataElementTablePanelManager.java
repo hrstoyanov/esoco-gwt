@@ -113,9 +113,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 								   Map<String, String>  rElementErrors,
 								   boolean				bUpdateUI)
 	{
-		boolean bUpdate = containsSameElements(aDataElements, rNewDataElements);
-
-		if (bUpdate)
+		if (containsSameElements(aDataElements, rNewDataElements))
 		{
 			aDataElements = new ArrayList<DataElement<?>>(rNewDataElements);
 

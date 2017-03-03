@@ -136,13 +136,12 @@ public class ProcessPanelManager
 	private boolean bCancelProcess     = false;
 	private boolean bCancelled		   = false;
 
-	private DataElement<?>		 rDeferredInteractionElement   = null;
-	private InteractionEventType eDeferredInteractionEventType;
-
 	private Map<String, DataElementListView> aProcessViews =
 		Collections.emptyMap();
 
 	private HandlerRegistration rUiInspectorEventHandler = null;
+
+	private boolean bLocked = false;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -246,6 +245,7 @@ public class ProcessPanelManager
 		boolean bFinishProcess =
 			rProcessState != null && rProcessState.isFinalStep();
 
+		bLocked		  = false;
 		rProcessState = rNewState;
 		bAutoContinue = rProcessState.isAutoContinue();
 
@@ -367,17 +367,9 @@ public class ProcessPanelManager
 		final DataElement<?> rDataElement,
 		InteractionEventType eEventType)
 	{
-		if (isCommandExecuting())
+		if (!bLocked)
 		{
-			// save the last interaction UI to prevent loss of input by
-			// executing the process after the current handling ends
-			rDeferredInteractionElement   = rDataElement;
-			eDeferredInteractionEventType = eEventType;
-		}
-		else
-		{
-			rDeferredInteractionElement = null;
-
+			bLocked = true;
 			lockUserInterface();
 
 			for (DataElementListView rView : aProcessViews.values())
@@ -483,11 +475,7 @@ public class ProcessPanelManager
 			setTitle(rProcessState.getName());
 			buildParameterPanel(null);
 
-			if (rDeferredInteractionElement != null)
-			{
-				handleDeferredInteraction();
-			}
-			else if (bAutoContinue && !bPauseAutoContinue)
+			if (bAutoContinue && !bPauseAutoContinue)
 			{
 				executeProcess(ProcessExecutionMode.EXECUTE,
 							   rProcessState,
@@ -859,21 +847,6 @@ public class ProcessPanelManager
 					});
 			}
 		}
-	}
-
-	/***************************************
-	 * Process a deferred interaction to prevent loss of input.
-	 */
-	private void handleDeferredInteraction()
-	{
-		List<DataElement<?>> rInteractionParams =
-			rProcessState.getInteractionParams();
-
-		aParamPanelManager.updateDataElements(rInteractionParams, null, false);
-		aParamPanelManager.collectInput();
-
-		handleInteractiveInput(rDeferredInteractionElement,
-							   eDeferredInteractionEventType);
 	}
 
 	/***************************************

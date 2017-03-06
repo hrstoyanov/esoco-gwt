@@ -483,9 +483,9 @@ public abstract class DataElementPanelManager
 	 * @param bUpdateUI        TRUE to also update the UI, FALSE to only update
 	 *                         the data element references
 	 */
-	public void updateDataElements(List<DataElement<?>> rNewDataElements,
-								   Map<String, String>  rErrorMessages,
-								   boolean				bUpdateUI)
+	public void updateDataElements(List<DataElement<?>>		 rNewDataElements,
+								   final Map<String, String> rErrorMessages,
+								   final boolean			 bUpdateUI)
 	{
 		if (rNewDataElements.size() != 1 ||
 			!(rNewDataElements.get(0) instanceof DataElementList))
@@ -500,40 +500,32 @@ public abstract class DataElementPanelManager
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);
 
-		if (rNewDataElementList.getName().equals(rDataElementList.getName()) &&
+		final boolean bIsUpdate =
+			rNewDataElementList.getName().equals(rDataElementList.getName()) &&
 			containsSameElements(rNewDataElementList.getElements(),
-								 rDataElementList.getElements()))
+								 rDataElementList.getElements());
+
+		rDataElementList = rNewDataElementList;
+
+		if (bIsUpdate)
 		{
-			// must be assigned before updating panel manager for correct lookup
-			// of data element dependencies
-			rDataElementList = rNewDataElementList;
-
-			if (aInteractionHandler != null)
-			{
-				aInteractionHandler.updateDataElement(rDataElementList);
-			}
-
-			List<DataElement<?>> rOrderedElements =
-				new ArrayList<>(prepareChildDataElements(rDataElementList)
-								.keySet());
-
-			int nIndex = 0;
-
-			for (DataElementUI<?> rUI : aDataElementUIs.values())
-			{
-				DataElement<?> rNewElement = rOrderedElements.get(nIndex++);
-
-				rUI.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
-			}
+			updateElementUIs(rErrorMessages, bUpdateUI);
+			applyElementSelection();
 		}
 		else
 		{
-			rDataElementList = rNewDataElementList;
-			aDataElementUIs.clear();
-			rebuild();
+			Scheduler.get()
+					 .scheduleDeferred(new ScheduledCommand()
+				{
+					@Override
+					public void execute()
+					{
+						aDataElementUIs.clear();
+						rebuild();
+						applyElementSelection();
+					}
+				});
 		}
-
-		applyElementSelection();
 	}
 
 	/***************************************
@@ -586,22 +578,7 @@ public abstract class DataElementPanelManager
 	@Override
 	protected void addComponents()
 	{
-		if (rDataElementList.hasFlag(StateProperties.DEFERRED_UPDATE))
-		{
-			Scheduler.get()
-					 .scheduleDeferred(new ScheduledCommand()
-				{
-					@Override
-					public void execute()
-					{
-						buildElementUIs();
-					}
-				});
-		}
-		else
-		{
-			buildElementUIs();
-		}
+		buildElementUIs();
 	}
 
 	/***************************************
@@ -873,6 +850,38 @@ public abstract class DataElementPanelManager
 		if (aEventHandler.setupEventHandling(getContainer(), false))
 		{
 			aInteractionHandler = aEventHandler;
+		}
+	}
+
+	/***************************************
+	 * Updates the data element UIs of this instance.
+	 *
+	 * @param rErrorMessages A mapping from the names of data elements with
+	 *                       errors to error messages or NULL to clear all error
+	 *                       messages
+	 * @param bUpdateUI      TRUE to also update the UI, FALSE to only update
+	 *                       the data element references
+	 */
+	protected void updateElementUIs(
+		Map<String, String> rErrorMessages,
+		boolean				bUpdateUI)
+	{
+		if (aInteractionHandler != null)
+		{
+			aInteractionHandler.updateDataElement(rDataElementList);
+		}
+
+		List<DataElement<?>> rOrderedElements =
+			new ArrayList<>(prepareChildDataElements(rDataElementList)
+							.keySet());
+
+		int nIndex = 0;
+
+		for (DataElementUI<?> rUI : aDataElementUIs.values())
+		{
+			DataElement<?> rNewElement = rOrderedElements.get(nIndex++);
+
+			rUI.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
 		}
 	}
 

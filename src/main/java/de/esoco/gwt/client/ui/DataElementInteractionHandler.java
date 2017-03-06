@@ -33,6 +33,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Timer;
 
 import static de.esoco.lib.property.StateProperties.EVENT_HANDLING_DELAY;
@@ -53,7 +55,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	//~ Static fields/initializers ---------------------------------------------
 
 	/** The default delay for the handling of input events in milliseconds. */
-	private static final int DEFAULT_EVENT_HANDLING_DELAY = 10;
+	private static final int DEFAULT_EVENT_HANDLING_DELAY = 0;
 
 	private static int nInputEventHandlingDelay = 750;
 
@@ -128,27 +130,42 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	@Override
 	public void handleEvent(final EWTEvent rEvent)
 	{
-		if (aInputEventTimer != null)
-		{
-			aInputEventTimer.cancel();
-		}
-
-		aInputEventTimer =
-			new Timer()
-			{
-				@Override
-				public void run()
-				{
-					processEvent(rEvent);
-				}
-			};
-
-		boolean bLongDelay =
+		boolean bDeferredEventHandling =
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 rEvent.getType() == EventType.KEY_RELEASED);
 
-		aInputEventTimer.schedule(bLongDelay ? nInputEventHandlingDelay
-											 : nEventHandlingDelay);
+		if (aInputEventTimer != null)
+		{
+			aInputEventTimer.cancel();
+			aInputEventTimer = null;
+		}
+
+		if (bDeferredEventHandling || nEventHandlingDelay > 0)
+		{
+			aInputEventTimer =
+				new Timer()
+				{
+					@Override
+					public void run()
+					{
+						processEvent(rEvent);
+					}
+				};
+			aInputEventTimer.schedule(nEventHandlingDelay > 0
+									  ? nEventHandlingDelay : 750);
+		}
+		else
+		{
+			Scheduler.get()
+					 .scheduleDeferred(new ScheduledCommand()
+				{
+					@Override
+					public void execute()
+					{
+						processEvent(rEvent);
+					}
+				});
+		}
 	}
 
 	/***************************************
@@ -311,6 +328,12 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			rPanelManager.getRootDataElementPanelManager().collectInput();
 			rPanelManager.handleInteractiveInput(rDataElement,
 												 eInteractionEventType);
+		}
+
+		if (aInputEventTimer != null)
+		{
+			aInputEventTimer.cancel();
+			aInputEventTimer = null;
 		}
 	}
 

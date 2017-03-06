@@ -494,9 +494,6 @@ public abstract class DataElementPanelManager
 											   rNewDataElements);
 		}
 
-		getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
-																  getBaseStyle()));
-
 		DataElementList rNewDataElementList =
 			(DataElementList) rNewDataElements.get(0);
 
@@ -506,6 +503,9 @@ public abstract class DataElementPanelManager
 								 rDataElementList.getElements());
 
 		rDataElementList = rNewDataElementList;
+
+		getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
+																  getBaseStyle()));
 
 		if (bIsUpdate)
 		{

@@ -95,7 +95,6 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 							  PanelManager.addStyles(getBaseStyle(),
 													 sAddStyle));
 
-//		applyElementProperties();
 		applyStyle();
 		aListPanelManager.getPanel().applyStyle(rNewStyle);
 

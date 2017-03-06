@@ -54,10 +54,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	/** The default delay for the handling of input events in milliseconds. */
-	private static final int DEFAULT_EVENT_HANDLING_DELAY = 0;
-
-	private static int nInputEventHandlingDelay = 750;
+	private static final int DEFAULT_EVENT_HANDLING_DELAY = 750;
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -84,22 +81,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 		this.rDataElement  = rDataElement;
 
 		nEventHandlingDelay =
-			rDataElement.getIntProperty(EVENT_HANDLING_DELAY,
-										DEFAULT_EVENT_HANDLING_DELAY);
-	}
-
-	//~ Static methods ---------------------------------------------------------
-
-	/***************************************
-	 * Sets the event handling delay for the handling of successive input
-	 * events. Such events (like key presses) will only be evaluated after this
-	 * delay and only if no successive event of the same type occurred.
-	 *
-	 * @param nMilliseconds The new event handling delay
-	 */
-	public static void setInputEventHandlingDelay(int nMilliseconds)
-	{
-		nInputEventHandlingDelay = nMilliseconds;
+			rDataElement.getIntProperty(EVENT_HANDLING_DELAY, 0);
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -131,6 +113,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	public void handleEvent(final EWTEvent rEvent)
 	{
 		boolean bDeferredEventHandling =
+			nEventHandlingDelay > 0 ||
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 rEvent.getType() == EventType.KEY_RELEASED);
 
@@ -140,7 +123,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			aInputEventTimer = null;
 		}
 
-		if (bDeferredEventHandling || nEventHandlingDelay > 0)
+		if (bDeferredEventHandling)
 		{
 			aInputEventTimer =
 				new Timer()
@@ -152,7 +135,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 					}
 				};
 			aInputEventTimer.schedule(nEventHandlingDelay > 0
-									  ? nEventHandlingDelay : 750);
+									  ? nEventHandlingDelay
+									  : DEFAULT_EVENT_HANDLING_DELAY);
 		}
 		else
 		{

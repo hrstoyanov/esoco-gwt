@@ -504,9 +504,6 @@ public abstract class DataElementPanelManager
 
 		rDataElementList = rNewDataElementList;
 
-		getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
-																  getBaseStyle()));
-
 		if (bIsUpdate)
 		{
 			updateElementUIs(rErrorMessages, bUpdateUI);
@@ -869,6 +866,12 @@ public abstract class DataElementPanelManager
 		if (aInteractionHandler != null)
 		{
 			aInteractionHandler.updateDataElement(rDataElementList);
+		}
+
+		if (bUpdateUI)
+		{
+			getContainer().applyStyle(DataElementUI.applyElementStyle(rDataElementList,
+																	  getBaseStyle()));
 		}
 
 		List<DataElement<?>> rOrderedElements =

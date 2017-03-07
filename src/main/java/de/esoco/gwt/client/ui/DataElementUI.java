@@ -66,6 +66,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -1784,7 +1786,15 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (bUpdateUI)
 		{
-			update();
+			Scheduler.get()
+					 .scheduleDeferred(new ScheduledCommand()
+				{
+					@Override
+					public void execute()
+					{
+						update();
+					}
+				});
 		}
 
 		checkElementError(rElementErrors);

@@ -25,12 +25,8 @@ import de.esoco.ewt.component.Container;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.Layout;
-import de.esoco.lib.property.StateProperties;
 
 import java.util.Map;
-
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 
@@ -97,23 +93,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 
 		applyStyle();
 		aListPanelManager.getPanel().applyStyle(rNewStyle);
-
-		if (rDataElement.hasFlag(StateProperties.DEFERRED_UPDATE))
-		{
-			Scheduler.get()
-					 .scheduleDeferred(new ScheduledCommand()
-				{
-					@Override
-					public void execute()
-					{
-						aListPanelManager.updatePanel();
-					}
-				});
-		}
-		else
-		{
-			aListPanelManager.updatePanel();
-		}
+		aListPanelManager.updatePanel();
 	}
 
 	/***************************************

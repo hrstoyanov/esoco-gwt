@@ -274,6 +274,7 @@ public class ProcessPanelManager
 	@Override
 	public void handleError(Throwable rCaught)
 	{
+		bLocked		  = false;
 		bAutoContinue = false;
 
 		if (rCaught instanceof ServiceException &&

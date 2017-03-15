@@ -1158,7 +1158,15 @@ public class DataElementFactory
 		}
 		else
 		{
-			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
+//			if (bModified)
+			{
+				aDataElement =
+					createDataElement(rObject, rType, rRelation, rValue);
+			}
+//			else
+//			{
+//				aDataElement = ProcessService.UNCHANGED_ELEMENT;
+//			}
 		}
 
 		if (aDataElement != null)
@@ -1699,6 +1707,11 @@ public class DataElementFactory
 										rRelation,
 										rFlags);
 		}
+
+//		if (aDataElement == null)
+//		{
+//			System.out.printf("DE NULL: %s\n", rType.getName());
+//		}
 
 		if (aDataElement != null && rRelation != null)
 		{

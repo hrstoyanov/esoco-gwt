@@ -1,12 +1,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,6 +15,8 @@
 // limitations under the License.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.shared;
+
+import de.esoco.data.element.StringDataElement;
 
 import de.esoco.lib.property.PropertyName;
 
@@ -48,6 +50,10 @@ public interface ProcessService extends StorageService
 	/** A process state flag used to show or hide the UI inspector view. */
 	public static final PropertyName<Boolean> SHOW_UI_INSPECTOR =
 		PropertyName.newBooleanName("SHOW_UI_INSPECTOR");
+
+	/** TODO: DOCUMENT ME */
+	public static final StringDataElement UNCHANGED_ELEMENT =
+		new StringDataElement("UNCHANGED", "");
 
 	// - Commands --------------------------------------------------------------
 

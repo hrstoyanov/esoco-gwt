@@ -123,6 +123,8 @@ public class DataElementUI<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
+	private static final boolean PROFILING = false;
+
 	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	/** The default prefix for label resource IDs. */
@@ -421,11 +423,18 @@ public class DataElementUI<D extends DataElement<?>>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
+		long t = System.currentTimeMillis();
+
 		rBaseStyle		  = rStyle;
 		rStyle			  = applyElementStyle(rDataElement, rStyle);
 		aElementComponent = buildDataElementUI(rBuilder, rStyle);
 
 		applyElementProperties();
+
+		if (PROFILING)
+		{
+			EWT.logTime("DE-BUILD", getDataElement().getName(), t);
+		}
 	}
 
 	/***************************************
@@ -580,17 +589,34 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	public void update()
 	{
-		if (aElementComponent != null)
-		{
-			if (rDataElement.hasFlag(VALUE_CHANGED))
+		Scheduler.get()
+				 .scheduleDeferred(new ScheduledCommand()
 			{
-				updateValue();
-			}
+				@Override
+				public void execute()
+				{
+					if (aElementComponent != null)
+					{
+						long t = System.currentTimeMillis();
 
-			applyStyle();
-			aElementComponent.repaint();
-			checkRequestFocus();
-		}
+						if (rDataElement.hasFlag(VALUE_CHANGED))
+						{
+							updateValue();
+						}
+
+						applyStyle();
+						aElementComponent.repaint();
+						checkRequestFocus();
+
+						if (PROFILING)
+						{
+							EWT.logTime("DE-UPDATE",
+										getDataElement().getName(),
+										t);
+						}
+					}
+				}
+			});
 	}
 
 	/***************************************
@@ -1786,15 +1812,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (bUpdateUI)
 		{
-			Scheduler.get()
-					 .scheduleDeferred(new ScheduledCommand()
-				{
-					@Override
-					public void execute()
-					{
-						update();
-					}
-				});
+			update();
 		}
 
 		checkElementError(rElementErrors);

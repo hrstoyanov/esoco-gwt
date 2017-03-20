@@ -19,6 +19,7 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
+import de.esoco.ewt.EWT;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
@@ -68,6 +69,8 @@ public abstract class DataElementPanelManager
 	extends PanelManager<Container, PanelManager<?, ?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
+
+	private static final boolean PROFILING = false;
 
 	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
@@ -504,10 +507,17 @@ public abstract class DataElementPanelManager
 
 		rDataElementList = rNewDataElementList;
 
+		final long tStart = System.currentTimeMillis();
+
 		if (bIsUpdate)
 		{
 			updateElementUIs(rErrorMessages, bUpdateUI);
 			applyElementSelection();
+
+			if (PROFILING)
+			{
+				EWT.logTime("UPDATE", rDataElementList.getName(), tStart);
+			}
 		}
 		else
 		{
@@ -520,6 +530,13 @@ public abstract class DataElementPanelManager
 						aDataElementUIs.clear();
 						rebuild();
 						applyElementSelection();
+
+						if (PROFILING)
+						{
+							EWT.logTime("REBUILD",
+										rDataElementList.getName(),
+										tStart);
+						}
 					}
 				});
 		}
@@ -575,7 +592,14 @@ public abstract class DataElementPanelManager
 	@Override
 	protected void addComponents()
 	{
+		long t = System.currentTimeMillis();
+
 		buildElementUIs();
+
+		if (PROFILING)
+		{
+			EWT.logTime("BUILD", rDataElementList.getName(), t);
+		}
 	}
 
 	/***************************************

@@ -389,13 +389,13 @@ public class ProcessPanelManager
 	@Override
 	protected void addComponents()
 	{
-		if (rBusyImage == null)
-		{
-			rBusyImage = getContext().createImage("$imBusy");
-		}
-
 		if (bShowNavigationBar)
 		{
+			if (rBusyImage == null)
+			{
+				rBusyImage = getContext().createImage("$imBusy");
+			}
+
 			buildTopPanel();
 		}
 

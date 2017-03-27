@@ -37,6 +37,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Timer;
 
+import static de.esoco.lib.property.StateProperties.DISABLE_ON_INTERACTION;
 import static de.esoco.lib.property.StateProperties.EVENT_HANDLING_DELAY;
 import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
@@ -117,11 +118,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			(rEventTypes.contains(InteractionEventType.UPDATE) &&
 			 rEvent.getType() == EventType.KEY_RELEASED);
 
-		if (aInputEventTimer != null)
-		{
-			aInputEventTimer.cancel();
-			aInputEventTimer = null;
-		}
+		cancelInputEventTimer();
 
 		if (bDeferredEventHandling)
 		{
@@ -282,6 +279,8 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 */
 	protected void processEvent(EWTEvent rEvent)
 	{
+		cancelInputEventTimer();
+
 		EventType eEventType = rEvent.getType();
 		Object    rEventData = rEvent.getElement();
 		Object    rSource    = rEvent.getSource();
@@ -309,15 +308,14 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			 eEventType != EventType.VALUE_CHANGED) ||
 			hasValueChanged(rSource))
 		{
+			if (rDataElement.hasFlag(DISABLE_ON_INTERACTION))
+			{
+				((Component) rSource).setEnabled(false);
+			}
+
 			rPanelManager.getRootDataElementPanelManager().collectInput();
 			rPanelManager.handleInteractiveInput(rDataElement,
 												 eInteractionEventType);
-		}
-
-		if (aInputEventTimer != null)
-		{
-			aInputEventTimer.cancel();
-			aInputEventTimer = null;
 		}
 	}
 
@@ -347,6 +345,18 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	void updateDataElement(D rNewDataElement)
 	{
 		rDataElement = rNewDataElement;
+	}
+
+	/***************************************
+	 * Cancels the input event timer if it is currently running.
+	 */
+	private void cancelInputEventTimer()
+	{
+		if (aInputEventTimer != null)
+		{
+			aInputEventTimer.cancel();
+			aInputEventTimer = null;
+		}
 	}
 
 	/***************************************

@@ -384,6 +384,27 @@ public class ProcessPanelManager
 	}
 
 	/***************************************
+	 * Checks the disable on interaction option.
+	 *
+	 * @return TRUE if the panel elements are disabled on interactions
+	 */
+	public final boolean isDisableOnInteraction()
+	{
+		return bDisableOnInteraction;
+	}
+
+	/***************************************
+	 * Sets the disable on interaction option.
+	 *
+	 * @param bDisableOnInteraction TRUE to disable the panel elements on
+	 *                              interactions
+	 */
+	public final void setDisableOnInteraction(boolean bDisableOnInteraction)
+	{
+		this.bDisableOnInteraction = bDisableOnInteraction;
+	}
+
+	/***************************************
 	 * {@inheritDoc}
 	 */
 	@Override

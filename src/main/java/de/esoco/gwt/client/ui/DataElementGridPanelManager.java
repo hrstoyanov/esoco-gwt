@@ -16,6 +16,7 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.client.ui;
 
+import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
@@ -28,13 +29,16 @@ import de.esoco.lib.property.Alignment;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.SAME_ROW;
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
+import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
 import static de.esoco.lib.property.StyleProperties.HIDE_LABEL;
 import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 
@@ -112,11 +116,11 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			 aCurrentRow.entrySet())
 		{
 			DataElementUI<?> rUI		   = rUiAndStyle.getKey();
+			DataElement<?>   rDataElement  = rUI.getDataElement();
 			StyleData		 rStyle		   = rUiAndStyle.getValue();
 			int				 nElementCount = aCurrentRow.size();
 
-			Layout eElementLayout =
-				rUI.getDataElement().getProperty(LAYOUT, null);
+			Layout eElementLayout = rDataElement.getProperty(LAYOUT, null);
 
 			if (eElementLayout == Layout.GRID_ROW && nElementCount == 1)
 			{
@@ -136,12 +140,23 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 
 			ContainerBuilder<?> rUiBuilder = aRowBuilder;
 
-			boolean bAddLabel = !rUI.getDataElement().hasFlag(HIDE_LABEL);
+			boolean bAddLabel = !rDataElement.hasFlag(HIDE_LABEL);
 
 			if (bAddLabel || eElementLayout != Layout.GRID_COLUMN)
 			{
-				StyleData aColumnStyle =
-					aGridFormatter.applyColumnStyle(rUI, StyleData.DEFAULT);
+				StyleData aColumnStyle = StyleData.DEFAULT;
+
+				if (rDataElement.getProperty(HORIZONTAL_ALIGN, null) ==
+					Alignment.END)
+				{
+					Map<String, String> aCss = new HashMap<>(1);
+
+					aCss.put("float", "right");
+					aColumnStyle = aColumnStyle.set(CSS_STYLES, aCss);
+				}
+
+				aColumnStyle =
+					aGridFormatter.applyColumnStyle(rUI, aColumnStyle);
 
 				rUiBuilder =
 					aRowBuilder.addPanel(aColumnStyle, Layout.GRID_COLUMN);

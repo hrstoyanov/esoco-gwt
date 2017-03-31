@@ -312,9 +312,10 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			{
 				((Component) rSource).setEnabled(false);
 			}
-			else if (rDataElement.getParent().hasFlag(DISABLE_ON_INTERACTION))
+			else if (rPanelManager.getDataElementList()
+					 .hasFlag(DISABLE_ON_INTERACTION))
 			{
-				((Component) rSource).getParent().setChildrenEnabled(false);
+				rPanelManager.getContainer().setChildrenEnabled(false);
 			}
 
 			rPanelManager.getRootDataElementPanelManager().collectInput();

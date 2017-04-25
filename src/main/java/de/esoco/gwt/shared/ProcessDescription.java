@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,8 +40,9 @@ public class ProcessDescription extends StringDataElement
 
 	private DataElement<?> rProcessInput = null;
 
-	private int nClientWidth;
-	private int nClientHeight;
+	private String sClientInfo;
+	private int    nClientWidth;
+	private int    nClientHeight;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -111,6 +112,17 @@ public class ProcessDescription extends StringDataElement
 	}
 
 	/***************************************
+	 * Returns a string with information about the connecting client (web
+	 * browser).
+	 *
+	 * @return The client information
+	 */
+	public final String getClientInfo()
+	{
+		return sClientInfo;
+	}
+
+	/***************************************
 	 * Returns the width of the client area of the current user's web browser.
 	 *
 	 * @return The client area width
@@ -162,6 +174,16 @@ public class ProcessDescription extends StringDataElement
 	public final boolean isSeparator()
 	{
 		return getName().equals(SEPARATOR_NAME);
+	}
+
+	/***************************************
+	 * Sets a string with information about the connecting client (web browser).
+	 *
+	 * @param sClientInfo The client information
+	 */
+	public final void setClientInfo(String sClientInfo)
+	{
+		this.sClientInfo = sClientInfo;
 	}
 
 	/***************************************

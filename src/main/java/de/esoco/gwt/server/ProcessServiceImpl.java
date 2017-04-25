@@ -75,6 +75,7 @@ import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
 import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
 import static de.esoco.process.ProcessRelationTypes.AUTO_UPDATE;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_HEIGHT;
+import static de.esoco.process.ProcessRelationTypes.CLIENT_INFO;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_WIDTH;
 import static de.esoco.process.ProcessRelationTypes.DETAIL_STEP;
 import static de.esoco.process.ProcessRelationTypes.EXTERNAL_SERVICE_ACCESS;
@@ -428,6 +429,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				checkOpenUiInspector(rProcessState, rProcess);
 			}
 
+			rProcess.set(CLIENT_INFO, rDescription.getClientInfo());
 			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
 			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
 

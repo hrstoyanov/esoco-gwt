@@ -802,6 +802,7 @@ public class ProcessPanelManager
 			((ProcessState) rDescription).setExecutionMode(eMode);
 		}
 
+		rDescription.setClientInfo(createLoginUserInfo());
 		setClientSize(rDescription);
 		executeCommand(GwtApplicationService.EXECUTE_PROCESS,
 					   rDescription,

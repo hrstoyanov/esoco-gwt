@@ -1,12 +1,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -443,7 +443,8 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	public DataElementList handleLogin(StringDataElement rLoginData)
 		throws AuthenticationException, ServiceException
 	{
-		return loginUser(rLoginData);
+		return loginUser(rLoginData,
+						 rLoginData.getProperty(LOGIN_USER_INFO, ""));
 	}
 
 	/***************************************
@@ -480,8 +481,10 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public DataElementList loginUser(StringDataElement rLoginData)
-		throws AuthenticationException, ServiceException
+	public DataElementList loginUser(
+		StringDataElement rLoginData,
+		String			  sClientInfo) throws AuthenticationException,
+											  ServiceException
 	{
 		String  sLoginName = rLoginData.getName();
 		boolean bReLogin   = rLoginData.getValue() == null;
@@ -521,7 +524,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 				Log.infof("[LOGIN] User %s authenticated in %s\n%s",
 						  rUser,
 						  ServiceContext.getInstance().getApplicationName(),
-						  rLoginData.getProperty(LOGIN_USER_INFO, ""));
+						  sClientInfo);
 			}
 
 			authorizeUser(rUser, rLoginData);

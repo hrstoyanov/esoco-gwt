@@ -244,7 +244,6 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 				}
 			}
 
-			rProcessDescription.setClientInfo(createLoginUserInfo());
 			setClientSize(rProcessDescription);
 
 			executeCommand(GwtApplicationService.EXECUTE_PROCESS,
@@ -254,6 +253,7 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 					@Override
 					public void handleCommandResult(ProcessState rProcessState)
 					{
+						rProcessState.setClientInfo(createClientInfo());
 						displayProcess(rProcessState);
 					}
 				});

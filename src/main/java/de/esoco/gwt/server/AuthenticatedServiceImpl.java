@@ -519,10 +519,23 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 		}
 		else
 		{
+			HttpServletRequest rRequest = getThreadLocalRequest();
+
 			if (!bReLogin)
 			{
-				Log.infof("[LOGIN] User %s authenticated in %s\n%s",
+				String sClientAddr  = rRequest.getRemoteAddr();
+				String sForwardAddr = rRequest.getHeader("X-Forwarded-For");
+
+				if (sForwardAddr != null &&
+					sForwardAddr.length() > 0 &&
+					!sForwardAddr.equals(sClientAddr))
+				{
+					sClientAddr = sForwardAddr;
+				}
+
+				Log.infof("[LOGIN] User %s from %s authenticated in %s\n%s",
 						  rUser,
+						  sClientAddr,
 						  ServiceContext.getInstance().getApplicationName(),
 						  sClientInfo);
 			}
@@ -532,7 +545,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 			Map<String, SessionData> rSessionMap =
 				getSessionMap(getServletContext());
 
-			HttpSession     rSession     = getThreadLocalRequest().getSession();
+			HttpSession     rSession     = rRequest.getSession();
 			String		    sSessionId   = rSession.getId();
 			SessionData     rSessionData = rSessionMap.get(sSessionId);
 			DataElementList aUserData    = null;

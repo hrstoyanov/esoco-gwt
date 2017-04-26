@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,10 +114,33 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	}
 
 	/***************************************
+	 * Creates an information string for the client browser.
+	 *
+	 * @return The client info string
+	 */
+	protected static String createClientInfo()
+	{
+		StringBuilder aLoginUserInfo = new StringBuilder();
+
+		aLoginUserInfo.append("UserAgent: ");
+		aLoginUserInfo.append(Window.Navigator.getUserAgent());
+		aLoginUserInfo.append("\nApp: ");
+		aLoginUserInfo.append(Window.Navigator.getAppName());
+		aLoginUserInfo.append(" (");
+		aLoginUserInfo.append(Window.Navigator.getAppCodeName());
+		aLoginUserInfo.append(")\nVersion: ");
+		aLoginUserInfo.append(Window.Navigator.getAppVersion());
+		aLoginUserInfo.append("\nPlatform: ");
+		aLoginUserInfo.append(Window.Navigator.getPlatform());
+
+		return aLoginUserInfo.toString();
+	}
+
+	/***************************************
 	 * Creates a new data element containing the login data. The default
 	 * implementation creates a string data element with the user name as it's
 	 * name and the password as it's value. It also adds the user info created
-	 * by {@link #createLoginUserInfo()} as a property with the property name
+	 * by {@link #createClientInfo()} as a property with the property name
 	 * {@link AuthenticatedService#LOGIN_USER_INFO} and an existing session ID
 	 * (from the session cookie) with the property {@link
 	 * AuthenticatedService#SESSION_ID}.
@@ -137,7 +160,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 			new StringDataElement(sUserName, sPassword);
 
 		aLoginData.setProperty(AuthenticatedService.LOGIN_USER_INFO,
-							   createLoginUserInfo());
+							   createClientInfo());
 
 		if (sSessionId != null)
 		{
@@ -145,29 +168,6 @@ public abstract class AuthenticationPanelManager<C extends Container,
 		}
 
 		return aLoginData;
-	}
-
-	/***************************************
-	 * Creates an information string for the user that is currently logging in.
-	 *
-	 * @return The user info string
-	 */
-	protected static String createLoginUserInfo()
-	{
-		StringBuilder aLoginUserInfo = new StringBuilder();
-
-		aLoginUserInfo.append("UserAgent: ");
-		aLoginUserInfo.append(Window.Navigator.getUserAgent());
-		aLoginUserInfo.append("\nApp: ");
-		aLoginUserInfo.append(Window.Navigator.getAppName());
-		aLoginUserInfo.append(" (");
-		aLoginUserInfo.append(Window.Navigator.getAppCodeName());
-		aLoginUserInfo.append(")\nVersion: ");
-		aLoginUserInfo.append(Window.Navigator.getAppVersion());
-		aLoginUserInfo.append("\nPlatform: ");
-		aLoginUserInfo.append(Window.Navigator.getPlatform());
-
-		return aLoginUserInfo.toString();
 	}
 
 	//~ Methods ----------------------------------------------------------------

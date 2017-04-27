@@ -429,7 +429,13 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				checkOpenUiInspector(rProcessState, rProcess);
 			}
 
-			rProcess.set(CLIENT_INFO, rDescription.getClientInfo());
+			String sClientInfo = rDescription.getClientInfo();
+
+			if (sClientInfo != null)
+			{
+				rProcess.set(CLIENT_INFO, sClientInfo);
+			}
+
 			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
 			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
 

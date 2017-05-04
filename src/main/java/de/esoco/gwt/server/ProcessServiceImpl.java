@@ -22,6 +22,7 @@ import de.esoco.data.element.DataElementList;
 
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
+import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
@@ -69,8 +70,6 @@ import org.obrel.type.MetaTypes;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
-
-import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
 
 import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
 import static de.esoco.process.ProcessRelationTypes.AUTO_UPDATE;
@@ -784,9 +783,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		}
 		else
 		{
-			Map<String, Entity> rModifiedEntities =
-				rProcess.getParameter(CONTEXT_MODIFIED_ENTITIES);
-
 			ProcessStep rInteractionStep = rProcess.getInteractionStep();
 
 			List<DataElement<?>> aInteractionElements =
@@ -820,10 +816,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 										  sStyle);
 			}
 
+			Set<String> rModifiedEntities =
+				EntityManager.getModifiedEntities().keySet();
+
 			if (rModifiedEntities.size() > 0)
 			{
-				String sLocks =
-					CollectionUtil.toString(rModifiedEntities.keySet(), ",");
+				String sLocks = CollectionUtil.toString(rModifiedEntities, ",");
 
 				aProcessState.setProperty(PROCESS_ENTITY_LOCKS, sLocks);
 			}

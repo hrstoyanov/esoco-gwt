@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,15 +44,6 @@ import de.esoco.lib.model.ListDataModel;
  */
 public class EntityDataElementUI extends DataElementListUI
 {
-	//~ Constructors -----------------------------------------------------------
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	public EntityDataElementUI()
-	{
-	}
-
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
@@ -172,7 +163,7 @@ public class EntityDataElementUI extends DataElementListUI
 				{
 					aDetailPanelManager =
 						new DataElementTablePanelManager(rParentPanelManager,
-														rElement);
+														 rElement);
 
 					aDetailPanelManager.buildIn(rPanelBuilder, rDetailStyle);
 				}

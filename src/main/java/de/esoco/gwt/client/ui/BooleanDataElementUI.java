@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.UserInterfaceProperties;
 
-import static de.esoco.lib.property.UserInterfaceProperties.LABEL;
+import static de.esoco.lib.property.ContentProperties.LABEL;
 
 
 /********************************************************************
@@ -36,15 +36,6 @@ import static de.esoco.lib.property.UserInterfaceProperties.LABEL;
  */
 public class BooleanDataElementUI extends DataElementUI<BooleanDataElement>
 {
-	//~ Constructors -----------------------------------------------------------
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	public BooleanDataElementUI()
-	{
-	}
-
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
@@ -62,8 +53,7 @@ public class BooleanDataElementUI extends DataElementUI<BooleanDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#createDisplayUI(ContainerBuilder, StyleData,
-	 *      DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected Component createDisplayUI(ContainerBuilder<?> rBuilder,
@@ -82,8 +72,7 @@ public class BooleanDataElementUI extends DataElementUI<BooleanDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#createInputUI(ContainerBuilder, StyleData,
-	 *      DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected Component createInputUI(ContainerBuilder<?> rBuilder,
@@ -117,7 +106,7 @@ public class BooleanDataElementUI extends DataElementUI<BooleanDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void transferInputToDataElement(

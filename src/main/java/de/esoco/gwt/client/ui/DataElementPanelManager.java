@@ -214,7 +214,7 @@ public abstract class DataElementPanelManager
 	 * @param  rDataElementList The data element list to create the style name
 	 *                          for
 	 *
-	 * @return
+	 * @return The panel style
 	 */
 	protected static String createPanelStyle(DataElementList rDataElementList)
 	{

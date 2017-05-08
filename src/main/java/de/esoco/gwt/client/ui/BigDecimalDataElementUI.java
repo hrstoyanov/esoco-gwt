@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import java.math.RoundingMode;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.i18n.client.constants.NumberConstants;
 
-import static de.esoco.lib.property.UserInterfaceProperties.FORMAT;
-import static de.esoco.lib.property.UserInterfaceProperties.INPUT_CONSTRAINT;
+import static de.esoco.lib.property.ContentProperties.FORMAT;
+import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
 
 
 /********************************************************************
@@ -49,7 +49,7 @@ public class BigDecimalDataElementUI
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * @see DataElementUI#DataElementUI()
 	 */
 	public BigDecimalDataElementUI()
 	{
@@ -61,7 +61,7 @@ public class BigDecimalDataElementUI
 	 * Overridden to convert the input constraint if necessary.
 	 *
 	 * @see DataElementUI#createInputUI(ContainerBuilder, StyleData,
-	 *      DataElement)
+	 *      de.esoco.data.element.DataElement)
 	 */
 	@Override
 	protected Component createInputUI(ContainerBuilder<?>   rBuilder,
@@ -74,7 +74,7 @@ public class BigDecimalDataElementUI
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, DataElement)
+	 * @see DataElementUI#transferInputToDataElement(Component, de.esoco.data.element.DataElement)
 	 */
 	@Override
 	protected void transferInputToDataElement(
@@ -113,7 +113,6 @@ public class BigDecimalDataElementUI
 	/***************************************
 	 * Overridden to first invoke the input constraint conversion.
 	 *
-	 * @see #convertInputConstraintToLocale(BigDecimalDataElement)
 	 * @see DataElementUI#updateTextComponent(TextControl)
 	 */
 	@Override

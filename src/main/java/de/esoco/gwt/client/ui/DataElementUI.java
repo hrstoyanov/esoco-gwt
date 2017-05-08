@@ -681,7 +681,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * @param  rBuilder The container builder to create the components with
 	 * @param  rStyle   The style data for display components
 	 *
-	 * @return
+	 * @return The UI component
 	 */
 	protected Component buildDataElementUI(
 		ContainerBuilder<?> rBuilder,
@@ -1193,7 +1193,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * @param  rDisplayStyle The default style data for the display components
 	 * @param  eContentType  TRUE for a relative and FALSE for an absolute URL
 	 *
-	 * @return
+	 * @return The URL component
 	 */
 	protected Component createUrlComponent(ContainerBuilder<?> rBuilder,
 										   StyleData		   rDisplayStyle,

@@ -71,7 +71,8 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * @see AuthenticationPanelManager#AuthenticationPanelManager(AuthenticationPanelManager,
+	 *      String)
 	 */
 	public GwtApplicationPanelManager(P rParent, String sPanelStyle)
 	{
@@ -93,8 +94,8 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 
 	/***************************************
 	 * Adds buttons for process descriptions to a panel. The panel should have
-	 * been created with {@link #addToolbar(ContainerBuilder, StyleData,
-	 * StyleData, int)}.
+	 * been created with {@link #addToolbar(ContainerBuilder,
+	 * de.esoco.ewt.style.StyleData, de.esoco.ewt.style.StyleData, int)}.
 	 *
 	 * @param rBuilder   The container builder to add the buttons with
 	 * @param rProcesses The process descriptions

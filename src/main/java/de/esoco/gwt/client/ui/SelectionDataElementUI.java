@@ -1,12 +1,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,15 +55,6 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 
 	private DataModel<? extends DataModel<?>> aDataModel;
 	private ListDataModel<ColumnDefinition>   aColumnModel;
-
-	//~ Constructors -----------------------------------------------------------
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	public SelectionDataElementUI()
-	{
-	}
 
 	//~ Methods ----------------------------------------------------------------
 
@@ -134,7 +125,7 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferDataElementValueToComponent(DataElement,
+	 * @see DataElementUI#transferDataElementValueToComponent(de.esoco.data.element.DataElement,
 	 *      Component)
 	 */
 	@Override
@@ -156,7 +147,7 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, DataElement)
+	 * @see DataElementUI#transferInputToDataElement(Component, de.esoco.data.element.DataElement)
 	 */
 	@Override
 	protected void transferInputToDataElement(

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -54,9 +54,10 @@ public abstract class GwtApplication extends EWTEntryPoint
 	}
 
 	/***************************************
-	 * Must be implemented by subclasses to create the application
+	 * Must be implemented by subclasses to create the asynchronous application
+	 * service interface.
 	 *
-	 * @return
+	 * @return The app service
 	 */
 	protected abstract GwtApplicationServiceAsync createApplicationService();
 

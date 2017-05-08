@@ -84,7 +84,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * @see PanelManager#PanelManager(PanelManager, String)
 	 */
 	public AuthenticationPanelManager(P rParent, String sPanelStyle)
 	{

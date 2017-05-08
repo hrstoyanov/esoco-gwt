@@ -43,15 +43,6 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 
 	private DataElementPanelManager aListPanelManager;
 
-	//~ Constructors -----------------------------------------------------------
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	public DataElementListUI()
-	{
-	}
-
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************

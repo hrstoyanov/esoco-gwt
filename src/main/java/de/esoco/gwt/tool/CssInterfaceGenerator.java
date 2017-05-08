@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// This file is a part of the 'gewt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// This file is a part of the 'esoco-gwt' project.
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -204,7 +204,9 @@ public class CssInterfaceGenerator extends ToolBase
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * @see InterfaceGenerator#getDescription()
+	 * Returns a description string
+	 *
+	 * @return The description
 	 */
 	@Override
 	protected String getDescription()
@@ -411,7 +413,7 @@ public class CssInterfaceGenerator extends ToolBase
 		 *
 		 * @param  value The new flag
 		 *
-		 * @return
+		 * @return Always true
 		 */
 		@Override
 		public boolean setFlag(boolean value)

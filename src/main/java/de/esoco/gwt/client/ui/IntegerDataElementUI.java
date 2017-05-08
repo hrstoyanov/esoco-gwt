@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,10 @@ import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.ProgressBar;
 import de.esoco.ewt.component.Spinner;
 import de.esoco.ewt.style.StyleData;
+
 import de.esoco.lib.property.ContentType;
 
-import static de.esoco.lib.property.UserInterfaceProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 
 
 /********************************************************************
@@ -40,7 +41,7 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * @see DataElementUI#DataElementUI()
 	 */
 	public IntegerDataElementUI()
 	{
@@ -86,7 +87,7 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 
 	/***************************************
 	 * @see DataElementUI#createInputUI(ContainerBuilder, StyleData,
-	 *      DataElement)
+	 *      de.esoco.data.element.DataElement)
 	 */
 	@Override
 	@SuppressWarnings("boxing")
@@ -123,7 +124,8 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferDataElementValueToComponent(DataElement, Component)
+	 * @see DataElementUI#transferDataElementValueToComponent(de.esoco.data.element.DataElement,
+	 *      Component)
 	 */
 	@Override
 	@SuppressWarnings("boxing")
@@ -148,7 +150,7 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, DataElement)
+	 * @see DataElementUI#transferInputToDataElement(Component, de.esoco.data.element.DataElement)
 	 */
 	@Override
 	@SuppressWarnings("boxing")

@@ -80,7 +80,8 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * @see DataElementLayoutPanelManager#DataElementLayoutPanelManager(PanelManager,
+	 *      DataElementList)
 	 */
 	public DataElementGridPanelManager(
 		PanelManager<?, ?> rParent,

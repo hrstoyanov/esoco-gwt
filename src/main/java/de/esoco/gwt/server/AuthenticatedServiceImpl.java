@@ -70,6 +70,8 @@ import javax.servlet.http.HttpSession;
 import org.obrel.core.RelationType;
 import org.obrel.core.RelationTypes;
 
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
 import static de.esoco.data.SessionData.SESSION_START_TIME;
 
 import static org.obrel.core.RelationTypes.newMapType;
@@ -287,7 +289,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	/***************************************
 	 * Overridden to logout and cleanup all sessions on shutdown.
 	 *
-	 * @see CommandServiceImpl#destroy()
+	 * @see RemoteServiceServlet#destroy()
 	 */
 	@Override
 	public void destroy()
@@ -461,7 +463,10 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * @see CommandServiceImpl#init()
+	 * Invokes {@link EntityManager#setSessionManager(SessionManager)} and
+	 * {@link ServiceContext#setService(AuthenticatedServiceImpl)}.
+	 *
+	 * @see RemoteServiceServlet#init()
 	 */
 	@Override
 	public void init() throws ServletException

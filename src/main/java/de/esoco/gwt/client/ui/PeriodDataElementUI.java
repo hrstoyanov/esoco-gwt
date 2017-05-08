@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,15 +56,6 @@ public class PeriodDataElementUI extends DataElementUI<PeriodDataElement>
 	private static final StyleData PERIOD_UNIT_STYLE =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES, CSS.gfPeriodUnit());
 
-	//~ Constructors -----------------------------------------------------------
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	public PeriodDataElementUI()
-	{
-	}
-
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
@@ -111,7 +102,7 @@ public class PeriodDataElementUI extends DataElementUI<PeriodDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void transferInputToDataElement(

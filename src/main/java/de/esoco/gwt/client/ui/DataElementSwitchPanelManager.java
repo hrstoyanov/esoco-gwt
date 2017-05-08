@@ -53,7 +53,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * @see DataElementPanelManager#DataElementPanelManager(PanelManager, DataElementList)
 	 */
 	public DataElementSwitchPanelManager(
 		PanelManager<?, ?> rParent,

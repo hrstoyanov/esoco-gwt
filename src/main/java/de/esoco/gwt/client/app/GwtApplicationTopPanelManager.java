@@ -188,7 +188,7 @@ public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPane
 	}
 
 	/***************************************
-	 * @see ClosingHandler#onWindowClosing(ClosingEvent)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onWindowClosing(ClosingEvent rEvent)

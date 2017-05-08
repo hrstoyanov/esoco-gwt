@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,11 +47,10 @@ import org.obrel.core.RelatedObject;
 
 /********************************************************************
  * A base class that provides a context for GWT web applications. It implements
- * the {@link ServletContextListener} interface to initialize and shutdown
- * global data structures and executes schedule processes if setup by
- * subclasses. It also listens via {@link HttpSessionListener} for sessions and
- * reports changes to an {@link AuthenticatedServiceImpl} instance if one has
- * been registered with.
+ * the ServletContextListener interface to initialize and shutdown global data
+ * structures and executes schedule processes if setup by subclasses. It also
+ * listens via HttpSessionListener for sessions and reports changes to an {@link
+ * AuthenticatedServiceImpl} instance if one has been registered with.
  *
  * @author eso
  */
@@ -126,7 +125,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void contextDestroyed(ServletContextEvent rEvent)
@@ -154,7 +153,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent rEvent)
@@ -296,7 +295,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ProcessScheduler#resumeScheduleProcess(String)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void resumeScheduleProcess(String sEntityId)
@@ -311,7 +310,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see ProcessScheduler#runScheduleProcessNow(String)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void runScheduleProcessNow(String sEntityId)
@@ -325,7 +324,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see HttpSessionListener#sessionCreated(HttpSessionEvent)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void sessionCreated(HttpSessionEvent rEvent)
@@ -333,7 +332,7 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * @see HttpSessionListener#sessionDestroyed(HttpSessionEvent)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void sessionDestroyed(HttpSessionEvent rEvent)

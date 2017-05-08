@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,8 +60,7 @@ import com.google.gwt.resources.css.InterfaceGenerator;
 /********************************************************************
  * Creates the resources for a GEWT application by concatenating all string
  * properties and CSS files into single files and then generates the code files
- * by invoking the tools {@link I18NSync} and {@link CssInterfaceGenerator} on
- * them.
+ * by invoking the tools I18NSync and {@link CssInterfaceGenerator} on them.
  *
  * @author eso
  */

@@ -39,7 +39,6 @@ import de.esoco.data.validate.QueryValidator;
 import de.esoco.data.validate.SelectionValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
-
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityDefinition;
 import de.esoco.entity.EntityDefinition.DisplayMode;
@@ -47,11 +46,8 @@ import de.esoco.entity.EntityFunctions;
 import de.esoco.entity.EntityFunctions.GetExtraAttribute;
 import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes.HierarchicalQueryMode;
-
 import de.esoco.gwt.client.data.QueryDataModel;
 import de.esoco.gwt.shared.AuthenticationException;
-import de.esoco.gwt.shared.ServiceException;
-
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.datatype.Period;
 import de.esoco.lib.datatype.Period.Unit;
@@ -78,18 +74,13 @@ import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
-
-import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
-
 import de.esoco.storage.QueryList;
 import de.esoco.storage.QueryPredicate;
 import de.esoco.storage.StorageException;
 
 import java.math.BigDecimal;
-
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -109,7 +100,6 @@ import org.obrel.type.MetaTypes;
 import static de.esoco.data.DataRelationTypes.CHILD_STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_IDS;
-
 import static de.esoco.entity.EntityPredicates.forEntity;
 import static de.esoco.entity.EntityPredicates.ifAttribute;
 import static de.esoco.entity.EntityRelationTypes.DISPLAY_ENTITY_IDS;
@@ -120,7 +110,6 @@ import static de.esoco.entity.EntityRelationTypes.ENTITY_QUERY_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.ENTITY_SORT_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHICAL_QUERY_MODE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHY_CHILD_PREDICATE;
-
 import static de.esoco.lib.expression.Functions.asString;
 import static de.esoco.lib.expression.Predicates.equalTo;
 import static de.esoco.lib.expression.StringFunctions.capitalizedIdentifier;
@@ -134,7 +123,6 @@ import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
-
 import static de.esoco.process.ProcessRelationTypes.ALLOWED_VALUES;
 import static de.esoco.process.ProcessRelationTypes.DATA_ELEMENT;
 import static de.esoco.process.ProcessRelationTypes.INPUT_PARAMS;
@@ -1321,7 +1309,6 @@ public class DataElementFactory
 	 * @param  rType        The target relation type to apply the data element
 	 *                      to
 	 *
-	 * @throws AuthenticationException If the user is no longer logged in
 	 * @throws StorageException        If accessing the storage to retrieve the
 	 *                                 selected entity fails
 	 */
@@ -1329,7 +1316,7 @@ public class DataElementFactory
 	private void applyEntitySelection(SelectionDataElement rDataElement,
 									  Relatable			   rTarget,
 									  RelationType<?>	   rType)
-		throws AuthenticationException, StorageException
+		throws StorageException
 	{
 		Validator<?> rValidator  = rDataElement.getValidator();
 		Relation<?>  rRelation   = rTarget.getRelation(rType);

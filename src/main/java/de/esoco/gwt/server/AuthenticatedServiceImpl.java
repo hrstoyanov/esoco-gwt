@@ -448,12 +448,9 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	/***************************************
 	 * Handles the {@link AuthenticatedService#LOGOUT} command.
 	 *
-	 * @param  rIgnored Not used, should always be NULL
-	 *
-	 * @throws AuthenticationException If accessing the session data fails
+	 * @param rIgnored Not used, should always be NULL
 	 */
 	public void handleLogout(DataElement<?> rIgnored)
-		throws AuthenticationException
 	{
 		logoutCurrentUser();
 	}
@@ -746,6 +743,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 *
 	 * @throws AuthenticationException If the authorization fails
 	 */
+	@SuppressWarnings("unused")
 	protected void authorizeUser(E rUser, HasProperties rLoginData)
 		throws AuthenticationException
 	{
@@ -891,6 +889,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 *
 	 * @throws ServiceException If initializing the data fails
 	 */
+	@SuppressWarnings("unused")
 	protected void initUserData(DataElementList rUserData,
 								E				rUser,
 								String			sLoginName)
@@ -918,7 +917,6 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	protected boolean processDownloadRequest(HttpServletRequest  rRequest,
 											 HttpServletResponse rResponse,
 											 SessionData		 rSessionData)
-		throws IOException, ServletException
 	{
 		String  sUrl			   = rRequest.getRequestURI();
 		boolean bIsDownloadRequest = false;

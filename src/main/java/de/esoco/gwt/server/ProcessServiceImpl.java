@@ -23,7 +23,6 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityManager;
-import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
@@ -47,7 +46,6 @@ import de.esoco.process.ProcessDefinition;
 import de.esoco.process.ProcessException;
 import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
-import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
 import de.esoco.process.ViewFragment;
 import de.esoco.process.step.EditInteractionParameters;
@@ -243,15 +241,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		for (Process rProcess : rProcessMap.values())
 		{
-			try
-			{
-				rProcess.cancel();
-				rProcessList.remove(rProcess);
-			}
-			catch (ProcessException e)
-			{
-				Log.error("Could not cancel process " + rProcess.getName(), e);
-			}
+			rProcess.cancel();
+			rProcessList.remove(rProcess);
 		}
 
 		rProcessMap.clear();
@@ -541,6 +532,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * @throws ServiceException If the user is not authenticated or the
 	 *                          preparing the process context fails
 	 */
+	@SuppressWarnings("unused")
 	protected void initProcess(Process rProcess, Entity rReferenceEntity)
 		throws ProcessException, ServiceException
 	{

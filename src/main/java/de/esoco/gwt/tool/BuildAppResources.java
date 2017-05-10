@@ -54,7 +54,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.google.gwt.i18n.tools.I18NSync;
-import com.google.gwt.resources.css.InterfaceGenerator;
 
 
 /********************************************************************
@@ -569,7 +568,6 @@ public class BuildAppResources
 	 * @throws IOException If accessing files fails
 	 */
 	private static void generateStringClasses(Class<?> rAppClass)
-		throws IOException
 	{
 		String sPackage = rAppClass.getPackage().getName() + GENERATED_PACKAGE;
 

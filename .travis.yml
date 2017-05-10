@@ -1,4 +1,6 @@
 # Travis CI build file
+dist: trusty
+sudo: false
 language: java
 jdk:
   - oraclejdk8

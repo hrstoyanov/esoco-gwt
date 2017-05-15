@@ -20,7 +20,8 @@ import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.IntegerDataElement;
 import de.esoco.data.element.SelectionDataElement;
-
+import de.esoco.data.process.ProcessDescription;
+import de.esoco.data.process.ProcessState;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Button;
 import de.esoco.ewt.component.Container;
@@ -33,8 +34,6 @@ import de.esoco.gwt.client.ui.AuthenticationPanelManager;
 import de.esoco.gwt.client.ui.DefaultCommandResultHandler;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
-import de.esoco.gwt.shared.ProcessDescription;
-import de.esoco.gwt.shared.ProcessState;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

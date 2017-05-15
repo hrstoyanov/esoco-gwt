@@ -17,7 +17,8 @@
 package de.esoco.gwt.shared;
 
 import de.esoco.data.element.StringDataElement;
-
+import de.esoco.data.process.ProcessDescription;
+import de.esoco.data.process.ProcessState;
 import de.esoco.lib.property.PropertyName;
 
 

@@ -18,6 +18,9 @@ package de.esoco.gwt.client.app;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.process.ProcessDescription;
+import de.esoco.data.process.ProcessState;
+import de.esoco.data.process.ProcessState.ProcessExecutionMode;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
@@ -46,10 +49,7 @@ import de.esoco.gwt.client.ui.DataElementPanelManager.InteractiveInputHandler;
 import de.esoco.gwt.client.ui.DataElementTablePanelManager;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
-import de.esoco.gwt.shared.ProcessDescription;
 import de.esoco.gwt.shared.ProcessService;
-import de.esoco.gwt.shared.ProcessState;
-import de.esoco.gwt.shared.ProcessState.ProcessExecutionMode;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.property.InteractionEventType;
@@ -258,6 +258,11 @@ public class ProcessPanelManager
 		}
 		else if (!bCancelled)
 		{
+			for (ProcessState rNewProcess : rProcessState.getSpawnProcesses())
+			{
+				displayProcess(rNewProcess);
+			}
+
 			update(bFinishProcess);
 		}
 	}

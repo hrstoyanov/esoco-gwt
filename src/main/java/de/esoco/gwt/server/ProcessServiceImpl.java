@@ -19,6 +19,10 @@ package de.esoco.gwt.server;
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
+import de.esoco.data.process.ProcessDescription;
+import de.esoco.data.process.ProcessState;
+import de.esoco.data.process.ProcessState.ProcessExecutionMode;
+import de.esoco.data.process.ProcessState.ProcessStateFlag;
 
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
@@ -26,11 +30,7 @@ import de.esoco.entity.EntityManager;
 
 import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
-import de.esoco.gwt.shared.ProcessDescription;
 import de.esoco.gwt.shared.ProcessService;
-import de.esoco.gwt.shared.ProcessState;
-import de.esoco.gwt.shared.ProcessState.ProcessExecutionMode;
-import de.esoco.gwt.shared.ProcessState.ProcessStateFlag;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.collection.CollectionUtil;
@@ -44,6 +44,7 @@ import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
 import de.esoco.process.ProcessDefinition;
 import de.esoco.process.ProcessException;
+import de.esoco.process.ProcessExecutor;
 import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
 import de.esoco.process.ProcessStep;
@@ -63,6 +64,7 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import org.obrel.core.ObjectRelations;
 import org.obrel.core.Relatable;
 import org.obrel.core.RelationType;
 import org.obrel.type.MetaTypes;
@@ -93,6 +95,7 @@ import static de.esoco.process.ProcessRelationTypes.PROCESS_STEP_STYLE;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_USER;
 import static de.esoco.process.ProcessRelationTypes.RELOAD_CURRENT_STEP;
 import static de.esoco.process.ProcessRelationTypes.REQUIRED_PROCESS_INPUT_PARAMS;
+import static de.esoco.process.ProcessRelationTypes.SPAWN_PROCESSES;
 import static de.esoco.process.ProcessRelationTypes.VIEW_PARAMS;
 
 import static org.obrel.core.RelationTypes.newMapType;
@@ -107,7 +110,7 @@ import static org.obrel.type.StandardTypes.NAME;
  * @author eso
  */
 public abstract class ProcessServiceImpl<E extends Entity>
-	extends StorageServiceImpl<E> implements ProcessService
+	extends StorageServiceImpl<E> implements ProcessService, ProcessExecutor
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -187,6 +190,110 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProcessState executeProcess(
+		ProcessDescription rDescription,
+		Relatable		   rInitParams) throws AuthenticationException,
+											   ServiceException
+	{
+		boolean bCheckAuthentication =
+			!hasProcessAuthentication() ||
+			rDescription.hasFlag(PROCESS_AUTHENTICATED);
+
+		SessionData rSessionData = getSessionData(bCheckAuthentication);
+
+		ProcessExecutionMode  eExecutionMode = ProcessExecutionMode.EXECUTE;
+		Process				  rProcess		 = null;
+		Integer				  rId			 = null;
+		ProcessState		  rProcessState  = null;
+		Map<Integer, Process> rProcessMap    = null;
+
+		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
+
+		try
+		{
+			// this can only happen in the case of process-based authentication
+			if (rSessionData == null)
+			{
+				rSessionData =
+					createProcessAuthenticationSession(rDescription,
+													   rInitParams);
+			}
+
+			rProcessMap = rSessionData.get(USER_PROCESS_MAP);
+			rProcess    = getProcess(rDescription, rSessionData, rInitParams);
+
+			rId = rProcess.getParameter(PROCESS_ID);
+
+			if (rDescription instanceof ProcessState)
+			{
+				rProcessState = (ProcessState) rDescription;
+
+				eExecutionMode = rProcessState.getExecutionMode();
+				checkOpenUiInspector(rProcessState, rProcess);
+			}
+
+			String sClientInfo = rDescription.getClientInfo();
+
+			if (sClientInfo != null)
+			{
+				rProcess.set(CLIENT_INFO, sClientInfo);
+			}
+
+			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
+			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
+
+			executeProcess(rProcess, eExecutionMode);
+
+			rProcessState =
+				createProcessState(rDescription,
+								   rProcess,
+								   eExecutionMode ==
+								   ProcessExecutionMode.RELOAD);
+
+			if (rProcess.isFinished())
+			{
+				rProcessList.remove(rProcess);
+				rProcessMap.remove(rId);
+			}
+		}
+		catch (Throwable e)
+		{
+			if (rProcess != null)
+			{
+				try
+				{
+					rProcessState =
+						createProcessState(rDescription, rProcess, false);
+				}
+				catch (Exception eSecondary)
+				{
+					// should normally not occur. If it does then log and fall
+					// through to standard exception handling
+					Log.error("Could not create exception process state",
+							  eSecondary);
+				}
+			}
+
+			ServiceException eService = wrapException(e, rProcessState);
+
+			// keep the process on recoverable error for re-execution when the
+			// client has tried to resolve the error condition
+			if (!eService.isRecoverable() && rProcess != null)
+			{
+				rProcessList.remove(rProcess);
+				rProcessMap.remove(rId);
+			}
+
+			throw eService;
+		}
+
+		return rProcessState;
+	}
 
 	/***************************************
 	 * Handles the {@link ProcessService#EXECUTE_PROCESS} command.
@@ -364,120 +471,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Internal method to execute a process and associate it with a task if
-	 * necessary.
-	 *
-	 * @param  rDescription The process description
-	 * @param  rInitParams  Optional process initialization parameters or NULL
-	 *                      for none
-	 *
-	 * @return The resulting process state or NULL if the process has already
-	 *         terminated
-	 *
-	 * @throws AuthenticationException If the user is not authenticated
-	 * @throws ServiceException        If the process execution fails
-	 */
-	protected ProcessState executeProcess(
-		ProcessDescription rDescription,
-		Relatable		   rInitParams) throws AuthenticationException,
-											   ServiceException
-	{
-		boolean bCheckAuthentication =
-			!hasProcessAuthentication() ||
-			rDescription.hasFlag(PROCESS_AUTHENTICATED);
-
-		SessionData rSessionData = getSessionData(bCheckAuthentication);
-
-		ProcessExecutionMode  eExecutionMode = ProcessExecutionMode.EXECUTE;
-		Process				  rProcess		 = null;
-		Integer				  rId			 = null;
-		ProcessState		  rProcessState  = null;
-		Map<Integer, Process> rProcessMap    = null;
-
-		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
-
-		try
-		{
-			// this can only happen in the case of process-based authentication
-			if (rSessionData == null)
-			{
-				rSessionData =
-					createProcessAuthenticationSession(rDescription,
-													   rInitParams);
-			}
-
-			rProcessMap = rSessionData.get(USER_PROCESS_MAP);
-			rProcess    = getProcess(rDescription, rSessionData, rInitParams);
-
-			rId = rProcess.getParameter(PROCESS_ID);
-
-			if (rDescription instanceof ProcessState)
-			{
-				rProcessState = (ProcessState) rDescription;
-
-				eExecutionMode = rProcessState.getExecutionMode();
-				checkOpenUiInspector(rProcessState, rProcess);
-			}
-
-			String sClientInfo = rDescription.getClientInfo();
-
-			if (sClientInfo != null)
-			{
-				rProcess.set(CLIENT_INFO, sClientInfo);
-			}
-
-			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
-			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
-
-			executeProcess(rProcess, eExecutionMode);
-
-			rProcessState =
-				createProcessState(rDescription,
-								   rProcess,
-								   eExecutionMode ==
-								   ProcessExecutionMode.RELOAD);
-
-			if (rProcess.isFinished())
-			{
-				rProcessList.remove(rProcess);
-				rProcessMap.remove(rId);
-			}
-		}
-		catch (Throwable e)
-		{
-			if (rProcess != null)
-			{
-				try
-				{
-					rProcessState =
-						createProcessState(rDescription, rProcess, false);
-				}
-				catch (Exception eSecondary)
-				{
-					// should normally not occur. If it does then log and fall
-					// through to standard exception handling
-					Log.error("Could not create exception process state",
-							  eSecondary);
-				}
-			}
-
-			ServiceException eService = wrapException(e, rProcessState);
-
-			// keep the process on recoverable error for re-execution when the
-			// client has tried to resolve the error condition
-			if (!eService.isRecoverable() && rProcess != null)
-			{
-				rProcessList.remove(rProcess);
-				rProcessMap.remove(rId);
-			}
-
-			throw eService;
-		}
-
-		return rProcessState;
-	}
-
-	/***************************************
 	 * Performs the actual invocation of a process execution method.
 	 *
 	 * @param  rProcess The process to execute
@@ -524,7 +517,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	/***************************************
 	 * Initializes a new process and associates it with a reference entity if it
 	 * is not NULL. Subclasses that override this method should typically invoke
-	 * the superclass method first.
+	 * the superclass method first. The initialization parameters will be copied
+	 * to the process, overriding any existing parameters.
 	 *
 	 * @param  rProcess    The process to initialize
 	 * @param  rInitParams Optional process initialization parameters or NULL
@@ -537,6 +531,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	protected void initProcess(Process rProcess, Relatable rInitParams)
 		throws ProcessException, ServiceException
 	{
+		if (rInitParams != null)
+		{
+			ObjectRelations.copyRelations(rInitParams, rProcess, true);
+		}
 	}
 
 	/***************************************
@@ -781,20 +779,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			List<DataElement<?>> aInteractionElements =
 				createInteractionDataElements(rInteractionStep, bReload);
 
-			List<DataElementList> aViewElements =
-				createViewDataElements(rInteractionStep);
-
-			Set<ProcessStateFlag> aFlags =
-				getProcessStateFlags(rProcess, rInteractionStep);
-
 			aProcessState =
 				new ProcessState(rDescription,
 								 sProcessId,
 								 sProcessInfo,
 								 rInteractionStep.getName(),
 								 aInteractionElements,
-								 aViewElements,
-								 aFlags);
+								 createViewDataElements(rInteractionStep),
+								 getSpawnProcesses(rProcess),
+								 getProcessStateFlags(rProcess,
+													  rInteractionStep));
 
 			if (rProcess.hasFlagParameter(MetaTypes.AUTHENTICATED))
 			{
@@ -851,13 +845,17 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		Set<RelationType<List<RelationType<?>>>> rViewParams =
 			rInteractionStep.get(VIEW_PARAMS);
 
-		List<DataElementList> aViewElements =
-			new ArrayList<>(rViewParams.size());
+		List<DataElementList> aViewElements = null;
 
-		for (RelationType<List<RelationType<?>>> rViewParam : rViewParams)
+		if (rViewParams.size() > 0)
 		{
-			aViewElements.add((DataElementList) rFactory.getDataElement(rInteractionStep,
-																		rViewParam));
+			aViewElements = new ArrayList<>(rViewParams.size());
+
+			for (RelationType<List<RelationType<?>>> rViewParam : rViewParams)
+			{
+				aViewElements.add((DataElementList) rFactory.getDataElement(rInteractionStep,
+																			rViewParam));
+			}
 		}
 
 		return aViewElements;
@@ -988,6 +986,36 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		}
 
 		return aStepFlags;
+	}
+
+	/***************************************
+	 * Returns a list of process states for new processes that are to be spawned
+	 * separate from the context of the current process. The process states must
+	 * be stored in the list of the parameter {@link
+	 * de.esoco.process.ProcessRelationTypes#NEW_PROCESSES}. This list will be
+	 * cleared after it has been queried.
+	 *
+	 * @param  rProcess The process to query the new processes from
+	 *
+	 * @return A list of process states or NULL for none
+	 */
+	private List<ProcessState> getSpawnProcesses(Process rProcess)
+	{
+		List<ProcessState> rSpawnProcesses =
+			rProcess.getParameter(SPAWN_PROCESSES);
+
+		if (rSpawnProcesses.size() > 0)
+		{
+			rSpawnProcesses = new ArrayList<>(rSpawnProcesses);
+		}
+		else
+		{
+			rSpawnProcesses = null;
+		}
+
+		rProcess.getParameter(SPAWN_PROCESSES).clear();
+
+		return rSpawnProcesses;
 	}
 
 	/***************************************

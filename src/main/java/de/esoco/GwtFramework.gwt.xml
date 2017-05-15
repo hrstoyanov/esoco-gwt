@@ -6,5 +6,6 @@
  	<source path='gwt/shared'/>
  	<source path='lib/property'/>
  	<source path='data/element'/>
+ 	<source path='data/process'/>
  	<source path='data/validate'/>
 </module>

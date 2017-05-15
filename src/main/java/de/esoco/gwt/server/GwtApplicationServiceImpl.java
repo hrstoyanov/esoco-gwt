@@ -18,12 +18,10 @@ package de.esoco.gwt.server;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-
+import de.esoco.data.process.ProcessDescription;
 import de.esoco.entity.Entity;
 
 import de.esoco.gwt.shared.GwtApplicationService;
-import de.esoco.gwt.shared.ProcessDescription;
-
 import de.esoco.process.ProcessDefinition;
 
 import java.util.ArrayList;

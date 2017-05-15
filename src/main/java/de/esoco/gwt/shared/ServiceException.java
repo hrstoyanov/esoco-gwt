@@ -16,6 +16,8 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.shared;
 
+import de.esoco.data.process.ProcessState;
+
 import java.util.Map;
 
 

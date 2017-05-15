@@ -523,7 +523,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 	/***************************************
 	 * Initializes a new process and associates it with a reference entity if it
-	 * is not NULL. The default implementation does nothing.
+	 * is not NULL. Subclasses that override this method should typically invoke
+	 * the superclass method first.
 	 *
 	 * @param  rProcess    The process to initialize
 	 * @param  rInitParams Optional process initialization parameters or NULL
@@ -533,7 +534,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * @throws ServiceException If the user is not authenticated or the
 	 *                          preparing the process context fails
 	 */
-	@SuppressWarnings("unused")
 	protected void initProcess(Process rProcess, Relatable rInitParams)
 		throws ProcessException, ServiceException
 	{

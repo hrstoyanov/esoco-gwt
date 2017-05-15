@@ -63,6 +63,7 @@ import java.util.Set;
 
 import javax.servlet.ServletException;
 
+import org.obrel.core.Relatable;
 import org.obrel.core.RelationType;
 import org.obrel.type.MetaTypes;
 
@@ -307,9 +308,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * the application process will be restarted so that it is available in the
 	 * session again.
 	 *
-	 * @param  rDescription     The process description of the application
-	 *                          process
-	 * @param  rReferenceEntity An optional reference entity
+	 * @param  rDescription The process description of the application process
+	 * @param  rInitParams  Optional process initialization parameters or NULL
+	 *                      for none
 	 *
 	 * @return A new unauthenticated session data object
 	 *
@@ -320,9 +321,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	@SuppressWarnings("boxing")
 	protected SessionData createProcessAuthenticationSession(
 		ProcessDescription rDescription,
-		Entity			   rReferenceEntity) throws StorageException,
-													ProcessException,
-													ServiceException
+		Relatable		   rInitParams) throws StorageException,
+											   ProcessException,
+											   ServiceException
 	{
 		SessionData rSessionData = createSessionData();
 
@@ -335,7 +336,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				new ProcessDescription(rDescription);
 
 			Process aRestartProcess =
-				getProcess(aRestartDescription, rSessionData, rReferenceEntity);
+				getProcess(aRestartDescription, rSessionData, rInitParams);
 
 			// execute once for initialization, then continue with the original
 			// process state (with updated process ID) to perform the last
@@ -366,9 +367,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * Internal method to execute a process and associate it with a task if
 	 * necessary.
 	 *
-	 * @param  rDescription     The process description
-	 * @param  rReferenceEntity The task to associate the process with or NULL
-	 *                          for none
+	 * @param  rDescription The process description
+	 * @param  rInitParams  Optional process initialization parameters or NULL
+	 *                      for none
 	 *
 	 * @return The resulting process state or NULL if the process has already
 	 *         terminated
@@ -378,8 +379,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 */
 	protected ProcessState executeProcess(
 		ProcessDescription rDescription,
-		Entity			   rReferenceEntity) throws AuthenticationException,
-													ServiceException
+		Relatable		   rInitParams) throws AuthenticationException,
+											   ServiceException
 	{
 		boolean bCheckAuthentication =
 			!hasProcessAuthentication() ||
@@ -402,12 +403,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			{
 				rSessionData =
 					createProcessAuthenticationSession(rDescription,
-													   rReferenceEntity);
+													   rInitParams);
 			}
 
 			rProcessMap = rSessionData.get(USER_PROCESS_MAP);
-			rProcess    =
-				getProcess(rDescription, rSessionData, rReferenceEntity);
+			rProcess    = getProcess(rDescription, rSessionData, rInitParams);
 
 			rId = rProcess.getParameter(PROCESS_ID);
 
@@ -525,15 +525,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * Initializes a new process and associates it with a reference entity if it
 	 * is not NULL. The default implementation does nothing.
 	 *
-	 * @param  rProcess         The process to initialize
-	 * @param  rReferenceEntity The optional reference entity or NULL for none
+	 * @param  rProcess    The process to initialize
+	 * @param  rInitParams Optional process initialization parameters or NULL
+	 *                     for none
 	 *
 	 * @throws ProcessException If the process initialization fails
 	 * @throws ServiceException If the user is not authenticated or the
 	 *                          preparing the process context fails
 	 */
 	@SuppressWarnings("unused")
-	protected void initProcess(Process rProcess, Entity rReferenceEntity)
+	protected void initProcess(Process rProcess, Relatable rInitParams)
 		throws ProcessException, ServiceException
 	{
 	}
@@ -866,12 +867,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * Returns the process that is associated with a certain process description
 	 * or process state and after preparing it for execution.
 	 *
-	 * @param  rDescription     The process description or process state,
-	 *                          depending on the current execution state of the
-	 *                          process
-	 * @param  rSessionData     The data of the current session
-	 * @param  rReferenceEntity An optional reference entity for the process or
-	 *                          NULL for none
+	 * @param  rDescription The process description or process state, depending
+	 *                      on the current execution state of the process
+	 * @param  rSessionData The data of the current session
+	 * @param  rInitParams  Optional process initialization parameters or NULL
+	 *                      for none
 	 *
 	 * @return The prepared process
 	 *
@@ -885,7 +885,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	@SuppressWarnings("boxing")
 	private Process getProcess(ProcessDescription rDescription,
 							   SessionData		  rSessionData,
-							   Entity			  rReferenceEntity)
+							   Relatable		  rInitParams)
 		throws ProcessException, ServiceException, StorageException
 	{
 		Process rProcess = null;
@@ -916,7 +916,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				getSessionContext().get(PROCESS_LIST).add(rProcess);
 				rUserProcessMap.put(rProcess.getParameter(PROCESS_ID),
 									rProcess);
-				initProcess(rProcess, rReferenceEntity);
+				initProcess(rProcess, rInitParams);
 				setProcessInput(rProcess, rDescription.getProcessInput());
 			}
 		}
@@ -935,7 +935,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 			if (hasProcessAuthentication())
 			{
-				initProcess(rProcess, rReferenceEntity);
+				initProcess(rProcess, rInitParams);
 			}
 		}
 		else

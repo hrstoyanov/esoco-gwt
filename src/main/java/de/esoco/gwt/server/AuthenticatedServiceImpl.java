@@ -743,7 +743,6 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 *
 	 * @throws AuthenticationException If the authorization fails
 	 */
-	@SuppressWarnings("unused")
 	protected void authorizeUser(E rUser, HasProperties rLoginData)
 		throws AuthenticationException
 	{
@@ -889,7 +888,6 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 *
 	 * @throws ServiceException If initializing the data fails
 	 */
-	@SuppressWarnings("unused")
 	protected void initUserData(DataElementList rUserData,
 								E				rUser,
 								String			sLoginName)

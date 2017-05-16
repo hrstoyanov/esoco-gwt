@@ -22,6 +22,7 @@ import de.esoco.data.element.IntegerDataElement;
 import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.process.ProcessDescription;
 import de.esoco.data.process.ProcessState;
+
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Button;
 import de.esoco.ewt.component.Container;
@@ -172,15 +173,21 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 	}
 
 	/***************************************
-	 * This method must be implemented by the root panel manager in a panel
-	 * manager hierarchy to display the result of a process execution. This
-	 * method will be invoked by {@link #executeProcess(String, DataElement)}.
-	 * The default implementation does nothing.
+	 * This method must be implemented by a panel manager in a panel manager
+	 * hierarchy to display the result of a process execution. This method will
+	 * be invoked by {@link #executeProcess(String, DataElement)}. The default
+	 * implementation invokes the parent method if a parent exists.
 	 *
 	 * @param rProcessState The process state returned by the process execution
 	 */
 	protected void displayProcess(ProcessState rProcessState)
 	{
+		P rParent = getParent();
+
+		if (rParent != null)
+		{
+			rParent.displayProcess(rProcessState);
+		}
 	}
 
 	/***************************************

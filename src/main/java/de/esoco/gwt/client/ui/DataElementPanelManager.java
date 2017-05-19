@@ -36,7 +36,6 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.Layout;
 import de.esoco.lib.property.SingleSelection;
-import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.text.TextConvert;
 
 import java.util.ArrayList;
@@ -753,7 +752,8 @@ public abstract class DataElementPanelManager
 				}
 				else
 				{
-					assert false : "No DataElement with name " + sElement;
+					assert false : "No DataElement with name " + sElement +
+						   "; referenced by " + rDataElement.getName();
 				}
 			}
 		}

@@ -46,8 +46,6 @@ import de.esoco.lib.net.ExternalServiceDefinition;
 import de.esoco.lib.net.ExternalServiceRequest;
 import de.esoco.lib.property.HasProperties;
 
-import de.esoco.storage.StorageException;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -67,6 +65,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.obrel.core.ProvidesConfiguration;
 import org.obrel.core.RelationType;
 import org.obrel.core.RelationTypes;
 
@@ -714,12 +713,12 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 	/***************************************
 	 * This method must be implemented by subclasses to return a configuration
-	 * object for this service. This must be a {@link Entity} instance that
-	 * allows to query configuration values as extra attributes.
+	 * object for this service. This must be an implementation of the interface
+	 * {@link ProvidesConfiguration}.
 	 *
 	 * @return The service configuration entity
 	 */
-	protected abstract Entity getServiceConfiguration();
+	protected abstract ProvidesConfiguration getServiceConfiguration();
 
 	/***************************************
 	 * Adds a log aspect to the logging framework after injecting the session
@@ -1124,16 +1123,8 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	{
 		int nAuthenticationTimeout;
 
-		try
-		{
-			nAuthenticationTimeout =
-				getServiceConfiguration().getExtraAttribute(AUTHENTICATION_TIMEOUT,
-															0);
-		}
-		catch (StorageException e)
-		{
-			throw new IllegalStateException(e);
-		}
+		nAuthenticationTimeout =
+			getServiceConfiguration().getConfigValue(AUTHENTICATION_TIMEOUT, 0);
 
 		if (nAuthenticationTimeout > 0)
 		{

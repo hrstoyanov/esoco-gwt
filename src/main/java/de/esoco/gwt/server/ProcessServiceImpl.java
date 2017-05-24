@@ -27,6 +27,7 @@ import de.esoco.data.process.ProcessState.ProcessStateFlag;
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityManager;
+import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
@@ -47,6 +48,7 @@ import de.esoco.process.ProcessException;
 import de.esoco.process.ProcessExecutor;
 import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
+import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
 import de.esoco.process.ViewFragment;
 import de.esoco.process.step.EditInteractionParameters;
@@ -127,6 +129,21 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		new ArrayList<ProcessDefinition>();
 
 	//~ Static methods ---------------------------------------------------------
+
+	/***************************************
+	 * Creates a process description to be used by client code for a certain
+	 * process definition and registers the definition internally so that it can
+	 * be associated with the index stored in the description.
+	 *
+	 * @param  rDefClass The process definition class
+	 *
+	 * @return A new process description of the process definition
+	 */
+	public static ProcessDescription createProcessDescription(
+		Class<? extends ProcessDefinition> rDefClass)
+	{
+		return createProcessDescriptions(rDefClass, null);
+	}
 
 	/***************************************
 	 * Creates one or more process descriptions for a certain process

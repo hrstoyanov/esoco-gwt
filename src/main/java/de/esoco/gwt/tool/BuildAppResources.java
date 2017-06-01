@@ -54,6 +54,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.google.gwt.i18n.tools.I18NSync;
+import com.google.gwt.resources.css.InterfaceGenerator;
 
 
 /********************************************************************
@@ -339,12 +340,14 @@ public class BuildAppResources
 				// first concatenate the default files
 				for (String sInputFile : aDefaultFiles)
 				{
-					// don't process equal-named files twice
-					if (!aProcessedFiles.contains(sInputFile))
-					{
-						aProcessedFiles.add(sInputFile);
+					String sFile = sDirectory + sInputFile;
 
-						int nLines = countLines(sDirectory + sInputFile);
+					// don't process the same file twice
+					if (!aProcessedFiles.contains(sFile))
+					{
+						aProcessedFiles.add(sFile);
+
+						int nLines = countLines(sFile);
 
 						if (nTotalLines < 0 || nTotalLines + nLines > nMaxLines)
 						{
@@ -369,9 +372,9 @@ public class BuildAppResources
 							nTotalLines += nLines;
 						}
 
-						writePropertiesHeader(sInputFile, aDefaultWriter);
-						writeFile(sDirectory + sInputFile, aDefaultWriter);
-						System.out.printf(" + %s%s\n", sDirectory, sInputFile);
+						writePropertiesHeader(sFile, aDefaultWriter);
+						writeFile(sFile, aDefaultWriter);
+						System.out.printf(" + %s%s\n", sDirectory, sFile);
 
 						// then lookup the locale-specific files for the current
 						// default file and concatenate them for each locale if
@@ -403,8 +406,11 @@ public class BuildAppResources
 								aWriters.put(sLocale, aLocaleWriter);
 							}
 
-							writePropertiesHeader(sLocaleFile, aLocaleWriter);
-							writeFile(sDirectory + sLocaleFile, aLocaleWriter);
+							String sFullLocalePath = sDirectory + sLocaleFile;
+
+							writePropertiesHeader(sFullLocalePath,
+												  aLocaleWriter);
+							writeFile(sFullLocalePath, aLocaleWriter);
 							System.out.printf(" + %s%s\n",
 											  sDirectory,
 											  sLocaleFile);

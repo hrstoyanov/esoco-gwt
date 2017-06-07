@@ -27,7 +27,6 @@ import de.esoco.data.process.ProcessState.ProcessStateFlag;
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityManager;
-import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
@@ -48,7 +47,6 @@ import de.esoco.process.ProcessException;
 import de.esoco.process.ProcessExecutor;
 import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
-import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
 import de.esoco.process.ViewFragment;
 import de.esoco.process.step.EditInteractionParameters;
@@ -498,25 +496,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	protected void executeProcess(Process rProcess, ProcessExecutionMode eMode)
 		throws ProcessException
 	{
-		switch (eMode)
-		{
-			case RELOAD:
-			case EXECUTE:
-				rProcess.execute();
-
-				break;
-
-			case ROLLBACK:
-				rProcess.rollbackToPreviousInteraction();
-				rProcess.execute();
-
-				break;
-
-			case CANCEL:
-				rProcess.cancel();
-
-				break;
-		}
+		rProcess.execute(eMode);
 	}
 
 	/***************************************

@@ -1586,28 +1586,32 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void transferTextInput(TextAttribute rComponent, D rDataElement)
 	{
-		String sText = rComponent.getText();
+		// ignore labels as they cannot change their value
+		if (rDataElement.getProperty(LABEL_STYLE, null) == null)
+		{
+			String sText = rComponent.getText();
 
-		if (sText != null)
-		{
-			sText = sText.trim();
-		}
+			if (sText != null)
+			{
+				sText = sText.trim();
+			}
 
-		try
-		{
-			rDataElement.setStringValue(sText);
-		}
-		catch (Exception e)
-		{
-			// ignore parsing errors TODO: check if obsolete
-		}
+			try
+			{
+				rDataElement.setStringValue(sText);
+			}
+			catch (Exception e)
+			{
+				// ignore parsing errors TODO: check if obsolete
+			}
 
-		if (rComponent instanceof TextControl &&
-			rDataElement.hasProperty(CARET_POSITION))
-		{
-			rDataElement.setProperty(CARET_POSITION,
-									 ((TextControl) rComponent)
-									 .getCaretPosition());
+			if (rComponent instanceof TextControl &&
+				rDataElement.hasProperty(CARET_POSITION))
+			{
+				rDataElement.setProperty(CARET_POSITION,
+										 ((TextControl) rComponent)
+										 .getCaretPosition());
+			}
 		}
 	}
 

@@ -19,7 +19,6 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.StringDataElement;
-import de.esoco.data.validate.ListValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
 
@@ -51,11 +50,9 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
-import de.esoco.lib.property.ContentProperties;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.Layout;
-import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.text.TextConvert;
 
@@ -845,25 +842,24 @@ public class DataElementUI<D extends DataElement<?>>
 	 * the data element as returned by {@link #convertValueToString(DataElement,
 	 * Object)}.
 	 *
-	 * @param  rBuilder      The container builder to create the components with
-	 * @param  rDisplayStyle The default style data for the display components
-	 * @param  rDataElement  The data element to create the UI for
+	 * @param  rBuilder     The container builder to create the components with
+	 * @param  rStyle       The default style data for the display components
+	 * @param  rDataElement The data element to create the UI for
 	 *
 	 * @return The display user interface component
 	 */
 	protected Component createDisplayUI(ContainerBuilder<?> rBuilder,
-										StyleData			rDisplayStyle,
+										StyleData			rStyle,
 										D					rDataElement)
 	{
 		int		    nRows		 = rDataElement.getIntProperty(ROWS, 1);
-		int		    nCols		 = rDataElement.getIntProperty(COLUMNS, -1);
 		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
 		Object	    rValue		 = rDataElement.getValue();
 		Component   aComponent;
 
 		if (rDataElement instanceof ListDataElement<?>)
 		{
-			de.esoco.ewt.component.List aList = rBuilder.addList(rDisplayStyle);
+			de.esoco.ewt.component.List aList = rBuilder.addList(rStyle);
 
 			for (Object rItem : (ListDataElement<?>) rDataElement)
 			{
@@ -874,118 +870,25 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else if (eContentType == ContentType.WEBSITE)
 		{
-			aComponent = rBuilder.addWebsite(rDisplayStyle, rValue.toString());
+			aComponent = rBuilder.addWebsite(rStyle, rValue.toString());
 		}
 		else if (eContentType == ContentType.HYPERLINK)
 		{
 			aComponent =
-				createHyperlinkDisplayComponent(rBuilder,
-												rDisplayStyle,
-												rDataElement);
+				createHyperlinkDisplayComponent(rBuilder, rStyle, rDataElement);
 		}
 		else if (eContentType == ContentType.ABSOLUTE_URL ||
 				 eContentType == ContentType.RELATIVE_URL)
 		{
-			aComponent =
-				createUrlComponent(rBuilder, rDisplayStyle, eContentType);
+			aComponent = createUrlComponent(rBuilder, rStyle, eContentType);
 		}
 		else if (nRows != 1)
 		{
-			TextArea aTextArea =
-				rBuilder.addTextArea(rDisplayStyle,
-									 convertValueToString(rDataElement,
-														  rDataElement));
-
-			aComponent = aTextArea;
-
-			aTextArea.setEditable(false);
-
-			if (nRows > 0)
-			{
-				aTextArea.setRows(nRows);
-			}
-
-			if (nCols != -1)
-			{
-				aTextArea.setColumns(nCols);
-			}
+			aComponent = createTextArea(rBuilder, rStyle, rDataElement, nRows);
 		}
 		else
 		{
-			LabelStyle eLabelStyle =
-				rDataElement.getProperty(LABEL_STYLE, null);
-
-			if (eLabelStyle != null)
-			{
-				rDisplayStyle = rDisplayStyle.set(LABEL_STYLE, eLabelStyle);
-			}
-
-			Label aLabel =
-				rBuilder.addLabel(rDisplayStyle,
-								  convertValueToString(rDataElement,
-													   rDataElement),
-								  null);
-
-			aComponent = aLabel;
-		}
-
-		return aComponent;
-	}
-
-	/***************************************
-	 * Creates the input component to edit the value of a data element. Can be
-	 * overridden by subclasses to modify the standard UI. The default
-	 * implementation typically creates a {@link TextField} or a {@link
-	 * TextArea} but depending on the content type of the data element other
-	 * components may be created.
-	 *
-	 * @param  rBuilder     The builder to add the input component with
-	 * @param  rStyle       The style data for the component
-	 * @param  rDataElement The data element to create the component for
-	 *
-	 * @return A new list component
-	 */
-	protected Component createEditComponent(ContainerBuilder<?> rBuilder,
-											StyleData			rStyle,
-											D					rDataElement)
-	{
-		String sValue = convertValueToString(rDataElement, rDataElement);
-
-		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
-		Component   aComponent;
-
-		if (eContentType == ContentType.PHONE_NUMBER)
-		{
-			aComponent =
-				createPhoneNumberInputComponent(rBuilder, rStyle, sValue);
-		}
-		else if (eContentType == ContentType.FILE_UPLOAD)
-		{
-			aComponent =
-				rBuilder.addFileChooser(rStyle,
-										rDataElement.getProperty(URL, null),
-										"$btn" + rDataElement.getResourceId());
-		}
-		else if (eContentType == ContentType.WEBSITE)
-		{
-			aComponent =
-				rBuilder.addWebsite(rStyle, rDataElement.getValue().toString());
-		}
-		else if (eContentType == ContentType.HYPERLINK)
-		{
-			aComponent =
-				rBuilder.addLabel(rStyle.setFlags(StyleFlag.HYPERLINK),
-								  rDataElement.getValue().toString(),
-								  null);
-		}
-		else
-		{
-			aComponent =
-				createTextInputComponent(rBuilder,
-										 rStyle,
-										 rDataElement,
-										 sValue,
-										 eContentType);
+			aComponent = createLabel(rBuilder, rStyle, rDataElement);
 		}
 
 		return aComponent;
@@ -1052,17 +955,60 @@ public class DataElementUI<D extends DataElement<?>>
 	 * StyleData, DataElement)}.
 	 *
 	 * @param  rBuilder     The container builder to create the components with
-	 * @param  rInputStyle  The default style data for the input components
+	 * @param  rStyle       The default style data for the input components
 	 * @param  rDataElement The data element to create the UI for
 	 *
 	 * @return The input user interface component or NULL if it shall not be
 	 *         handled by this instance
 	 */
 	protected Component createInputUI(ContainerBuilder<?> rBuilder,
-									  StyleData			  rInputStyle,
+									  StyleData			  rStyle,
 									  D					  rDataElement)
 	{
-		return createEditComponent(rBuilder, rInputStyle, rDataElement);
+		String sValue = convertValueToString(rDataElement, rDataElement);
+
+		ContentType eContentType = rDataElement.getProperty(CONTENT_TYPE, null);
+		Component   aComponent;
+
+		if (eContentType == ContentType.PHONE_NUMBER)
+		{
+			aComponent =
+				createPhoneNumberInputComponent(rBuilder, rStyle, sValue);
+		}
+		else if (eContentType == ContentType.FILE_UPLOAD)
+		{
+			aComponent =
+				rBuilder.addFileChooser(rStyle,
+										rDataElement.getProperty(URL, null),
+										"$btn" + rDataElement.getResourceId());
+		}
+		else if (eContentType == ContentType.WEBSITE)
+		{
+			aComponent =
+				rBuilder.addWebsite(rStyle, rDataElement.getValue().toString());
+		}
+		else if (eContentType == ContentType.HYPERLINK)
+		{
+			aComponent =
+				rBuilder.addLabel(rStyle.setFlags(StyleFlag.HYPERLINK),
+								  rDataElement.getValue().toString(),
+								  null);
+		}
+		else if (rDataElement.getProperty(LABEL_STYLE, null) != null)
+		{
+			aComponent = createLabel(rBuilder, rStyle, rDataElement);
+		}
+		else
+		{
+			aComponent =
+				createTextInputComponent(rBuilder,
+										 rStyle,
+										 rDataElement,
+										 sValue,
+										 eContentType);
+		}
+
+		return aComponent;
 	}
 
 	/***************************************
@@ -1080,6 +1026,37 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		return new DataElementInteractionHandler<D>(rPanelManager,
 													rDataElement);
+	}
+
+	/***************************************
+	 * Creates a label component.
+	 *
+	 * @param  rBuilder     The builder
+	 * @param  rStyle       The style
+	 * @param  rDataElement The data element to create the label for
+	 *
+	 * @return The new component
+	 */
+	protected Component createLabel(ContainerBuilder<?> rBuilder,
+									StyleData			rStyle,
+									D					rDataElement)
+	{
+		Component  aComponent;
+		LabelStyle eLabelStyle = rDataElement.getProperty(LABEL_STYLE, null);
+
+		if (eLabelStyle != null)
+		{
+			rStyle = rStyle.set(LABEL_STYLE, eLabelStyle);
+		}
+
+		Label aLabel =
+			rBuilder.addLabel(rStyle,
+							  convertValueToString(rDataElement, rDataElement),
+							  null);
+
+		aComponent = aLabel;
+
+		return aComponent;
 	}
 
 	/***************************************
@@ -1137,6 +1114,46 @@ public class DataElementUI<D extends DataElement<?>>
 		setPhoneNumber(aNumberFields, sValue);
 
 		return rBuilder.getContainer();
+	}
+
+	/***************************************
+	 * Creates a text area component.
+	 *
+	 * @param  rBuilder     The builder
+	 * @param  rStyle       The style
+	 * @param  rDataElement The data element to create the text area for
+	 * @param  nRows        The number of text rows to display
+	 *
+	 * @return The new component
+	 */
+	protected Component createTextArea(ContainerBuilder<?> rBuilder,
+									   StyleData		   rStyle,
+									   D				   rDataElement,
+									   int				   nRows)
+	{
+		Component aComponent;
+		int		  nCols = rDataElement.getIntProperty(COLUMNS, -1);
+
+		TextArea aTextArea =
+			rBuilder.addTextArea(rStyle,
+								 convertValueToString(rDataElement,
+													  rDataElement));
+
+		aComponent = aTextArea;
+
+		aTextArea.setEditable(false);
+
+		if (nRows > 0)
+		{
+			aTextArea.setRows(nRows);
+		}
+
+		if (nCols != -1)
+		{
+			aTextArea.setColumns(nCols);
+		}
+
+		return aComponent;
 	}
 
 	/***************************************

@@ -78,7 +78,7 @@ import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
 
-import de.esoco.process.ProcessRelationTypes;
+import de.esoco.process.Process;
 import de.esoco.process.ProcessStep;
 
 import de.esoco.storage.QueryList;
@@ -847,8 +847,11 @@ public class DataElementFactory
 
 			if (rElement instanceof DataElementList)
 			{
+				Process rSubProcess =
+					rTarget.getRelation(rType).getAnnotation(PROCESS);
+
 				applyDataElements(((DataElementList) rElement).getElements(),
-								  rTarget);
+								  rSubProcess != null ? rSubProcess : rTarget);
 			}
 		}
 	}
@@ -1161,7 +1164,7 @@ public class DataElementFactory
 		}
 		else
 		{
-			if (rRelation.hasAnnotation(PROCESS))
+			if (rRelation != null && rRelation.hasAnnotation(PROCESS))
 			{
 				rObject = rRelation.get(PROCESS).getInteractionStep();
 			}

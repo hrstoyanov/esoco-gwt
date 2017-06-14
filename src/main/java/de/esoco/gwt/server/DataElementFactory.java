@@ -1164,9 +1164,14 @@ public class DataElementFactory
 		}
 		else
 		{
-			if (rRelation != null && rRelation.hasAnnotation(PROCESS))
+			if (rRelation != null)
 			{
-				rObject = rRelation.get(PROCESS).getInteractionStep();
+				Process rProcess = rRelation.get(PROCESS);
+
+				if (rProcess != null)
+				{
+					rObject = rProcess.getInteractionStep();
+				}
 			}
 
 			aDataElement = createDataElement(rObject, rType, rRelation, rValue);

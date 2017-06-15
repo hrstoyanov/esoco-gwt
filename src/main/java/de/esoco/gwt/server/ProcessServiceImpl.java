@@ -27,6 +27,7 @@ import de.esoco.data.process.ProcessState.ProcessStateFlag;
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityManager;
+import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
 import de.esoco.gwt.shared.Command;
@@ -47,6 +48,7 @@ import de.esoco.process.ProcessException;
 import de.esoco.process.ProcessExecutor;
 import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
+import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
 import de.esoco.process.ViewFragment;
 import de.esoco.process.step.EditInteractionParameters;
@@ -90,7 +92,6 @@ import static de.esoco.process.ProcessRelationTypes.PROCESS_ID;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_INFO;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_LIST;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_LOCALE;
-import static de.esoco.process.ProcessRelationTypes.PROCESS_SCHEDULER;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_STEP_STYLE;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_USER;
 import static de.esoco.process.ProcessRelationTypes.RELOAD_CURRENT_STEP;
@@ -336,19 +337,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		// property name not known to GWT serialization if not accessed once
 		SHOW_UI_INSPECTOR.getName();
-	}
-
-	/***************************************
-	 * Resumes the execution of a background process if it is currently
-	 * suspended.
-	 *
-	 * @param rProcessDescription The process description of the background
-	 *                            process
-	 */
-	public void resumeBackgroundProcess(
-		Class<? extends ProcessDefinition> rProcessDescription)
-	{
-		ServiceContext.getInstance().resumeProcess(rProcessDescription);
 	}
 
 	/***************************************
@@ -726,14 +714,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		ProcessDefinition rDefinition,
 		SessionData		  rSessionData) throws ProcessException
 	{
-		Process		   rProcess = ProcessManager.getProcess(rDefinition);
-		Entity		   rUser    = rSessionData.get(SessionData.SESSION_USER);
-		ServiceContext rContext = ServiceContext.getInstance();
+		Process rProcess = ProcessManager.getProcess(rDefinition);
+		Entity  rUser    = rSessionData.get(SessionData.SESSION_USER);
 
 		rProcess.setParameter(SESSION_MANAGER, this);
 		rProcess.setParameter(EXTERNAL_SERVICE_ACCESS, this);
 		rProcess.setParameter(STORAGE_ADAPTER_REGISTRY, this);
-		rProcess.setParameter(PROCESS_SCHEDULER, rContext);
 		rProcess.setParameter(PROCESS_USER, rUser);
 		rProcess.setParameter(PROCESS_LOCALE,
 							  getThreadLocalRequest().getLocale());

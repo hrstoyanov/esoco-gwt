@@ -40,6 +40,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 
 import static de.esoco.lib.property.StateProperties.DISABLE_ON_INTERACTION;
+import static de.esoco.lib.property.StateProperties.EVENT_HANDLING_DELAY;
 import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
@@ -178,6 +179,10 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			nEventHandlingDelay =
 				((HasEventHandlingDelay) rWidget).getEventHandlingDelay();
 		}
+
+		nEventHandlingDelay =
+			rDataElement.getIntProperty(EVENT_HANDLING_DELAY,
+										nEventHandlingDelay);
 
 		if (bHasEventHandling)
 		{

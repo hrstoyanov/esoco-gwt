@@ -25,6 +25,7 @@ import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
+import de.esoco.ewt.impl.gwt.HasEventHandlingDelay;
 
 import de.esoco.lib.property.InteractionEventType;
 
@@ -36,9 +37,9 @@ import java.util.Set;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.Widget;
 
 import static de.esoco.lib.property.StateProperties.DISABLE_ON_INTERACTION;
-import static de.esoco.lib.property.StateProperties.EVENT_HANDLING_DELAY;
 import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
@@ -59,12 +60,13 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 
 	//~ Instance fields --------------------------------------------------------
 
-	private DataElementPanelManager   rPanelManager;
-	private D						  rDataElement;
-	private Set<InteractionEventType> rEventTypes;
-	private int						  nEventHandlingDelay;
+	private DataElementPanelManager rPanelManager;
+	private D					    rDataElement;
 
+	private int   nEventHandlingDelay = 0;
 	private Timer aInputEventTimer;
+
+	private Set<InteractionEventType> rEventTypes;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -80,9 +82,6 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	{
 		this.rPanelManager = rPanelManager;
 		this.rDataElement  = rDataElement;
-
-		nEventHandlingDelay =
-			rDataElement.getIntProperty(EVENT_HANDLING_DELAY, 0);
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -172,6 +171,13 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 									 .<InteractionEventType>emptySet());
 
 		boolean bHasEventHandling = !rEventTypes.isEmpty();
+		Widget  rWidget			  = rComponent.getWidget();
+
+		if (rWidget instanceof HasEventHandlingDelay)
+		{
+			nEventHandlingDelay =
+				((HasEventHandlingDelay) rWidget).getEventHandlingDelay();
+		}
 
 		if (bHasEventHandling)
 		{

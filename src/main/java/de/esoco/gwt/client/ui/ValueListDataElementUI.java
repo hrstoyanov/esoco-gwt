@@ -42,7 +42,7 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.ContentType;
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.ListStyle;
 import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.Selectable;
@@ -314,7 +314,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	{
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
-		Layout eLayout =
+		LayoutType eLayout =
 			rDataElement.getProperty(UserInterfaceProperties.LAYOUT,
 									 getButtonPanelDefaultLayout());
 
@@ -322,7 +322,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		// TODO: return not the parent container from this method as this
 		// causes problems in some configurations as button style updates
 		// will then modify the container
-		if (eLayout != Layout.INLINE)
+		if (eLayout != LayoutType.INLINE)
 		{
 			String		  sButtonPanelStyle =
 				EsocoGwtResources.INSTANCE.css().gfButtonPanel();
@@ -333,7 +333,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			setBaseStyle(getBaseStyle().append(WEB_ADDITIONAL_STYLES,
 											   sButtonPanelStyle));
 
-			if (eLayout == Layout.TABLE)
+			if (eLayout == LayoutType.TABLE)
 			{
 				aPanelLayout = new GridLayout(nColumns);
 			}

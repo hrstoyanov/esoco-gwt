@@ -52,7 +52,7 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.text.TextConvert;
 
@@ -133,7 +133,7 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default gap between components. */
 	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
-	private static Layout eButtonPanelDefaultLayout = Layout.TABLE;
+	private static LayoutType eButtonPanelDefaultLayout = LayoutType.TABLE;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };
@@ -237,7 +237,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @return The default layout mode
 	 */
-	public static Layout getButtonPanelDefaultLayout()
+	public static LayoutType getButtonPanelDefaultLayout()
 	{
 		return eButtonPanelDefaultLayout;
 	}
@@ -309,7 +309,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @param eLayoutMode The new button panel default layout mode
 	 */
-	public static void setButtonPanelDefaultLayout(Layout eLayoutMode)
+	public static void setButtonPanelDefaultLayout(LayoutType eLayoutMode)
 	{
 		eButtonPanelDefaultLayout = eLayoutMode;
 	}

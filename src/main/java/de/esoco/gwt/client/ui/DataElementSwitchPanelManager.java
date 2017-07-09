@@ -28,7 +28,7 @@ import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 import java.util.Iterator;
 
@@ -170,7 +170,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout				eDisplayMode)
+		LayoutType				eDisplayMode)
 	{
 		ContainerBuilder<? extends SwitchPanel> aPanelBuilder;
 

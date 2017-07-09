@@ -28,7 +28,7 @@ import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.GridLayout;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.UserInterfaceProperties;
 
 import java.util.ArrayList;
@@ -371,7 +371,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout				eLayout)
+		LayoutType				eLayout)
 	{
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,

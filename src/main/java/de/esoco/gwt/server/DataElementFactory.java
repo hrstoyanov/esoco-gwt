@@ -71,7 +71,7 @@ import de.esoco.lib.model.ListDataModel;
 import de.esoco.lib.model.SimpleColumnDefinition;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.HasProperties;
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.MutableProperties;
 import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
@@ -1801,7 +1801,7 @@ public class DataElementFactory
 
 			if (aChildElements.size() > 1)
 			{
-				aChildList.setProperty(LAYOUT, Layout.TABS);
+				aChildList.setProperty(LAYOUT, LayoutType.TABS);
 			}
 
 			aAttrElements.add(aChildList);

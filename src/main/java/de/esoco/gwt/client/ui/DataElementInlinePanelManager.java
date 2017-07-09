@@ -22,11 +22,11 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 
 /********************************************************************
- * A panel manager for the layout type {@link Layout#INLINE} that adds it's data
+ * A panel manager for the layout type {@link LayoutType#INLINE} that adds it's data
  * element UIs to the parent container.
  *
  * @author eso
@@ -55,7 +55,7 @@ public class DataElementInlinePanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout				eLayout)
+		LayoutType				eLayout)
 	{
 		return (ContainerBuilder<? extends Panel>) rBuilder;
 	}

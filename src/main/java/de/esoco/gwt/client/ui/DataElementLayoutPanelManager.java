@@ -21,13 +21,13 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 
 /********************************************************************
  * A panel manager for {@link DataElementList} instances that places the child
  * data elements of the data element list in a layout that is defined by the
- * {@link Layout} of the data element list.
+ * {@link LayoutType} of the data element list.
  *
  * @author eso
  */
@@ -53,7 +53,7 @@ public class DataElementLayoutPanelManager extends DataElementPanelManager
 	@Override
 	protected ContainerBuilder<?> createPanel(ContainerBuilder<?> rBuilder,
 											  StyleData			  rStyleData,
-											  Layout			  eLayout)
+											  LayoutType			  eLayout)
 	{
 		return rBuilder.addPanel(rStyleData, eLayout);
 	}

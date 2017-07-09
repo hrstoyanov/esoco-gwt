@@ -34,7 +34,7 @@ import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.InteractionEventType;
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.SingleSelection;
 import de.esoco.lib.text.TextConvert;
 
@@ -82,19 +82,19 @@ public abstract class DataElementPanelManager
 	static final StyleData HEADER_LABEL_STYLE =
 		addStyles(StyleData.DEFAULT, CSS.gfDataElementHeader());
 
-	private static final Set<Layout> ORDERED_LAYOUTS =
-		EnumSet.of(Layout.DOCK, Layout.SPLIT);
+	private static final Set<LayoutType> ORDERED_LAYOUTS =
+		EnumSet.of(LayoutType.DOCK, LayoutType.SPLIT);
 
-	private static final Set<Layout> SWITCH_LAYOUTS =
-		EnumSet.of(Layout.TABS, Layout.STACK, Layout.DECK);
+	private static final Set<LayoutType> SWITCH_LAYOUTS =
+		EnumSet.of(LayoutType.TABS, LayoutType.STACK, LayoutType.DECK);
 
-	private static final Set<Layout> GRID_LAYOUTS =
-		EnumSet.of(Layout.GRID, Layout.FORM, Layout.GROUP);
+	private static final Set<LayoutType> GRID_LAYOUTS =
+		EnumSet.of(LayoutType.GRID, LayoutType.FORM, LayoutType.GROUP);
 
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementList rDataElementList;
-	private Layout		    eLayout;
+	private LayoutType		    eLayout;
 
 	private Map<String, DataElementUI<?>> aDataElementUIs;
 
@@ -157,7 +157,7 @@ public abstract class DataElementPanelManager
 
 	/***************************************
 	 * Factory method that creates a new subclass instance based on the {@link
-	 * Layout} of the data element list argument.
+	 * LayoutType} of the data element list argument.
 	 *
 	 * @param  rParent          The parent panel manager
 	 * @param  rDataElementList The list of data elements to be handled by the
@@ -171,14 +171,14 @@ public abstract class DataElementPanelManager
 	{
 		DataElementPanelManager aPanelManager = null;
 
-		Layout eLayout = rDataElementList.getProperty(LAYOUT, Layout.TABLE);
+		LayoutType eLayout = rDataElementList.getProperty(LAYOUT, LayoutType.TABLE);
 
-		if (eLayout == Layout.TABLE)
+		if (eLayout == LayoutType.TABLE)
 		{
 			aPanelManager =
 				new DataElementTablePanelManager(rParent, rDataElementList);
 		}
-		else if (eLayout == Layout.INLINE)
+		else if (eLayout == LayoutType.INLINE)
 		{
 			aPanelManager =
 				new DataElementInlinePanelManager(rParent, rDataElementList);
@@ -220,8 +220,8 @@ public abstract class DataElementPanelManager
 		StringBuilder aStyle = new StringBuilder(CSS.gfDataElementPanel());
 
 		{
-			Layout eDisplayMode =
-				rDataElementList.getProperty(LAYOUT, Layout.TABLE);
+			LayoutType eDisplayMode =
+				rDataElementList.getProperty(LAYOUT, LayoutType.TABLE);
 
 			aStyle.append(" gf-DataElement");
 			aStyle.append(TextConvert.capitalizedIdentifier(eDisplayMode
@@ -583,7 +583,7 @@ public abstract class DataElementPanelManager
 	protected abstract ContainerBuilder<?> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout				eLayout);
+		LayoutType				eLayout);
 
 	/***************************************
 	 * {@inheritDoc}
@@ -776,7 +776,7 @@ public abstract class DataElementPanelManager
 		rStyleData =
 			DataElementUI.applyElementStyle(rDataElementList, rStyleData);
 
-		eLayout = rDataElementList.getProperty(LAYOUT, Layout.TABS);
+		eLayout = rDataElementList.getProperty(LAYOUT, LayoutType.TABS);
 
 		aPanelBuilder = createPanel(rBuilder, rStyleData, eLayout);
 
@@ -800,7 +800,7 @@ public abstract class DataElementPanelManager
 	 *
 	 * @return The layout
 	 */
-	protected final Layout getLayout()
+	protected final LayoutType getLayout()
 	{
 		return eLayout;
 	}

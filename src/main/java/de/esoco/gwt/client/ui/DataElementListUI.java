@@ -24,7 +24,7 @@ import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 import java.util.Map;
 
@@ -101,8 +101,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		DataElementList rDataElementList = getDataElement();
 		Container	    rListPanel		 = null;
 
-		Layout eDisplayMode =
-			rDataElementList.getProperty(LAYOUT, Layout.TABLE);
+		LayoutType eDisplayMode =
+			rDataElementList.getProperty(LAYOUT, LayoutType.TABLE);
 
 		aListPanelManager =
 			DataElementPanelManager.newInstance(getParent(), rDataElementList);
@@ -110,7 +110,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		aListPanelManager.buildIn(rBuilder, rStyle);
 		rListPanel = aListPanelManager.getPanel();
 
-		if (eDisplayMode == Layout.TABLE)
+		if (eDisplayMode == LayoutType.TABLE)
 		{
 			// DataElementPanelManager performs event handling for other cases
 			setupInteractionHandling(rListPanel, false);

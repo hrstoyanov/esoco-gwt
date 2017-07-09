@@ -27,7 +27,7 @@ import de.esoco.gwt.client.ui.GridFormatter.GridFormatterFactory;
 
 import de.esoco.lib.property.Alignment;
 import de.esoco.lib.property.LabelStyle;
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -121,9 +121,9 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			StyleData		 rStyle		   = rUiAndStyle.getValue();
 			int				 nElementCount = aCurrentRow.size();
 
-			Layout eElementLayout = rDataElement.getProperty(LAYOUT, null);
+			LayoutType eElementLayout = rDataElement.getProperty(LAYOUT, null);
 
-			if (eElementLayout == Layout.GRID_ROW && nElementCount == 1)
+			if (eElementLayout == LayoutType.GRID_ROW && nElementCount == 1)
 			{
 				rStyle =
 					aGridFormatter.applyRowStyle(aCurrentRow.keySet(), rStyle);
@@ -136,14 +136,14 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 					aGridFormatter.applyRowStyle(aCurrentRow.keySet(),
 												 aRowStyle);
 
-				aRowBuilder = addPanel(rRowStyle, Layout.GRID_ROW);
+				aRowBuilder = addPanel(rRowStyle, LayoutType.GRID_ROW);
 			}
 
 			ContainerBuilder<?> rUiBuilder = aRowBuilder;
 
 			boolean bAddLabel = !rDataElement.hasFlag(HIDE_LABEL);
 
-			if (bAddLabel || eElementLayout != Layout.GRID_COLUMN)
+			if (bAddLabel || eElementLayout != LayoutType.GRID_COLUMN)
 			{
 				StyleData aColumnStyle = StyleData.DEFAULT;
 
@@ -160,7 +160,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 					aGridFormatter.applyColumnStyle(rUI, aColumnStyle);
 
 				rUiBuilder =
-					aRowBuilder.addPanel(aColumnStyle, Layout.GRID_COLUMN);
+					aRowBuilder.addPanel(aColumnStyle, LayoutType.GRID_COLUMN);
 
 				if (bAddLabel)
 				{
@@ -174,7 +174,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 					}
 				}
 			}
-			else if (eElementLayout != Layout.GRID_ROW)
+			else if (eElementLayout != LayoutType.GRID_ROW)
 			{
 				// apply column count to elements with Layout GRID_COLUMN
 				rStyle = aGridFormatter.applyColumnStyle(rUI, rStyle);
@@ -224,12 +224,12 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	 * Overridden to check the container style for vertical alignment.
 	 *
 	 * @see DataElementLayoutPanelManager#createPanel(ContainerBuilder,StyleData,
-	 *      Layout)
+	 *      LayoutType)
 	 */
 	@Override
 	protected ContainerBuilder<?> createPanel(ContainerBuilder<?> rBuilder,
 											  StyleData			  rStyle,
-											  Layout			  eLayout)
+											  LayoutType			  eLayout)
 	{
 		Alignment eVAlign = rStyle.getProperty(VERTICAL_ALIGN, null);
 

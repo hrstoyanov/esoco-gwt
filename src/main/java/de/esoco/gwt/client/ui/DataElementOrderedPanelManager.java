@@ -25,7 +25,7 @@ import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ import static de.esoco.lib.property.StyleProperties.VERTICAL;
 /********************************************************************
  * A panel manager for {@link DataElementList} instances that places the child
  * data elements of the data element list in a layout that is defined by the
- * {@link Layout} of the data element list.
+ * {@link LayoutType} of the data element list.
  *
  * @author eso
  */
@@ -65,7 +65,7 @@ public class DataElementOrderedPanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		Layout				eLayout)
+		LayoutType				eLayout)
 	{
 		ContainerBuilder<? extends Panel> aPanelBuilder;
 

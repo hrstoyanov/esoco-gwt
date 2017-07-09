@@ -53,7 +53,7 @@ import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.property.InteractionEventType;
-import de.esoco.lib.property.Layout;
+import de.esoco.lib.property.LayoutType;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -584,7 +584,7 @@ public class ProcessPanelManager
 
 		if (rParams.size() == 1 &&
 			rFirstElement instanceof DataElementList &&
-			rFirstElement.getProperty(LAYOUT, Layout.TABLE) != Layout.TABLE)
+			rFirstElement.getProperty(LAYOUT, LayoutType.TABLE) != LayoutType.TABLE)
 		{
 			aPanelManager =
 				DataElementPanelManager.newInstance(this,

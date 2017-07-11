@@ -79,6 +79,7 @@ import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
 
 import de.esoco.process.Process;
+import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
 
 import de.esoco.storage.QueryList;
@@ -608,7 +609,7 @@ public class DataElementFactory
 							rRefDef.getDisplayProperties(rDisplayAttr);
 
 						// base properties always override reference properties
-						aDisplayProperties.setProperties(aBaseProperties);
+						aDisplayProperties.setProperties(aBaseProperties, true);
 
 						sId		    = rRefAttr.getName();
 						bSearchable = false;
@@ -649,7 +650,7 @@ public class DataElementFactory
 			if (aDisplayProperties != null &&
 				aDisplayProperties.getPropertyCount() > 0)
 			{
-				aColumn.setProperties(aDisplayProperties);
+				aColumn.setProperties(aDisplayProperties, true);
 			}
 
 			aColumns.add(aColumn);
@@ -1159,7 +1160,7 @@ public class DataElementFactory
 			// flags like DISABLED
 			if (rProperties != null)
 			{
-				aDataElement.setProperties(rProperties);
+				aDataElement.setProperties(rProperties, true);
 			}
 		}
 		else
@@ -1720,7 +1721,7 @@ public class DataElementFactory
 
 			if (rDisplayProperties != null)
 			{
-				aDataElement.setProperties(rDisplayProperties);
+				aDataElement.setProperties(rDisplayProperties, true);
 			}
 		}
 

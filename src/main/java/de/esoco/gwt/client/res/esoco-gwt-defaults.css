@@ -144,3 +144,9 @@ td.gf-DataElementHeader {
 .MessageBoxContent .MessageBoxText {
 	white-space: pre-wrap !important;
 }
+
+@external .gf-DataElementCssGridPanel;
+.gf-DataElementCssGridPanel {
+    display: grid;
+}
+

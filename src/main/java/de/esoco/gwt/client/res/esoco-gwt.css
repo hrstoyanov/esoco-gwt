@@ -39,6 +39,11 @@
 	
 }
 
+@external .gf-DataElementCssGridPanel;
+.gf-DataElementCssGridPanel {
+    display: grid;
+}
+
 @external .valign-center, .valign-bottom;
 .valign-center {
     align-items: center;

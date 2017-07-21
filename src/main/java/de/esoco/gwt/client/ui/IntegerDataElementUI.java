@@ -29,6 +29,7 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.lib.property.ContentType;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
+import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
 
 
 /********************************************************************
@@ -117,6 +118,7 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 		}
 		else
 		{
+			rDataElement.setProperty(INPUT_CONSTRAINT, "-?\\d*");
 			aComponent = super.createInputUI(rBuilder, rStyle, rDataElement);
 		}
 

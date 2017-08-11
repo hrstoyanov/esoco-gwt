@@ -19,6 +19,7 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.StringDataElement;
+import de.esoco.data.validate.ListValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
 
@@ -50,9 +51,12 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
+import de.esoco.lib.property.ButtonStyle;
+import de.esoco.lib.property.ContentProperties;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.LayoutType;
+import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.text.TextConvert;
 
@@ -98,6 +102,7 @@ import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.HIDDEN;
 import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
+import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.StyleProperties.EDITABLE;
 import static de.esoco.lib.property.StyleProperties.HAS_IMAGES;
@@ -836,6 +841,28 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Creates a label component.
+	 *
+	 * @param  rBuilder     The builder
+	 * @param  rStyle       The style
+	 * @param  rDataElement The data element to create the label for
+	 *
+	 * @return The new component
+	 */
+	protected Component createButton(ContainerBuilder<?> rBuilder,
+									 StyleData			 rStyle,
+									 D					 rDataElement)
+	{
+		ButtonStyle eButtonStyle =
+			rDataElement.getProperty(BUTTON_STYLE, ButtonStyle.DEFAULT);
+
+		return rBuilder.addButton(rStyle.set(BUTTON_STYLE, eButtonStyle),
+								  convertValueToString(rDataElement,
+													   rDataElement),
+								  null);
+	}
+
+	/***************************************
 	 * This method can be overridden by subclasses to create the user interface
 	 * for a data element that is either immutable or for display only. The
 	 * default implementation creates a label with the string-converted value of
@@ -998,6 +1025,10 @@ public class DataElementUI<D extends DataElement<?>>
 		{
 			aComponent = createLabel(rBuilder, rStyle, rDataElement);
 		}
+		else if (rDataElement.getProperty(BUTTON_STYLE, null) != null)
+		{
+			aComponent = createButton(rBuilder, rStyle, rDataElement);
+		}
 		else
 		{
 			aComponent =
@@ -1041,7 +1072,6 @@ public class DataElementUI<D extends DataElement<?>>
 									StyleData			rStyle,
 									D					rDataElement)
 	{
-		Component  aComponent;
 		LabelStyle eLabelStyle = rDataElement.getProperty(LABEL_STYLE, null);
 
 		if (eLabelStyle != null)
@@ -1049,14 +1079,10 @@ public class DataElementUI<D extends DataElement<?>>
 			rStyle = rStyle.set(LABEL_STYLE, eLabelStyle);
 		}
 
-		Label aLabel =
-			rBuilder.addLabel(rStyle,
-							  convertValueToString(rDataElement, rDataElement),
-							  null);
-
-		aComponent = aLabel;
-
-		return aComponent;
+		return rBuilder.addLabel(rStyle,
+								 convertValueToString(rDataElement,
+													  rDataElement),
+								 null);
 	}
 
 	/***************************************

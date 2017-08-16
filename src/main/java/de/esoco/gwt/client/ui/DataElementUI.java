@@ -45,6 +45,7 @@ import de.esoco.ewt.event.KeyCode;
 import de.esoco.ewt.event.ModifierKeys;
 import de.esoco.ewt.graphics.Image;
 import de.esoco.ewt.layout.FlowLayout;
+import de.esoco.ewt.property.ImageAttribute;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
@@ -84,6 +85,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.ContentProperties.FORMAT;
+import static de.esoco.lib.property.ContentProperties.IMAGE;
 import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
 import static de.esoco.lib.property.ContentProperties.LABEL;
 import static de.esoco.lib.property.ContentProperties.NO_RESOURCE_PREFIX;
@@ -660,6 +662,16 @@ public class DataElementUI<D extends DataElement<?>>
 			if (!bHasError && sToolTip != null && sToolTip.length() > 0)
 			{
 				aElementComponent.setToolTip(sToolTip);
+			}
+
+			String sImage = rDataElement.getProperty(IMAGE, null);
+
+			if (sImage != null && aElementComponent instanceof ImageAttribute)
+			{
+				Image aImage =
+					aElementComponent.getContext().createImage(sImage);
+
+				((ImageAttribute) aElementComponent).setImage(aImage);
 			}
 		}
 

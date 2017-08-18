@@ -34,8 +34,10 @@ import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.InteractionEventType;
+import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.SingleSelection;
+import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.text.TextConvert;
 
 import java.util.ArrayList;
@@ -57,6 +59,8 @@ import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
+import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
+import static de.esoco.lib.property.StyleProperties.SHOW_LABEL;
 
 
 /********************************************************************
@@ -79,6 +83,9 @@ public abstract class DataElementPanelManager
 	static final StyleData ELEMENT_LABEL_STYLE =
 		addStyles(StyleData.DEFAULT, CSS.gfDataElementLabel());
 
+	static final StyleData FORM_LABEL_STYLE =
+		ELEMENT_LABEL_STYLE.set(LABEL_STYLE, LabelStyle.FORM);
+
 	static final StyleData HEADER_LABEL_STYLE =
 		addStyles(StyleData.DEFAULT, CSS.gfDataElementHeader());
 
@@ -94,7 +101,7 @@ public abstract class DataElementPanelManager
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementList rDataElementList;
-	private LayoutType		    eLayout;
+	private LayoutType	    eLayout;
 
 	private Map<String, DataElementUI<?>> aDataElementUIs;
 
@@ -171,7 +178,8 @@ public abstract class DataElementPanelManager
 	{
 		DataElementPanelManager aPanelManager = null;
 
-		LayoutType eLayout = rDataElementList.getProperty(LAYOUT, LayoutType.TABLE);
+		LayoutType eLayout =
+			rDataElementList.getProperty(LAYOUT, LayoutType.TABLE);
 
 		if (eLayout == LayoutType.TABLE)
 		{
@@ -583,7 +591,7 @@ public abstract class DataElementPanelManager
 	protected abstract ContainerBuilder<?> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		LayoutType				eLayout);
+		LayoutType			eLayout);
 
 	/***************************************
 	 * {@inheritDoc}
@@ -658,7 +666,24 @@ public abstract class DataElementPanelManager
 		DataElementUI<?> rDataElementUI,
 		StyleData		 rStyle)
 	{
-		rDataElementUI.buildUserInterface(this, rStyle);
+		ContainerBuilder<?> rUiBuilder = this;
+
+		if (rDataElementUI.getDataElement().hasFlag(SHOW_LABEL))
+		{
+			rUiBuilder = addPanel(StyleData.DEFAULT, LayoutType.FLOW);
+
+			String sLabel =
+				rDataElementUI.createElementLabelString(getContext());
+
+			if (sLabel.length() > 0)
+			{
+				rDataElementUI.createElementLabel(rUiBuilder,
+												  FORM_LABEL_STYLE,
+												  sLabel);
+			}
+		}
+
+		rDataElementUI.buildUserInterface(rUiBuilder, rStyle);
 		applyElementProperties(rDataElementUI);
 	}
 

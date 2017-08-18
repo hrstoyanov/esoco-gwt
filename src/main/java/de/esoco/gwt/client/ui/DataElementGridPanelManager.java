@@ -26,7 +26,6 @@ import de.esoco.gwt.client.ui.GridFormatter.DefaultGridFormatterFactory;
 import de.esoco.gwt.client.ui.GridFormatter.GridFormatterFactory;
 
 import de.esoco.lib.property.Alignment;
-import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.LayoutType;
 
 import java.util.HashMap;
@@ -40,7 +39,6 @@ import static de.esoco.lib.property.LayoutProperties.SAME_ROW;
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
 import static de.esoco.lib.property.StyleProperties.HIDE_LABEL;
-import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 
 
 /********************************************************************
@@ -53,9 +51,6 @@ import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
-
-	private static final StyleData FORM_LABEL_STYLE =
-		ELEMENT_LABEL_STYLE.set(LABEL_STYLE, LabelStyle.FORM);
 
 	private static final StyleData ROW_VALIGN_CENTER_STYLE =
 		StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES,
@@ -229,7 +224,7 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 	@Override
 	protected ContainerBuilder<?> createPanel(ContainerBuilder<?> rBuilder,
 											  StyleData			  rStyle,
-											  LayoutType			  eLayout)
+											  LayoutType		  eLayout)
 	{
 		Alignment eVAlign = rStyle.getProperty(VERTICAL_ALIGN, null);
 

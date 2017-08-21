@@ -508,7 +508,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 		RelationType<?> rAttr,
 		String			sConstraint) throws QueryConstraintException
 	{
-		Class<?>     rDatatype   = rAttr.getTargetType();
+		Class<?>     rDatatype   = rAttr.getValueType();
 		Predicate<?> pAttribute  = null;
 		char		 cComparison = sConstraint.charAt(0);
 
@@ -767,7 +767,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 		}
 		else
 		{
-			Class<?>		  rDatatype   = rAttr.getTargetType();
+			Class<?>		  rDatatype   = rAttr.getValueType();
 			Predicate<Object> pComparison;
 
 			if (sConstraint.indexOf('%') >= 0 || sConstraint.indexOf('_') >= 0)

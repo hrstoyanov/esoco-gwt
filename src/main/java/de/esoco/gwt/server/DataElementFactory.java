@@ -332,7 +332,7 @@ public class DataElementFactory
 		if (fGetAttr instanceof RelationType<?>)
 		{
 			rAttribute = (RelationType<?>) fGetAttr;
-			rDatatype  = rAttribute.getTargetType();
+			rDatatype  = rAttribute.getValueType();
 
 			if (Entity.class.isAssignableFrom(rDatatype))
 			{
@@ -359,7 +359,7 @@ public class DataElementFactory
 		else if (fGetAttr instanceof FunctionChain)
 		{
 			rAttribute = findDisplayAttribute(fGetAttr);
-			rDatatype  = rAttribute.getTargetType();
+			rDatatype  = rAttribute.getValueType();
 		}
 
 		if (rDatatype.isEnum())
@@ -581,7 +581,7 @@ public class DataElementFactory
 
 			if (rDisplayAttr != null)
 			{
-				Class<?> rDatatype = rDisplayAttr.getTargetType();
+				Class<?> rDatatype = rDisplayAttr.getValueType();
 
 				sId		  = rDisplayAttr.getName();
 				sDatatype = rDatatype.getSimpleName();
@@ -591,7 +591,7 @@ public class DataElementFactory
 					RelationType<?> rRefAttr =
 						(RelationType<?>) Functions.firstInChain(fGetAttr);
 
-					Class<?> rRefType = rRefAttr.getTargetType();
+					Class<?> rRefType = rRefAttr.getValueType();
 
 					if (Entity.class.isAssignableFrom(rRefType))
 					{
@@ -768,7 +768,7 @@ public class DataElementFactory
 								 RelationType<?> rType)
 		throws AuthenticationException, StorageException
 	{
-		Class<?> rTargetDatatype = rType.getTargetType();
+		Class<?> rTargetDatatype = rType.getValueType();
 
 		if (DataElement.class.isAssignableFrom(rTargetDatatype))
 		{
@@ -1608,7 +1608,7 @@ public class DataElementFactory
 	{
 		assert rType != null;
 
-		Class<?>	   rDatatype    = rType.getTargetType();
+		Class<?>	   rDatatype    = rType.getValueType();
 		String		   sName	    = rType.getName();
 		DataElement<?> aDataElement;
 

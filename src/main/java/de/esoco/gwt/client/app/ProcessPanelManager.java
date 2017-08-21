@@ -18,7 +18,7 @@ package de.esoco.gwt.client.app;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.process.ProcessDescription;
+import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.process.ProcessState;
 import de.esoco.data.process.ProcessState.ProcessExecutionMode;
 
@@ -384,7 +384,7 @@ public class ProcessPanelManager
 			}
 
 			rProcessState.setInteractionElement(rDataElement, eEventType);
-			executeProcess(ProcessExecutionMode.EXECUTE, rProcessState, true);
+			executeProcess(ProcessExecutionMode.EXECUTE, true);
 		}
 	}
 
@@ -504,9 +504,7 @@ public class ProcessPanelManager
 
 			if (bAutoContinue && !bPauseAutoContinue)
 			{
-				executeProcess(ProcessExecutionMode.EXECUTE,
-							   rProcessState,
-							   true);
+				executeProcess(ProcessExecutionMode.EXECUTE, true);
 			}
 
 			setUserInterfaceState();
@@ -552,7 +550,7 @@ public class ProcessPanelManager
 		rProcessState.setProperty(ProcessService.SHOW_UI_INSPECTOR,
 								  !bShowUiInspector);
 
-		executeProcess(ProcessExecutionMode.RELOAD, rProcessState, false);
+		executeProcess(ProcessExecutionMode.RELOAD, false);
 	}
 
 	/***************************************
@@ -584,7 +582,8 @@ public class ProcessPanelManager
 
 		if (rParams.size() == 1 &&
 			rFirstElement instanceof DataElementList &&
-			rFirstElement.getProperty(LAYOUT, LayoutType.TABLE) != LayoutType.TABLE)
+			rFirstElement.getProperty(LAYOUT, LayoutType.TABLE) !=
+			LayoutType.TABLE)
 		{
 			aPanelManager =
 				DataElementPanelManager.newInstance(this,
@@ -783,7 +782,7 @@ public class ProcessPanelManager
 		else
 		{
 			bCancelled = true;
-			executeProcess(ProcessExecutionMode.CANCEL, rProcessState, false);
+			executeProcess(ProcessExecutionMode.CANCEL, false);
 			processFinished(this, rProcessState);
 		}
 	}
@@ -792,24 +791,20 @@ public class ProcessPanelManager
 	 * Executes the process to receive the next process state.
 	 *
 	 * @param eMode         The execution mode
-	 * @param rDescription  The process description or state
 	 * @param bUpdateParams TRUE if the currently displayed parameters will only
 	 *                      be updated by the execution
 	 */
-	private void executeProcess(final ProcessExecutionMode eMode,
-								final ProcessDescription   rDescription,
-								boolean					   bUpdateParams)
+	private void executeProcess(
+		final ProcessExecutionMode eMode,
+		boolean					   bUpdateParams)
 	{
 		sPreviousStep = rProcessState.getCurrentStep();
 
-		if (rDescription instanceof ProcessState)
-		{
-			((ProcessState) rDescription).setExecutionMode(eMode);
-		}
-
-		setClientSize(rDescription);
+		trimDataElements(rProcessState.getInteractionParams());
+		rProcessState.setExecutionMode(eMode);
+		setClientSize(rProcessState);
 		executeCommand(GwtApplicationService.EXECUTE_PROCESS,
-					   rDescription,
+					   rProcessState,
 					   this);
 	}
 
@@ -831,7 +826,7 @@ public class ProcessPanelManager
 		{
 			// restart an automatically continuing process if it had been
 			// stopped in the meantime with bPauseAutoContinue
-			executeProcess(ProcessExecutionMode.EXECUTE, rProcessState, true);
+			executeProcess(ProcessExecutionMode.EXECUTE, true);
 		}
 
 		setUserInterfaceState();
@@ -893,7 +888,7 @@ public class ProcessPanelManager
 				aParamPanelManager.collectInput();
 			}
 
-			executeProcess(ProcessExecutionMode.EXECUTE, rProcessState, false);
+			executeProcess(ProcessExecutionMode.EXECUTE, false);
 		}
 	}
 
@@ -902,7 +897,7 @@ public class ProcessPanelManager
 	 */
 	private void handlePreviousProcessStepEvent()
 	{
-		executeProcess(ProcessExecutionMode.ROLLBACK, rProcessState, false);
+		executeProcess(ProcessExecutionMode.ROLLBACK, false);
 	}
 
 	/***************************************
@@ -910,7 +905,7 @@ public class ProcessPanelManager
 	 */
 	private void handleReload()
 	{
-		executeProcess(ProcessExecutionMode.RELOAD, rProcessState, true);
+		executeProcess(ProcessExecutionMode.RELOAD, true);
 	}
 
 	/***************************************
@@ -1045,6 +1040,31 @@ public class ProcessPanelManager
 			aNextButton.setEnabled(!bAutoContinue && !bCancelled &&
 								   !(bHasState &&
 									 rProcessState.hasImmedidateInteraction()));
+		}
+	}
+
+	/***************************************
+	 * Recursively trims the given data elements for reduced serialization size
+	 * by removing data that is not needed for the application of changes on the
+	 * server side.
+	 *
+	 * @param rElements The data elements to trim
+	 */
+	private void trimDataElements(List<DataElement<?>> rElements)
+	{
+		for (DataElement<?> rDataElement : rElements)
+		{
+			// selection validator is needed by DataElementFactory
+			if (!(rDataElement instanceof SelectionDataElement))
+			{
+				rDataElement.setValidator(null);
+			}
+
+			if (rDataElement instanceof DataElementList)
+			{
+				trimDataElements(((DataElementList) rDataElement)
+								 .getDataElements());
+			}
 		}
 	}
 }

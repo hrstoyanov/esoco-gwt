@@ -28,7 +28,6 @@ import de.esoco.gwt.client.ui.GridFormatter.GridFormatterFactory;
 import de.esoco.lib.property.Alignment;
 import de.esoco.lib.property.LayoutType;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,7 +36,6 @@ import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.SAME_ROW;
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
-import static de.esoco.lib.property.StyleProperties.CSS_STYLES;
 import static de.esoco.lib.property.StyleProperties.HIDE_LABEL;
 
 
@@ -142,13 +140,12 @@ public class DataElementGridPanelManager extends DataElementLayoutPanelManager
 			{
 				StyleData aColumnStyle = StyleData.DEFAULT;
 
-				if (rDataElement.getProperty(HORIZONTAL_ALIGN, null) ==
-					Alignment.END)
-				{
-					Map<String, String> aCss = new HashMap<>(1);
+				Alignment eHAlign =
+					rDataElement.getProperty(HORIZONTAL_ALIGN, null);
 
-					aCss.put("float", "right");
-					aColumnStyle = aColumnStyle.set(CSS_STYLES, aCss);
+				if (eHAlign != null)
+				{
+					aColumnStyle = aColumnStyle.set(HORIZONTAL_ALIGN, eHAlign);
 				}
 
 				aColumnStyle =

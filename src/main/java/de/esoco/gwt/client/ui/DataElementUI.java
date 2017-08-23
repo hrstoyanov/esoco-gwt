@@ -668,10 +668,9 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (sImage != null && aElementComponent instanceof ImageAttribute)
 			{
-				Image aImage =
-					aElementComponent.getContext().createImage(sImage);
-
-				((ImageAttribute) aElementComponent).setImage(aImage);
+				((ImageAttribute) aElementComponent).setImage(aElementComponent
+															  .getContext()
+															  .createImage(sImage));
 			}
 		}
 

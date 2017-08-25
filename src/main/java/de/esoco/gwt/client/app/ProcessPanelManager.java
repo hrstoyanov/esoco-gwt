@@ -18,7 +18,6 @@ package de.esoco.gwt.client.app;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.process.ProcessState;
 import de.esoco.data.process.ProcessState.ProcessExecutionMode;
 
@@ -800,7 +799,11 @@ public class ProcessPanelManager
 	{
 		sPreviousStep = rProcessState.getCurrentStep();
 
-		trimDataElements(rProcessState.getInteractionParams());
+		for (DataElement<?> rDataElement : rProcessState.getInteractionParams())
+		{
+			rDataElement.trim();
+		}
+
 		rProcessState.setExecutionMode(eMode);
 		setClientSize(rProcessState);
 		executeCommand(GwtApplicationService.EXECUTE_PROCESS,
@@ -1040,31 +1043,6 @@ public class ProcessPanelManager
 			aNextButton.setEnabled(!bAutoContinue && !bCancelled &&
 								   !(bHasState &&
 									 rProcessState.hasImmedidateInteraction()));
-		}
-	}
-
-	/***************************************
-	 * Recursively trims the given data elements for reduced serialization size
-	 * by removing data that is not needed for the application of changes on the
-	 * server side.
-	 *
-	 * @param rElements The data elements to trim
-	 */
-	private void trimDataElements(List<DataElement<?>> rElements)
-	{
-		for (DataElement<?> rDataElement : rElements)
-		{
-			// selection validator is needed by DataElementFactory
-			if (!(rDataElement instanceof SelectionDataElement))
-			{
-				rDataElement.setValidator(null);
-			}
-
-			if (rDataElement instanceof DataElementList)
-			{
-				trimDataElements(((DataElementList) rDataElement)
-								 .getDataElements());
-			}
 		}
 	}
 }

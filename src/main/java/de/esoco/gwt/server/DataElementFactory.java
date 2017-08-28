@@ -807,8 +807,6 @@ public class DataElementFactory
 			rTarget.set((RelationType<Object>) rType,
 						convertValue(rTargetDatatype, rElement.getValue()));
 		}
-
-		checkApplyProperties(rElement, rTarget, rType);
 	}
 
 	/***************************************
@@ -838,13 +836,15 @@ public class DataElementFactory
 												   rElement.getName());
 			}
 
-			if (!rElement.isImmutable())
+			if (rElement.isModified())
 			{
 				if (!rElement.isOptional() || rElement.isSelected())
 				{
 					applyDataElement(rElement, rTarget, rType);
 				}
 			}
+
+			checkApplyProperties(rElement, rTarget, rType);
 
 			if (rElement instanceof DataElementList)
 			{

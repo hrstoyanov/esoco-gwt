@@ -60,6 +60,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -78,6 +79,7 @@ import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
 import static de.esoco.process.ProcessRelationTypes.AUTO_UPDATE;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_HEIGHT;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_INFO;
+import static de.esoco.process.ProcessRelationTypes.CLIENT_LOCALE;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_WIDTH;
 import static de.esoco.process.ProcessRelationTypes.DETAIL_STEP;
 import static de.esoco.process.ProcessRelationTypes.EXTERNAL_SERVICE_ACCESS;
@@ -127,6 +129,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	private static List<ProcessDefinition> aProcessDefinitions =
 		new ArrayList<ProcessDefinition>();
 
+	private static Locale rDefaultLocale = Locale.GERMANY;
+
 	//~ Static methods ---------------------------------------------------------
 
 	/***************************************
@@ -142,6 +146,17 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		Class<? extends ProcessDefinition> rDefClass)
 	{
 		return createProcessDescriptions(rDefClass, null);
+	}
+
+	/***************************************
+	 * Sets the default locale to be used if the client locale cannot be
+	 * determined.
+	 *
+	 * @param rLocale The new default locale
+	 */
+	public static void setDefaultLocale(Locale rLocale)
+	{
+		rDefaultLocale = rLocale;
 	}
 
 	/***************************************
@@ -253,11 +268,26 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				checkOpenUiInspector(rProcessState, rProcess);
 			}
 
-			String sClientInfo = rDescription.getClientInfo();
+			String sClientInfo   = rDescription.getClientInfo();
+			String sClientLocale = rDescription.getClientLocale();
 
 			if (sClientInfo != null)
 			{
 				rProcess.set(CLIENT_INFO, sClientInfo);
+			}
+
+			if (sClientLocale != null)
+			{
+				try
+				{
+					rProcess.set(CLIENT_LOCALE,
+								 Locale.forLanguageTag(sClientLocale));
+				}
+				catch (Exception e)
+				{
+					Log.warn("Unknown client locale: " + sClientLocale, e);
+					rProcess.set(CLIENT_LOCALE, rDefaultLocale);
+				}
 			}
 
 			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());

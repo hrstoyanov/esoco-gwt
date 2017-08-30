@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
 
 
@@ -252,6 +253,8 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 			}
 
 			setClientSize(rProcessDescription);
+			rProcessDescription.setClientLocale(LocaleInfo.getCurrentLocale()
+												.getLocaleName());
 
 			executeCommand(GwtApplicationService.EXECUTE_PROCESS,
 						   rProcessDescription,
@@ -284,8 +287,9 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 	/***************************************
 	 * Can be overridden by subclasses to return the container in which the
 	 * result of a process execution will be displayed. This will be used by the
-	 * method {@link #setClientSize(ProcessDescription)}. If not overridden the
-	 * container of this instance will be returned.
+	 * method {@link #setClientSize(ProcessDescription)} to calculate the
+	 * correct size of the client area. If not overridden the container of this
+	 * panel will be returned.
 	 *
 	 * @return The process container
 	 */

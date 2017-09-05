@@ -799,10 +799,10 @@ public class ProcessPanelManager
 	{
 		sPreviousStep = rProcessState.getCurrentStep();
 
-		for (DataElement<?> rDataElement : rProcessState.getInteractionParams())
-		{
-			rDataElement.trim();
-		}
+//		for (DataElement<?> rDataElement : rProcessState.getInteractionParams())
+//		{
+//			rDataElement.trim();
+//		}
 
 		rProcessState.setExecutionMode(eMode);
 		setClientSize(rProcessState);

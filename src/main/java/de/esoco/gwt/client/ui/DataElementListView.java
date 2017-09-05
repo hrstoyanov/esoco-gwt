@@ -22,12 +22,14 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.View;
+import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.Alignment;
+import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.StandardProperties;
 import de.esoco.lib.property.ViewDisplayType;
 
@@ -241,6 +243,11 @@ public class DataElementListView
 
 		sViewTitle =
 			rDataElementList.getProperty(StandardProperties.TITLE, sViewTitle);
+
+		aPanelView.addEventListener(EventType.VIEW_CLOSING,
+									e -> aViewUI.getPanelManager()
+									.handleInteractiveInput(rDataElementList,
+															InteractionEventType.UPDATE));
 
 		aViewBuilder = new ContainerBuilder<View>(aPanelView);
 

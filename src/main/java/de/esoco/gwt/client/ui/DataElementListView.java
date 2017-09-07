@@ -1,12 +1,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
-// Licensed under the Apache License, Version 3.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//	  http://www.apache.org/licenses/LICENSE-3.0
+//	  http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,12 +22,14 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.View;
+import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.res.EsocoGwtResources;
 
 import de.esoco.lib.property.Alignment;
+import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.StandardProperties;
 import de.esoco.lib.property.ViewDisplayType;
 
@@ -38,6 +40,7 @@ import java.util.Set;
 
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.VIEW_DISPLAY_TYPE;
+import static de.esoco.lib.property.StyleProperties.AUTO_HIDE;
 
 
 /********************************************************************
@@ -211,6 +214,11 @@ public class DataElementListView
 			}
 		}
 
+		if (rDataElementList.hasFlag(AUTO_HIDE))
+		{
+			aViewFlags.add(ViewStyle.Flag.AUTO_HIDE);
+		}
+
 		if (!aViewFlags.isEmpty())
 		{
 			rViewStyle = rViewStyle.withFlags(aViewFlags);
@@ -235,6 +243,11 @@ public class DataElementListView
 
 		sViewTitle =
 			rDataElementList.getProperty(StandardProperties.TITLE, sViewTitle);
+
+		aPanelView.addEventListener(EventType.VIEW_CLOSING,
+									e -> aViewUI.getPanelManager()
+									.handleInteractiveInput(rDataElementList,
+															InteractionEventType.UPDATE));
 
 		aViewBuilder = new ContainerBuilder<View>(aPanelView);
 

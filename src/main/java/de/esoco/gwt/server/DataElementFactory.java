@@ -539,9 +539,12 @@ public class DataElementFactory
 												   rElement.getName());
 			}
 
-			if (!rElement.isOptional() || rElement.isSelected())
+			if (rElement.isModified())
 			{
-				applyDataElement(rElement, rTarget, rType);
+				if (!rElement.isOptional() || rElement.isSelected())
+				{
+					applyDataElement(rElement, rTarget, rType);
+				}
 			}
 
 			checkApplyProperties(rElement, rTarget, rType);

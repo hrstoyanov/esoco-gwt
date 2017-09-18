@@ -836,8 +836,8 @@ public class DataElementFactory
 												   rElement.getName());
 			}
 
-//			if (rElement.isModified())
-			if (!rElement.isImmutable())
+//			if (!rElement.isImmutable())
+			if (rElement.isModified())
 			{
 				if (!rElement.isOptional() || rElement.isSelected())
 				{

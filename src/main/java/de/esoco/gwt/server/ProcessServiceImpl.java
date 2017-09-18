@@ -1055,11 +1055,13 @@ public abstract class ProcessServiceImpl<E extends Entity>
 					 (DataElementList) rProcessInput)
 				{
 					rInputValues.add(rInputValue);
+					rInputValue.setModified(true);
 				}
 			}
 			else
 			{
 				rInputValues.add(rProcessInput);
+				rProcessInput.setModified(true);
 			}
 
 			getDataElementFactory().applyDataElements(rInputValues, rProcess);

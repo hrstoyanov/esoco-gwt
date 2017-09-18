@@ -451,6 +451,8 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	public void collectInput()
 	{
+		rDataElement.trim();
+
 		if (!rDataElement.isImmutable())
 		{
 			if (rOptionalCheckBox != null)

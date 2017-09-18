@@ -799,11 +799,6 @@ public class ProcessPanelManager
 	{
 		sPreviousStep = rProcessState.getCurrentStep();
 
-//		for (DataElement<?> rDataElement : rProcessState.getInteractionParams())
-//		{
-//			rDataElement.trim();
-//		}
-
 		rProcessState.setExecutionMode(eMode);
 		setClientSize(rProcessState);
 		executeCommand(GwtApplicationService.EXECUTE_PROCESS,

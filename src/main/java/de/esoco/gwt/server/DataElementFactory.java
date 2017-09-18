@@ -1,6 +1,18 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// esoco-gwt Source File
-// Copyright (c) 2017 by Thomas Kuechenthal / LEMARIT GmbH
+// This file is a part of the 'esoco-gwt' project.
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//	  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.server;
 
@@ -27,6 +39,7 @@ import de.esoco.data.validate.QueryValidator;
 import de.esoco.data.validate.SelectionValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
+
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityDefinition;
 import de.esoco.entity.EntityDefinition.DisplayMode;
@@ -34,8 +47,10 @@ import de.esoco.entity.EntityFunctions;
 import de.esoco.entity.EntityFunctions.GetExtraAttribute;
 import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes.HierarchicalQueryMode;
+
 import de.esoco.gwt.client.data.QueryDataModel;
 import de.esoco.gwt.shared.AuthenticationException;
+
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.datatype.Period;
 import de.esoco.lib.datatype.Period.Unit;
@@ -62,8 +77,11 @@ import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
+
 import de.esoco.process.Process;
+import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
+
 import de.esoco.storage.QueryList;
 import de.esoco.storage.QueryPredicate;
 import de.esoco.storage.StorageException;
@@ -91,6 +109,7 @@ import org.obrel.type.MetaTypes;
 import static de.esoco.data.DataRelationTypes.CHILD_STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_IDS;
+
 import static de.esoco.entity.EntityPredicates.forEntity;
 import static de.esoco.entity.EntityPredicates.ifAttribute;
 import static de.esoco.entity.EntityRelationTypes.DISPLAY_ENTITY_IDS;
@@ -101,6 +120,7 @@ import static de.esoco.entity.EntityRelationTypes.ENTITY_QUERY_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.ENTITY_SORT_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHICAL_QUERY_MODE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHY_CHILD_PREDICATE;
+
 import static de.esoco.lib.expression.Functions.asString;
 import static de.esoco.lib.expression.Predicates.equalTo;
 import static de.esoco.lib.expression.StringFunctions.capitalizedIdentifier;
@@ -114,6 +134,7 @@ import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
+
 import static de.esoco.process.ProcessRelationTypes.ALLOWED_VALUES;
 import static de.esoco.process.ProcessRelationTypes.DATA_ELEMENT;
 import static de.esoco.process.ProcessRelationTypes.INPUT_PARAMS;
@@ -166,7 +187,7 @@ public class DataElementFactory
 		this.rStorageAdapterRegistry = rStorageAdapterRegistry;
 	}
 
-	//~ Methods ----------------------------------------------------------------
+	//~ Static methods ---------------------------------------------------------
 
 	/***************************************
 	 * Creates an identifying name from an attribute function. If the given
@@ -180,8 +201,8 @@ public class DataElementFactory
 	 * @return The resulting column identifier
 	 */
 	public static String createAttributeName(
-			Function<?, ?> rFunction,
-			String		   sPrefix)
+		Function<?, ?> rFunction,
+		String		   sPrefix)
 	{
 		String sName = "";
 
@@ -231,13 +252,13 @@ public class DataElementFactory
 	 * @return A new data element for the selection of an entity
 	 */
 	public static SelectionDataElement createSelectionDataElement(
-			String									sName,
-			String									sCurrentValue,
-			String									sPrefix,
-			EntityDefinition<?>						rEntityDefinition,
-			List<HierarchicalDataObject>			aDataObjects,
-			Collection<Function<? super Entity, ?>> rAttributes,
-			boolean									bDisplayEntityIds)
+		String									sName,
+		String									sCurrentValue,
+		String									sPrefix,
+		EntityDefinition<?>						rEntityDefinition,
+		List<HierarchicalDataObject>			aDataObjects,
+		Collection<Function<? super Entity, ?>> rAttributes,
+		boolean									bDisplayEntityIds)
 	{
 		rAttributes =
 			processAttributeFunctions(rEntityDefinition,
@@ -268,10 +289,10 @@ public class DataElementFactory
 	 * @return The new data element
 	 */
 	public static StringDataElement createStringDataElement(
-			String		  sName,
-			Object		  rValue,
-			Collection<?> rAllowedValues,
-			Set<Flag>	  rFlags)
+		String		  sName,
+		Object		  rValue,
+		Collection<?> rAllowedValues,
+		Set<Flag>	  rFlags)
 	{
 		String sValue = rValue != null ? rValue.toString() : null;
 
@@ -301,9 +322,9 @@ public class DataElementFactory
 	 */
 	@SuppressWarnings("unchecked")
 	public static Function<? super Entity, ?> processAttributeFunction(
-			EntityDefinition<?>			rEntityDefinition,
-			Function<? super Entity, ?> fGetAttr,
-			boolean						bDisplayEntityIds)
+		EntityDefinition<?>			rEntityDefinition,
+		Function<? super Entity, ?> fGetAttr,
+		boolean						bDisplayEntityIds)
 	{
 		Class<?>	    rDatatype  = String.class;
 		RelationType<?> rAttribute = null;
@@ -369,8 +390,8 @@ public class DataElementFactory
 		{
 			// convert dates into their long values
 			fGetAttr =
-				GET_DATE_LONG_VALUE.from((Function<? super Entity, ? extends Date>)
-										 fGetAttr);
+				GET_DATE_LONG_VALUE.from((Function<? super Entity,
+												   ? extends Date>) fGetAttr);
 		}
 		else if (rDatatype == Boolean.class)
 		{
@@ -401,9 +422,9 @@ public class DataElementFactory
 	 *         perform the necessary transformations
 	 */
 	public static List<Function<? super Entity, ?>> processAttributeFunctions(
-			EntityDefinition<?>						rEntityDefinition,
-			Collection<Function<? super Entity, ?>> rAttributes,
-			boolean									bDisplayEntityIds)
+		EntityDefinition<?>						rEntityDefinition,
+		Collection<Function<? super Entity, ?>> rAttributes,
+		boolean									bDisplayEntityIds)
 	{
 		int nCount = rAttributes.size();
 
@@ -427,8 +448,8 @@ public class DataElementFactory
 	 * @param rProperties The display properties to modify
 	 */
 	public static void setEnumColumnProperties(
-			Class<? extends Enum<?>> rDatatype,
-			MutableProperties		 rProperties)
+		Class<? extends Enum<?>> rDatatype,
+		MutableProperties		 rProperties)
 	{
 		String sAllowedValues = null;
 
@@ -454,513 +475,6 @@ public class DataElementFactory
 	}
 
 	/***************************************
-	 * Applies a single data element to a relatable object by mapping the
-	 * element back to the corresponding relation from which it had been
-	 * created.
-	 *
-	 * @param  rElement The data element to apply
-	 * @param  rTarget  The relatable object to apply the data element to
-	 * @param  rType    The type of the relation to apply
-	 *
-	 * @throws AuthenticationException If the current user is not authenticated
-	 * @throws StorageException        If accessing storage data fails
-	 */
-	@SuppressWarnings("unchecked")
-	public void applyDataElement(DataElement<?>  rElement,
-								 Relatable		 rTarget,
-								 RelationType<?> rType)
-		throws AuthenticationException, StorageException
-	{
-		Class<?> rTargetDatatype = rType.getValueType();
-
-		if (DataElement.class.isAssignableFrom(rTargetDatatype))
-		{
-			// if the relation directly stores a data element no mapping is
-			// necessary
-			RelationType<DataElement<?>> rDataElementType =
-				(RelationType<DataElement<?>>) rType;
-
-			rTarget.set(rDataElementType, rElement);
-		}
-		else if (rElement instanceof EntityDataElement)
-		{
-			// apply attribute data elements recursively to target entity
-			EntityDataElement rEntityDataElement = (EntityDataElement) rElement;
-
-			applyEntityDataElement(rEntityDataElement, rTarget, rType);
-		}
-		else if (rElement instanceof SelectionDataElement)
-		{
-			applyEntitySelection((SelectionDataElement) rElement,
-								 rTarget,
-								 rType);
-		}
-		else if (rElement instanceof StringListDataElement &&
-				 Collection.class.isAssignableFrom(rTargetDatatype))
-		{
-			Collection<?> rTargetCollection =
-				(Collection<?>) rTarget.get(rType);
-
-			applyStringList(((StringListDataElement) rElement).getList(),
-							rType.get(ELEMENT_DATATYPE),
-							rTargetCollection);
-		}
-		else if (!(rElement instanceof DataElementList))
-		{
-			rTarget.set((RelationType<Object>) rType,
-						convertValue(rTargetDatatype, rElement.getValue()));
-		}
-	}
-
-	/***************************************
-	 * Applies a set of data elements to a relatable object by mapping the
-	 * element back to the corresponding relation from which it had been
-	 * created. Immutable elements will be ignored.
-	 *
-	 * @param  rSourceElements The list of data elements to apply
-	 * @param  rTarget         The relatable object to apply the data elements
-	 *                         to
-	 *
-	 * @throws AuthenticationException If the current user is not authenticated
-	 * @throws StorageException        If accessing storage data fails
-	 */
-	public void applyDataElements(
-			List<? extends DataElement<?>> rSourceElements,
-			Relatable					   rTarget)
-		throws AuthenticationException, StorageException
-	{
-		for (DataElement<?> rElement : rSourceElements)
-		{
-			RelationType<?> rType = RelationType.valueOf(rElement.getName());
-
-			if (rType == null)
-			{
-				throw new IllegalArgumentException("No relation type with name " +
-												   rElement.getName());
-			}
-
-			if (rElement.isModified())
-			{
-				if (!rElement.isOptional() || rElement.isSelected())
-				{
-					applyDataElement(rElement, rTarget, rType);
-				}
-			}
-
-			checkApplyProperties(rElement, rTarget, rType);
-
-			if (rElement instanceof DataElementList)
-			{
-				Process rSubProcess =
-					rTarget.getRelation(rType).getAnnotation(PROCESS);
-
-				applyDataElements(((DataElementList) rElement).getElements(),
-								  rSubProcess != null ? rSubProcess : rTarget);
-			}
-		}
-	}
-
-	/***************************************
-	 * Creates a list data element that contains data elements that are created
-	 * from a collection of values. The collection can either contain relation
-	 * types that will be converted to data elements recursively or other values
-	 * which will be converted to strings. If the value collection argument is
-	 * NULL the returned list data element will be empty.
-	 *
-	 * @param  rObject The target object of the collection relation
-	 * @param  rType   The collection relation type
-	 * @param  rValues A collection containing the values to be converted into
-	 *                 data elements (may be NULL)
-	 * @param  rFlags  The optional data element flags
-	 *
-	 * @return The new list data element
-	 *
-	 * @throws StorageException If creating data elements recursively fails
-	 */
-	public DataElementList createDataElementList(Relatable		 rObject,
-												 RelationType<?> rType,
-												 Collection<?>   rValues,
-												 Set<Flag>		 rFlags)
-		throws StorageException
-	{
-		Class<?> rElementDatatype = rType.get(ELEMENT_DATATYPE);
-
-		boolean bRecursive =
-			(rElementDatatype != null &&
-			 RelationType.class.isAssignableFrom(rElementDatatype));
-
-		List<DataElement<?>> aDataElements = null;
-
-		if (rValues != null)
-		{
-			aDataElements = new ArrayList<DataElement<?>>(rValues.size());
-
-			for (Object rValue : rValues)
-			{
-				DataElement<?> aDataElement;
-
-				if (bRecursive)
-				{
-					aDataElement =
-						getDataElement(rObject, (RelationType<?>) rValue);
-				}
-				else
-				{
-					aDataElement =
-						new StringDataElement(rValue.getClass().getSimpleName(),
-											  rValue.toString());
-				}
-
-				if (aDataElement != null)
-				{
-					aDataElements.add(aDataElement);
-				}
-			}
-		}
-
-		return new DataElementList(rType.getName(),
-								   null,
-								   aDataElements,
-								   rFlags);
-	}
-
-	/***************************************
-	 * Creates a data object for a certain entity in a storage query.
-	 *
-	 * @param  rEntity        The entity to create the data element from
-	 * @param  pChildCriteria A predicate that constrains the child entities to
-	 *                        be included in a hierarchical object or NULL for
-	 *                        none
-	 * @param  pSortCriteria  The sort criteria for child queries (NULL for
-	 *                        none)
-	 * @param  fGetColumnData The function to extract the entity's column data
-	 *                        into a list of strings
-	 * @param  rFlags         The flags for the entity object
-	 * @param  bHierarchical  TRUE, to include children of the same type as the
-	 *                        entity
-	 *
-	 * @return The resulting data element
-	 *
-	 * @throws StorageException If creating the data object fails
-	 */
-	public HierarchicalDataObject createEntityDataObject(
-			Entity						   rEntity,
-			Predicate<? super Entity>	   pChildCriteria,
-			Predicate<? super Entity>	   pSortCriteria,
-			Function<Entity, List<String>> fGetColumnData,
-			Collection<String>			   rFlags,
-			boolean						   bHierarchical)
-		throws StorageException
-	{
-		List<String> aValues = fGetColumnData.evaluate(rEntity);
-
-		DataModel<DataModel<String>> aChildren = null;
-
-		if (bHierarchical &&
-			rEntity.getDefinition().getHierarchyChildAttribute() != null)
-		{
-			aChildren =
-				createChildDataModels(rEntity,
-									  pChildCriteria,
-									  pSortCriteria,
-									  fGetColumnData);
-		}
-
-		return new HierarchicalDataObject(Integer.toString(rEntity.getId()),
-										  aValues,
-										  true,
-										  rFlags,
-										  aChildren);
-	}
-
-	/***************************************
-	 * Creates a new {@link SelectionDataElement} for the selection of a entity
-	 * data element from a list of entities.
-	 *
-	 * @param  sName            The name of the element
-	 * @param  rMetaData        A relatable object containing the meta data for
-	 *                          the element to create
-	 * @param  rCurrentEntityId sCurrentValue The current selection or NULL for
-	 *                          none
-	 * @param  rEntities        The entities to select from
-	 * @param  rAttributes      The entity attributes to display
-	 *
-	 * @return A new data element for the selection of an entity
-	 *
-	 * @throws StorageException If initializing the query fails
-	 */
-	public SelectionDataElement createEntitySelectionElement(
-			String							  sName,
-			Relatable						  rMetaData,
-			Integer							  rCurrentEntityId,
-			List<Entity>					  rEntities,
-			List<Function<? super Entity, ?>> rAttributes)
-		throws StorageException
-	{
-		EntityDefinition<?> rDef    = rEntities.get(0).getDefinition();
-		String			    sPrefix = rDef.getEntityName();
-
-		List<HierarchicalDataObject> aEntityObjects =
-			createEntityDataObjects(rEntities,
-									rAttributes,
-									rMetaData.hasFlag(MetaTypes.HIERARCHICAL));
-
-		String sCurrentValue =
-			rCurrentEntityId != null ? rCurrentEntityId.toString() : "-1";
-
-		SelectionDataElement aResult =
-			createSelectionDataElement(sName,
-									   sCurrentValue,
-									   sPrefix,
-									   rDef,
-									   aEntityObjects,
-									   rAttributes,
-									   rMetaData.hasFlag(DISPLAY_ENTITY_IDS));
-
-		return aResult;
-	}
-
-	/***************************************
-	 * Creates a new {@link SelectionDataElement} for the selection of a entity
-	 * data element from a list of entities that is defined by a storage.
-	 *
-	 * @param  sName                The name of the element
-	 * @param  rMetaData            A relatable object containing the meta data
-	 *                              for the element to create
-	 * @param  rCurrentEntityId     rCurrentValue The current selection or NULL
-	 *                              for none
-	 * @param  nCurrentSelection    The index of the current selection or -1
-	 * @param  pQuery               The query for the entities to select from
-	 * @param  pDefaultCriteria     An optional predicate containing default
-	 *                              criteria to be used if no specific query
-	 *                              constraints are provided
-	 * @param  pDefaultSortCriteria An optional predicate containing default
-	 *                              sort criteria to be used if no specific sort
-	 *                              fields are provided
-	 * @param  rAttributes          The entity attributes to query and display
-	 *
-	 * @return A new data element for the selection of an entity
-	 *
-	 * @throws StorageException If registering the query storage adapter fails
-	 */
-	public <E extends Entity> SelectionDataElement createEntitySelectionElement(
-			String							  sName,
-			Relatable						  rMetaData,
-			Integer							  rCurrentEntityId,
-			int								  nCurrentSelection,
-			QueryPredicate<E>				  pQuery,
-			Predicate<? super E>			  pDefaultCriteria,
-			Predicate<? super E>			  pDefaultSortCriteria,
-			List<Function<? super Entity, ?>> rAttributes)
-		throws StorageException
-	{
-		Class<E> rQueryType		   = pQuery.getQueryType();
-		boolean  bDisplayEntityIds = rMetaData.hasFlag(DISPLAY_ENTITY_IDS);
-
-		EntityDefinition<?> rDef =
-			EntityManager.getEntityDefinition(rQueryType);
-
-		String sPrefix = rDef.getEntityName();
-
-		rAttributes =
-			processAttributeFunctions(rDef, rAttributes, bDisplayEntityIds);
-
-		List<ColumnDefinition> aColumns =
-			createColumnDefinitions(rDef, rAttributes, sPrefix);
-
-		Function<Entity, List<String>> fGetAttributes =
-			CollectionFunctions.createStringList(false, rAttributes);
-
-		StorageAdapterId rStorageAdapterId =
-			getStorageAdapter(rMetaData,
-							  STORAGE_ADAPTER_ID,
-							  pQuery,
-							  fGetAttributes,
-							  pDefaultCriteria,
-							  pDefaultSortCriteria,
-							  aColumns);
-
-		Validator<String> rValidator =
-			new QueryValidator(rStorageAdapterId.toString(), aColumns);
-
-		String sCurrentValue =
-			rCurrentEntityId != null ? rCurrentEntityId.toString() : "-1";
-
-		SelectionDataElement aResult =
-			new SelectionDataElement(sName, sCurrentValue, rValidator, null);
-
-		boolean bHierarchical =
-			pQuery.get(HIERARCHICAL_QUERY_MODE) != HierarchicalQueryMode.NEVER;
-
-		aResult.setProperty(HIERARCHICAL, bHierarchical);
-
-		if (nCurrentSelection == -1 && rCurrentEntityId != null)
-		{
-			nCurrentSelection =
-				((DatabaseStorageAdapter) rStorageAdapterRegistry
-				 .getStorageAdapter(rStorageAdapterId)).positionOf(rCurrentEntityId);
-		}
-
-		if (nCurrentSelection >= 0)
-		{
-			aResult.setProperty(CURRENT_SELECTION, nCurrentSelection);
-		}
-
-		return aResult;
-	}
-
-	/***************************************
-	 * Returns a data element for a certain relation of a relatable object. If
-	 * the given object is an instance of {@link ProcessStep} this method
-	 * invokes {@link ProcessStep#getParameterRelation(RelationType)} to query
-	 * the relation to also take into account parameters that are stored in the
-	 * step's process.
-	 *
-	 * @param  rObject The related object to query the relation from
-	 * @param  rType   The type of the relation to convert into a data element
-	 *
-	 * @return The data element or NULL if it could not be mapped
-	 *
-	 * @throws StorageException If the initialization of a storage-based data
-	 *                          element fails
-	 */
-	public DataElement<?> getDataElement(
-			Relatable		rObject,
-			RelationType<?> rType) throws StorageException
-	{
-		Relation<?> rRelation;
-		Object	    rValue;
-		boolean     bModified = false;
-
-		if (rObject instanceof ProcessStep)
-		{
-			// handle process step differently because getParameter reads values
-			// from both the process and the step
-			ProcessStep rProcessStep = (ProcessStep) rObject;
-
-			rRelation = rProcessStep.getParameterRelation(rType);
-			rValue    = rProcessStep.getParameter(rType);
-			bModified = rProcessStep.isParameterModified(rType);
-		}
-		else
-		{
-			rRelation = rObject.getRelation(rType);
-			rValue    = rObject.get(rType);
-		}
-
-		DataElement<?> aDataElement = null;
-		HasProperties  rProperties  = null;
-
-		if (rRelation != null)
-		{
-			aDataElement = rRelation.get(DATA_ELEMENT);
-			rProperties  = rRelation.get(DISPLAY_PROPERTIES);
-		}
-
-		if (aDataElement instanceof SelectionDataElement && !bModified)
-		{
-			// keep existing selection elements to prevent that storage adapters
-			// become invalid because the previous data element is garbage
-			// collected and the UI doesn't update to the new element because of
-			// the unchanged flag. Set all properties to keep value-independent
-			// flags like DISABLED
-			if (rProperties != null)
-			{
-				aDataElement.setProperties(rProperties, true);
-			}
-		}
-		else
-		{
-			if (rRelation != null)
-			{
-				Process rProcess = rRelation.get(PROCESS);
-
-				if (rProcess != null)
-				{
-					rObject = rProcess.getInteractionStep();
-				}
-			}
-
-			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
-		}
-
-		if (aDataElement != null)
-		{
-			if (bModified)
-			{
-				aDataElement.setFlag(VALUE_CHANGED);
-			}
-			else
-			{
-				aDataElement.removeProperty(VALUE_CHANGED);
-			}
-		}
-
-		return aDataElement;
-	}
-
-	/***************************************
-	 * Creates the data elements for certain relations of a relatable object.
-	 * For each relation a single data element will be created by invoking the
-	 * method {@link #getDataElement(Relatable, RelationType)}. If that method
-	 * returns NULL no data element will be added to the result for the
-	 * respective relation.
-	 *
-	 * @param  rObject The related object to query the relations from
-	 * @param  rTypes  The relation types to create data elements for
-	 * @param  rFlags  The optional flags for each data element
-	 *
-	 * @return A new list containing the resulting data elements
-	 *
-	 * @throws StorageException If the initialization of a storage-based data
-	 *                          element fails
-	 */
-	public List<DataElement<?>> getDataElements(
-			Relatable							  rObject,
-			Collection<? extends RelationType<?>> rTypes,
-			Set<Flag>							  rFlags)
-		throws StorageException
-	{
-		List<DataElement<?>> aResult =
-			new ArrayList<DataElement<?>>(rTypes.size());
-
-		for (RelationType<?> rType : rTypes)
-		{
-			DataElement<?> aElement = getDataElement(rObject, rType);
-
-			if (aElement != null)
-			{
-				aResult.add(aElement);
-			}
-		}
-
-		return aResult;
-	}
-
-	/***************************************
-	 * Applies a list of string values by converting the values according to the
-	 * given datatype and storing them in a collection.
-	 *
-	 * @param rValues           The values to apply
-	 * @param rDatatype         The target datatype
-	 * @param rTargetCollection The collection to store the converted values in
-	 */
-	protected void applyStringList(List<String>  rValues,
-								   Class<?>		 rDatatype,
-								   Collection<?> rTargetCollection)
-	{
-		@SuppressWarnings("unchecked")
-		Collection<Object> rCollection = (Collection<Object>) rTargetCollection;
-
-		rTargetCollection.clear();
-
-		for (String sValue : rValues)
-		{
-			rCollection.add(convertValue(rDatatype, sValue));
-		}
-	}
-
-	/***************************************
 	 * Creates a new string list validator instance. The given list of values
 	 * will be converted by invoking their {@link Object#toString() toString()}
 	 * method.
@@ -973,8 +487,8 @@ public class DataElementFactory
 	 * @return The new validator instance
 	 */
 	static StringListValidator createStringListValidator(
-			Collection<?> rValues,
-			boolean		  bResourceIds)
+		Collection<?> rValues,
+		boolean		  bResourceIds)
 	{
 		StringListValidator rValidator;
 		List<String>	    aValues = new ArrayList<String>(rValues.size());
@@ -1002,8 +516,8 @@ public class DataElementFactory
 	 * @return The validator for the given enum class
 	 */
 	static StringListValidator getEnumValidator(
-			Class<? extends Enum<?>> rEnumClass,
-			Collection<?>			 rAllowedValues)
+		Class<? extends Enum<?>> rEnumClass,
+		Collection<?>			 rAllowedValues)
 	{
 		StringListValidator rValidator;
 
@@ -1031,63 +545,6 @@ public class DataElementFactory
 	}
 
 	/***************************************
-	 * Creates a new data element for an enum value. The returned element will
-	 * be constrained to the list of possible values for the given enum value.
-	 * If the current value is a single enum value the returned data element
-	 * will be a {@link StringDataElement}. If the value is a collection, the
-	 * returned value will be a {@link StringListDataElement} that allows the
-	 * selection of multiple values.
-	 *
-	 * @param  sName          The name of the data element
-	 * @param  rEnumType      The enum type
-	 * @param  rCurrentValue  The enum value of the element
-	 * @param  rAllowedValues The allow values or NULL for all enum values
-	 * @param  rFlags         The optional data element flags
-	 *
-	 * @return A new string data element for the given enum
-	 *
-	 * @throws IllegalArgumentException If the enum value is NULL
-	 */
-	DataElement<?> createEnumDataElement(
-			String					 sName,
-			Class<? extends Enum<?>> rEnumType,
-			Object					 rCurrentValue,
-			Collection<?>			 rAllowedValues,
-			Set<Flag>				 rFlags)
-	{
-		DataElement<?> aResult = null;
-
-		StringListValidator rValidator =
-			getEnumValidator(rEnumType, rAllowedValues);
-
-		if (rCurrentValue instanceof Collection)
-		{
-			Collection<?> aValues	    = (Collection<?>) rCurrentValue;
-			List<String>  aStringValues = new ArrayList<String>(aValues.size());
-
-			for (Object rValue : aValues)
-			{
-				aStringValues.add(rValue.toString());
-			}
-
-			aResult =
-				new StringListDataElement(sName,
-										  aStringValues,
-										  rValidator,
-										  rFlags);
-		}
-		else
-		{
-			String sValue =
-				rCurrentValue != null ? rCurrentValue.toString() : null;
-
-			aResult = new StringDataElement(sName, sValue, rValidator, rFlags);
-		}
-
-		return aResult;
-	}
-
-	/***************************************
 	 * Processes a list of entity attribute access functions and to create a
 	 * list of column definitions from it.
 	 *
@@ -1099,9 +556,9 @@ public class DataElementFactory
 	 */
 	@SuppressWarnings("unchecked")
 	private static List<ColumnDefinition> createColumnDefinitions(
-			EntityDefinition<?>						rEntityDefinition,
-			Collection<Function<? super Entity, ?>> rAttributes,
-			String									sPrefix)
+		EntityDefinition<?>						rEntityDefinition,
+		Collection<Function<? super Entity, ?>> rAttributes,
+		String									sPrefix)
 	{
 		List<ColumnDefinition> aColumns =
 			new ArrayList<ColumnDefinition>(rAttributes.size());
@@ -1214,7 +671,7 @@ public class DataElementFactory
 	 * @return The innermost attribute relation type or NULL for none
 	 */
 	private static RelationType<?> findDisplayAttribute(
-			Function<?, ?> rAccessFunction)
+		Function<?, ?> rAccessFunction)
 	{
 		RelationType<?> rResult = null;
 
@@ -1289,6 +746,568 @@ public class DataElementFactory
 									   RelationType<?> rType)
 	{
 		return rObject.get(INPUT_PARAMS).contains(rType);
+	}
+
+	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * Applies a single data element to a relatable object by mapping the
+	 * element back to the corresponding relation from which it had been
+	 * created.
+	 *
+	 * @param  rElement The data element to apply
+	 * @param  rTarget  The relatable object to apply the data element to
+	 * @param  rType    The type of the relation to apply
+	 *
+	 * @throws AuthenticationException If the current user is not authenticated
+	 * @throws StorageException        If accessing storage data fails
+	 */
+	@SuppressWarnings("unchecked")
+	public void applyDataElement(DataElement<?>  rElement,
+								 Relatable		 rTarget,
+								 RelationType<?> rType)
+		throws AuthenticationException, StorageException
+	{
+		Class<?> rTargetDatatype = rType.getValueType();
+
+		if (DataElement.class.isAssignableFrom(rTargetDatatype))
+		{
+			// if the relation directly stores a data element no mapping is
+			// necessary
+			RelationType<DataElement<?>> rDataElementType =
+				(RelationType<DataElement<?>>) rType;
+
+			rTarget.set(rDataElementType, rElement);
+		}
+		else if (rElement instanceof EntityDataElement)
+		{
+			// apply attribute data elements recursively to target entity
+			EntityDataElement rEntityDataElement = (EntityDataElement) rElement;
+
+			applyEntityDataElement(rEntityDataElement, rTarget, rType);
+		}
+		else if (rElement instanceof SelectionDataElement)
+		{
+			applyEntitySelection((SelectionDataElement) rElement,
+								 rTarget,
+								 rType);
+		}
+		else if (rElement instanceof StringListDataElement &&
+				 Collection.class.isAssignableFrom(rTargetDatatype))
+		{
+			Collection<?> rTargetCollection =
+				(Collection<?>) rTarget.get(rType);
+
+			applyStringList(((StringListDataElement) rElement).getList(),
+							rType.get(ELEMENT_DATATYPE),
+							rTargetCollection);
+		}
+		else if (!(rElement instanceof DataElementList))
+		{
+			rTarget.set((RelationType<Object>) rType,
+						convertValue(rTargetDatatype, rElement.getValue()));
+		}
+	}
+
+	/***************************************
+	 * Applies a set of data elements to a relatable object by mapping the
+	 * element back to the corresponding relation from which it had been
+	 * created. Immutable elements will be ignored.
+	 *
+	 * @param  rSourceElements The list of data elements to apply
+	 * @param  rTarget         The relatable object to apply the data elements
+	 *                         to
+	 *
+	 * @throws AuthenticationException If the current user is not authenticated
+	 * @throws StorageException        If accessing storage data fails
+	 */
+	public void applyDataElements(
+		List<? extends DataElement<?>> rSourceElements,
+		Relatable					   rTarget) throws AuthenticationException,
+													   StorageException
+	{
+		for (DataElement<?> rElement : rSourceElements)
+		{
+			RelationType<?> rType = RelationType.valueOf(rElement.getName());
+
+			if (rType == null)
+			{
+				throw new IllegalArgumentException("No relation type with name " +
+												   rElement.getName());
+			}
+
+//			if (rElement.isModified())
+			{
+				if (!rElement.isOptional() || rElement.isSelected())
+				{
+					applyDataElement(rElement, rTarget, rType);
+				}
+			}
+
+			checkApplyProperties(rElement, rTarget, rType);
+
+			if (rElement instanceof DataElementList)
+			{
+				Process rSubProcess =
+					rTarget.getRelation(rType).getAnnotation(PROCESS);
+
+				applyDataElements(((DataElementList) rElement).getElements(),
+								  rSubProcess != null ? rSubProcess : rTarget);
+			}
+		}
+	}
+
+	/***************************************
+	 * Creates a list data element that contains data elements that are created
+	 * from a collection of values. The collection can either contain relation
+	 * types that will be converted to data elements recursively or other values
+	 * which will be converted to strings. If the value collection argument is
+	 * NULL the returned list data element will be empty.
+	 *
+	 * @param  rObject The target object of the collection relation
+	 * @param  rType   The collection relation type
+	 * @param  rValues A collection containing the values to be converted into
+	 *                 data elements (may be NULL)
+	 * @param  rFlags  The optional data element flags
+	 *
+	 * @return The new list data element
+	 *
+	 * @throws StorageException If creating data elements recursively fails
+	 */
+	public DataElementList createDataElementList(Relatable		 rObject,
+												 RelationType<?> rType,
+												 Collection<?>   rValues,
+												 Set<Flag>		 rFlags)
+		throws StorageException
+	{
+		Class<?> rElementDatatype = rType.get(ELEMENT_DATATYPE);
+
+		boolean bRecursive =
+			(rElementDatatype != null &&
+			 RelationType.class.isAssignableFrom(rElementDatatype));
+
+		List<DataElement<?>> aDataElements = null;
+
+		if (rValues != null)
+		{
+			aDataElements = new ArrayList<DataElement<?>>(rValues.size());
+
+			for (Object rValue : rValues)
+			{
+				DataElement<?> aDataElement;
+
+				if (bRecursive)
+				{
+					aDataElement =
+						getDataElement(rObject, (RelationType<?>) rValue);
+				}
+				else
+				{
+					aDataElement =
+						new StringDataElement(rValue.getClass().getSimpleName(),
+											  rValue.toString());
+				}
+
+				if (aDataElement != null)
+				{
+					aDataElements.add(aDataElement);
+				}
+			}
+		}
+
+		return new DataElementList(rType.getName(),
+								   null,
+								   aDataElements,
+								   rFlags);
+	}
+
+	/***************************************
+	 * Creates a data object for a certain entity in a storage query.
+	 *
+	 * @param  rEntity        The entity to create the data element from
+	 * @param  pChildCriteria A predicate that constrains the child entities to
+	 *                        be included in a hierarchical object or NULL for
+	 *                        none
+	 * @param  pSortCriteria  The sort criteria for child queries (NULL for
+	 *                        none)
+	 * @param  fGetColumnData The function to extract the entity's column data
+	 *                        into a list of strings
+	 * @param  rFlags         The flags for the entity object
+	 * @param  bHierarchical  TRUE, to include children of the same type as the
+	 *                        entity
+	 *
+	 * @return The resulting data element
+	 *
+	 * @throws StorageException If creating the data object fails
+	 */
+	public HierarchicalDataObject createEntityDataObject(
+		Entity						   rEntity,
+		Predicate<? super Entity>	   pChildCriteria,
+		Predicate<? super Entity>	   pSortCriteria,
+		Function<Entity, List<String>> fGetColumnData,
+		Collection<String>			   rFlags,
+		boolean						   bHierarchical) throws StorageException
+	{
+		List<String> aValues = fGetColumnData.evaluate(rEntity);
+
+		DataModel<DataModel<String>> aChildren = null;
+
+		if (bHierarchical &&
+			rEntity.getDefinition().getHierarchyChildAttribute() != null)
+		{
+			aChildren =
+				createChildDataModels(rEntity,
+									  pChildCriteria,
+									  pSortCriteria,
+									  fGetColumnData);
+		}
+
+		return new HierarchicalDataObject(Integer.toString(rEntity.getId()),
+										  aValues,
+										  true,
+										  rFlags,
+										  aChildren);
+	}
+
+	/***************************************
+	 * Creates a new {@link SelectionDataElement} for the selection of a entity
+	 * data element from a list of entities.
+	 *
+	 * @param  sName            The name of the element
+	 * @param  rMetaData        A relatable object containing the meta data for
+	 *                          the element to create
+	 * @param  rCurrentEntityId sCurrentValue The current selection or NULL for
+	 *                          none
+	 * @param  rEntities        The entities to select from
+	 * @param  rAttributes      The entity attributes to display
+	 *
+	 * @return A new data element for the selection of an entity
+	 *
+	 * @throws StorageException If initializing the query fails
+	 */
+	public SelectionDataElement createEntitySelectionElement(
+		String							  sName,
+		Relatable						  rMetaData,
+		Integer							  rCurrentEntityId,
+		List<Entity>					  rEntities,
+		List<Function<? super Entity, ?>> rAttributes) throws StorageException
+	{
+		EntityDefinition<?> rDef    = rEntities.get(0).getDefinition();
+		String			    sPrefix = rDef.getEntityName();
+
+		List<HierarchicalDataObject> aEntityObjects =
+			createEntityDataObjects(rEntities,
+									rAttributes,
+									rMetaData.hasFlag(MetaTypes.HIERARCHICAL));
+
+		String sCurrentValue =
+			rCurrentEntityId != null ? rCurrentEntityId.toString() : "-1";
+
+		SelectionDataElement aResult =
+			createSelectionDataElement(sName,
+									   sCurrentValue,
+									   sPrefix,
+									   rDef,
+									   aEntityObjects,
+									   rAttributes,
+									   rMetaData.hasFlag(DISPLAY_ENTITY_IDS));
+
+		return aResult;
+	}
+
+	/***************************************
+	 * Creates a new {@link SelectionDataElement} for the selection of a entity
+	 * data element from a list of entities that is defined by a storage.
+	 *
+	 * @param  sName                The name of the element
+	 * @param  rMetaData            A relatable object containing the meta data
+	 *                              for the element to create
+	 * @param  rCurrentEntityId     rCurrentValue The current selection or NULL
+	 *                              for none
+	 * @param  nCurrentSelection    The index of the current selection or -1
+	 * @param  pQuery               The query for the entities to select from
+	 * @param  pDefaultCriteria     An optional predicate containing default
+	 *                              criteria to be used if no specific query
+	 *                              constraints are provided
+	 * @param  pDefaultSortCriteria An optional predicate containing default
+	 *                              sort criteria to be used if no specific sort
+	 *                              fields are provided
+	 * @param  rAttributes          The entity attributes to query and display
+	 *
+	 * @return A new data element for the selection of an entity
+	 *
+	 * @throws StorageException If registering the query storage adapter fails
+	 */
+	public <E extends Entity> SelectionDataElement createEntitySelectionElement(
+		String							  sName,
+		Relatable						  rMetaData,
+		Integer							  rCurrentEntityId,
+		int								  nCurrentSelection,
+		QueryPredicate<E>				  pQuery,
+		Predicate<? super E>			  pDefaultCriteria,
+		Predicate<? super E>			  pDefaultSortCriteria,
+		List<Function<? super Entity, ?>> rAttributes) throws StorageException
+	{
+		Class<E> rQueryType		   = pQuery.getQueryType();
+		boolean  bDisplayEntityIds = rMetaData.hasFlag(DISPLAY_ENTITY_IDS);
+
+		EntityDefinition<?> rDef =
+			EntityManager.getEntityDefinition(rQueryType);
+
+		String sPrefix = rDef.getEntityName();
+
+		rAttributes =
+			processAttributeFunctions(rDef, rAttributes, bDisplayEntityIds);
+
+		List<ColumnDefinition> aColumns =
+			createColumnDefinitions(rDef, rAttributes, sPrefix);
+
+		Function<Entity, List<String>> fGetAttributes =
+			CollectionFunctions.createStringList(false, rAttributes);
+
+		StorageAdapterId rStorageAdapterId =
+			getStorageAdapter(rMetaData,
+							  STORAGE_ADAPTER_ID,
+							  pQuery,
+							  fGetAttributes,
+							  pDefaultCriteria,
+							  pDefaultSortCriteria,
+							  aColumns);
+
+		Validator<String> rValidator =
+			new QueryValidator(rStorageAdapterId.toString(), aColumns);
+
+		String sCurrentValue =
+			rCurrentEntityId != null ? rCurrentEntityId.toString() : "-1";
+
+		SelectionDataElement aResult =
+			new SelectionDataElement(sName, sCurrentValue, rValidator, null);
+
+		boolean bHierarchical =
+			pQuery.get(HIERARCHICAL_QUERY_MODE) != HierarchicalQueryMode.NEVER;
+
+		aResult.setProperty(HIERARCHICAL, bHierarchical);
+
+		if (nCurrentSelection == -1 && rCurrentEntityId != null)
+		{
+			nCurrentSelection =
+				((DatabaseStorageAdapter) rStorageAdapterRegistry
+				 .getStorageAdapter(rStorageAdapterId)).positionOf(rCurrentEntityId);
+		}
+
+		if (nCurrentSelection >= 0)
+		{
+			aResult.setProperty(CURRENT_SELECTION, nCurrentSelection);
+		}
+
+		return aResult;
+	}
+
+	/***************************************
+	 * Returns a data element for a certain relation of a relatable object. If
+	 * the given object is an instance of {@link ProcessStep} this method
+	 * invokes {@link ProcessStep#getParameterRelation(RelationType)} to query
+	 * the relation to also take into account parameters that are stored in the
+	 * step's process.
+	 *
+	 * @param  rObject The related object to query the relation from
+	 * @param  rType   The type of the relation to convert into a data element
+	 *
+	 * @return The data element or NULL if it could not be mapped
+	 *
+	 * @throws StorageException If the initialization of a storage-based data
+	 *                          element fails
+	 */
+	public DataElement<?> getDataElement(
+		Relatable		rObject,
+		RelationType<?> rType) throws StorageException
+	{
+		Relation<?> rRelation;
+		Object	    rValue;
+		boolean     bModified = false;
+
+		if (rObject instanceof ProcessStep)
+		{
+			// handle process step differently because getParameter reads values
+			// from both the process and the step
+			ProcessStep rProcessStep = (ProcessStep) rObject;
+
+			rRelation = rProcessStep.getParameterRelation(rType);
+			rValue    = rProcessStep.getParameter(rType);
+			bModified = rProcessStep.isParameterModified(rType);
+		}
+		else
+		{
+			rRelation = rObject.getRelation(rType);
+			rValue    = rObject.get(rType);
+		}
+
+		DataElement<?> aDataElement = null;
+		HasProperties  rProperties  = null;
+
+		if (rRelation != null)
+		{
+			aDataElement = rRelation.get(DATA_ELEMENT);
+			rProperties  = rRelation.get(DISPLAY_PROPERTIES);
+		}
+
+		if (aDataElement instanceof SelectionDataElement && !bModified)
+		{
+			// keep existing selection elements to prevent that storage adapters
+			// become invalid because the previous data element is garbage
+			// collected and the UI doesn't update to the new element because of
+			// the unchanged flag. Set all properties to keep value-independent
+			// flags like DISABLED
+			if (rProperties != null)
+			{
+				aDataElement.setProperties(rProperties, true);
+			}
+		}
+		else
+		{
+			if (rRelation != null)
+			{
+				Process rProcess = rRelation.get(PROCESS);
+
+				if (rProcess != null)
+				{
+					rObject = rProcess.getInteractionStep();
+				}
+			}
+
+			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
+		}
+
+		if (aDataElement != null)
+		{
+			if (bModified)
+			{
+				aDataElement.setFlag(VALUE_CHANGED);
+			}
+			else
+			{
+				aDataElement.removeProperty(VALUE_CHANGED);
+			}
+		}
+
+		return aDataElement;
+	}
+
+	/***************************************
+	 * Creates the data elements for certain relations of a relatable object.
+	 * For each relation a single data element will be created by invoking the
+	 * method {@link #getDataElement(Relatable, RelationType)}. If that method
+	 * returns NULL no data element will be added to the result for the
+	 * respective relation.
+	 *
+	 * @param  rObject The related object to query the relations from
+	 * @param  rTypes  The relation types to create data elements for
+	 * @param  rFlags  The optional flags for each data element
+	 *
+	 * @return A new list containing the resulting data elements
+	 *
+	 * @throws StorageException If the initialization of a storage-based data
+	 *                          element fails
+	 */
+	public List<DataElement<?>> getDataElements(
+		Relatable							  rObject,
+		Collection<? extends RelationType<?>> rTypes,
+		Set<Flag>							  rFlags) throws StorageException
+	{
+		List<DataElement<?>> aResult =
+			new ArrayList<DataElement<?>>(rTypes.size());
+
+		for (RelationType<?> rType : rTypes)
+		{
+			DataElement<?> aElement = getDataElement(rObject, rType);
+
+			if (aElement != null)
+			{
+				aResult.add(aElement);
+			}
+		}
+
+		return aResult;
+	}
+
+	/***************************************
+	 * Applies a list of string values by converting the values according to the
+	 * given datatype and storing them in a collection.
+	 *
+	 * @param rValues           The values to apply
+	 * @param rDatatype         The target datatype
+	 * @param rTargetCollection The collection to store the converted values in
+	 */
+	protected void applyStringList(List<String>  rValues,
+								   Class<?>		 rDatatype,
+								   Collection<?> rTargetCollection)
+	{
+		@SuppressWarnings("unchecked")
+		Collection<Object> rCollection = (Collection<Object>) rTargetCollection;
+
+		rTargetCollection.clear();
+
+		for (String sValue : rValues)
+		{
+			rCollection.add(convertValue(rDatatype, sValue));
+		}
+	}
+
+	/***************************************
+	 * Creates a new data element for an enum value. The returned element will
+	 * be constrained to the list of possible values for the given enum value.
+	 * If the current value is a single enum value the returned data element
+	 * will be a {@link StringDataElement}. If the value is a collection, the
+	 * returned value will be a {@link StringListDataElement} that allows the
+	 * selection of multiple values.
+	 *
+	 * @param  sName          The name of the data element
+	 * @param  rEnumType      The enum type
+	 * @param  rCurrentValue  The enum value of the element
+	 * @param  rAllowedValues The allow values or NULL for all enum values
+	 * @param  rFlags         The optional data element flags
+	 *
+	 * @return A new string data element for the given enum
+	 *
+	 * @throws IllegalArgumentException If the enum value is NULL
+	 */
+	DataElement<?> createEnumDataElement(
+		String					 sName,
+		Class<? extends Enum<?>> rEnumType,
+		Object					 rCurrentValue,
+		Collection<?>			 rAllowedValues,
+		Set<Flag>				 rFlags)
+	{
+		DataElement<?> aResult = null;
+
+		StringListValidator rValidator =
+			getEnumValidator(rEnumType, rAllowedValues);
+
+		if (rCurrentValue instanceof Collection)
+		{
+			Collection<?> aValues	    = (Collection<?>) rCurrentValue;
+			List<String>  aStringValues = new ArrayList<String>(aValues.size());
+
+			for (Object rValue : aValues)
+			{
+				aStringValues.add(rValue.toString());
+			}
+
+			aResult =
+				new StringListDataElement(sName,
+										  aStringValues,
+										  rValidator,
+										  rFlags);
+		}
+		else
+		{
+			String sValue =
+				rCurrentValue != null ? rCurrentValue.toString() : null;
+
+			aResult = new StringDataElement(sName, sValue, rValidator, rFlags);
+		}
+
+		return aResult;
 	}
 
 	/***************************************
@@ -1486,11 +1505,10 @@ public class DataElementFactory
 	 */
 	@SuppressWarnings("boxing")
 	private DataModel<DataModel<String>> createChildDataModels(
-			Entity						   rParent,
-			Predicate<? super Entity>	   pChildCriteria,
-			Predicate<? super Entity>	   pSortCriteria,
-			Function<Entity, List<String>> fGetColumnData)
-		throws StorageException
+		Entity						   rParent,
+		Predicate<? super Entity>	   pChildCriteria,
+		Predicate<? super Entity>	   pSortCriteria,
+		Function<Entity, List<String>> fGetColumnData) throws StorageException
 	{
 		RelationType<List<Entity>> rChildAttribute =
 			rParent.getDefinition().getHierarchyChildAttribute();
@@ -1657,7 +1675,7 @@ public class DataElementFactory
 				{
 					rValue =
 						ReflectUtil.newInstance(ReflectUtil
-													.getImplementationClass(rDatatype));
+												.getImplementationClass(rDatatype));
 				}
 
 				aDataElement =
@@ -1759,7 +1777,7 @@ public class DataElementFactory
 
 			List<Function<? super Entity, ?>> rChildAttributes =
 				new ArrayList<Function<? super Entity, ?>>(rChildDef
-															   .getDisplayAttributes(DisplayMode.COMPACT));
+														   .getDisplayAttributes(DisplayMode.COMPACT));
 
 			SelectionDataElement aChildElement =
 				createEntitySelectionElement(sChildren,
@@ -1820,10 +1838,9 @@ public class DataElementFactory
 	 * @throws StorageException If creating a data object fails
 	 */
 	private List<HierarchicalDataObject> createEntityDataObjects(
-			Collection<Entity>				  rEntities,
-			List<Function<? super Entity, ?>> rAttributes,
-			boolean							  bHierarchical)
-		throws StorageException
+		Collection<Entity>				  rEntities,
+		List<Function<? super Entity, ?>> rAttributes,
+		boolean							  bHierarchical) throws StorageException
 	{
 		List<HierarchicalDataObject>   aEntityObjects =
 			new ArrayList<HierarchicalDataObject>(rEntities.size());
@@ -1858,9 +1875,9 @@ public class DataElementFactory
 	 */
 	@SuppressWarnings("unchecked")
 	private SelectionDataElement createEntitySelectionElement(
-			String					   sName,
-			Relation<? extends Entity> rRelation,
-			Collection<?>			   rAllowedValues) throws StorageException
+		String					   sName,
+		Relation<? extends Entity> rRelation,
+		Collection<?>			   rAllowedValues) throws StorageException
 	{
 		QueryPredicate<? extends Entity> pQuery =
 			rRelation.get(ENTITY_QUERY_PREDICATE);
@@ -2122,7 +2139,7 @@ public class DataElementFactory
 	 * @return The data element attributes
 	 */
 	private List<RelationType<?>> getEntityDataElementAttributes(
-			EntityDefinition<?> rDefinition)
+		EntityDefinition<?> rDefinition)
 	{
 		List<RelationType<?>> aAttributes =
 			new ArrayList<RelationType<?>>(rDefinition.getAttributes());
@@ -2163,13 +2180,13 @@ public class DataElementFactory
 	 */
 	@SuppressWarnings("boxing")
 	private <E extends Entity> StorageAdapterId getStorageAdapter(
-			Relatable					   rTarget,
-			RelationType<StorageAdapterId> rAdapterId,
-			QueryPredicate<E>			   pQuery,
-			Function<Entity, List<String>> fGetColumnData,
-			Predicate<? super E>		   pDefaultCriteria,
-			Predicate<? super E>		   pSortCriteria,
-			List<ColumnDefinition>		   rColumns) throws StorageException
+		Relatable					   rTarget,
+		RelationType<StorageAdapterId> rAdapterId,
+		QueryPredicate<E>			   pQuery,
+		Function<Entity, List<String>> fGetColumnData,
+		Predicate<? super E>		   pDefaultCriteria,
+		Predicate<? super E>		   pSortCriteria,
+		List<ColumnDefinition>		   rColumns) throws StorageException
 	{
 		DatabaseStorageAdapter rStorageAdapter   = null;
 		StorageAdapterId	   rStorageAdapterId = rTarget.get(rAdapterId);
@@ -2178,7 +2195,7 @@ public class DataElementFactory
 		{
 			rStorageAdapter =
 				(DatabaseStorageAdapter) rStorageAdapterRegistry
-						.getStorageAdapter(rStorageAdapterId);
+				.getStorageAdapter(rStorageAdapterId);
 		}
 
 		if (rStorageAdapter == null)

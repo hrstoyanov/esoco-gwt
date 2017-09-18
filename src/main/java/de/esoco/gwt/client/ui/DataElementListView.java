@@ -1,33 +1,18 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//	  http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// esoco-gwt Source File
+// Copyright (c) 2017 by Thomas Kuechenthal / LEMARIT GmbH
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.View;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
-
 import de.esoco.gwt.client.res.EsocoGwtResources;
-
 import de.esoco.lib.property.Alignment;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.StandardProperties;
@@ -40,7 +25,6 @@ import java.util.Set;
 
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.VIEW_DISPLAY_TYPE;
-import static de.esoco.lib.property.StyleProperties.AUTO_HIDE;
 
 
 /********************************************************************
@@ -70,15 +54,15 @@ public class DataElementListView
 	 * @param rViewElement The data element list to be displayed in a view
 	 */
 	public DataElementListView(
-		DataElementPanelManager rParent,
-		DataElementList			rViewElement)
+			DataElementPanelManager rParent,
+			DataElementList			rViewElement)
 	{
 		aViewUI =
 			(DataElementListUI) DataElementUIFactory.create(rParent,
 															rViewElement);
 	}
 
-	//~ Static methods ---------------------------------------------------------
+	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
 	 * Sets the default view style flags for new views.
@@ -86,12 +70,10 @@ public class DataElementListView
 	 * @param rDefaultViewFlags The default view style flags
 	 */
 	public static final void setDefaultViewFlags(
-		Set<ViewStyle.Flag> rDefaultViewFlags)
+			Set<ViewStyle.Flag> rDefaultViewFlags)
 	{
 		aDefaultViewFlags = EnumSet.copyOf(rDefaultViewFlags);
 	}
-
-	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
 	 * Collects the current input values into the corresponding data elements.
@@ -181,8 +163,8 @@ public class DataElementListView
 	 * @return
 	 */
 	private ContainerBuilder<View> createView(
-		View			rParentView,
-		ViewDisplayType eViewType)
+			View			rParentView,
+			ViewDisplayType eViewType)
 	{
 		DataElementList		   rDataElementList = aViewUI.getDataElement();
 		UserInterfaceContext   rContext		    = rParentView.getContext();
@@ -214,10 +196,10 @@ public class DataElementListView
 			}
 		}
 
-		if (rDataElementList.hasFlag(AUTO_HIDE))
-		{
-			aViewFlags.add(ViewStyle.Flag.AUTO_HIDE);
-		}
+//      if (rDataElementList.hasFlag(AUTO_HIDE))
+//      {
+//          aViewFlags.add(ViewStyle.Flag.AUTO_HIDE);
+//      }
 
 		if (!aViewFlags.isEmpty())
 		{
@@ -246,8 +228,8 @@ public class DataElementListView
 
 		aPanelView.addEventListener(EventType.VIEW_CLOSING,
 									e -> aViewUI.getPanelManager()
-									.handleInteractiveInput(rDataElementList,
-															InteractionEventType.UPDATE));
+												.handleInteractiveInput(rDataElementList,
+																		InteractionEventType.UPDATE));
 
 		aViewBuilder = new ContainerBuilder<View>(aPanelView);
 

@@ -34,11 +34,14 @@ import de.esoco.gwt.client.data.SearchableListDataModel;
 import de.esoco.lib.model.ColumnDefinition;
 import de.esoco.lib.model.DataModel;
 import de.esoco.lib.model.ListDataModel;
+import de.esoco.lib.model.SearchableDataModel;
 import de.esoco.lib.property.UserInterfaceProperties;
 
 import java.util.List;
+import java.util.Map;
 
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
+import static de.esoco.lib.property.StateProperties.FILTER_CRITERIA;
 import static de.esoco.lib.property.StyleProperties.TABLE_ROWS;
 
 
@@ -125,8 +128,7 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferDataElementValueToComponent(de.esoco.data.element.DataElement,
-	 *      Component)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void transferDataElementValueToComponent(
@@ -147,32 +149,43 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, de.esoco.data.element.DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void transferInputToDataElement(
 		Component			 rComponent,
-		SelectionDataElement rElement)
+		SelectionDataElement rDataElement)
 	{
 		if (aTable != null)
 		{
 			DataModel<?> rSelectedRow = aTable.getSelection();
 
-			rElement.setProperty(CURRENT_SELECTION, aTable.getSelectionIndex());
+			rDataElement.setProperty(CURRENT_SELECTION,
+									 aTable.getSelectionIndex());
 
 			if (rSelectedRow instanceof HierarchicalDataObject)
 			{
-				rElement.setValue(((HierarchicalDataObject) rSelectedRow)
-								  .getId());
+				rDataElement.setValue(((HierarchicalDataObject) rSelectedRow)
+									  .getId());
 			}
 			else
 			{
-				rElement.setValue(SelectionDataElement.NO_SELECTION);
+				rDataElement.setValue(SelectionDataElement.NO_SELECTION);
 			}
+
+			Map<String, String> rTableConstraints =
+				((SearchableDataModel<?>) aDataModel).getConstraints();
+
+			if (rTableConstraints.isEmpty())
+			{
+				rTableConstraints = null;
+			}
+
+			rDataElement.setProperty(FILTER_CRITERIA, rTableConstraints);
 		}
 		else
 		{
-			super.transferInputToDataElement(rComponent, rElement);
+			super.transferInputToDataElement(rComponent, rDataElement);
 		}
 	}
 
@@ -287,7 +300,19 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 		TabularDataValidator rValidator =
 			(TabularDataValidator) rDataElement.getValidator();
 
+		Map<String, String> rConstraints =
+			rDataElement.getProperty(FILTER_CRITERIA, null);
+
 		aDataModel = checkTableDataModel(rValidator);
+
+		if (rConstraints != null)
+		{
+			SearchableDataModel<?> rSearchableModel =
+				(SearchableDataModel<?>) aDataModel;
+
+			rSearchableModel.removeConstraints();
+			rSearchableModel.setConstraints(rConstraints);
+		}
 
 		aColumnModel =
 			new ListDataModel<ColumnDefinition>("COLUMNS",

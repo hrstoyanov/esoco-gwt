@@ -73,6 +73,7 @@ import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.HasProperties;
 import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.MutableProperties;
+import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
@@ -130,6 +131,7 @@ import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
+import static de.esoco.lib.property.StateProperties.FILTER_CRITERIA;
 import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
@@ -1431,30 +1433,10 @@ public class DataElementFactory
 									  Relatable		  rTarget,
 									  RelationType<?> rType)
 	{
-		if (rElement.hasProperty(CURRENT_SELECTION))
-		{
-			Integer rSelection = rElement.getProperty(CURRENT_SELECTION, null);
-
-			getDisplayProperties(rTarget.getRelation(rType)).setProperty(CURRENT_SELECTION,
-																		 rSelection);
-		}
-
-		if (rElement.hasProperty(FOCUSED))
-		{
-			Boolean bFocused = rElement.getProperty(FOCUSED, null);
-
-			getDisplayProperties(rTarget.getRelation(rType)).setProperty(FOCUSED,
-																		 bFocused);
-		}
-
-		if (rElement.hasProperty(INTERACTION_EVENT_DATA))
-		{
-			String sEventData =
-				rElement.getProperty(INTERACTION_EVENT_DATA, null);
-
-			getDisplayProperties(rTarget.getRelation(rType)).setProperty(INTERACTION_EVENT_DATA,
-																		 sEventData);
-		}
+		copyDisplayProperty(rElement, rTarget, rType, CURRENT_SELECTION);
+		copyDisplayProperty(rElement, rTarget, rType, FOCUSED);
+		copyDisplayProperty(rElement, rTarget, rType, INTERACTION_EVENT_DATA);
+		copyDisplayProperty(rElement, rTarget, rType, FILTER_CRITERIA);
 	}
 
 	/***************************************
@@ -1484,6 +1466,38 @@ public class DataElementFactory
 		}
 
 		return rValue;
+	}
+
+	/***************************************
+	 * Copies a display property from a data element to a relation if it exists.
+	 *
+	 * @param rElement   The data element to read the property value from
+	 * @param rRelatable The object to copy the property on
+	 * @param rType      The type of the relation on which to set the property
+	 * @param rProperty  The property name
+	 */
+	private <T> void copyDisplayProperty(DataElement<?>  rElement,
+										 Relatable		 rRelatable,
+										 RelationType<?> rType,
+										 PropertyName<T> rProperty)
+	{
+		if (rElement.hasProperty(rProperty))
+		{
+			Relation<?> rRelation = rRelatable.getRelation(rType);
+
+			T rValue = rElement.getProperty(rProperty, null);
+
+			MutableProperties rDisplayProperties =
+				rRelation.get(DISPLAY_PROPERTIES);
+
+			if (rDisplayProperties == null)
+			{
+				rDisplayProperties = new StringProperties();
+				rRelation.annotate(DISPLAY_PROPERTIES, rDisplayProperties);
+			}
+
+			rDisplayProperties.setProperty(rProperty, rValue);
+		}
 	}
 
 	/***************************************
@@ -2107,28 +2121,6 @@ public class DataElementFactory
 		}
 
 		return rResult;
-	}
-
-	/***************************************
-	 * Returns the display properties for a certain relation and creates them if
-	 * necessary.
-	 *
-	 * @param  rRelation The relation to return the display properties for
-	 *
-	 * @return The display properties object
-	 */
-	private MutableProperties getDisplayProperties(Relation<?> rRelation)
-	{
-		MutableProperties rDisplayProperties =
-			rRelation.get(DISPLAY_PROPERTIES);
-
-		if (rDisplayProperties == null)
-		{
-			rDisplayProperties = new StringProperties();
-			rRelation.annotate(DISPLAY_PROPERTIES, rDisplayProperties);
-		}
-
-		return rDisplayProperties;
 	}
 
 	/***************************************

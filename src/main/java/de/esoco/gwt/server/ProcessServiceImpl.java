@@ -816,12 +816,13 @@ public abstract class ProcessServiceImpl<E extends Entity>
 										  sStyle);
 			}
 
-			Set<String> rModifiedEntities =
-				EntityManager.getModifiedEntities().keySet();
+			Map<String, Entity> rModifiedEntities =
+				EntityManager.getModifiedEntities();
 
-			if (rModifiedEntities.size() > 0)
+			if (!rModifiedEntities.isEmpty())
 			{
-				String sLocks = CollectionUtil.toString(rModifiedEntities, ",");
+				String sLocks =
+					CollectionUtil.toString(rModifiedEntities.keySet(), ",");
 
 				aProcessState.setProperty(PROCESS_ENTITY_LOCKS, sLocks);
 			}

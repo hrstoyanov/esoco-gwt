@@ -26,7 +26,6 @@ import de.esoco.data.process.ProcessState.ProcessStateFlag;
 
 import de.esoco.entity.ConcurrentEntityModificationException;
 import de.esoco.entity.Entity;
-import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes;
 
 import de.esoco.gwt.shared.AuthenticationException;
@@ -74,6 +73,8 @@ import org.obrel.type.MetaTypes;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
+
+import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
 
 import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
 import static de.esoco.process.ProcessRelationTypes.AUTO_UPDATE;
@@ -817,7 +818,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			}
 
 			Map<String, Entity> rModifiedEntities =
-				EntityManager.getModifiedEntities();
+				rProcess.get(CONTEXT_MODIFIED_ENTITIES);
 
 			if (!rModifiedEntities.isEmpty())
 			{

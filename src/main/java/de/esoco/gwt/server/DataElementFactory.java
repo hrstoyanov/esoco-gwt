@@ -1146,12 +1146,10 @@ public class DataElementFactory
 		}
 
 		DataElement<?> aDataElement = null;
-		HasProperties  rProperties  = null;
 
 		if (rRelation != null)
 		{
 			aDataElement = rRelation.get(DATA_ELEMENT);
-			rProperties  = rRelation.get(DISPLAY_PROPERTIES);
 		}
 
 		if (aDataElement instanceof SelectionDataElement && !bModified)
@@ -1161,6 +1159,9 @@ public class DataElementFactory
 			// collected and the UI doesn't update to the new element because of
 			// the unchanged flag. Set all properties to keep value-independent
 			// flags like DISABLED
+			HasProperties rProperties =
+				rRelation != null ? rRelation.get(DISPLAY_PROPERTIES) : null;
+
 			if (rProperties != null)
 			{
 				aDataElement.setProperties(rProperties, true);

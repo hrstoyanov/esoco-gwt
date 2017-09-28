@@ -37,8 +37,8 @@ import static de.esoco.lib.property.StyleProperties.VERTICAL;
 
 /********************************************************************
  * A panel manager for {@link DataElementList} instances that places the child
- * data elements of the data element list in a layout that is defined by the
- * {@link LayoutType} of the data element list.
+ * data elements in a panel that displays the elements in a certain order or
+ * sequence.
  *
  * @author eso
  */
@@ -65,7 +65,7 @@ public class DataElementOrderedPanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		LayoutType				eLayout)
+		LayoutType			eLayout)
 	{
 		ContainerBuilder<? extends Panel> aPanelBuilder;
 

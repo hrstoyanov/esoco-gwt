@@ -143,6 +143,10 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 				getDataElementUI(nSelectedElement);
 
 			rDataElementUI.update();
+
+			aSwitchPanel.setPageTitle(nSelectedElement,
+									  getPageTitle(rDataElementUI
+												   .getDataElement()));
 		}
 	}
 
@@ -170,7 +174,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		LayoutType				eDisplayMode)
+		LayoutType			eDisplayMode)
 	{
 		ContainerBuilder<? extends SwitchPanel> aPanelBuilder;
 

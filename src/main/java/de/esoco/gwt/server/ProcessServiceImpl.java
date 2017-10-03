@@ -33,7 +33,6 @@ import de.esoco.gwt.shared.Command;
 import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
-import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.UserInterfaceProperties;
@@ -652,6 +651,43 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Applies the list of modified entities in a process to the given process
+	 * state.
+	 *
+	 * @param rProcess      The process to read the modification from
+	 * @param rProcessState The process state to apply the modifications too
+	 */
+	private void applyModifiedEntities(
+		Process		 rProcess,
+		ProcessState rProcessState)
+	{
+		Map<String, Entity> rModifiedEntities =
+			rProcess.get(CONTEXT_MODIFIED_ENTITIES);
+
+		if (!rModifiedEntities.isEmpty())
+		{
+			StringBuilder aLocks = new StringBuilder();
+
+			for (Entity rLockedEntity : rModifiedEntities.values())
+			{
+				if (!rLockedEntity.hasFlag(MetaTypes.LOCKED))
+				{
+					aLocks.append(rLockedEntity.getGlobalId());
+					aLocks.append(",");
+				}
+			}
+
+			if (aLocks.length() > 0)
+			{
+				aLocks.setLength(aLocks.length() - 1);
+
+				rProcessState.setProperty(PROCESS_ENTITY_LOCKS,
+										  aLocks.toString());
+			}
+		}
+	}
+
+	/***************************************
 	 * Checks whether the client has requested to open the UI inspector and
 	 * opens the corresponding view if necessary.
 	 *
@@ -817,16 +853,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 										  sStyle);
 			}
 
-			Map<String, Entity> rModifiedEntities =
-				rProcess.get(CONTEXT_MODIFIED_ENTITIES);
-
-			if (!rModifiedEntities.isEmpty())
-			{
-				String sLocks =
-					CollectionUtil.toString(rModifiedEntities.keySet(), ",");
-
-				aProcessState.setProperty(PROCESS_ENTITY_LOCKS, sLocks);
-			}
+			applyModifiedEntities(rProcess, aProcessState);
 
 			// reset modifications here to allow parameter relation listeners
 			// to update parameters when the DataElements are applied after the

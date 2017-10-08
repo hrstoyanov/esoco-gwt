@@ -64,10 +64,12 @@ import de.esoco.lib.text.TextConvert;
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -85,6 +87,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.ContentProperties.FORMAT;
+import static de.esoco.lib.property.ContentProperties.FORMAT_ARGUMENTS;
 import static de.esoco.lib.property.ContentProperties.IMAGE;
 import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
 import static de.esoco.lib.property.ContentProperties.LABEL;
@@ -721,6 +724,47 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Checks whether a text string needs to be expanded with format arguments
+	 * stored in the {@link ContentProperties#FORMAT_ARGUMENTS} property. If the
+	 * property exists it will be tried to replace all occurrences of
+	 * placeholders (%s) analog to {@link String#format(String, Object...)}, but
+	 * only string values are supported. Placeholders may be indexed (e.g. %1$s)
+	 * in which case they can also occur multiple times. If not enough
+	 * placeholders occur in the text string any surplus values will be ignored.
+	 *
+	 * @param  rDataElement The data element to check for format arguments
+	 * @param  sText        The text string to format
+	 *
+	 * @return The formatted string
+	 */
+	protected String checkApplyFormatting(D rDataElement, String sText)
+	{
+		if (rDataElement.hasProperty(FORMAT_ARGUMENTS))
+		{
+			List<String> rFormatArgs =
+				rDataElement.getProperty(FORMAT_ARGUMENTS,
+										 Collections.emptyList());
+
+			for (int i = 0; i < rFormatArgs.size(); i++)
+			{
+				String sValue	    = rFormatArgs.get(i);
+				String sPlaceholder = "%" + i + "$s";
+
+				if (sText.contains(sPlaceholder))
+				{
+					sText = sText.replace(sPlaceholder, sValue);
+				}
+				else
+				{
+					sText = sText.replaceFirst("%s", sValue);
+				}
+			}
+		}
+
+		return sText;
+	}
+
+	/***************************************
 	 * Checks if an error message is present for the data element of this
 	 * instance.
 	 *
@@ -807,11 +851,11 @@ public class DataElementUI<D extends DataElement<?>>
 			sValue =
 				NumberFormat.getFormat(sFormat).format((BigDecimal) rValue);
 		}
-		else if (rValue instanceof ListDataElement<?>)
+		else if (rValue instanceof ListDataElement)
 		{
 			sValue = ((ListDataElement<?>) rValue).getElements().toString();
 		}
-		else if (rValue instanceof DataElement<?>)
+		else if (rValue instanceof DataElement)
 		{
 			sValue =
 				convertValueToString(rDataElement,
@@ -1090,10 +1134,12 @@ public class DataElementUI<D extends DataElement<?>>
 			rStyle = rStyle.set(LABEL_STYLE, eLabelStyle);
 		}
 
-		return rBuilder.addLabel(rStyle,
+		String sLabel =
+			checkApplyFormatting(rDataElement,
 								 convertValueToString(rDataElement,
-													  rDataElement),
-								 null);
+													  rDataElement));
+
+		return rBuilder.addLabel(rStyle, sLabel, null);
 	}
 
 	/***************************************
@@ -1709,6 +1755,8 @@ public class DataElementUI<D extends DataElement<?>>
 
 		String sInteractionUrl =
 			rDataElement.getProperty(INTERACTION_URL, null);
+
+		GWT.log("UPDATE VALUE: " + sInteractionUrl);
 
 		if (sInteractionUrl != null)
 		{

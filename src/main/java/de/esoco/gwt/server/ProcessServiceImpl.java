@@ -382,7 +382,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		for (Process rProcess : rProcessMap.values())
 		{
-			rProcess.cancel();
+			rProcess.execute(ProcessExecutionMode.CANCEL);
 			rProcessList.remove(rProcess);
 		}
 
@@ -482,7 +482,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			// process state (with updated process ID) to perform the last
 			// interaction of the login step which had failed because of the
 			// session timeout
-			aRestartProcess.execute();
+			aRestartProcess.execute(ProcessExecutionMode.EXECUTE);
 			((ProcessState) rDescription).setProcessId(aRestartProcess
 													   .getParameter(PROCESS_ID));
 		}

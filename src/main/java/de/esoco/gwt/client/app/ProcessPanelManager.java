@@ -372,7 +372,7 @@ public class ProcessPanelManager
 		final DataElement<?> rDataElement,
 		InteractionEventType eEventType)
 	{
-		if (!bLocked)
+		if (!bLocked && !rProcessState.isFinished())
 		{
 			bLocked = true;
 			lockUserInterface();
@@ -383,6 +383,7 @@ public class ProcessPanelManager
 			}
 
 			rProcessState.setInteractionElement(rDataElement, eEventType);
+
 			executeProcess(ProcessExecutionMode.EXECUTE, true);
 		}
 	}

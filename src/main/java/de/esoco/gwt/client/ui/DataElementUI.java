@@ -69,7 +69,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -745,20 +744,7 @@ public class DataElementUI<D extends DataElement<?>>
 				rDataElement.getProperty(FORMAT_ARGUMENTS,
 										 Collections.emptyList());
 
-			for (int i = 0; i < rFormatArgs.size(); i++)
-			{
-				String sValue	    = rFormatArgs.get(i);
-				String sPlaceholder = "%" + i + "$s";
-
-				if (sText.contains(sPlaceholder))
-				{
-					sText = sText.replace(sPlaceholder, sValue);
-				}
-				else
-				{
-					sText = sText.replaceFirst("%s", sValue);
-				}
-			}
+			sText = TextConvert.format(sText, rFormatArgs);
 		}
 
 		return sText;
@@ -1755,8 +1741,6 @@ public class DataElementUI<D extends DataElement<?>>
 
 		String sInteractionUrl =
 			rDataElement.getProperty(INTERACTION_URL, null);
-
-		GWT.log("UPDATE VALUE: " + sInteractionUrl);
 
 		if (sInteractionUrl != null)
 		{

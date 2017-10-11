@@ -1437,7 +1437,11 @@ public class DataElementFactory
 		copyDisplayProperty(rElement, rTarget, rType, CURRENT_SELECTION);
 		copyDisplayProperty(rElement, rTarget, rType, FOCUSED);
 		copyDisplayProperty(rElement, rTarget, rType, INTERACTION_EVENT_DATA);
-		copyDisplayProperty(rElement, rTarget, rType, FILTER_CRITERIA);
+
+		if (rElement instanceof SelectionDataElement)
+		{
+			copyDisplayProperty(rElement, rTarget, rType, FILTER_CRITERIA);
+		}
 	}
 
 	/***************************************
@@ -1482,21 +1486,21 @@ public class DataElementFactory
 										 RelationType<?> rType,
 										 PropertyName<T> rProperty)
 	{
-		if (rElement.hasProperty(rProperty))
+		Relation<?> rRelation = rRelatable.getRelation(rType);
+
+		T rValue = rElement.getProperty(rProperty, null);
+
+		MutableProperties rDisplayProperties =
+			rRelation.get(DISPLAY_PROPERTIES);
+
+		if (rDisplayProperties == null && rValue != null)
 		{
-			Relation<?> rRelation = rRelatable.getRelation(rType);
+			rDisplayProperties = new StringProperties();
+			rRelation.annotate(DISPLAY_PROPERTIES, rDisplayProperties);
+		}
 
-			T rValue = rElement.getProperty(rProperty, null);
-
-			MutableProperties rDisplayProperties =
-				rRelation.get(DISPLAY_PROPERTIES);
-
-			if (rDisplayProperties == null)
-			{
-				rDisplayProperties = new StringProperties();
-				rRelation.annotate(DISPLAY_PROPERTIES, rDisplayProperties);
-			}
-
+		if (rDisplayProperties != null)
+		{
 			rDisplayProperties.setProperty(rProperty, rValue);
 		}
 	}

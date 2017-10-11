@@ -37,6 +37,7 @@ import de.esoco.lib.model.ListDataModel;
 import de.esoco.lib.model.SearchableDataModel;
 import de.esoco.lib.property.UserInterfaceProperties;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -300,19 +301,12 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 		TabularDataValidator rValidator =
 			(TabularDataValidator) rDataElement.getValidator();
 
-		Map<String, String> rConstraints =
-			rDataElement.getProperty(FILTER_CRITERIA, null);
-
 		aDataModel = checkTableDataModel(rValidator);
 
-		if (rConstraints != null)
-		{
-			SearchableDataModel<?> rSearchableModel =
-				(SearchableDataModel<?>) aDataModel;
+		Map<String, String> rConstraints =
+			rDataElement.getProperty(FILTER_CRITERIA, Collections.emptyMap());
 
-			rSearchableModel.removeConstraints();
-			rSearchableModel.setConstraints(rConstraints);
-		}
+		((SearchableDataModel<?>) aDataModel).setConstraints(rConstraints);
 
 		aColumnModel =
 			new ListDataModel<ColumnDefinition>("COLUMNS",

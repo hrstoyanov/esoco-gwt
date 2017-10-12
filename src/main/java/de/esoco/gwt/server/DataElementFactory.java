@@ -838,7 +838,6 @@ public class DataElementFactory
 												   rElement.getName());
 			}
 
-//			if (rElement.isModified())
 			if (!rElement.isImmutable())
 			{
 				if (!rElement.isOptional() || rElement.isSelected())
@@ -1488,20 +1487,23 @@ public class DataElementFactory
 	{
 		Relation<?> rRelation = rRelatable.getRelation(rType);
 
-		T rValue = rElement.getProperty(rProperty, null);
-
-		MutableProperties rDisplayProperties =
-			rRelation.get(DISPLAY_PROPERTIES);
-
-		if (rDisplayProperties == null && rValue != null)
+		if (rRelation != null)
 		{
-			rDisplayProperties = new StringProperties();
-			rRelation.annotate(DISPLAY_PROPERTIES, rDisplayProperties);
-		}
+			T rValue = rElement.getProperty(rProperty, null);
 
-		if (rDisplayProperties != null)
-		{
-			rDisplayProperties.setProperty(rProperty, rValue);
+			MutableProperties rDisplayProperties =
+				rRelation.get(DISPLAY_PROPERTIES);
+
+			if (rDisplayProperties == null && rValue != null)
+			{
+				rDisplayProperties = new StringProperties();
+				rRelation.annotate(DISPLAY_PROPERTIES, rDisplayProperties);
+			}
+
+			if (rDisplayProperties != null)
+			{
+				rDisplayProperties.setProperty(rProperty, rValue);
+			}
 		}
 	}
 

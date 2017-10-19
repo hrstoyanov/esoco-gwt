@@ -355,7 +355,7 @@ public class ProcessPanelManager
 				}
 				else if (rSource == aReloadButton)
 				{
-					handleReload();
+					reload();
 				}
 			}
 		}
@@ -396,6 +396,14 @@ public class ProcessPanelManager
 	public final boolean isDisableOnInteraction()
 	{
 		return bDisableOnInteraction;
+	}
+
+	/***************************************
+	 * Reloads the process data by re-executing the process.
+	 */
+	public void reload()
+	{
+		executeProcess(ProcessExecutionMode.RELOAD, true);
 	}
 
 	/***************************************
@@ -897,14 +905,6 @@ public class ProcessPanelManager
 	private void handlePreviousProcessStepEvent()
 	{
 		executeProcess(ProcessExecutionMode.ROLLBACK, false);
-	}
-
-	/***************************************
-	 * Handles a reload event by updating the user interface.
-	 */
-	private void handleReload()
-	{
-		executeProcess(ProcessExecutionMode.RELOAD, true);
 	}
 
 	/***************************************

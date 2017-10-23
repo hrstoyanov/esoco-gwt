@@ -335,6 +335,27 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Returns the {@link SessionData} for the current session or NULL if no
+	 * user is authenticated for the current request. Other than {@link
+	 * #getSessionData()} this method will not throw an authentication exception
+	 * if no user is authenticated but return NULL instead.
+	 *
+	 * @return The session data if a user is authenticated for the current
+	 *         request or NULL for none
+	 */
+	public SessionData getCurrentSession()
+	{
+		try
+		{
+			return getSessionData();
+		}
+		catch (AuthenticationException e)
+		{
+			return null;
+		}
+	}
+
+	/***************************************
 	 * @see SessionManager#getSessionContext()
 	 */
 	@Override

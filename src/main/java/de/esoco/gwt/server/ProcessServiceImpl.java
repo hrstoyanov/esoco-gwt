@@ -293,6 +293,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
 			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
 
+			rProcess.pauseBackgroundJobs();
 			executeProcess(rProcess, eExecutionMode);
 
 			rProcessState =
@@ -305,6 +306,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			{
 				rProcessList.remove(rProcess);
 				rProcessMap.remove(rId);
+			}
+			else
+			{
+				rProcess.resumeBackgroundJobs();
 			}
 		}
 		catch (Throwable e)

@@ -236,7 +236,7 @@ public class ProcessPanelManager
 	}
 
 	/***************************************
-	 * @see CommandResultHandler#handleCommandResult(DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void handleCommandResult(ProcessState rNewState)
@@ -464,6 +464,26 @@ public class ProcessPanelManager
 		}
 
 		return (ContainerBuilder<Container>) rPanelBuilder;
+	}
+
+	/***************************************
+	 * Executes the process to receive the next process state.
+	 *
+	 * @param eMode         The execution mode
+	 * @param bUpdateParams TRUE if the currently displayed parameters will only
+	 *                      be updated by the execution
+	 */
+	protected void executeProcess(
+		final ProcessExecutionMode eMode,
+		boolean					   bUpdateParams)
+	{
+		sPreviousStep = rProcessState.getCurrentStep();
+
+		rProcessState.setExecutionMode(eMode);
+		setClientSize(rProcessState);
+		executeCommand(GwtApplicationService.EXECUTE_PROCESS,
+					   rProcessState,
+					   this);
 	}
 
 	/***************************************
@@ -793,26 +813,6 @@ public class ProcessPanelManager
 			executeProcess(ProcessExecutionMode.CANCEL, false);
 			processFinished(this, rProcessState);
 		}
-	}
-
-	/***************************************
-	 * Executes the process to receive the next process state.
-	 *
-	 * @param eMode         The execution mode
-	 * @param bUpdateParams TRUE if the currently displayed parameters will only
-	 *                      be updated by the execution
-	 */
-	private void executeProcess(
-		final ProcessExecutionMode eMode,
-		boolean					   bUpdateParams)
-	{
-		sPreviousStep = rProcessState.getCurrentStep();
-
-		rProcessState.setExecutionMode(eMode);
-		setClientSize(rProcessState);
-		executeCommand(GwtApplicationService.EXECUTE_PROCESS,
-					   rProcessState,
-					   this);
 	}
 
 	/***************************************

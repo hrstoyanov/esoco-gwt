@@ -35,7 +35,7 @@ dependencies {
 }
 
 gwt {
-    gwtVersion='2.8.1'
+    gwtVersion='2.8.2'
 }
 
 jar { from sourceSets.main.allSource }

@@ -437,7 +437,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (PROFILING)
 		{
-			EWT.logTime("DE-BUILD", getDataElement().getName(), t);
+			EWT.logTime("DE-BUILD", getDataElement().getSimpleName(), t);
 		}
 	}
 
@@ -608,7 +608,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (PROFILING)
 			{
-				EWT.logTime("DE-UPDATE", getDataElement().getName(), t);
+				EWT.logTime("DE-UPDATE", getDataElement().getSimpleName(), t);
 			}
 		}
 	}

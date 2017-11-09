@@ -19,6 +19,7 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
+import de.esoco.ewt.EWT;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
@@ -39,6 +40,10 @@ import static de.esoco.lib.property.LayoutProperties.LAYOUT;
  */
 public class DataElementListUI extends DataElementUI<DataElementList>
 {
+	//~ Static fields/initializers ---------------------------------------------
+
+	private static final boolean PROFILING = false;
+
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementPanelManager aListPanelManager;
@@ -74,6 +79,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void update()
 	{
+		long t = System.currentTimeMillis();
+
 		DataElementList rDataElement = getDataElement();
 		String		    sAddStyle    = aListPanelManager.getStyleName();
 
@@ -85,6 +92,11 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		applyStyle();
 		aListPanelManager.getPanel().applyStyle(rNewStyle);
 		aListPanelManager.updatePanel();
+
+		if (PROFILING)
+		{
+			EWT.logTime("DEL-UPDATE", getDataElement().getSimpleName(), t);
+		}
 	}
 
 	/***************************************
@@ -98,6 +110,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
+		long		    t				 = System.currentTimeMillis();
 		DataElementList rDataElementList = getDataElement();
 		Container	    rListPanel		 = null;
 
@@ -114,6 +127,11 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		{
 			// DataElementPanelManager performs event handling for other cases
 			setupInteractionHandling(rListPanel, false);
+		}
+
+		if (PROFILING)
+		{
+			EWT.logTime("DEL-BUILD", getDataElement().getSimpleName(), t);
 		}
 
 		return rListPanel;

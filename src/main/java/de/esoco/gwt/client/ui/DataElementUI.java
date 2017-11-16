@@ -73,7 +73,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Widget;
 
 import static de.esoco.data.element.DataElement.ALLOWED_VALUES_CHANGED;
 import static de.esoco.data.element.DataElement.HIDDEN_URL;
@@ -1474,29 +1473,12 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		bHasError = (sMessage != null);
 
-		Widget rWidget = aElementComponent.getWidget();
+		aElementComponent.setError(sMessage);
 
-		if (sMessage == null)
+		if (aElementLabel != null)
 		{
-			sMessage = sToolTip;
-			rWidget.removeStyleName(CSS.error());
-
-			if (aElementLabel != null)
-			{
-				aElementLabel.getWidget().removeStyleName(CSS.error());
-			}
+			aElementLabel.setError(sMessage);
 		}
-		else
-		{
-			rWidget.addStyleName(CSS.error());
-
-			if (aElementLabel != null)
-			{
-				aElementLabel.getWidget().addStyleName(CSS.error());
-			}
-		}
-
-		aElementComponent.setToolTip(sMessage);
 	}
 
 	/***************************************

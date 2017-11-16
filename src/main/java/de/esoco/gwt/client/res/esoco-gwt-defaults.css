@@ -2,7 +2,6 @@
    framework. They can be imported by applications to set default values for 
    several framework styles.
 */
-@external .error;
 @external .vertical;
 @external .horizontal;
 @external .gf-DataElement;
@@ -28,9 +27,6 @@
 @external .MessageBox;
 @external .MessageBoxContent;
 @external .MessageBoxText;
-.error {
-	color: #E84040;
-}
 
 .gf-DataElementTablePanel > tbody > tr > td {
 	padding: 0.3em;
@@ -87,16 +83,9 @@
 	background: #FFE;
 }
 
-.gf-DataElement.error, .gf-DataElement.gwt-TextArea-readonly.error {
-	border: 2px solid #E84040;
-}
 
 .DialogAction .gwt-PushButton {
 	min-width: 8em;
-}
-
-.gf-DataElementLabel.error {
-	color: #E84040;
 }
 
 td.gf-DataElementHeader {
@@ -150,3 +139,13 @@ td.gf-DataElementHeader {
     display: grid;
 }
 
+@external .ewt-Error;
+
+.ewt-Error, .gf-DataElementLabel.ewt-Error {
+	color: #E84040;
+}
+
+.gf-DataElement.ewt-Error, 
+.gf-DataElement.gwt-TextArea-readonly.ewt-Error {
+	border: 2px solid #E84040;
+}

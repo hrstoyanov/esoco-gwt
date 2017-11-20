@@ -312,8 +312,10 @@ public abstract class DataElementPanelManager
 	/***************************************
 	 * Collects the values from the input components into the corresponding data
 	 * elements.
+	 *
+	 * @param rModifiedElements A list to add modified data elements to
 	 */
-	public void collectInput()
+	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
 		GenericLayout rLayout = getContainer().getLayout();
 
@@ -328,7 +330,7 @@ public abstract class DataElementPanelManager
 		{
 			if (rUI != null)
 			{
-				rUI.collectInput();
+				rUI.collectInput(rModifiedElements);
 			}
 		}
 	}
@@ -448,13 +450,12 @@ public abstract class DataElementPanelManager
 	 *
 	 * @return The root panel manager
 	 */
-	public DataElementPanelManager getRootDataElementPanelManager()
+	public DataElementPanelManager getRoot()
 	{
 		PanelManager<?, ?> rParent = getParent();
 
 		return rParent instanceof DataElementPanelManager
-			   ? ((DataElementPanelManager) rParent)
-			   .getRootDataElementPanelManager() : this;
+			   ? ((DataElementPanelManager) rParent).getRoot() : this;
 	}
 
 	/***************************************
@@ -535,6 +536,8 @@ public abstract class DataElementPanelManager
 					public void execute()
 					{
 						aDataElementUIs.clear();
+						EWT.log("REBUILD: %s",
+								rDataElementList.getSimpleName());
 						rebuild();
 						applyElementSelection();
 

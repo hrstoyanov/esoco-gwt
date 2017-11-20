@@ -31,6 +31,7 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.lib.property.LayoutType;
 
 import java.util.Iterator;
+import java.util.List;
 
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 
@@ -81,20 +82,24 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	/***************************************
 	 * Invokes {@link DataElementPanelManager#collectInput()} on the currently
 	 * selected page's panel manager.
+	 *
+	 * @see DataElementPanelManager#collectInput(List)
 	 */
 	@Override
-	public void collectInput()
+	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
-		int nSelectedElement = getSelectedElement();
+		DataElementList rDataElementList = getDataElementList();
+		int			    nSelectedElement = getSelectedElement();
 
-		getDataElementList().setProperty(CURRENT_SELECTION, nSelectedElement);
+		rDataElementList.setProperty(CURRENT_SELECTION, nSelectedElement);
+		rModifiedElements.add(rDataElementList);
 
 		if (nSelectedElement >= 0)
 		{
 			DataElementUI<?> rDataElementUI =
 				getDataElementUI(nSelectedElement);
 
-			rDataElementUI.collectInput();
+			rDataElementUI.collectInput(rModifiedElements);
 		}
 	}
 

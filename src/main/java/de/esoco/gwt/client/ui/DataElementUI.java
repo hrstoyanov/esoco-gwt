@@ -447,8 +447,10 @@ public class DataElementUI<D extends DataElement<?>>
 	 * user. If this instance is not for input the call will be ignored.
 	 * Therefore it won't harm to invoke this method on display user interfaces
 	 * too.
+	 *
+	 * @param rModifiedElements A list to add modified data elements to
 	 */
-	public void collectInput()
+	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
 		if (!rDataElement.isImmutable())
 		{
@@ -458,6 +460,11 @@ public class DataElementUI<D extends DataElement<?>>
 			}
 
 			transferInputToDataElement(aElementComponent, rDataElement);
+
+			if (rDataElement.isModified())
+			{
+				rModifiedElements.add(rDataElement);
+			}
 		}
 	}
 
@@ -1859,6 +1866,7 @@ public class DataElementUI<D extends DataElement<?>>
 						   boolean			   bUpdateUI)
 	{
 		rDataElement = (D) rNewElement;
+		rDataElement.setModified(false);
 
 		if (aInteractionHandler != null)
 		{

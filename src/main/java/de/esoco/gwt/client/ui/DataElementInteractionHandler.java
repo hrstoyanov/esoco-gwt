@@ -255,6 +255,24 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Checks whether the value of an event source component has changed
+	 * compared to the data element. This applies only to {@link TextControl}
+	 * components to prevent unnecessary events on cursor navigation and
+	 * similar, where the actual content doesn't change.
+	 *
+	 * @param  rEventSource The event source to check
+	 *
+	 * @return TRUE if the value has changed
+	 */
+	protected boolean hasValueChanged(Object rEventSource)
+	{
+		return !(rEventSource instanceof TextControl) ||
+			   rEventSource instanceof ComboBox ||
+			   !((TextControl) rEventSource).getText()
+											.equals(rDataElement.getValue());
+	}
+
+	/***************************************
 	 * Maps a GWT event type to the corresponding interaction event type.
 	 *
 	 * @param  eEventType The event type to map
@@ -319,17 +337,16 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			 eEventType != EventType.VALUE_CHANGED) ||
 			hasValueChanged(rSource))
 		{
-			if (rDataElement.hasFlag(DISABLE_ON_INTERACTION))
-			{
-				((Component) rSource).setEnabled(false);
-			}
-			else if (rPanelManager.getDataElementList()
-					 .hasFlag(DISABLE_ON_INTERACTION))
+			if (rPanelManager.getDataElementList()
+				.hasFlag(DISABLE_ON_INTERACTION))
 			{
 				rPanelManager.getContainer().setChildrenEnabled(false);
 			}
+			else if (rDataElement.hasFlag(DISABLE_ON_INTERACTION))
+			{
+				((Component) rSource).setEnabled(false);
+			}
 
-			rPanelManager.getRootDataElementPanelManager().collectInput();
 			rPanelManager.handleInteractiveInput(rDataElement,
 												 eInteractionEventType);
 		}
@@ -373,21 +390,5 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 			aInputEventTimer.cancel();
 			aInputEventTimer = null;
 		}
-	}
-
-	/***************************************
-	 * Checks whether the value of an event source has changed compared to the
-	 * data element.
-	 *
-	 * @param  rEventSource The event source to check
-	 *
-	 * @return TRUE if the value has changed
-	 */
-	private boolean hasValueChanged(Object rEventSource)
-	{
-		return rEventSource instanceof ComboBox ||
-			   !(rEventSource instanceof TextControl) ||
-			   !((TextControl) rEventSource).getText()
-											.equals(rDataElement.getValue());
 	}
 }

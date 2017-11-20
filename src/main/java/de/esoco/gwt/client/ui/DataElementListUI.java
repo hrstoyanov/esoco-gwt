@@ -27,6 +27,7 @@ import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.LayoutType;
 
+import java.util.List;
 import java.util.Map;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
@@ -54,9 +55,9 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void collectInput()
+	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
-		aListPanelManager.collectInput();
+		aListPanelManager.collectInput(rModifiedElements);
 	}
 
 	/***************************************

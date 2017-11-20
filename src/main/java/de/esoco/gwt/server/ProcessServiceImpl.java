@@ -1133,10 +1133,17 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				List<DataElementList> rViewParams =
 					rProcessState.getViewParams();
 
-				getDataElementFactory().applyDataElements(rInteractionParams,
+				DataElementFactory rDataElementFactory =
+					getDataElementFactory();
+
+				rDataElementFactory.applyDataElements(rInteractionParams,
+													  rProcess);
+
+				if (rViewParams != null)
+				{
+					rDataElementFactory.applyDataElements(rViewParams,
 														  rProcess);
-				getDataElementFactory().applyDataElements(rViewParams,
-														  rProcess);
+				}
 			}
 
 			DataElement<?> rInteractionElement =

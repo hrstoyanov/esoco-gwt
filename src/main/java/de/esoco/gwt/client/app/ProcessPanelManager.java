@@ -54,6 +54,7 @@ import de.esoco.gwt.shared.ServiceException;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.LayoutType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -377,14 +378,21 @@ public class ProcessPanelManager
 			bLocked = true;
 			lockUserInterface();
 
+			List<DataElement<?>> aModifiedElements = new ArrayList<>();
+
+			aParamPanelManager.collectInput(aModifiedElements);
+
 			for (DataElementListView rView : aProcessViews.values())
 			{
-				rView.collectInput();
+				rView.collectInput(aModifiedElements);
 			}
 
-			rProcessState.setInteractionElement(rDataElement, eEventType);
+			ProcessState aInteractionState =
+				new ProcessState(rProcessState, aModifiedElements);
 
-			executeProcess(ProcessExecutionMode.EXECUTE, true);
+			aInteractionState.setInteractionElement(rDataElement, eEventType);
+
+			executeProcess(aInteractionState, ProcessExecutionMode.EXECUTE);
 		}
 	}
 
@@ -403,7 +411,7 @@ public class ProcessPanelManager
 	 */
 	public void reload()
 	{
-		executeProcess(ProcessExecutionMode.RELOAD, true);
+		executeProcess(rProcessState, ProcessExecutionMode.RELOAD);
 	}
 
 	/***************************************
@@ -469,21 +477,18 @@ public class ProcessPanelManager
 	/***************************************
 	 * Executes the process to receive the next process state.
 	 *
-	 * @param eMode         The execution mode
-	 * @param bUpdateParams TRUE if the currently displayed parameters will only
-	 *                      be updated by the execution
+	 * @param rState The process state to transmit to the server
+	 * @param eMode  The execution mode
 	 */
 	protected void executeProcess(
-		final ProcessExecutionMode eMode,
-		boolean					   bUpdateParams)
+		ProcessState		 rState,
+		ProcessExecutionMode eMode)
 	{
 		sPreviousStep = rProcessState.getCurrentStep();
 
-		rProcessState.setExecutionMode(eMode);
-		setClientSize(rProcessState);
-		executeCommand(GwtApplicationService.EXECUTE_PROCESS,
-					   rProcessState,
-					   this);
+		rState.setExecutionMode(eMode);
+		setClientSize(rState);
+		executeCommand(GwtApplicationService.EXECUTE_PROCESS, rState, this);
 	}
 
 	/***************************************
@@ -532,7 +537,7 @@ public class ProcessPanelManager
 
 			if (bAutoContinue && !bPauseAutoContinue)
 			{
-				executeProcess(ProcessExecutionMode.EXECUTE, true);
+				executeProcess(rProcessState, ProcessExecutionMode.EXECUTE);
 			}
 
 			setUserInterfaceState();
@@ -578,7 +583,7 @@ public class ProcessPanelManager
 		rProcessState.setProperty(ProcessService.SHOW_UI_INSPECTOR,
 								  !bShowUiInspector);
 
-		executeProcess(ProcessExecutionMode.RELOAD, false);
+		reload();
 	}
 
 	/***************************************
@@ -810,7 +815,7 @@ public class ProcessPanelManager
 		else
 		{
 			bCancelled = true;
-			executeProcess(ProcessExecutionMode.CANCEL, false);
+			executeProcess(rProcessState, ProcessExecutionMode.CANCEL);
 			processFinished(this, rProcessState);
 		}
 	}
@@ -833,7 +838,7 @@ public class ProcessPanelManager
 		{
 			// restart an automatically continuing process if it had been
 			// stopped in the meantime with bPauseAutoContinue
-			executeProcess(ProcessExecutionMode.EXECUTE, true);
+			executeProcess(rProcessState, ProcessExecutionMode.EXECUTE);
 		}
 
 		setUserInterfaceState();
@@ -892,10 +897,12 @@ public class ProcessPanelManager
 		{
 			if (aParamPanelManager != null)
 			{
-				aParamPanelManager.collectInput();
+				List<DataElement<?>> aModifiedElements = new ArrayList<>();
+
+				aParamPanelManager.collectInput(aModifiedElements);
 			}
 
-			executeProcess(ProcessExecutionMode.EXECUTE, false);
+			executeProcess(rProcessState, ProcessExecutionMode.EXECUTE);
 		}
 	}
 
@@ -904,7 +911,7 @@ public class ProcessPanelManager
 	 */
 	private void handlePreviousProcessStepEvent()
 	{
-		executeProcess(ProcessExecutionMode.ROLLBACK, false);
+		executeProcess(rProcessState, ProcessExecutionMode.ROLLBACK);
 	}
 
 	/***************************************

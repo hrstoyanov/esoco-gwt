@@ -536,8 +536,6 @@ public abstract class DataElementPanelManager
 					public void execute()
 					{
 						aDataElementUIs.clear();
-						EWT.log("REBUILD: %s",
-								rDataElementList.getSimpleName());
 						rebuild();
 						applyElementSelection();
 

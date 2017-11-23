@@ -128,8 +128,6 @@ public class DataElementTest
 		assertTrue(e1.equals(e2));
 		e2.setSelected(true);
 		assertFalse(e1.equals(e2));
-		e2.setSelected(false);
-		assertTrue(e1.equals(e2));
 		e2.setValue("OTHER");
 		assertFalse(e1.equals(e2));
 		assertFalse(e1.equals(new Object()));

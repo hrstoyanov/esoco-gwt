@@ -81,7 +81,6 @@ import static de.esoco.process.ProcessRelationTypes.CLIENT_HEIGHT;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_INFO;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_LOCALE;
 import static de.esoco.process.ProcessRelationTypes.CLIENT_WIDTH;
-import static de.esoco.process.ProcessRelationTypes.DETAIL_STEP;
 import static de.esoco.process.ProcessRelationTypes.EXTERNAL_SERVICE_ACCESS;
 import static de.esoco.process.ProcessRelationTypes.FINAL_STEP;
 import static de.esoco.process.ProcessRelationTypes.IMMEDIATE_INTERACTION;
@@ -94,6 +93,7 @@ import static de.esoco.process.ProcessRelationTypes.PROCESS_ID;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_INFO;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_LIST;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_LOCALE;
+import static de.esoco.process.ProcessRelationTypes.PROCESS_SESSION_EXPIRED;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_STEP_STYLE;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_USER;
 import static de.esoco.process.ProcessRelationTypes.RELOAD_CURRENT_STEP;
@@ -130,6 +130,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		new ArrayList<ProcessDefinition>();
 
 	private static Locale rDefaultLocale = Locale.GERMANY;
+
+	//~ Instance fields --------------------------------------------------------
+
+	// set by services that use a bootstrap application process
+	private ProcessDescription rAppProcess = null;
 
 	//~ Static methods ---------------------------------------------------------
 
@@ -237,28 +242,41 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		SessionData rSessionData = getSessionData(bCheckAuthentication);
 
-		ProcessExecutionMode  eExecutionMode = ProcessExecutionMode.EXECUTE;
-		Process				  rProcess		 = null;
-		Integer				  rId			 = null;
-		ProcessState		  rProcessState  = null;
-		Map<Integer, Process> rProcessMap    = null;
+		ProcessExecutionMode  eExecutionMode     = ProcessExecutionMode.EXECUTE;
+		Process				  rProcess			 = null;
+		Integer				  rId				 = null;
+		ProcessState		  rProcessState		 = null;
+		Map<Integer, Process> rProcessMap		 = null;
+		boolean				  bHasSessionTimeout = false;
 
 		List<Process> rProcessList = getSessionContext().get(PROCESS_LIST);
 
 		try
 		{
 			// this can only happen in the case of process-based authentication
+			// in the case that the session has expired
 			if (rSessionData == null)
 			{
-				rSessionData =
-					createProcessAuthenticationSession(rDescription,
-													   rInitParams);
+				rSessionData = createSessionData();
+
+				if (rDescription instanceof ProcessState)
+				{
+					// if a session timeout occurred re-start the app process
+					// from a new process description
+					rDescription	   = new ProcessDescription(rDescription);
+					bHasSessionTimeout = true;
+				}
 			}
 
 			rProcessMap = rSessionData.get(USER_PROCESS_MAP);
 			rProcess    = getProcess(rDescription, rSessionData, rInitParams);
 
 			rId = rProcess.getParameter(PROCESS_ID);
+
+			if (bHasSessionTimeout)
+			{
+				rProcess.set(PROCESS_SESSION_EXPIRED);
+			}
 
 			if (rDescription instanceof ProcessState)
 			{
@@ -323,8 +341,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				}
 				catch (Exception eSecondary)
 				{
-					// should normally not occur. If it does then log and fall
-					// through to standard exception handling
+					// Only log secondary exceptions and fall through to
+					// standard exception handling
 					Log.error("Could not create exception process state",
 							  eSecondary);
 				}
@@ -447,55 +465,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Creates a dummy session in the case of process-based authentication that
-	 * is used until the user is authenticated by the process. If a session
-	 * timeout occurred during the execution of the authentication process step
-	 * the application process will be restarted so that it is available in the
-	 * session again.
-	 *
-	 * @param  rDescription The process description of the application process
-	 * @param  rInitParams  Optional process initialization parameters or NULL
-	 *                      for none
-	 *
-	 * @return A new unauthenticated session data object
-	 *
-	 * @throws ServiceException
-	 * @throws ProcessException
-	 * @throws StorageException
-	 */
-	@SuppressWarnings("boxing")
-	protected SessionData createProcessAuthenticationSession(
-		ProcessDescription rDescription,
-		Relatable		   rInitParams) throws StorageException,
-											   ProcessException,
-											   ServiceException
-	{
-		SessionData rSessionData = createSessionData();
-
-		if (rDescription instanceof ProcessState)
-		{
-			// if a session timeout occurs before authentication (i.e.
-			// in the login step of the application process) re-start
-			// the app process with a new process description
-			ProcessDescription aRestartDescription =
-				new ProcessDescription(rDescription);
-
-			Process aRestartProcess =
-				getProcess(aRestartDescription, rSessionData, rInitParams);
-
-			// execute once for initialization, then continue with the original
-			// process state (with updated process ID) to perform the last
-			// interaction of the login step which had failed because of the
-			// session timeout
-			aRestartProcess.execute(ProcessExecutionMode.EXECUTE);
-			((ProcessState) rDescription).setProcessId(aRestartProcess
-													   .getParameter(PROCESS_ID));
-		}
-
-		return rSessionData;
-	}
-
-	/***************************************
 	 * Overridden to cancel any running processes of the current user.
 	 *
 	 * @see AuthenticatedServiceImpl#endSession(SessionData)
@@ -570,18 +539,21 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Can be invoked by subclasses to set the main application process. This
+	 * Can be invoked by subclasses to set the (main) application process. This
 	 * method should be invoked before any other process definitions are created
 	 * through {@link #createProcessDescriptions(Class, List)}.
 	 *
-	 * @param  rAppProcess The class of the main application process
+	 * @param  rProcessDefinition The class of the application process
+	 *                            definition
 	 *
 	 * @return The description of the application process
 	 */
 	protected ProcessDescription setApplicationProcess(
-		Class<? extends ProcessDefinition> rAppProcess)
+		Class<? extends ProcessDefinition> rProcessDefinition)
 	{
-		return createProcessDescriptions(rAppProcess, null);
+		rAppProcess = createProcessDescriptions(rProcessDefinition, null);
+
+		return rAppProcess;
 	}
 
 	/***************************************
@@ -948,7 +920,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 			if (rProcess != null)
 			{
-				// reload the current action if a process is re-used
 				rProcess.set(INTERACTIVE_INPUT_PARAM, RELOAD_CURRENT_STEP);
 			}
 			else
@@ -1020,11 +991,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		if (rInteractionStep.hasFlag(FINAL_STEP))
 		{
 			aStepFlags.add(ProcessStateFlag.FINAL_STEP);
-		}
-
-		if (rInteractionStep.hasFlag(DETAIL_STEP))
-		{
-			aStepFlags.add(ProcessStateFlag.DETAIL_STEP);
 		}
 
 		if (rInteractionStep.hasFlag(IMMEDIATE_INTERACTION))

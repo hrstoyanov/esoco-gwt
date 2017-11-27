@@ -287,40 +287,11 @@ public class ProcessPanelManager
 		{
 			ServiceException eService = (ServiceException) rCaught;
 
-			String			    sMessage     = eService.getMessage();
-			Map<String, String> rErrorParams = eService.getErrorParameters();
-			ProcessState	    rNewState    = eService.getProcessState();
-
-			if (sMessage.equals(ERROR_ENTITY_LOCKED))
-			{
-				Object[] rMessageArgs = rErrorParams.values().toArray();
-
-				sMessage =
-					getContext().getResourceString("msg" +
-												   sMessage,
-												   rMessageArgs);
-			}
-			else
-			{
-				if (rNewState != null)
-				{
-					rProcessState = rNewState;
-				}
-
-				if (!sMessage.startsWith("$"))
-				{
-					sMessage = "$msg" + sMessage;
-				}
-
-				buildParameterPanel(rErrorParams);
-			}
-
-			displayMessage(sMessage, 0);
+			handleRecoverableError(eService);
 		}
 		else
 		{
-			bCancelled = true;
-			buildSummaryPanel(rCaught);
+			handleUnrecoverableError(rCaught);
 		}
 
 		setUserInterfaceState();
@@ -489,6 +460,56 @@ public class ProcessPanelManager
 		rState.setExecutionMode(eMode);
 		setClientSize(rState);
 		executeCommand(GwtApplicationService.EXECUTE_PROCESS, rState, this);
+	}
+
+	/***************************************
+	 * Handles service exceptions for errors that can be recovered by displaying
+	 * the error process state.
+	 *
+	 * @param eService The recoverable service exception
+	 */
+	protected void handleRecoverableError(ServiceException eService)
+	{
+		String			    sMessage     = eService.getMessage();
+		Map<String, String> rErrorParams = eService.getErrorParameters();
+		ProcessState	    rNewState    = eService.getProcessState();
+
+		if (sMessage.equals(ERROR_ENTITY_LOCKED))
+		{
+			Object[] rMessageArgs = rErrorParams.values().toArray();
+
+			sMessage =
+				getContext().getResourceString("msg" +
+											   sMessage, rMessageArgs);
+		}
+		else
+		{
+			if (rNewState != null)
+			{
+				rProcessState = rNewState;
+			}
+
+			if (!sMessage.startsWith("$"))
+			{
+				sMessage = "$msg" + sMessage;
+			}
+
+			buildParameterPanel(rErrorParams);
+		}
+
+		displayMessage(sMessage, 0);
+	}
+
+	/***************************************
+	 * Handles fatal exceptions that cannot be recovered by re-executing the
+	 * current process.
+	 *
+	 * @param rCaught The exception that signalled the non-recoverable error
+	 */
+	protected void handleUnrecoverableError(Throwable rCaught)
+	{
+		bCancelled = true;
+		buildSummaryPanel(rCaught);
 	}
 
 	/***************************************

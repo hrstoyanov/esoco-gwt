@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.user.client.rpc.CustomFieldSerializer;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
@@ -36,6 +37,7 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
  * @author eso
  */
 public class HierarchicalDataObject_CustomFieldSerializer
+	extends CustomFieldSerializer<HierarchicalDataObject>
 {
 	//~ Static methods ---------------------------------------------------------
 
@@ -182,5 +184,48 @@ public class HierarchicalDataObject_CustomFieldSerializer
 		{
 			rWriter.writeInt(0);
 		}
+	}
+
+	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deserializeInstance(
+		SerializationStreamReader rStreamReader,
+		HierarchicalDataObject    rInstance) throws SerializationException
+	{
+		deserialize(rStreamReader, rInstance);
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasCustomInstantiateInstance()
+	{
+		return true;
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public HierarchicalDataObject instantiateInstance(
+		SerializationStreamReader rStreamReader) throws SerializationException
+	{
+		return instantiate(rStreamReader);
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void serializeInstance(
+		SerializationStreamWriter rStreamWriter,
+		HierarchicalDataObject    rInstance) throws SerializationException
+	{
+		serialize(rStreamWriter, rInstance);
 	}
 }

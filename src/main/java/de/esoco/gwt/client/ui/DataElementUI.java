@@ -433,6 +433,7 @@ public class DataElementUI<D extends DataElement<?>>
 		aElementComponent = buildDataElementUI(rBuilder, rStyle);
 
 		applyElementProperties();
+		rDataElement.setModified(false);
 
 		if (PROFILING)
 		{

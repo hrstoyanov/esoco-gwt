@@ -736,7 +736,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 				if (bMarkAsChanged)
 				{
-					aElement.markAsChanged();
+					aElement.markAsValueChanged();
 				}
 			}
 		}
@@ -1095,6 +1095,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			{
 				List<DataElement<?>> rInteractionParams =
 					rProcessState.getInteractionParams();
+
+//				System.out.printf("InteractionParams[%d]: %s\n",
+//								  rInteractionParams.size(),
+//								  CollectionUtil.map(rInteractionParams,
+//													 e -> e.getSimpleName()));
 
 				List<DataElementList> rViewParams =
 					rProcessState.getViewParams();

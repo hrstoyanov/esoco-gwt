@@ -364,6 +364,11 @@ public class ProcessPanelManager
 			aInteractionState.setInteractionElement(rDataElement, eEventType);
 
 			executeProcess(aInteractionState, ProcessExecutionMode.EXECUTE);
+
+			for (DataElement<?> rElement : aModifiedElements)
+			{
+				rElement.setModified(false);
+			}
 		}
 	}
 

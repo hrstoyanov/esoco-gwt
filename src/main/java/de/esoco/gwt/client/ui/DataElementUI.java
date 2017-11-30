@@ -1866,7 +1866,6 @@ public class DataElementUI<D extends DataElement<?>>
 						   boolean			   bUpdateUI)
 	{
 		rDataElement = (D) rNewElement;
-		rDataElement.setModified(false);
 
 		if (aInteractionHandler != null)
 		{
@@ -1884,6 +1883,7 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		checkElementError(rElementErrors);
+		rDataElement.setModified(false);
 	}
 
 	/***************************************

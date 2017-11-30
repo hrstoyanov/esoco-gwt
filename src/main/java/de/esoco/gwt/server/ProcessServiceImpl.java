@@ -1105,7 +1105,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				rDataElementFactory.applyDataElements(rInteractionParams,
 													  rProcess);
 
-				if (rViewParams != null)
+				if (!rViewParams.isEmpty())
 				{
 					rDataElementFactory.applyDataElements(rViewParams,
 														  rProcess);

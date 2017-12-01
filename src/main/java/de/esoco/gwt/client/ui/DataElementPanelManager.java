@@ -17,6 +17,7 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
+import de.esoco.data.element.DataElement.CopyMode;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.EWT;
@@ -317,14 +318,7 @@ public abstract class DataElementPanelManager
 	 */
 	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
-		GenericLayout rLayout = getContainer().getLayout();
-
-		if (rLayout instanceof SingleSelection)
-		{
-			int nSelection = ((SingleSelection) rLayout).getSelectionIndex();
-
-			rDataElementList.setProperty(CURRENT_SELECTION, nSelection);
-		}
+		checkIfDataElementListModified(rModifiedElements);
 
 		for (DataElementUI<?> rUI : aDataElementUIs.values())
 		{
@@ -935,6 +929,20 @@ public abstract class DataElementPanelManager
 			DataElement<?> rNewElement = rOrderedElements.get(nIndex++);
 
 			rUI.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
+		}
+	}
+
+	/***************************************
+	 * Checks whether the data element list of this instance has been modified
+	 * and adds it to the given list if necessary.
+	 *
+	 * @param rModifiedElements The list of modified elements
+	 */
+	void checkIfDataElementListModified(List<DataElement<?>> rModifiedElements)
+	{
+		if (rDataElementList.isModified())
+		{
+			rModifiedElements.add(rDataElementList.copy(CopyMode.PROPERTIES));
 		}
 	}
 

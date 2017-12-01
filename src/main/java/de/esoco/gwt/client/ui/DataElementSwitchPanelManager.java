@@ -17,7 +17,6 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
-import de.esoco.data.element.DataElement.CopyMode;
 import de.esoco.data.element.DataElementList;
 
 import de.esoco.ewt.build.ContainerBuilder;
@@ -90,19 +89,22 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
 		DataElementList rDataElementList = getDataElementList();
-		int			    nSelectedElement = getSelectedElement();
+		int			    nSelection		 = getSelectedElement();
 
-		rDataElementList.setProperty(CURRENT_SELECTION, nSelectedElement);
-
-		if (rDataElementList.isModified())
+		if (nSelection <= 0)
 		{
-			rModifiedElements.add(rDataElementList.copy(CopyMode.PROPERTIES));
+			rDataElementList.removeProperty(CURRENT_SELECTION);
+		}
+		else
+		{
+			rDataElementList.setProperty(CURRENT_SELECTION, nSelection);
 		}
 
-		if (nSelectedElement >= 0)
+		checkIfDataElementListModified(rModifiedElements);
+
+		if (nSelection >= 0)
 		{
-			DataElementUI<?> rDataElementUI =
-				getDataElementUI(nSelectedElement);
+			DataElementUI<?> rDataElementUI = getDataElementUI(nSelection);
 
 			rDataElementUI.collectInput(rModifiedElements);
 		}

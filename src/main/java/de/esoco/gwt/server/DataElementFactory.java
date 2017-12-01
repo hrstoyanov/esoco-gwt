@@ -1191,6 +1191,9 @@ public class DataElementFactory
 			{
 				aDataElement.removeProperty(VALUE_CHANGED);
 			}
+
+			// the modified state is
+			aDataElement.setModified(false);
 		}
 
 		return aDataElement;

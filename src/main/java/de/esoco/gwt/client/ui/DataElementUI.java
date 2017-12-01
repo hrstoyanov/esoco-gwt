@@ -465,6 +465,7 @@ public class DataElementUI<D extends DataElement<?>>
 			if (rDataElement.isModified())
 			{
 				rModifiedElements.add(rDataElement);
+				rDataElement.setModified(false);
 			}
 		}
 	}

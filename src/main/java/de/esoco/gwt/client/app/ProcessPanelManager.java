@@ -365,6 +365,7 @@ public class ProcessPanelManager
 
 			executeProcess(aInteractionState, ProcessExecutionMode.EXECUTE);
 
+			// reset all modification flags for next interaction loop
 			for (DataElement<?> rElement : aModifiedElements)
 			{
 				rElement.setModified(false);

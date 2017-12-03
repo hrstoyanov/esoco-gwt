@@ -129,7 +129,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	private static List<ProcessDefinition> aProcessDefinitions =
 		new ArrayList<ProcessDefinition>();
 
-	private static Locale rDefaultLocale = Locale.GERMANY;
+	private static Locale rDefaultLocale = Locale.ENGLISH;
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -285,27 +285,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				eExecutionMode = rProcessState.getExecutionMode();
 				checkOpenUiInspector(rProcessState, rProcess);
 			}
-
-			String sClientInfo   = rDescription.getClientInfo();
-			String sClientLocale = rDescription.getClientLocale();
-
-			if (sClientInfo != null)
+			else
 			{
-				rProcess.set(CLIENT_INFO, sClientInfo);
-			}
-
-			if (sClientLocale != null)
-			{
-				try
-				{
-					rProcess.set(CLIENT_LOCALE,
-								 Locale.forLanguageTag(sClientLocale));
-				}
-				catch (Exception e)
-				{
-					Log.warn("Unknown client locale: " + sClientLocale, e);
-					rProcess.set(CLIENT_LOCALE, rDefaultLocale);
-				}
+				setClientProperties(rDescription, rProcess);
 			}
 
 			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
@@ -1032,6 +1014,42 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Sets properties of the current client (e.g. info, locale) as process
+	 * parameters.
+	 *
+	 * @param rDescription The process description containing the client
+	 *                     properties
+	 * @param rProcess     The process to set the parameters in
+	 */
+	private void setClientProperties(
+		ProcessDescription rDescription,
+		Process			   rProcess)
+	{
+		String sClientInfo   = rDescription.getClientInfo();
+		String sClientLocale = rDescription.getClientLocale();
+
+		rProcess.set(CLIENT_LOCALE, rDefaultLocale);
+
+		if (sClientInfo != null)
+		{
+			rProcess.set(CLIENT_INFO, sClientInfo);
+		}
+
+		if (sClientLocale != null)
+		{
+			try
+			{
+				rProcess.set(CLIENT_LOCALE,
+							 Locale.forLanguageTag(sClientLocale));
+			}
+			catch (Exception e)
+			{
+				Log.warn("Unknown client locale: " + sClientLocale, e);
+			}
+		}
+	}
+
+	/***************************************
 	 * Sets the process input parameters from a data element or a list of data
 	 * elements.
 	 *
@@ -1093,15 +1111,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		{
 			if (eMode == ProcessExecutionMode.EXECUTE)
 			{
-				List<DataElement<?>> rInteractionParams =
+				List<DataElement<?>>  rInteractionParams =
 					rProcessState.getInteractionParams();
-
-//				System.out.printf("InteractionParams[%d]: %s\n",
-//								  rInteractionParams.size(),
-//								  CollectionUtil.map(rInteractionParams,
-//													 e -> e.getSimpleName()));
-
-				List<DataElementList> rViewParams =
+				List<DataElementList> rViewParams		 =
 					rProcessState.getViewParams();
 
 				DataElementFactory rDataElementFactory =

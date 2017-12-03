@@ -1608,7 +1608,10 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else if (rComponent instanceof TextAttribute)
 		{
-			transferTextInput((TextAttribute) rComponent, rDataElement);
+			if (!(rComponent instanceof Button))
+			{
+				transferTextInput((TextAttribute) rComponent, rDataElement);
+			}
 		}
 		else if (rComponent instanceof Panel)
 		{
@@ -1726,6 +1729,8 @@ public class DataElementUI<D extends DataElement<?>>
 			rDataElement.removeProperty(INTERACTION_URL);
 			openUrl(sInteractionUrl, rDataElement.hasFlag(HIDDEN_URL));
 		}
+
+		rDataElement.setModified(false);
 	}
 
 	/***************************************
@@ -1885,7 +1890,6 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		checkElementError(rElementErrors);
-		rDataElement.setModified(false);
 	}
 
 	/***************************************

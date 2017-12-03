@@ -1436,14 +1436,19 @@ public class DataElementFactory
 									  Relatable		  rTarget,
 									  RelationType<?> rType)
 	{
-		copyDisplayProperty(rElement, rTarget, rType, CURRENT_SELECTION);
-		copyDisplayProperty(rElement, rTarget, rType, FOCUSED);
-		copyDisplayProperty(rElement, rTarget, rType, INTERACTION_EVENT_DATA);
+		Relation<?> rRelation = rTarget.getRelation(rType);
 
-		if (rElement instanceof SelectionDataElement)
+		if (rRelation == null)
 		{
-			copyDisplayProperty(rElement, rTarget, rType, FILTER_CRITERIA);
+			rRelation = rTarget.set(rType, null);
 		}
+
+		copyDisplayProperties(rElement,
+							  rRelation,
+							  CURRENT_SELECTION,
+							  FOCUSED,
+							  INTERACTION_EVENT_DATA,
+							  FILTER_CRITERIA);
 	}
 
 	/***************************************
@@ -1476,26 +1481,24 @@ public class DataElementFactory
 	}
 
 	/***************************************
-	 * Copies a display property from a data element to a relation if it exists.
+	 * Copies display properties from a data element to a relation if they
+	 * exist.
 	 *
-	 * @param rElement   The data element to read the property value from
-	 * @param rRelatable The object to copy the property on
-	 * @param rType      The type of the relation on which to set the property
-	 * @param rProperty  The property name
+	 * @param rElement    The data element to read the property value from
+	 * @param rRelation   The relation on which to set the property
+	 * @param rProperties The names of the properties to copy
 	 */
-	private <T> void copyDisplayProperty(DataElement<?>  rElement,
-										 Relatable		 rRelatable,
-										 RelationType<?> rType,
-										 PropertyName<T> rProperty)
+	@SuppressWarnings("unchecked")
+	private void copyDisplayProperties(DataElement<?>	  rElement,
+									   Relation<?>		  rRelation,
+									   PropertyName<?>... rProperties)
 	{
-		Relation<?> rRelation = rRelatable.getRelation(rType);
+		MutableProperties rDisplayProperties =
+			rRelation.get(DISPLAY_PROPERTIES);
 
-		if (rRelation != null)
+		for (PropertyName<?> rProperty : rProperties)
 		{
-			T rValue = rElement.getProperty(rProperty, null);
-
-			MutableProperties rDisplayProperties =
-				rRelation.get(DISPLAY_PROPERTIES);
+			Object rValue = rElement.getProperty(rProperty, null);
 
 			if (rDisplayProperties == null && rValue != null)
 			{
@@ -1505,7 +1508,9 @@ public class DataElementFactory
 
 			if (rDisplayProperties != null)
 			{
-				rDisplayProperties.setProperty(rProperty, rValue);
+				rDisplayProperties.setProperty((PropertyName<Object>)
+											   rProperty,
+											   rValue);
 			}
 		}
 	}

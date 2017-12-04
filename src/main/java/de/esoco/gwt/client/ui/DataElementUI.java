@@ -728,19 +728,29 @@ public class DataElementUI<D extends DataElement<?>>
 	 * placeholders occur in the text string any surplus values will be ignored.
 	 *
 	 * @param  rDataElement The data element to check for format arguments
+	 * @param  rContext     The user interface context for resource expansion
 	 * @param  sText        The text string to format
 	 *
 	 * @return The formatted string
 	 */
-	protected String checkApplyFormatting(D rDataElement, String sText)
+	protected String checkApplyFormatting(D					   rDataElement,
+										  UserInterfaceContext rContext,
+										  String			   sText)
 	{
 		if (rDataElement.hasProperty(FORMAT_ARGUMENTS))
 		{
-			List<String> rFormatArgs =
-				rDataElement.getProperty(FORMAT_ARGUMENTS,
-										 Collections.emptyList());
+			List<String> aFormatArgs =
+				new ArrayList<>(rDataElement.getProperty(FORMAT_ARGUMENTS,
+														 Collections
+														 .emptyList()));
 
-			sText = TextConvert.format(sText, rFormatArgs);
+			for (int i = aFormatArgs.size() - 1; i >= 0; i--)
+			{
+				aFormatArgs.set(i, rContext.expandResource(aFormatArgs.get(i)));
+			}
+
+			sText =
+				TextConvert.format(rContext.expandResource(sText), aFormatArgs);
 		}
 
 		return sText;
@@ -1118,6 +1128,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		String sLabel =
 			checkApplyFormatting(rDataElement,
+								 rBuilder.getContext(),
 								 convertValueToString(rDataElement,
 													  rDataElement));
 

@@ -739,18 +739,18 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		if (rDataElement.hasProperty(FORMAT_ARGUMENTS))
 		{
-			List<String> aFormatArgs =
-				new ArrayList<>(rDataElement.getProperty(FORMAT_ARGUMENTS,
-														 Collections
-														 .emptyList()));
+			List<String> rFormatArgs =
+				rDataElement.getProperty(FORMAT_ARGUMENTS,
+										 Collections.emptyList());
 
-			for (int i = aFormatArgs.size() - 1; i >= 0; i--)
+			Object[] aArgs = new String[rFormatArgs.size()];
+
+			for (int i = aArgs.length - 1; i >= 0; i--)
 			{
-				aFormatArgs.set(i, rContext.expandResource(aFormatArgs.get(i)));
+				aArgs[i] = rContext.expandResource(rFormatArgs.get(i));
 			}
 
-			sText =
-				TextConvert.format(rContext.expandResource(sText), aFormatArgs);
+			sText = TextConvert.format(rContext.expandResource(sText), aArgs);
 		}
 
 		return sText;
@@ -1210,10 +1210,13 @@ public class DataElementUI<D extends DataElement<?>>
 		Component aComponent;
 		int		  nCols = rDataElement.getIntProperty(COLUMNS, -1);
 
-		TextArea aTextArea =
-			rBuilder.addTextArea(rStyle,
+		String sText =
+			checkApplyFormatting(rDataElement,
+								 rBuilder.getContext(),
 								 convertValueToString(rDataElement,
 													  rDataElement));
+
+		TextArea aTextArea = rBuilder.addTextArea(rStyle, sText);
 
 		aComponent = aTextArea;
 
@@ -1238,7 +1241,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * @param  rBuilder     The builder to add the input component with
 	 * @param  rStyle       The style data for the component
 	 * @param  rDataElement The data element to create the component for
-	 * @param  sValue       The initial value
+	 * @param  sText        The initial value
 	 * @param  eContentType
 	 *
 	 * @return The new component
@@ -1247,16 +1250,19 @@ public class DataElementUI<D extends DataElement<?>>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle,
 		D					rDataElement,
-		String				sValue,
+		String				sText,
 		ContentType			eContentType)
 	{
 		int nRows = rDataElement.getIntProperty(ROWS, 1);
 
 		TextControl aTextComponent;
 
+		sText =
+			checkApplyFormatting(rDataElement, rBuilder.getContext(), sText);
+
 		if (nRows > 1 || nRows == -1)
 		{
-			aTextComponent = rBuilder.addTextArea(rStyle, sValue);
+			aTextComponent = rBuilder.addTextArea(rStyle, sText);
 
 			if (nRows > 1)
 			{
@@ -1270,7 +1276,7 @@ public class DataElementUI<D extends DataElement<?>>
 				rStyle = rStyle.setFlags(StyleFlag.PASSWORD);
 			}
 
-			aTextComponent = rBuilder.addTextField(rStyle, sValue);
+			aTextComponent = rBuilder.addTextField(rStyle, sText);
 		}
 
 		updateTextComponent(aTextComponent);

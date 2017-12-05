@@ -341,7 +341,7 @@ public class ProcessPanelManager
 	 */
 	@Override
 	public void handleInteractiveInput(
-		final DataElement<?> rDataElement,
+		DataElement<?>		 rInteractionElement,
 		InteractionEventType eEventType)
 	{
 		if (!bLocked && !rProcessState.isFinished())
@@ -359,9 +359,10 @@ public class ProcessPanelManager
 			}
 
 			ProcessState aInteractionState =
-				new ProcessState(rProcessState, aModifiedElements);
-
-			aInteractionState.setInteractionElement(rDataElement, eEventType);
+				new ProcessState(rProcessState,
+								 eEventType,
+								 rInteractionElement,
+								 aModifiedElements);
 
 			executeProcess(aInteractionState, ProcessExecutionMode.EXECUTE);
 

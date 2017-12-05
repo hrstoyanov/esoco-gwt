@@ -832,29 +832,28 @@ public class DataElementFactory
 		{
 			RelationType<?> rType = RelationType.valueOf(rElement.getName());
 
-			if (rType == null)
+			if (rType != null)
 			{
-				throw new IllegalArgumentException("No relation type with name " +
-												   rElement.getName());
-			}
-
-			if (!rElement.isImmutable())
-			{
-				if (!rElement.isOptional() || rElement.isSelected())
+				if (!rElement.isImmutable())
 				{
-					applyDataElement(rElement, rTarget, rType);
+					if (!rElement.isOptional() || rElement.isSelected())
+					{
+						applyDataElement(rElement, rTarget, rType);
+					}
 				}
-			}
 
-			checkApplyProperties(rElement, rTarget, rType);
+				checkApplyProperties(rElement, rTarget, rType);
 
-			if (rElement instanceof DataElementList)
-			{
-				Process rSubProcess =
-					rTarget.getRelation(rType).getAnnotation(PROCESS);
+				if (rElement instanceof DataElementList)
+				{
+					Process rSubProcess =
+						rTarget.getRelation(rType).getAnnotation(PROCESS);
 
-				applyDataElements(((DataElementList) rElement).getElements(),
-								  rSubProcess != null ? rSubProcess : rTarget);
+					applyDataElements(((DataElementList) rElement)
+									  .getElements(),
+									  rSubProcess != null ? rSubProcess
+														  : rTarget);
+				}
 			}
 		}
 	}

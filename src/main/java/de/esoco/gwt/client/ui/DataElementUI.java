@@ -1575,7 +1575,10 @@ public class DataElementUI<D extends DataElement<?>>
 				  rDataElement instanceof ListDataElement))
 			{
 				String sValue =
-					convertValueToString(rDataElement, rDataElement);
+					checkApplyFormatting(rDataElement,
+										 rComponent.getContext(),
+										 convertValueToString(rDataElement,
+															  rDataElement));
 
 				rComponent.setProperties(sValue);
 			}

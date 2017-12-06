@@ -772,8 +772,8 @@ public abstract class DataElementPanelManager
 				}
 				else
 				{
-					assert false : "No DataElement with name " + sElement +
-						   "; referenced by " + rDataElement.getName();
+					EWT.log("Warning: No data element %s for selection dependency",
+							sElement);
 				}
 			}
 		}

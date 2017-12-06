@@ -57,6 +57,7 @@ import de.esoco.lib.property.ContentProperties;
 import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.LabelStyle;
 import de.esoco.lib.property.LayoutType;
+import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.StateProperties;
 import de.esoco.lib.property.TextAttribute;
 import de.esoco.lib.text.TextConvert;
@@ -64,8 +65,11 @@ import de.esoco.lib.text.TextConvert;
 import java.math.BigDecimal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -125,6 +129,9 @@ import static de.esoco.lib.property.StyleProperties.WRAP;
 public class DataElementUI<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
+
+	private static final List<PropertyName<?>> MAPPED_PROPERTIES =
+		Arrays.asList(STYLE, WIDTH, HEIGHT, VERTICAL, WRAP, NO_WRAP, RESOURCE);
 
 	private static final boolean PROFILING = false;
 
@@ -231,11 +238,12 @@ public class DataElementUI<D extends DataElement<?>>
 			rStyle = rStyle.setFlags(StyleFlag.RESOURCE);
 		}
 
-		rStyle =
-			rStyle.withProperties(rDataElement,
-								  rDataElement.getPropertyNames());
+		Collection<PropertyName<?>> aCopyProperties =
+			new HashSet<>(rDataElement.getPropertyNames());
 
-		return rStyle;
+		aCopyProperties.removeAll(MAPPED_PROPERTIES);
+
+		return rStyle.withProperties(rDataElement, aCopyProperties);
 	}
 
 	/***************************************

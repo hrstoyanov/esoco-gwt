@@ -1474,6 +1474,10 @@ public class DataElementFactory
 			{
 				rValue = Period.valueOf(sValue);
 			}
+			else
+			{
+				rValue = sValue.trim();
+			}
 		}
 
 		return rValue;

@@ -1636,7 +1636,7 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else if (rComponent instanceof TextAttribute)
 		{
-			if (!(rComponent instanceof Button))
+			if (!rDataElement.isImmutable() && !(rComponent instanceof Button))
 			{
 				transferTextInput((TextAttribute) rComponent, rDataElement);
 			}
@@ -1665,32 +1665,23 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void transferTextInput(TextAttribute rComponent, D rDataElement)
 	{
-		// ignore labels as they cannot change their value
-		if (rDataElement.getProperty(LABEL_STYLE, null) == null)
+		String sText = rComponent.getText();
+
+		try
 		{
-			String sText = rComponent.getText();
+			rDataElement.setStringValue(sText);
+		}
+		catch (Exception e)
+		{
+			// ignore parsing errors TODO: check if obsolete
+		}
 
-			if (sText != null)
-			{
-				sText = sText.trim();
-			}
-
-			try
-			{
-				rDataElement.setStringValue(sText);
-			}
-			catch (Exception e)
-			{
-				// ignore parsing errors TODO: check if obsolete
-			}
-
-			if (rComponent instanceof TextControl &&
-				rDataElement.hasProperty(CARET_POSITION))
-			{
-				rDataElement.setProperty(CARET_POSITION,
-										 ((TextControl) rComponent)
-										 .getCaretPosition());
-			}
+		if (rComponent instanceof TextControl &&
+			rDataElement.hasProperty(CARET_POSITION))
+		{
+			rDataElement.setProperty(CARET_POSITION,
+									 ((TextControl) rComponent)
+									 .getCaretPosition());
 		}
 	}
 

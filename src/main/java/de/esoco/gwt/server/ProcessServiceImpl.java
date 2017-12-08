@@ -294,6 +294,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			rProcess.set(CLIENT_HEIGHT, rDescription.getClientHeight());
 
 			rProcess.pauseBackgroundJobs();
+			rProcess.executeInteractionCleanupActions();
+
 			executeProcess(rProcess, eExecutionMode);
 
 			rProcessState =

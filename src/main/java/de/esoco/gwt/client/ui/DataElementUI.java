@@ -1463,10 +1463,11 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Opens the URL that is stored in the current data element.
+	 * Opens a URL in a page or a hidden frame.
 	 *
 	 * @param sUrl    The URL to open
-	 * @param bHidden TRUE to open the URL in a hidden frame
+	 * @param bHidden TRUE to open the URL in a hidden frame, FALSE to open it
+	 *                in a new browser page
 	 */
 	protected void openUrl(String sUrl, boolean bHidden)
 	{
@@ -1749,6 +1750,8 @@ public class DataElementUI<D extends DataElement<?>>
 			openUrl(sInteractionUrl, rDataElement.hasFlag(HIDDEN_URL));
 		}
 
+		// reset any modifications so that only changes from subsequent user
+		// interactions are recorded as modifications
 		rDataElement.setModified(false);
 	}
 

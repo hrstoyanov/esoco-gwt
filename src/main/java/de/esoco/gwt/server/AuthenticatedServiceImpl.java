@@ -958,6 +958,11 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 					rResponse.setContentType(rDownloadData.getFileType()
 											 .getMimeType()
 											 .getDefinition());
+
+					// this allows to use Window.Location.assign() for the
+					// download URL without actually replacing the window URL
+					rResponse.setHeader("Content-Disposition", "attachment");
+
 					writeDownloadDataToResponse(rResponse, rDownloadData);
 				}
 				catch (Exception e)

@@ -73,7 +73,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -1322,11 +1321,9 @@ public class DataElementUI<D extends DataElement<?>>
 				@Override
 				public void handleEvent(EWTEvent rEvent)
 				{
-					String sUrl =
-						GWT.getModuleBaseURL() +
-						rDataElement.getValue().toString();
-
-					Window.Location.assign(sUrl);
+					openUrl(rDataElement.getValue().toString(),
+							rDataElement.getProperty(CONTENT_TYPE, null) ==
+							ContentType.RELATIVE_URL);
 				}
 			});
 

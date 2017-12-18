@@ -682,6 +682,40 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * TODO: DOCUMENT ME!
+	 *
+	 * @param  rInteractionStep TODO: DOCUMENT ME!
+	 *
+	 * @return TODO: DOCUMENT ME!
+	 *
+	 * @throws StorageException TODO: DOCUMENT ME!
+	 */
+	private List<DataElement<?>> createInteractionDataElements(
+		ProcessFragment rInteractionStep) throws StorageException
+	{
+		DataElementFactory rFactory = getDataElementFactory();
+
+		Collection<RelationType<?>> rModifiedParams =
+			rInteractionStep.getProcessStep().getModifiedParams();
+
+		List<DataElement<?>> aDataElements =
+			new ArrayList<DataElement<?>>(rModifiedParams.size());
+
+		for (RelationType<?> rParam : rModifiedParams)
+		{
+			DataElement<?> aElement =
+				rFactory.getDataElement(rInteractionStep, rParam);
+
+			if (aElement != null)
+			{
+				aDataElements.add(aElement);
+			}
+		}
+
+		return aDataElements;
+	}
+
+	/***************************************
 	 * Creates the data elements for certain relations of a relatable object.
 	 * For each relation a single data element will be created by invoking the
 	 * method {@link #createDataElement(Relatable, RelationType, Set)}. If that

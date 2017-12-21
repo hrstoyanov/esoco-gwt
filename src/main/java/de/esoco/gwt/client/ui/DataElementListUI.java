@@ -96,7 +96,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 
 		if (PROFILING)
 		{
-			EWT.logTime("DEL-UPDATE", getDataElement().getSimpleName(), t);
+			profile("DEL-UPDATE", t);
 		}
 	}
 
@@ -111,7 +111,6 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
-		long		    t				 = System.currentTimeMillis();
 		DataElementList rDataElementList = getDataElement();
 		Container	    rListPanel		 = null;
 
@@ -128,11 +127,6 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		{
 			// DataElementPanelManager performs event handling for other cases
 			setupInteractionHandling(rListPanel, false);
-		}
-
-		if (PROFILING)
-		{
-			EWT.logTime("DEL-BUILD", getDataElement().getSimpleName(), t);
 		}
 
 		return rListPanel;
@@ -158,6 +152,23 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		aListPanelManager.dispose();
 
 		super.dispose();
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	void profile(String sDescription, long nStartTime)
+	{
+		String sIndent    = getPanelManager().getHierarchyChildIndent();
+		String sIndicator =
+			System.currentTimeMillis() - nStartTime > 100 ? "!!" : "  ";
+
+		sIndent = sIndent.substring(0, sIndent.length() - 1);
+
+		EWT.logTime(sIndicator + sIndent + "o-" + sDescription,
+					getDataElement().getSimpleName(),
+					nStartTime);
 	}
 
 	/***************************************

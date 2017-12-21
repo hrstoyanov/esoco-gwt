@@ -69,6 +69,7 @@ import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
+import static de.esoco.lib.property.StateProperties.NO_EVENT_PROPAGATION;
 import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
 import static de.esoco.lib.property.StyleProperties.CHECK_BOX_STYLE;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
@@ -96,7 +97,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 									   HORIZONTAL_ALIGN,
 									   VERTICAL_ALIGN,
 									   ICON_ALIGN,
-									   FLOAT);
+									   FLOAT,
+									   NO_EVENT_PROPAGATION);
 
 	//~ Instance fields --------------------------------------------------------
 

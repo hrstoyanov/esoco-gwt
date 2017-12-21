@@ -74,8 +74,6 @@ public abstract class DataElementPanelManager
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static final boolean PROFILING = false;
-
 	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	static final StyleData ELEMENT_STYLE =
@@ -110,6 +108,8 @@ public abstract class DataElementPanelManager
 	private boolean				    bHandlingSelectionEvent  = false;
 
 	private DataElementInteractionHandler<DataElementList> aInteractionHandler;
+
+	private String sChildIndent;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -509,17 +509,10 @@ public abstract class DataElementPanelManager
 
 		rDataElementList = rNewDataElementList;
 
-		final long tStart = System.currentTimeMillis();
-
 		if (bIsUpdate)
 		{
 			updateElementUIs(rErrorMessages, bUpdateUI);
 			applyElementSelection();
-
-			if (PROFILING)
-			{
-				EWT.logTime("UPDATE", rDataElementList.getName(), tStart);
-			}
 		}
 		else
 		{
@@ -532,13 +525,6 @@ public abstract class DataElementPanelManager
 						aDataElementUIs.clear();
 						rebuild();
 						applyElementSelection();
-
-						if (PROFILING)
-						{
-							EWT.logTime("REBUILD",
-										rDataElementList.getName(),
-										tStart);
-						}
 					}
 				});
 		}
@@ -594,14 +580,7 @@ public abstract class DataElementPanelManager
 	@Override
 	protected void addComponents()
 	{
-		long t = System.currentTimeMillis();
-
 		buildElementUIs();
-
-		if (PROFILING)
-		{
-			EWT.logTime("BUILD", rDataElementList.getName(), t);
-		}
 	}
 
 	/***************************************
@@ -969,6 +948,46 @@ public abstract class DataElementPanelManager
 				checkSelectionDependencies(rRootManager, rChildElements);
 			}
 		}
+	}
+
+	/***************************************
+	 * Returns the indentation for the hierarchy level of this panel manager's
+	 * data element.
+	 *
+	 * @return The hierarchy indent
+	 */
+	String getHierarchyChildIndent()
+	{
+		if (sChildIndent == null)
+		{
+			DataElementList rParent = rDataElementList.getParent();
+			StringBuilder   aIndent = new StringBuilder();
+
+			while (rParent != null)
+			{
+				aIndent.append("| ");
+				rParent = rParent.getParent();
+			}
+
+			aIndent.setLength(aIndent.length() - 1);
+			sChildIndent = aIndent.toString();
+		}
+
+		return sChildIndent;
+	}
+
+	/***************************************
+	 * Returns the indentation for the hierarchy level of this panel manager's
+	 * data element.
+	 *
+	 * @return The hierarchy indent
+	 */
+	String getHierarchyIndent()
+	{
+		PanelManager<?, ?> rParent = getParent();
+
+		return rParent instanceof DataElementPanelManager
+			   ? ((DataElementPanelManager) rParent).getHierarchyIndent() : "";
 	}
 
 	//~ Inner Interfaces -------------------------------------------------------

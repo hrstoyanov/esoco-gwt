@@ -445,7 +445,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 		if (PROFILING)
 		{
-			EWT.logTime("DE-BUILD", getDataElement().getSimpleName(), t);
+			profile("DE-BUILD", t);
 		}
 	}
 
@@ -624,7 +624,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (PROFILING)
 			{
-				EWT.logTime("DE-UPDATE", getDataElement().getSimpleName(), t);
+				profile("DE-UPDATE", t);
 			}
 		}
 	}
@@ -1867,6 +1867,20 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		this.rPanelManager = rParent;
 		this.rDataElement  = rElement;
+	}
+
+	/***************************************
+	 * Profiling output
+	 *
+	 * @param sDescription A description string
+	 * @param nStartTime   The start time of the profiled execution
+	 */
+	void profile(String sDescription, long nStartTime)
+	{
+		EWT.logTime("  " + rPanelManager.getHierarchyChildIndent() + " +-" +
+					sDescription,
+					getDataElement().getSimpleName(),
+					nStartTime);
 	}
 
 	/***************************************

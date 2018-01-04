@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -127,9 +127,8 @@ public class ProcessPanelManager
 	private Label     aMessageLabel;
 	private Image     rBusyImage = null;
 
-	private ProcessState rProcessState  = null;
-	private String		 sPreviousStep  = null;
-	private String		 sPreviousStyle = "";
+	private ProcessState rProcessState = null;
+	private String		 sPreviousStep = null;
 
 	private boolean bAutoContinue	   = false;
 	private boolean bPauseAutoContinue = false;
@@ -716,24 +715,25 @@ public class ProcessPanelManager
 		if (rProcessState != null && !rProcessState.isFinished())
 		{
 			String sCurrentStep = rProcessState.getCurrentStep();
-			String sStepStyle   = rProcessState.getProperty(STYLE, "");
 
 			List<DataElement<?>> rInteractionParams =
 				rProcessState.getInteractionParams();
 
 			if (aParamPanelManager != null &&
-				sCurrentStep.equals(sPreviousStep) &&
-				sStepStyle.equals(sPreviousStyle) &&
-				rInteractionParams.size() ==
-				aParamPanelManager.getDataElements().size())
+				sCurrentStep.equals(sPreviousStep))
 			{
-				aParamPanelManager.updateDataElements(rInteractionParams,
-													  rErrorParams,
-													  true);
+				DataElementList aElementList =
+					new DataElementList(aParamPanelManager.getDataElementList()
+										.getName(),
+										rInteractionParams);
+
+				aParamPanelManager.update(aElementList, rErrorParams, true);
 			}
 			else
 			{
 				List<DataElement<?>> rParams = rInteractionParams;
+
+				String sStepStyle = rProcessState.getProperty(STYLE, "");
 
 				if (aParamPanelManager != null)
 				{
@@ -746,8 +746,7 @@ public class ProcessPanelManager
 					bRenderInline
 					? this : addPanel(PARAM_PANEL_STYLE, new FillLayout(true));
 
-				rParamPanel    = aBuilder.getContainer();
-				sPreviousStyle = sStepStyle;
+				rParamPanel = aBuilder.getContainer();
 
 				aParamPanelManager =
 					addParamDataElementPanel(aBuilder,

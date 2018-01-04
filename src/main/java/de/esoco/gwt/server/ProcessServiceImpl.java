@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -74,6 +74,8 @@ import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
 
 import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
+
+import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 
 import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
 import static de.esoco.process.ProcessRelationTypes.AUTO_UPDATE;
@@ -682,37 +684,32 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * TODO: DOCUMENT ME!
+	 * Collects all modified data element from a hierarchy of data elements. If
+	 * a data element list is modified it will be added to the target
+	 * collection. Otherwise it's children will be checked recursively.
 	 *
-	 * @param  rInteractionStep TODO: DOCUMENT ME!
-	 *
-	 * @return TODO: DOCUMENT ME!
-	 *
-	 * @throws StorageException TODO: DOCUMENT ME!
+	 * @param rDataElements     The data elements to check for modification
+	 * @param rModifiedElements A collection to add modified elements to
 	 */
-	private List<DataElement<?>> createInteractionDataElements(
-		ProcessFragment rInteractionStep) throws StorageException
+	private void collectModifiedDataElements(
+		Collection<DataElement<?>> rDataElements,
+		Collection<DataElement<?>> rModifiedElements)
 	{
-		DataElementFactory rFactory = getDataElementFactory();
-
-		Collection<RelationType<?>> rModifiedParams =
-			rInteractionStep.getProcessStep().getModifiedParams();
-
-		List<DataElement<?>> aDataElements =
-			new ArrayList<DataElement<?>>(rModifiedParams.size());
-
-		for (RelationType<?> rParam : rModifiedParams)
+		for (DataElement<?> rDataElement : rDataElements)
 		{
-			DataElement<?> aElement =
-				rFactory.getDataElement(rInteractionStep, rParam);
-
-			if (aElement != null)
+			if (rDataElement.hasFlag(VALUE_CHANGED))
 			{
-				aDataElements.add(aElement);
+				// save the path for updating the UI (parent is transient)
+				rDataElement.setUpdatePath(rDataElement.getPath());
+				rModifiedElements.add(rDataElement);
+			}
+			else if (rDataElement instanceof DataElementList)
+			{
+				collectModifiedDataElements(((DataElementList) rDataElement)
+											.getElements(),
+											rModifiedElements);
 			}
 		}
-
-		return aDataElements;
 	}
 
 	/***************************************
@@ -731,7 +728,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * @throws StorageException If the initialization of a storage-based data
 	 *                          element fails
 	 */
-	private List<DataElement<?>> createInteractionDataElements(
+	private List<DataElement<?>> createInteractionElements(
 		ProcessFragment rInteractionStep,
 		boolean			bMarkAsChanged) throws StorageException
 	{
@@ -822,7 +819,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			ProcessStep rInteractionStep = rProcess.getInteractionStep();
 
 			List<DataElement<?>> aInteractionElements =
-				createInteractionDataElements(rInteractionStep, bReload);
+				createInteractionElements(rInteractionStep, bReload);
+
+//			aInteractionElements =
+//				reduceToModifiedElements(aInteractionElements);
 
 			aProcessState =
 				new ProcessState(rDescription,
@@ -1050,6 +1050,25 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
+	 * Searches all modified elements in a hierarchy of data elements. If a data
+	 * element list is modified it will be added to the target collection.
+	 * Otherwise it's children will be checked recursively.
+	 *
+	 * @param  rDataElements The data elements to check for modification
+	 *
+	 * @return A list containing the modified elements from the input collection
+	 */
+	private List<DataElement<?>> reduceToModifiedElements(
+		Collection<DataElement<?>> rDataElements)
+	{
+		List<DataElement<?>> aModifiedElements = new ArrayList<>();
+
+		collectModifiedDataElements(rDataElements, aModifiedElements);
+
+		return aModifiedElements;
+	}
+
+	/***************************************
 	 * Sets properties of the current client (e.g. info, locale) as process
 	 * parameters.
 	 *
@@ -1147,9 +1166,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		{
 			if (eMode == ProcessExecutionMode.EXECUTE)
 			{
-				List<DataElement<?>>  rInteractionParams =
+				List<DataElement<?>> rInteractionParams =
 					rProcessState.getInteractionParams();
-				List<DataElementList> rViewParams		 =
+
+				List<DataElementList> rViewParams =
 					rProcessState.getViewParams();
 
 				DataElementFactory rDataElementFactory =

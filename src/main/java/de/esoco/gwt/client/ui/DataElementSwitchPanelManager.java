@@ -128,7 +128,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	@Override
 	public void handleEvent(EWTEvent rEvent)
 	{
-		updatePanel();
+		updateUI();
 	}
 
 	/***************************************
@@ -145,7 +145,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void updatePanel()
+	public void updateUI()
 	{
 		int nSelectedElement = getSelectedElement();
 

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.StandardProperties;
 import de.esoco.lib.property.ViewDisplayType;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
@@ -150,7 +151,7 @@ public class DataElementListView
 
 		DataElementPanelManager    rViewManager = aViewUI.getPanelManager();
 		Collection<DataElement<?>> rElements    =
-			rViewManager.getDataElements();
+			Arrays.asList(rViewManager.getDataElementList());
 
 		rViewManager.checkSelectionDependencies(rViewManager, rElements);
 

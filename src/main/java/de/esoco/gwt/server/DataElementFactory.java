@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1190,9 +1190,6 @@ public class DataElementFactory
 			{
 				aDataElement.removeProperty(VALUE_CHANGED);
 			}
-
-			// the modified state is
-			aDataElement.setModified(false);
 		}
 
 		return aDataElement;

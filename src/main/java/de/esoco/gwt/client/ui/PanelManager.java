@@ -232,7 +232,7 @@ public abstract class PanelManager<C extends Container,
 	 * Therefore it should only be invoked on display UIs or when the resetting
 	 * of input fields is explicitly desired.</p>
 	 */
-	public void updatePanel()
+	public void updateUI()
 	{
 		getPanel().repaint();
 	}

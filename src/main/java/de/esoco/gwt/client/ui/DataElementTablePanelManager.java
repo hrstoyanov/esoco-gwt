@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
-import de.esoco.data.element.ListDataElement;
 
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
@@ -34,7 +33,6 @@ import de.esoco.lib.property.UserInterfaceProperties;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
@@ -55,8 +53,6 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 {
 	//~ Instance fields --------------------------------------------------------
 
-	private List<DataElement<?>> aDataElements;
-
 	private boolean bHasOptions;
 	private boolean bHasLabels;
 	private int     nElementColumns;
@@ -75,23 +71,23 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 		DataElementList    rDataElementList)
 	{
 		super(rParent, rDataElementList);
-
-		initDataElements(rDataElementList.getDataElements());
 	}
 
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * @see DataElementPanelManager#getDataElements()
+	 * {@inheritDoc}
 	 */
 	@Override
-	public final Collection<DataElement<?>> getDataElements()
+	public void rebuild()
 	{
-		return aDataElements;
+		getDataElementsLayout().setGridCount(calcLayoutColumns(getDataElementList()
+															   .getElements()));
+		super.rebuild();
 	}
 
 	/***************************************
-	 * @see DataElementPanelManager#setElementVisibility(DataElementUI, boolean)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setElementVisibility(
@@ -106,93 +102,23 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	}
 
 	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void updateDataElements(List<DataElement<?>> rNewDataElements,
-								   Map<String, String>  rElementErrors,
-								   boolean				bUpdateUI)
-	{
-		if (containsSameElements(aDataElements, rNewDataElements))
-		{
-			aDataElements = new ArrayList<DataElement<?>>(rNewDataElements);
-
-			for (DataElement<?> rElement : aDataElements)
-			{
-				DataElementUI<?> rElementUI =
-					getDataElementUIs().get(rElement.getName());
-
-				rElementUI.updateDataElement(rElement,
-											 rElementErrors,
-											 bUpdateUI);
-			}
-		}
-		else
-		{
-			dispose();
-			initDataElements(rNewDataElements);
-			getDataElementsLayout().setGridCount(calcLayoutColumns(aDataElements));
-			rebuild();
-		}
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	@SuppressWarnings("unchecked")
-	public void updateFromDataElement(DataElement<?>	  rNewDataElement,
-									  Map<String, String> rErrorMessages,
-									  boolean			  bUpdateUI)
-	{
-		if (rNewDataElement instanceof DataElementList)
-		{
-			String sElementStyle = rNewDataElement.getProperty(STYLE, null);
-			String sStyleName    = getStyleName();
-
-			if (sElementStyle != null && sStyleName.indexOf(sElementStyle) < 0)
-			{
-				sStyleName = sStyleName + " " + sElementStyle;
-			}
-
-			rNewDataElement.setProperty(STYLE, sStyleName);
-
-			StyleData rNewStyle =
-				DataElementUI.applyElementStyle(rNewDataElement,
-												getBaseStyle());
-
-			getContainer().applyStyle(rNewStyle);
-
-			updateDataElements(((ListDataElement<DataElement<?>>)
-								rNewDataElement).getElements(),
-							   rErrorMessages,
-							   bUpdateUI);
-		}
-		else
-		{
-			super.updateFromDataElement(rNewDataElement,
-										rErrorMessages,
-										bUpdateUI);
-		}
-	}
-
-	/***************************************
 	 * Adds the user interfaces for the data elements in this panel.
 	 */
 	@Override
 	protected void buildElementUIs()
 	{
-		UserInterfaceContext rContext = getContext();
-		List<Label>			 aHeaders = null;
+		List<DataElement<?>> rDataElements = getDataElementList().getElements();
+		UserInterfaceContext rContext	   = getContext();
+		List<Label>			 aHeaders	   = null;
 
 		int     nColumn		  = nElementColumns;
 		int     nHeaderColumn = 0;
-		int     nElementCount = aDataElements.size();
+		int     nElementCount = rDataElements.size();
 		boolean bFocusSet     = false;
 
 		for (int nElement = 0; nElement < nElementCount; nElement++)
 		{
-			DataElement<?> rDataElement = aDataElements.get(nElement);
+			DataElement<?> rDataElement = rDataElements.get(nElement);
 
 			String sWidth  = rDataElement.getProperty(HTML_WIDTH, null);
 			String sHeight = rDataElement.getProperty(HTML_HEIGHT, null);
@@ -223,7 +149,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 
 				while (nCol < nElementColumns && nRowElement < nElementCount)
 				{
-					DataElement<?> rElement = aDataElements.get(nRowElement++);
+					DataElement<?> rElement = rDataElements.get(nRowElement++);
 
 					if (aHeaders == null && rElement.hasFlag(HEADER_LABEL))
 					{
@@ -240,7 +166,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 
 					for (int i = nElement; i < nRowElement; i++)
 					{
-						DataElement<?> rElement = aDataElements.get(i);
+						DataElement<?> rElement = rDataElements.get(i);
 
 						String sHeaderStyle = rElement.getResourceId();
 
@@ -275,7 +201,8 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 
 			if ("100%".equals(sWidth) && "100%".equals(sHeight))
 			{
-				aElementUI.getElementComponent().getWidget()
+				aElementUI.getElementComponent()
+						  .getWidget()
 						  .setSize("100%", "100%");
 			}
 
@@ -371,11 +298,13 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	protected ContainerBuilder<? extends Panel> createPanel(
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyleData,
-		LayoutType				eLayout)
+		LayoutType			eLayout)
 	{
+		List<DataElement<?>> rDataElements = getDataElementList().getElements();
+
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,
-							  new GridLayout(calcLayoutColumns(aDataElements),
+							  new GridLayout(calcLayoutColumns(rDataElements),
 											 true));
 
 		return aContainerBuilder;
@@ -518,24 +447,5 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	private GridLayout getDataElementsLayout()
 	{
 		return (GridLayout) getContainer().getLayout();
-	}
-
-	/***************************************
-	 * Initializes the internal data structures that contain the data elements
-	 * of this instance.
-	 *
-	 * @param  rDataElements The data elements
-	 *
-	 * @throws IllegalArgumentException If the list of data elements is empty
-	 */
-	private void initDataElements(Collection<DataElement<?>> rDataElements)
-	{
-		if (rDataElements == null)
-		{
-			throw new IllegalArgumentException(getStyleName() +
-											   ": No data elements");
-		}
-
-		aDataElements = new ArrayList<DataElement<?>>(rDataElements);
 	}
 }

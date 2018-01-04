@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,6 +62,7 @@ import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
 import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 import static de.esoco.lib.property.StyleProperties.SHOW_LABEL;
+import static de.esoco.lib.property.StyleProperties.STYLE;
 
 
 /********************************************************************
@@ -306,7 +307,7 @@ public abstract class DataElementPanelManager
 		// element UIs have been initialized
 		if (!(getParent() instanceof DataElementPanelManager))
 		{
-			checkSelectionDependencies(this, getDataElements());
+			checkSelectionDependencies(this, Arrays.asList(rDataElementList));
 		}
 	}
 
@@ -341,6 +342,8 @@ public abstract class DataElementPanelManager
 		{
 			rUI.dispose();
 		}
+
+		aDataElementUIs.clear();
 	}
 
 	/***************************************
@@ -390,16 +393,6 @@ public abstract class DataElementPanelManager
 	public final DataElementList getDataElementList()
 	{
 		return rDataElementList;
-	}
-
-	/***************************************
-	 * Returns the data elements that are displayed by this instance.
-	 *
-	 * @return The list of data elements
-	 */
-	public Collection<DataElement<?>> getDataElements()
-	{
-		return Arrays.<DataElement<?>>asList(rDataElementList);
 	}
 
 	/***************************************
@@ -478,31 +471,22 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
-	 * Updates the data elements of this instance with new values and then the
-	 * data element UIs.
+	 * Updates this instance from a new data element list.
 	 *
-	 * @param rNewDataElements The list containing the new data elements
-	 * @param rErrorMessages   A mapping from the names of data elements with
-	 *                         errors to error messages or NULL to clear all
-	 *                         error messages
-	 * @param bUpdateUI        TRUE to also update the UI, FALSE to only update
-	 *                         the data element references
+	 * @param rNewDataElementList The list containing the new data elements
+	 * @param rErrorMessages      A mapping from the names of data elements with
+	 *                            errors to error messages or NULL to clear all
+	 *                            error messages
+	 * @param bUpdateUI           TRUE to also update the UI, FALSE to only
+	 *                            update the data element references
 	 */
-	public void updateDataElements(List<DataElement<?>>		 rNewDataElements,
-								   final Map<String, String> rErrorMessages,
-								   final boolean			 bUpdateUI)
+	public void update(DataElementList	   rNewDataElementList,
+					   Map<String, String> rErrorMessages,
+					   boolean			   bUpdateUI)
 	{
-		if (rNewDataElements.size() != 1 ||
-			!(rNewDataElements.get(0) instanceof DataElementList))
-		{
-			throw new IllegalArgumentException("DataElementList expected, not " +
-											   rNewDataElements);
-		}
+		checkUpdateContainerStyle(rNewDataElementList);
 
-		DataElementList rNewDataElementList =
-			(DataElementList) rNewDataElements.get(0);
-
-		final boolean bIsUpdate =
+		boolean bIsUpdate =
 			rNewDataElementList.getName().equals(rDataElementList.getName()) &&
 			containsSameElements(rNewDataElementList.getElements(),
 								 rDataElementList.getElements());
@@ -522,7 +506,7 @@ public abstract class DataElementPanelManager
 					@Override
 					public void execute()
 					{
-						aDataElementUIs.clear();
+						dispose();
 						rebuild();
 						applyElementSelection();
 					}
@@ -531,27 +515,10 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
-	 * A convenience method to update a panel manager from a single data
-	 * element. The default implementation wraps the element into a list and
-	 * then forwards it to {@link #updateDataElements(List, Map, boolean)}.
-	 *
-	 * @see #updateDataElements(List, Map, boolean)
-	 */
-	public void updateFromDataElement(DataElement<?>	  rNewDataElement,
-									  Map<String, String> rErrorMessages,
-									  boolean			  bUpdateUI)
-	{
-		List<DataElement<?>> aUpdateList =
-			Arrays.<DataElement<?>>asList(rNewDataElement);
-
-		updateDataElements(aUpdateList, rErrorMessages, bUpdateUI);
-	}
-
-	/***************************************
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void updatePanel()
+	public void updateUI()
 	{
 		for (DataElementUI<?> rElementUI : aDataElementUIs.values())
 		{
@@ -948,6 +915,29 @@ public abstract class DataElementPanelManager
 				checkSelectionDependencies(rRootManager, rChildElements);
 			}
 		}
+	}
+
+	/***************************************
+	 * Check if the container style needs to be updated for a new data element.
+	 *
+	 * @param rNewDataElement The new data element
+	 */
+	void checkUpdateContainerStyle(DataElement<?> rNewDataElement)
+	{
+		String sElementStyle = rNewDataElement.getProperty(STYLE, null);
+		String sStyleName    = getStyleName();
+
+		if (sElementStyle != null && sStyleName.indexOf(sElementStyle) < 0)
+		{
+			sStyleName = sStyleName + " " + sElementStyle;
+		}
+
+		rNewDataElement.setProperty(STYLE, sStyleName);
+
+		StyleData rNewStyle =
+			DataElementUI.applyElementStyle(rNewDataElement, getBaseStyle());
+
+		getContainer().applyStyle(rNewStyle);
 	}
 
 	/***************************************

@@ -722,10 +722,21 @@ public class ProcessPanelManager
 			if (aParamPanelManager != null &&
 				sCurrentStep.equals(sPreviousStep))
 			{
-				DataElementList aElementList =
-					new DataElementList(aParamPanelManager.getDataElementList()
-										.getName(),
-										rInteractionParams);
+				DataElement<?>  rFirstElement = rInteractionParams.get(0);
+				DataElementList aElementList;
+
+				if (rInteractionParams.size() == 1 &&
+					rFirstElement instanceof DataElementList)
+				{
+					aElementList = (DataElementList) rInteractionParams.get(0);
+				}
+				else
+				{
+					aElementList =
+						new DataElementList(aParamPanelManager
+											.getDataElementList().getName(),
+											rInteractionParams);
+				}
 
 				aParamPanelManager.update(aElementList, rErrorParams, true);
 			}

@@ -100,6 +100,27 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
+	{
+		// always use FALSE to not update UI before data element is updated;
+		// UI update will be done in the update() method
+		super.updateDataElement(rNewElement, false);
+
+		if (aListPanelManager != null)
+		{
+			aListPanelManager.update(getDataElement(), false);
+		}
+
+		if (bUpdateUI)
+		{
+			update();
+		}
+	}
+
+	/***************************************
 	 * Overridden to create a child {@link DataElementTablePanelManager} for the
 	 * data element list.
 	 *
@@ -168,26 +189,5 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 		EWT.logTime(sIndicator + sIndent + "o-" + sDescription,
 					getDataElement().getSimpleName(),
 					nStartTime);
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
-	{
-		// always use FALSE to not update UI before data element is updated;
-		// UI update will be done in the update() method
-		super.updateDataElement(rNewElement, false);
-
-		if (aListPanelManager != null)
-		{
-			aListPanelManager.update(getDataElement(), false);
-		}
-
-		if (bUpdateUI)
-		{
-			update();
-		}
 	}
 }

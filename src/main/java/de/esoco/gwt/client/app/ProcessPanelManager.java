@@ -53,7 +53,6 @@ import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.property.InteractionEventType;
-import de.esoco.lib.property.LayoutType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +68,6 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
 import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
-import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StyleProperties.STYLE;
 
 
@@ -206,6 +204,29 @@ public class ProcessPanelManager
 	}
 
 	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * TODO: `Description`
+	 *
+	 * @return
+	 */
+	public ContainerBuilder<? extends Container> createParameterPanel()
+	{
+		if (aParamPanelManager != null)
+		{
+			aParamPanelManager.dispose();
+		}
+
+		removeParameterPanel();
+
+		ContainerBuilder<? extends Container> aBuilder =
+			bRenderInline ? this
+						  : addPanel(PARAM_PANEL_STYLE, new FillLayout(true));
+
+		rParamPanel = aBuilder.getContainer();
+
+		return aBuilder;
+	}
 
 	/***************************************
 	 * Sets the message label visible and displays a message in the panels
@@ -420,7 +441,7 @@ public class ProcessPanelManager
 			buildTopPanel();
 		}
 
-		buildParameterPanel();
+		updateParameterPanel();
 		setUserInterfaceState();
 
 		addUiInspectorEventHandler();
@@ -507,8 +528,9 @@ public class ProcessPanelManager
 			{
 				for (Entry<String, String> rError : rErrorParams.entrySet())
 				{
-					DataElementUI<?> rErrorUI =
-						aParamPanelManager.findDataElementUI(rError.getKey());
+					String			 sElementName = rError.getKey();
+					DataElementUI<?> rErrorUI     =
+						aParamPanelManager.findDataElementUI(sElementName);
 
 					if (rErrorUI != null)
 					{
@@ -516,8 +538,20 @@ public class ProcessPanelManager
 					}
 					else
 					{
-						assert false : "No UI for data element " +
-							   rError.getKey();
+						for (DataElementListView rView : aProcessViews.values())
+						{
+							rErrorUI =
+								rView.getViewUI()
+									 .getPanelManager()
+									 .findDataElementUI(sElementName);
+
+							if (rErrorUI != null)
+							{
+								rErrorUI.setErrorMessage(rError.getValue());
+
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -530,7 +564,7 @@ public class ProcessPanelManager
 	 * Handles fatal exceptions that cannot be recovered by re-executing the
 	 * current process.
 	 *
-	 * @param rCaught The exception that signalled the non-recoverable error
+	 * @param rCaught The exception that signaled the non-recoverable error
 	 */
 	protected void handleUnrecoverableError(Throwable rCaught)
 	{
@@ -580,7 +614,7 @@ public class ProcessPanelManager
 		{
 			processUpdated(ProcessPanelManager.this, rProcessState);
 			setTitle(rProcessState.getName());
-			buildParameterPanel();
+			updateParameterPanel();
 
 			if (bAutoContinue && !bPauseAutoContinue)
 			{
@@ -635,44 +669,32 @@ public class ProcessPanelManager
 
 	/***************************************
 	 * Adds a data element panel for a list of process parameter data elements.
-	 *
-	 * @param  rBuilder     The builder to add the panel with
-	 * @param  rParams      The list of process parameter data elements
-	 * @param  sCurrentStep The name of the current step
-	 * @param  sStyle       An optional step style name (empty string for NONE)
-	 *
-	 * @return The panel manager for the new panel
 	 */
-	private DataElementPanelManager addParamDataElementPanel(
-		ContainerBuilder<?>  rBuilder,
-		List<DataElement<?>> rParams,
-		String				 sCurrentStep,
-		String				 sStyle)
+	private void addParameterDataElementPanel()
 	{
-		DataElementPanelManager aPanelManager = null;
+		ContainerBuilder<?>  rBuilder = createParameterPanel();
+		List<DataElement<?>> rParams  = rProcessState.getInteractionParams();
+		String				 sStep    = rProcessState.getCurrentStep();
 
 		if (rParams.size() == 0)
 		{
 			throw new IllegalArgumentException("No DataElements in " +
-											   sProcessName + "." +
-											   sCurrentStep);
+											   sProcessName + "." + sStep);
 		}
 
 		DataElement<?> rFirstElement = rParams.get(0);
 
-		if (rParams.size() == 1 &&
-			rFirstElement instanceof DataElementList &&
-			rFirstElement.getProperty(LAYOUT, LayoutType.TABLE) !=
-			LayoutType.TABLE)
+		if (rParams.size() == 1 && rFirstElement instanceof DataElementList)
 		{
-			aPanelManager =
+			aParamPanelManager =
 				DataElementPanelManager.newInstance(this,
 													(DataElementList)
 													rFirstElement);
 		}
 		else
 		{
-			String sName = sProcessName + " " + sCurrentStep;
+			String sName  = sProcessName + " " + sStep;
+			String sStyle = rProcessState.getProperty(STYLE, null);
 
 			if (sStyle != null && sStyle.length() > 0)
 			{
@@ -682,20 +704,17 @@ public class ProcessPanelManager
 			DataElementList rParamDataElements =
 				new DataElementList(sName, rParams);
 
-			// also set ResID
 			rParamDataElements.setProperty(RESOURCE_ID, sName);
 
-			aPanelManager =
+			aParamPanelManager =
 				new DataElementTablePanelManager(this, rParamDataElements);
 		}
 
 		StyleData aPanelStyle =
 			StyleData.DEFAULT.setFlags(StyleFlag.VERTICAL_ALIGN_TOP);
 
-		aPanelManager.buildIn(rBuilder, aPanelStyle);
-		aPanelManager.setInteractiveInputHandler(this);
-
-		return aPanelManager;
+		aParamPanelManager.buildIn(rBuilder, aPanelStyle);
+		aParamPanelManager.setInteractiveInputHandler(this);
 	}
 
 	/***************************************
@@ -721,70 +740,6 @@ public class ProcessPanelManager
 //						}
 //					}
 //				});
-	}
-
-	/***************************************
-	 * Builds the panel to display the process parameters of the current
-	 * interactive step.
-	 */
-	private void buildParameterPanel()
-	{
-		if (rProcessState != null && !rProcessState.isFinished())
-		{
-			String sCurrentStep = rProcessState.getCurrentStep();
-
-			List<DataElement<?>> rInteractionParams =
-				rProcessState.getInteractionParams();
-
-			if (aParamPanelManager != null &&
-				sCurrentStep.equals(sPreviousStep))
-			{
-				DataElement<?>  rFirstElement = rInteractionParams.get(0);
-				DataElementList aElementList;
-
-				if (rInteractionParams.size() == 1 &&
-					rFirstElement instanceof DataElementList)
-				{
-					aElementList = (DataElementList) rInteractionParams.get(0);
-				}
-				else
-				{
-					aElementList =
-						new DataElementList(aParamPanelManager
-											.getDataElementList().getName(),
-											rInteractionParams);
-				}
-
-				aParamPanelManager.update(aElementList, true);
-			}
-			else
-			{
-				List<DataElement<?>> rParams = rInteractionParams;
-
-				String sStepStyle = rProcessState.getProperty(STYLE, "");
-
-				if (aParamPanelManager != null)
-				{
-					aParamPanelManager.dispose();
-				}
-
-				removeParameterPanel();
-
-				ContainerBuilder<? extends Container> aBuilder =
-					bRenderInline
-					? this : addPanel(PARAM_PANEL_STYLE, new FillLayout(true));
-
-				rParamPanel = aBuilder.getContainer();
-
-				aParamPanelManager =
-					addParamDataElementPanel(aBuilder,
-											 rParams,
-											 sCurrentStep,
-											 sStepStyle);
-			}
-
-			manageProcessViews();
-		}
 	}
 
 	/***************************************
@@ -1099,6 +1054,49 @@ public class ProcessPanelManager
 			aNextButton.setEnabled(!bAutoContinue && !bCancelled &&
 								   !(bHasState &&
 									 rProcessState.hasImmedidateInteraction()));
+		}
+	}
+
+	/***************************************
+	 * Updates the UIs for the data elements that have been modified during the
+	 * last interaction.
+	 */
+	private void updateInteractionUIs()
+	{
+		for (DataElement<?> rUpdateElement :
+			 rProcessState.getInteractionParams())
+		{
+			DataElementUI<?> rUpdateUI =
+				aParamPanelManager.findDataElementUI(rUpdateElement.getName());
+
+			if (rUpdateUI != null)
+			{
+				rUpdateUI.updateDataElement(rUpdateElement, true);
+			}
+		}
+	}
+
+	/***************************************
+	 * Updates the panel that displays the process parameters of the current
+	 * process interaction.
+	 */
+	private void updateParameterPanel()
+	{
+		if (rProcessState != null && !rProcessState.isFinished())
+		{
+			String sCurrentStep = rProcessState.getCurrentStep();
+
+			if (aParamPanelManager != null &&
+				sCurrentStep.equals(sPreviousStep))
+			{
+				updateInteractionUIs();
+			}
+			else
+			{
+				addParameterDataElementPanel();
+			}
+
+			manageProcessViews();
 		}
 	}
 }

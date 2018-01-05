@@ -59,7 +59,8 @@ public class DataElementListView
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementListUI aViewUI;
-	private View			  aView;
+
+	private View aView;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -109,6 +110,16 @@ public class DataElementListView
 	public void enableInteraction(boolean bEnable)
 	{
 		aViewUI.enableInteraction(bEnable);
+	}
+
+	/***************************************
+	 * Returns the data element UI of this view.
+	 *
+	 * @return The view's data elementUI
+	 */
+	public final DataElementListUI getViewUI()
+	{
+		return aViewUI;
 	}
 
 	/***************************************

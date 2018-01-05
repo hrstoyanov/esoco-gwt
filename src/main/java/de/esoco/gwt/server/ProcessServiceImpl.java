@@ -821,15 +821,21 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			List<DataElement<?>> aInteractionElements =
 				createInteractionElements(rInteractionStep, bReload);
 
-//			aInteractionElements =
-//				reduceToModifiedElements(aInteractionElements);
+			List<DataElement<?>> aModifiedElements =
+				reduceToModifiedElements(aInteractionElements);
+
+			if (aModifiedElements.isEmpty())
+			{
+				// no elements modified happens on browser reload or restart
+				aModifiedElements = aInteractionElements;
+			}
 
 			aProcessState =
 				new ProcessState(rDescription,
 								 sProcessId,
 								 sProcessInfo,
 								 rInteractionStep.getName(),
-								 aInteractionElements,
+								 aModifiedElements,
 								 createViewDataElements(rInteractionStep),
 								 getSpawnProcesses(rProcess),
 								 getProcessStateFlags(rProcess,

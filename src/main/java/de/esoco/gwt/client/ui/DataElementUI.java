@@ -653,6 +653,35 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Package-internal method to update the data element of this instance.
+	 *
+	 * @param rNewElement The new data element
+	 * @param bUpdateUI   TRUE to also update the UI, FALSE to only update data
+	 *                    element references
+	 */
+	@SuppressWarnings("unchecked")
+	public void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
+	{
+		rDataElement = (D) rNewElement;
+		rPanelManager.getDataElementList().replaceElement(rNewElement);
+
+		if (aInteractionHandler != null)
+		{
+			aInteractionHandler.updateDataElement(rDataElement);
+		}
+
+		if (bHasError)
+		{
+			setErrorMessage(null);
+		}
+
+		if (bUpdateUI)
+		{
+			update();
+		}
+	}
+
+	/***************************************
 	 * Creates a checkbox to select an optional component.
 	 *
 	 * @param rBuilder The builder to add the component with
@@ -1871,34 +1900,6 @@ public class DataElementUI<D extends DataElement<?>>
 	final void setBaseStyle(StyleData rBaseStyle)
 	{
 		this.rBaseStyle = rBaseStyle;
-	}
-
-	/***************************************
-	 * Package-internal method to update the data element of this instance.
-	 *
-	 * @param rNewElement The new data element
-	 * @param bUpdateUI   TRUE to also update the UI, FALSE to only update data
-	 *                    element references
-	 */
-	@SuppressWarnings("unchecked")
-	void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
-	{
-		rDataElement = (D) rNewElement;
-
-		if (aInteractionHandler != null)
-		{
-			aInteractionHandler.updateDataElement(rDataElement);
-		}
-
-		if (bHasError)
-		{
-			setErrorMessage(null);
-		}
-
-		if (bUpdateUI)
-		{
-			update();
-		}
 	}
 
 	/***************************************

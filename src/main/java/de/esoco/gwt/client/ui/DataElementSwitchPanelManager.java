@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,14 +151,15 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		if (nSelectedElement >= 0)
 		{
-			DataElementUI<?> rDataElementUI =
-				getDataElementUI(nSelectedElement);
+			getDataElementUI(nSelectedElement).update();
+		}
 
-			rDataElementUI.update();
+		int nPage = 0;
 
-			aSwitchPanel.setPageTitle(nSelectedElement,
-									  getPageTitle(rDataElementUI
-												   .getDataElement()));
+		for (DataElementUI<?> rElementUI : getDataElementUIs().values())
+		{
+			aSwitchPanel.setPageTitle(nPage++,
+									  getPageTitle(rElementUI.getDataElement()));
 		}
 	}
 

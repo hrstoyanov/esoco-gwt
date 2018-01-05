@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -71,7 +71,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
@@ -586,6 +585,30 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Shows or hides an error message for an error of the data element value.
+	 * The default implementation sets the message as the element component's
+	 * tooltip (and on the label too if such exists).
+	 *
+	 * @param sMessage The error message or NULL to clear
+	 */
+	public void setErrorMessage(String sMessage)
+	{
+		bHasError = (sMessage != null);
+
+		if (sMessage != null && !sMessage.startsWith("$"))
+		{
+			sMessage = "$msg" + sMessage;
+		}
+
+		aElementComponent.setError(sMessage);
+
+		if (aElementLabel != null)
+		{
+			aElementLabel.setError(sMessage);
+		}
+	}
+
+	/***************************************
 	 * @see Object#toString()
 	 */
 	@Override
@@ -762,31 +785,6 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		return sText;
-	}
-
-	/***************************************
-	 * Checks if an error message is present for the data element of this
-	 * instance.
-	 *
-	 * @param rElementErrors The mapping from data element names to error
-	 *                       message (NULL for no errors)
-	 */
-	protected void checkElementError(Map<String, String> rElementErrors)
-	{
-		if (rElementErrors != null)
-		{
-			String sErrorMessage = rElementErrors.get(rDataElement.getName());
-
-			if (sErrorMessage != null)
-			{
-				if (!sErrorMessage.startsWith("$"))
-				{
-					sErrorMessage = "$msg" + sErrorMessage;
-				}
-			}
-
-			setErrorMessage(sErrorMessage);
-		}
 	}
 
 	/***************************************
@@ -1498,25 +1496,6 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
-	 * Shows or hides an error message for an error of the data element value.
-	 * The default implementation sets the message as the element component's
-	 * tooltip.
-	 *
-	 * @param sMessage The error message or NULL to clear
-	 */
-	protected void setErrorMessage(String sMessage)
-	{
-		bHasError = (sMessage != null);
-
-		aElementComponent.setError(sMessage);
-
-		if (aElementLabel != null)
-		{
-			aElementLabel.setError(sMessage);
-		}
-	}
-
-	/***************************************
 	 * Sets a hint for the component if the element label is not visible. The
 	 * default implementation sets the label text as the component tooltip but
 	 * subclasses can override this method.
@@ -1897,16 +1876,12 @@ public class DataElementUI<D extends DataElement<?>>
 	/***************************************
 	 * Package-internal method to update the data element of this instance.
 	 *
-	 * @param rNewElement    The new data element
-	 * @param rElementErrors A mapping from data element names to error message
-	 *                       (NULL for no errors)
-	 * @param bUpdateUI      TRUE to also update the UI, FALSE to only update
-	 *                       data element references
+	 * @param rNewElement The new data element
+	 * @param bUpdateUI   TRUE to also update the UI, FALSE to only update data
+	 *                    element references
 	 */
 	@SuppressWarnings("unchecked")
-	void updateDataElement(DataElement<?>	   rNewElement,
-						   Map<String, String> rElementErrors,
-						   boolean			   bUpdateUI)
+	void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
 	{
 		rDataElement = (D) rNewElement;
 
@@ -1924,8 +1899,6 @@ public class DataElementUI<D extends DataElement<?>>
 		{
 			update();
 		}
-
-		checkElementError(rElementErrors);
 	}
 
 	/***************************************

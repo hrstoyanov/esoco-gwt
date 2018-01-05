@@ -46,6 +46,7 @@ import de.esoco.gwt.client.ui.DataElementListView;
 import de.esoco.gwt.client.ui.DataElementPanelManager;
 import de.esoco.gwt.client.ui.DataElementPanelManager.InteractiveInputHandler;
 import de.esoco.gwt.client.ui.DataElementTablePanelManager;
+import de.esoco.gwt.client.ui.DataElementUI;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
 import de.esoco.gwt.shared.ProcessService;
@@ -59,6 +60,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -418,7 +420,7 @@ public class ProcessPanelManager
 			buildTopPanel();
 		}
 
-		buildParameterPanel(null);
+		buildParameterPanel();
 		setUserInterfaceState();
 
 		addUiInspectorEventHandler();
@@ -478,7 +480,6 @@ public class ProcessPanelManager
 	{
 		String			    sMessage     = eService.getMessage();
 		Map<String, String> rErrorParams = eService.getErrorParameters();
-		ProcessState	    rNewState    = eService.getProcessState();
 
 		if (sMessage.equals(ERROR_ENTITY_LOCKED))
 		{
@@ -490,6 +491,8 @@ public class ProcessPanelManager
 		}
 		else
 		{
+			ProcessState rNewState = eService.getProcessState();
+
 			if (rNewState != null)
 			{
 				rProcessState = rNewState;
@@ -500,7 +503,24 @@ public class ProcessPanelManager
 				sMessage = "$msg" + sMessage;
 			}
 
-			buildParameterPanel(rErrorParams);
+			if (rErrorParams != null)
+			{
+				for (Entry<String, String> rError : rErrorParams.entrySet())
+				{
+					DataElementUI<?> rErrorUI =
+						aParamPanelManager.findDataElementUI(rError.getKey());
+
+					if (rErrorUI != null)
+					{
+						rErrorUI.setErrorMessage(rError.getValue());
+					}
+					else
+					{
+						assert false : "No UI for data element " +
+							   rError.getKey();
+					}
+				}
+			}
 		}
 
 		displayMessage(sMessage, 0);
@@ -560,7 +580,7 @@ public class ProcessPanelManager
 		{
 			processUpdated(ProcessPanelManager.this, rProcessState);
 			setTitle(rProcessState.getName());
-			buildParameterPanel(null);
+			buildParameterPanel();
 
 			if (bAutoContinue && !bPauseAutoContinue)
 			{
@@ -706,11 +726,8 @@ public class ProcessPanelManager
 	/***************************************
 	 * Builds the panel to display the process parameters of the current
 	 * interactive step.
-	 *
-	 * @param rErrorParams A list containing the names of erroneous parameters
-	 *                     or NULL for none
 	 */
-	private void buildParameterPanel(Map<String, String> rErrorParams)
+	private void buildParameterPanel()
 	{
 		if (rProcessState != null && !rProcessState.isFinished())
 		{
@@ -738,7 +755,7 @@ public class ProcessPanelManager
 											rInteractionParams);
 				}
 
-				aParamPanelManager.update(aElementList, rErrorParams, true);
+				aParamPanelManager.update(aElementList, true);
 			}
 			else
 			{
@@ -766,7 +783,7 @@ public class ProcessPanelManager
 											 sStepStyle);
 			}
 
-			manageProcessViews(rErrorParams);
+			manageProcessViews();
 		}
 	}
 
@@ -954,10 +971,8 @@ public class ProcessPanelManager
 
 	/***************************************
 	 * Manages the views that are defined in the process state.
-	 *
-	 * @param rErrorParams The current error parameters
 	 */
-	private void manageProcessViews(Map<String, String> rErrorParams)
+	private void manageProcessViews()
 	{
 		List<DataElementList> rViewParams = rProcessState.getViewParams();
 
@@ -971,7 +986,7 @@ public class ProcessPanelManager
 
 			if (aView != null && aView.isVisible())
 			{
-				aView.updateDataElement(rViewParam, rErrorParams, true);
+				aView.updateDataElement(rViewParam, true);
 			}
 			else
 			{

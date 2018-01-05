@@ -37,7 +37,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
@@ -164,13 +163,13 @@ public class DataElementListView
 	/***************************************
 	 * Updates the data element of this view.
 	 *
-	 * @see DataElementUI#updateDataElement(DataElement, Map, boolean)
+	 * @see DataElementUI#updateDataElement(DataElement, boolean)
 	 */
-	public void updateDataElement(DataElementList	  rNewElement,
-								  Map<String, String> rElementErrors,
-								  boolean			  bUpdateUI)
+	public void updateDataElement(
+		DataElementList rNewElement,
+		boolean			bUpdateUI)
 	{
-		aViewUI.updateDataElement(rNewElement, rElementErrors, bUpdateUI);
+		aViewUI.updateDataElement(rNewElement, bUpdateUI);
 	}
 
 	/***************************************

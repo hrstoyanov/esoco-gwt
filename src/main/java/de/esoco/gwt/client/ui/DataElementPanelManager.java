@@ -374,6 +374,40 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
+	 * Searches for the UI of a data element with a certain name in this
+	 * manager's hierarchy.
+	 *
+	 * @param  sElementName The name of the data element to search the UI for
+	 *
+	 * @return The matching data element UI or NULL if no such element exists
+	 */
+	public DataElementUI<?> findDataElementUI(String sElementName)
+	{
+		DataElementUI<?> rElementUI = aDataElementUIs.get(sElementName);
+
+		if (rElementUI == null)
+		{
+			for (DataElementUI<?> rUI : aDataElementUIs.values())
+			{
+				if (rUI instanceof DataElementListUI)
+				{
+					DataElementPanelManager rPanelManager =
+						((DataElementListUI) rUI).getPanelManager();
+
+					rElementUI = rPanelManager.findDataElementUI(sElementName);
+
+					if (rElementUI != null)
+					{
+						break;
+					}
+				}
+			}
+		}
+
+		return rElementUI;
+	}
+
+	/***************************************
 	 * Returns a certain element in this manager's list of data elements.
 	 *
 	 * @param  nIndex The index of the element to return
@@ -474,15 +508,10 @@ public abstract class DataElementPanelManager
 	 * Updates this instance from a new data element list.
 	 *
 	 * @param rNewDataElementList The list containing the new data elements
-	 * @param rErrorMessages      A mapping from the names of data elements with
-	 *                            errors to error messages or NULL to clear all
-	 *                            error messages
 	 * @param bUpdateUI           TRUE to also update the UI, FALSE to only
 	 *                            update the data element references
 	 */
-	public void update(DataElementList	   rNewDataElementList,
-					   Map<String, String> rErrorMessages,
-					   boolean			   bUpdateUI)
+	public void update(DataElementList rNewDataElementList, boolean bUpdateUI)
 	{
 		checkUpdateContainerStyle(rNewDataElementList);
 
@@ -495,7 +524,7 @@ public abstract class DataElementPanelManager
 
 		if (bIsUpdate)
 		{
-			updateElementUIs(rErrorMessages, bUpdateUI);
+			updateElementUIs(bUpdateUI);
 			applyElementSelection();
 		}
 		else
@@ -843,15 +872,10 @@ public abstract class DataElementPanelManager
 	/***************************************
 	 * Updates the data element UIs of this instance.
 	 *
-	 * @param rErrorMessages A mapping from the names of data elements with
-	 *                       errors to error messages or NULL to clear all error
-	 *                       messages
-	 * @param bUpdateUI      TRUE to also update the UI, FALSE to only update
-	 *                       the data element references
+	 * @param bUpdateUI TRUE to also update the UI, FALSE to only update the
+	 *                  data element references
 	 */
-	protected void updateElementUIs(
-		Map<String, String> rErrorMessages,
-		boolean				bUpdateUI)
+	protected void updateElementUIs(boolean bUpdateUI)
 	{
 		if (aInteractionHandler != null)
 		{
@@ -874,7 +898,7 @@ public abstract class DataElementPanelManager
 		{
 			DataElement<?> rNewElement = rOrderedElements.get(nIndex++);
 
-			rUI.updateDataElement(rNewElement, rErrorMessages, bUpdateUI);
+			rUI.updateDataElement(rNewElement, bUpdateUI);
 		}
 	}
 

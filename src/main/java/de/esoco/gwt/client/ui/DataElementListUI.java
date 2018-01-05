@@ -28,7 +28,6 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.lib.property.LayoutType;
 
 import java.util.List;
-import java.util.Map;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 
@@ -175,17 +174,15 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	 * {@inheritDoc}
 	 */
 	@Override
-	void updateDataElement(DataElement<?>	   rNewElement,
-						   Map<String, String> rElementErrors,
-						   boolean			   bUpdateUI)
+	void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
 	{
 		// always use FALSE to not update UI before data element is updated;
 		// UI update will be done in the update() method
-		super.updateDataElement(rNewElement, rElementErrors, false);
+		super.updateDataElement(rNewElement, false);
 
 		if (aListPanelManager != null)
 		{
-			aListPanelManager.update(getDataElement(), rElementErrors, false);
+			aListPanelManager.update(getDataElement(), false);
 		}
 
 		if (bUpdateUI)

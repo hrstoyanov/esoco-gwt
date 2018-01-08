@@ -53,6 +53,7 @@ import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.property.InteractionEventType;
+import de.esoco.lib.property.LayoutType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,6 +69,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
 import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
+import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StyleProperties.STYLE;
 
 
@@ -684,14 +686,17 @@ public class ProcessPanelManager
 
 		DataElement<?> rFirstElement = rParams.get(0);
 
-		if (rParams.size() == 1 && rFirstElement instanceof DataElementList)
+		if (rParams.size() == 1 &&
+			rFirstElement instanceof DataElementList &&
+			rFirstElement.getProperty(LAYOUT, LayoutType.TABLE) !=
+			LayoutType.TABLE)
 		{
 			aParamPanelManager =
 				DataElementPanelManager.newInstance(this,
 													(DataElementList)
 													rFirstElement);
 		}
-		else
+		else // legacy handling for root-level table layouts
 		{
 			String sName  = sProcessName + " " + sStep;
 			String sStyle = rProcessState.getProperty(STYLE, null);

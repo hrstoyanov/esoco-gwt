@@ -139,12 +139,6 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default prefix for label resource IDs. */
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";
 
-	/** The default suffix for label strings. */
-	protected static String sLabelSuffix = ":";
-
-	/** The default gap between components. */
-	protected static final int DEFAULT_COMPONENT_GAP = 5;
-
 	private static LayoutType eButtonPanelDefaultLayout = LayoutType.TABLE;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
@@ -156,6 +150,12 @@ public class DataElementUI<D extends DataElement<?>>
 			"$ttPhoneCountryCode", "$ttPhoneAreaCode", "$ttPhoneNumber",
 			"$ttPhoneExtension"
 		};
+
+	/** The default suffix for label strings. */
+	private static String sLabelSuffix = ":";
+
+	/** The default gap between components. */
+	protected static final int DEFAULT_COMPONENT_GAP = 5;
 
 	//~ Instance fields --------------------------------------------------------
 

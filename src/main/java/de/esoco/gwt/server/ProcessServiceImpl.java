@@ -290,6 +290,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			else
 			{
 				setClientProperties(rDescription, rProcess);
+
+				if (rProcess.get(INTERACTIVE_INPUT_PARAM) ==
+					RELOAD_CURRENT_STEP)
+				{
+					eExecutionMode = ProcessExecutionMode.RELOAD;
+				}
 			}
 
 			rProcess.set(CLIENT_WIDTH, rDescription.getClientWidth());
@@ -824,9 +830,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			List<DataElement<?>> aModifiedElements =
 				reduceToModifiedElements(aInteractionElements);
 
-			if (aModifiedElements.isEmpty())
+			if (aModifiedElements.isEmpty() &&
+				rProcess.get(INTERACTIVE_INPUT_PARAM) == RELOAD_CURRENT_STEP)
 			{
-				// no elements modified happens on browser reload or restart
 				aModifiedElements = aInteractionElements;
 			}
 

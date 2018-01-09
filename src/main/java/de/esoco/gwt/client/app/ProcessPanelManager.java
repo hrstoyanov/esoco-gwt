@@ -679,12 +679,6 @@ public class ProcessPanelManager
 		List<DataElement<?>> rParams  = rProcessState.getInteractionParams();
 		String				 sStep    = rProcessState.getCurrentStep();
 
-		if (rParams.size() == 0)
-		{
-			throw new IllegalArgumentException("No DataElements in " +
-											   sProcessName + "." + sStep);
-		}
-
 		DataElement<?> rFirstElement = rParams.get(0);
 
 		if (rParams.size() == 1 &&
@@ -1107,7 +1101,7 @@ public class ProcessPanelManager
 			{
 				updateInteractionUIs();
 			}
-			else
+			else if (!rProcessState.getInteractionParams().isEmpty())
 			{
 				sPreviousStyle = sStepStyle;
 				addParameterDataElementPanel();

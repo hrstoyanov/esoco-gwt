@@ -129,8 +129,9 @@ public class ProcessPanelManager
 	private Label     aMessageLabel;
 	private Image     rBusyImage = null;
 
-	private ProcessState rProcessState = null;
-	private String		 sPreviousStep = null;
+	private ProcessState rProcessState  = null;
+	private String		 sPreviousStep  = null;
+	private String		 sPreviousStyle = "";
 
 	private boolean bAutoContinue	   = false;
 	private boolean bPauseAutoContinue = false;
@@ -1078,6 +1079,14 @@ public class ProcessPanelManager
 			{
 				rUpdateUI.updateDataElement(rUpdateElement, true);
 			}
+			else
+			{
+				// if no UI has been found the root has changed, therefore
+				// rebuild the complete panel
+				aParamPanelManager.dispose();
+				aParamPanelManager = null;
+				rebuild();
+			}
 		}
 	}
 
@@ -1090,14 +1099,17 @@ public class ProcessPanelManager
 		if (rProcessState != null && !rProcessState.isFinished())
 		{
 			String sCurrentStep = rProcessState.getCurrentStep();
+			String sStepStyle   = rProcessState.getProperty(STYLE, "");
 
 			if (aParamPanelManager != null &&
-				sCurrentStep.equals(sPreviousStep))
+				sCurrentStep.equals(sPreviousStep) &&
+				sStepStyle.equals(sPreviousStyle))
 			{
 				updateInteractionUIs();
 			}
 			else
 			{
+				sPreviousStyle = sStepStyle;
 				addParameterDataElementPanel();
 			}
 

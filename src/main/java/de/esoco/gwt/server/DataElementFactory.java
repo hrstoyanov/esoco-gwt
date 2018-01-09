@@ -131,9 +131,6 @@ import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
-import static de.esoco.lib.property.StateProperties.FILTER_CRITERIA;
-import static de.esoco.lib.property.StateProperties.FOCUSED;
-import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_DATA;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
 
@@ -1441,10 +1438,7 @@ public class DataElementFactory
 
 		copyDisplayProperties(rElement,
 							  rRelation,
-							  CURRENT_SELECTION,
-							  FOCUSED,
-							  INTERACTION_EVENT_DATA,
-							  FILTER_CRITERIA);
+							  DataElement.COPY_PROPERTIES);
 	}
 
 	/***************************************

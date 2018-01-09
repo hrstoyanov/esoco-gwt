@@ -17,6 +17,7 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.DataElement;
+import de.esoco.data.element.DataElement.CopyMode;
 import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.StringDataElement;
 import de.esoco.data.validate.ListValidator;
@@ -471,7 +472,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (rDataElement.isModified())
 			{
-				rModifiedElements.add(rDataElement);
+				rModifiedElements.add(rDataElement.copy(CopyMode.FLAT));
 				rDataElement.setModified(false);
 			}
 		}

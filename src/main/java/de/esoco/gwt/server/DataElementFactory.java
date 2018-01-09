@@ -296,7 +296,7 @@ public class DataElementFactory
 		Collection<?> rAllowedValues,
 		Set<Flag>	  rFlags)
 	{
-		String sValue = rValue != null ? rValue.toString() : null;
+		String sValue = rValue != null ? rValue.toString() : "";
 
 		StringListValidator rValidator = null;
 

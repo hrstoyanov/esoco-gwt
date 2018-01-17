@@ -848,8 +848,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			{
 				aInteractionElements =
 					reduceToModifiedElements(aInteractionElements);
-				System.out.printf("MODIFIED ELEMENTS: %d\n",
-								  aInteractionElements.size());
 			}
 
 			aProcessState =

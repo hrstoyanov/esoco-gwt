@@ -51,15 +51,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-
 import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.HTML_WIDTH;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY;
 import static de.esoco.lib.property.StateProperties.SELECTION_DEPENDENCY_REVERSE_PREFIX;
+import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 import static de.esoco.lib.property.StyleProperties.SHOW_LABEL;
 import static de.esoco.lib.property.StyleProperties.STYLE;
@@ -516,6 +514,7 @@ public abstract class DataElementPanelManager
 		checkUpdateContainerStyle(rNewDataElementList);
 
 		boolean bIsUpdate =
+			!rNewDataElementList.hasFlag(STRUCTURE_CHANGED) &&
 			rNewDataElementList.getName().equals(rDataElementList.getName()) &&
 			containsSameElements(rNewDataElementList.getElements(),
 								 rDataElementList.getElements());
@@ -529,17 +528,9 @@ public abstract class DataElementPanelManager
 		}
 		else
 		{
-			Scheduler.get()
-					 .scheduleDeferred(new ScheduledCommand()
-				{
-					@Override
-					public void execute()
-					{
-						dispose();
-						rebuild();
-						applyElementSelection();
-					}
-				});
+			dispose();
+			rebuild();
+			applyElementSelection();
 		}
 	}
 
@@ -912,7 +903,8 @@ public abstract class DataElementPanelManager
 	{
 		if (rDataElementList.isModified())
 		{
-			rModifiedElements.add(rDataElementList.copy(CopyMode.PROPERTIES));
+			rModifiedElements.add(rDataElementList.copy(CopyMode.PROPERTIES,
+														DataElement.SERVER_PROPERTIES));
 		}
 	}
 

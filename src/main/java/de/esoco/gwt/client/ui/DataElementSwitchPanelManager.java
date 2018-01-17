@@ -128,7 +128,12 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	@Override
 	public void handleEvent(EWTEvent rEvent)
 	{
-		updateUI();
+		int nSelection = getSelectedElement();
+
+		if (nSelection >= 0)
+		{
+			getDataElementUI(nSelection).update();
+		}
 	}
 
 	/***************************************
@@ -147,11 +152,14 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	@Override
 	public void updateUI()
 	{
-		int nSelectedElement = getSelectedElement();
+		@SuppressWarnings("boxing")
+		int nSelection = getDataElementList().getProperty(CURRENT_SELECTION, 0);
 
-		if (nSelectedElement >= 0)
+		setSelectedElement(nSelection);
+
+		if (nSelection >= 0)
 		{
-			getDataElementUI(nSelectedElement).update();
+			getDataElementUI(nSelection).update();
 		}
 
 		int nPage = 0;
@@ -178,6 +186,24 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 		aSwitchPanel.addPage(rElementComponent,
 							 getPageTitle(rDataElementUI.getDataElement()),
 							 false);
+	}
+
+	/***************************************
+	 * Initializes the event handling for this instance.
+	 */
+	@Override
+	@SuppressWarnings("boxing")
+	protected void buildElementUIs()
+	{
+		super.buildElementUIs();
+
+		if (!aSwitchPanel.getComponents().isEmpty())
+		{
+			setSelectedElement(getDataElementList().getProperty(CURRENT_SELECTION,
+																0));
+		}
+
+		aSwitchPanel.addEventListener(EventType.SELECTION, this);
 	}
 
 	/***************************************
@@ -216,22 +242,6 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 		aSwitchPanel = aPanelBuilder.getContainer();
 
 		return aPanelBuilder;
-	}
-
-	/***************************************
-	 * Initializes the event handling for this instance.
-	 */
-	@Override
-	protected void setupEventHandling()
-	{
-		super.setupEventHandling();
-
-		@SuppressWarnings("boxing")
-		int nSelectedPage =
-			getDataElementList().getProperty(CURRENT_SELECTION, 0);
-
-		setSelectedElement(nSelectedPage);
-		aSwitchPanel.addEventListener(EventType.SELECTION, this);
 	}
 
 	/***************************************

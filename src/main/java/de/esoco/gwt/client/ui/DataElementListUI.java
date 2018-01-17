@@ -30,6 +30,7 @@ import de.esoco.lib.property.LayoutType;
 import java.util.List;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
+import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
 
 
 /********************************************************************
@@ -57,6 +58,17 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
 		aListPanelManager.collectInput(rModifiedElements);
+	}
+
+	/***************************************
+	 * Overridden to return the base stype from the panel manager instead.
+	 *
+	 * @see DataElementUI#getBaseStyle()
+	 */
+	@Override
+	public StyleData getBaseStyle()
+	{
+		return aListPanelManager.getBaseStyle();
 	}
 
 	/***************************************
@@ -105,13 +117,25 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void updateDataElement(DataElement<?> rNewElement, boolean bUpdateUI)
 	{
-		// always use FALSE to not update UI before data element is updated;
-		// UI update will be done in the update() method
-		super.updateDataElement(rNewElement, false);
-
-		if (aListPanelManager != null)
+		if (rNewElement.hasFlag(STRUCTURE_CHANGED))
 		{
-			aListPanelManager.update(getDataElement(), false);
+			// always use FALSE to not update UI before data element is updated;
+			// UI update will be done in the update() method
+			super.updateDataElement(rNewElement, false);
+
+			if (aListPanelManager != null)
+			{
+				aListPanelManager.update((DataElementList) rNewElement, false);
+			}
+		}
+		else
+		{
+			DataElementList rDataElementList = getDataElement();
+
+			rDataElementList.clearProperties();
+			rDataElementList.setProperties(rNewElement, true);
+
+			clearError();
 		}
 
 		if (bUpdateUI)

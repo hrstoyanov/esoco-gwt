@@ -18,6 +18,7 @@ package de.esoco.gwt.server;
 
 import de.esoco.data.SessionData;
 import de.esoco.data.element.DataElement;
+import de.esoco.data.element.DataElement.CopyMode;
 import de.esoco.data.element.DataElementList;
 import de.esoco.data.process.ProcessDescription;
 import de.esoco.data.process.ProcessState;
@@ -75,6 +76,7 @@ import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
 
 import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
 
+import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 
 import static de.esoco.process.ProcessRelationTypes.AUTO_CONTINUE;
@@ -703,17 +705,29 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	{
 		for (DataElement<?> rDataElement : rDataElements)
 		{
-			if (rDataElement.hasFlag(VALUE_CHANGED))
+			boolean bValueChanged = rDataElement.hasFlag(VALUE_CHANGED);
+
+			if (rDataElement instanceof DataElementList)
 			{
-				// save the path for updating the UI (parent is transient)
-				rDataElement.setUpdatePath(rDataElement.getPath());
-				rModifiedElements.add(rDataElement);
+				if (rDataElement.hasFlag(STRUCTURE_CHANGED))
+				{
+					rModifiedElements.add(rDataElement);
+				}
+				else
+				{
+					if (bValueChanged)
+					{
+						rModifiedElements.add(rDataElement.copy(CopyMode.PROPERTIES));
+					}
+
+					collectModifiedDataElements(((DataElementList) rDataElement)
+												.getElements(),
+												rModifiedElements);
+				}
 			}
-			else if (rDataElement instanceof DataElementList)
+			else if (bValueChanged)
 			{
-				collectModifiedDataElements(((DataElementList) rDataElement)
-											.getElements(),
-											rModifiedElements);
+				rModifiedElements.add(rDataElement);
 			}
 		}
 	}
@@ -757,7 +771,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 				if (bMarkAsChanged)
 				{
-					aElement.markAsValueChanged();
+					aElement.markAsChanged();
 				}
 			}
 		}
@@ -827,13 +841,15 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			List<DataElement<?>> aInteractionElements =
 				createInteractionElements(rInteractionStep, bReload);
 
-			List<DataElement<?>> aModifiedElements =
-				reduceToModifiedElements(aInteractionElements);
+			List<DataElementList> aViewElements =
+				createViewDataElements(rInteractionStep);
 
-			if (aModifiedElements.isEmpty() &&
-				rProcess.get(INTERACTIVE_INPUT_PARAM) == RELOAD_CURRENT_STEP)
+			if (!bReload)
 			{
-				aModifiedElements = aInteractionElements;
+				aInteractionElements =
+					reduceToModifiedElements(aInteractionElements);
+				System.out.printf("MODIFIED ELEMENTS: %d\n",
+								  aInteractionElements.size());
 			}
 
 			aProcessState =
@@ -841,8 +857,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 								 sProcessId,
 								 sProcessInfo,
 								 rInteractionStep.getName(),
-								 aModifiedElements,
-								 createViewDataElements(rInteractionStep),
+								 aInteractionElements,
+								 aViewElements,
 								 getSpawnProcesses(rProcess),
 								 getProcessStateFlags(rProcess,
 													  rInteractionStep));

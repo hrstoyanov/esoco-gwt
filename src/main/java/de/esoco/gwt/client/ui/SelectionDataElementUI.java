@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -269,7 +269,10 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 		{
 			int nRows = rDataElement.getIntProperty(TABLE_ROWS, -1);
 
-			rInputStyle = rInputStyle.set(TABLE_ROWS, nRows);
+			if (nRows > 0)
+			{
+				rInputStyle = rInputStyle.set(TABLE_ROWS, nRows);
+			}
 
 			if (rDataElement.hasFlag(UserInterfaceProperties.HIERARCHICAL))
 			{

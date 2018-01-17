@@ -293,7 +293,7 @@ public class DataElementFactory
 		Collection<?> rAllowedValues,
 		Set<Flag>	  rFlags)
 	{
-		String sValue = rValue != null ? rValue.toString() : "";
+		String sValue = rValue != null ? rValue.toString() : null;
 
 		StringListValidator rValidator = null;
 
@@ -1436,9 +1436,7 @@ public class DataElementFactory
 			rRelation = rTarget.set(rType, null);
 		}
 
-		copyDisplayProperties(rElement,
-							  rRelation,
-							  DataElement.COPY_PROPERTIES);
+		copyDisplayProperties(rElement, rRelation, DataElement.SERVER_PROPERTIES);
 	}
 
 	/***************************************

@@ -472,7 +472,8 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (rDataElement.isModified())
 			{
-				rModifiedElements.add(rDataElement.copy(CopyMode.FLAT));
+				rModifiedElements.add(rDataElement.copy(CopyMode.FLAT,
+														DataElement.SERVER_PROPERTIES));
 				rDataElement.setModified(false);
 			}
 		}
@@ -496,7 +497,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 *
 	 * @return The base style data
 	 */
-	public final StyleData getBaseStyle()
+	public StyleData getBaseStyle()
 	{
 		return rBaseStyle;
 	}
@@ -671,10 +672,7 @@ public class DataElementUI<D extends DataElement<?>>
 			aInteractionHandler.updateDataElement(rDataElement);
 		}
 
-		if (bHasError)
-		{
-			setErrorMessage(null);
-		}
+		clearError();
 
 		if (bUpdateUI)
 		{
@@ -827,6 +825,17 @@ public class DataElementUI<D extends DataElement<?>>
 		{
 			requestFocus();
 			rDataElement.clearFlag(FOCUSED);
+		}
+	}
+
+	/***************************************
+	 * Clears an error message if such exists.
+	 */
+	protected void clearError()
+	{
+		if (bHasError)
+		{
+			setErrorMessage(null);
 		}
 	}
 

@@ -374,28 +374,10 @@ public class ProcessPanelManager
 			bLocked = true;
 			lockUserInterface();
 
-			List<DataElement<?>> aModifiedElements = new ArrayList<>();
-
-			aParamPanelManager.collectInput(aModifiedElements);
-
-			for (DataElementListView rView : aProcessViews.values())
-			{
-				rView.collectInput(aModifiedElements);
-			}
-
 			ProcessState aInteractionState =
-				new ProcessState(rProcessState,
-								 eEventType,
-								 rInteractionElement,
-								 aModifiedElements);
+				createInteractionState(rInteractionElement, eEventType);
 
 			executeProcess(aInteractionState, ProcessExecutionMode.EXECUTE);
-
-			// reset all modification flags for next interaction loop
-			for (DataElement<?> rElement : aModifiedElements)
-			{
-				rElement.setModified(false);
-			}
 		}
 	}
 
@@ -520,6 +502,7 @@ public class ProcessPanelManager
 			if (rNewState != null)
 			{
 				rProcessState = rNewState;
+				updateParameterPanel();
 			}
 
 			if (!sMessage.startsWith("$"))
@@ -701,13 +684,12 @@ public class ProcessPanelManager
 				sName += " " + sStyle;
 			}
 
-			DataElementList rParamDataElements =
-				new DataElementList(sName, rParams);
+			DataElementList aParamsList = new DataElementList(sName, rParams);
 
-			rParamDataElements.setProperty(RESOURCE_ID, sName);
+			aParamsList.setProperty(RESOURCE_ID, sName);
 
 			aParamPanelManager =
-				new DataElementTablePanelManager(this, rParamDataElements);
+				new DataElementTablePanelManager(this, aParamsList);
 		}
 
 		StyleData aPanelStyle =
@@ -831,6 +813,43 @@ public class ProcessPanelManager
 	}
 
 	/***************************************
+	 * Creates a {@link ProcessState} instance for an interaction event.
+	 *
+	 * @param  rInteractionElement The data element from which the event
+	 *                             originated
+	 * @param  eEventType          The event type
+	 *
+	 * @return The interaction process state
+	 */
+	private ProcessState createInteractionState(
+		DataElement<?>		 rInteractionElement,
+		InteractionEventType eEventType)
+	{
+		List<DataElement<?>> aModifiedElements = new ArrayList<>();
+
+		aParamPanelManager.collectInput(aModifiedElements);
+
+		for (DataElementListView rView : aProcessViews.values())
+		{
+			rView.collectInput(aModifiedElements);
+		}
+
+		ProcessState aInteractionState =
+			new ProcessState(rProcessState,
+							 eEventType,
+							 rInteractionElement,
+							 aModifiedElements);
+
+		// reset all modification flags for next interaction loop
+		for (DataElement<?> rElement : aModifiedElements)
+		{
+			rElement.setModified(false);
+		}
+
+		return aInteractionState;
+	}
+
+	/***************************************
 	 * Handles the button selection from the confirmation message box displayed
 	 * by {@link #handleCancelProcessEvent()}.
 	 *
@@ -899,21 +918,18 @@ public class ProcessPanelManager
 	 */
 	private void handleNextProcessStepEvent()
 	{
+		ProcessState aInteractionState = rProcessState;
+
 		if (rProcessState.isFinished())
 		{
 			processFinished(this, rProcessState);
 		}
-		else
+		else if (aParamPanelManager != null)
 		{
-			if (aParamPanelManager != null)
-			{
-				List<DataElement<?>> aModifiedElements = new ArrayList<>();
-
-				aParamPanelManager.collectInput(aModifiedElements);
-			}
-
-			executeProcess(rProcessState, ProcessExecutionMode.EXECUTE);
+			aInteractionState = createInteractionState(null, null);
 		}
+
+		executeProcess(aInteractionState, ProcessExecutionMode.EXECUTE);
 	}
 
 	/***************************************
@@ -1060,8 +1076,10 @@ public class ProcessPanelManager
 	/***************************************
 	 * Updates the UIs for the data elements that have been modified during the
 	 * last interaction.
+	 *
+	 * @return TODO: DOCUMENT ME!
 	 */
-	private void updateInteractionUIs()
+	private boolean updateInteractionUIs()
 	{
 		for (DataElement<?> rUpdateElement :
 			 rProcessState.getInteractionParams())
@@ -1075,13 +1093,13 @@ public class ProcessPanelManager
 			}
 			else
 			{
-				// if no UI has been found the root has changed, therefore
-				// rebuild the complete panel
-				aParamPanelManager.dispose();
-				aParamPanelManager = null;
-				rebuild();
+				return false;
 			}
 		}
+
+		manageProcessViews();
+
+		return true;
 	}
 
 	/***************************************
@@ -1099,15 +1117,23 @@ public class ProcessPanelManager
 				sCurrentStep.equals(sPreviousStep) &&
 				sStepStyle.equals(sPreviousStyle))
 			{
-				updateInteractionUIs();
+				if (!updateInteractionUIs())
+				{
+					// if no UI has been found the root has changed, therefore
+					// rebuild the complete panel; addComponents() will then
+					// invoke updateParameterPanel() again which then falls
+					// into the else branch below
+					aParamPanelManager.dispose();
+					aParamPanelManager = null;
+					rebuild();
+				}
 			}
 			else if (!rProcessState.getInteractionParams().isEmpty())
 			{
 				sPreviousStyle = sStepStyle;
 				addParameterDataElementPanel();
+				manageProcessViews();
 			}
-
-			manageProcessViews();
 		}
 	}
 }

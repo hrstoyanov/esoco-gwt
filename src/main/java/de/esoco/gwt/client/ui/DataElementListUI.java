@@ -19,7 +19,6 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 
-import de.esoco.ewt.EWT;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
@@ -28,9 +27,11 @@ import de.esoco.ewt.style.StyleData;
 import de.esoco.lib.property.LayoutType;
 
 import java.util.List;
+import java.util.Objects;
 
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
+import static de.esoco.lib.property.StyleProperties.STYLE;
 
 
 /********************************************************************
@@ -41,10 +42,6 @@ import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
  */
 public class DataElementListUI extends DataElementUI<DataElementList>
 {
-	//~ Static fields/initializers ---------------------------------------------
-
-	private static final boolean PROFILING = false;
-
 	//~ Instance fields --------------------------------------------------------
 
 	private DataElementPanelManager aListPanelManager;
@@ -91,24 +88,8 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	@Override
 	public void update()
 	{
-		long t = System.currentTimeMillis();
-
-		DataElementList rDataElement = getDataElement();
-		String		    sAddStyle    = aListPanelManager.getStyleName();
-
-		StyleData rNewStyle =
-			applyElementStyle(rDataElement,
-							  PanelManager.addStyles(getBaseStyle(),
-													 sAddStyle));
-
-		applyStyle();
-		aListPanelManager.getPanel().applyStyle(rNewStyle);
+		updateStyle();
 		aListPanelManager.updateUI();
-
-		if (PROFILING)
-		{
-			profile("DEL-UPDATE", t);
-		}
 	}
 
 	/***************************************
@@ -127,20 +108,29 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 			{
 				aListPanelManager.update((DataElementList) rNewElement, false);
 			}
+
+			if (bUpdateUI)
+			{
+				update();
+			}
 		}
 		else
 		{
 			DataElementList rDataElementList = getDataElement();
+			String		    sOldStyle		 =
+				rDataElementList.getProperty(STYLE, null);
 
 			rDataElementList.clearProperties();
 			rDataElementList.setProperties(rNewElement, true);
 
-			clearError();
-		}
+			boolean bStyleChanged =
+				!Objects.equals(sOldStyle,
+								rDataElementList.getProperty(STYLE, null));
 
-		if (bUpdateUI)
-		{
-			update();
+			aListPanelManager.updateFromProperties(bStyleChanged);
+
+			updateStyle();
+			clearError();
 		}
 	}
 
@@ -199,19 +189,19 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
-	 * {@inheritDoc}
+	 * Updates the style of the panel.
 	 */
-	@Override
-	void profile(String sDescription, long nStartTime)
+	private void updateStyle()
 	{
-		String sIndent    = getPanelManager().getHierarchyChildIndent();
-		String sIndicator =
-			System.currentTimeMillis() - nStartTime > 100 ? "!!" : "  ";
+		DataElementList rDataElement = getDataElement();
+		String		    sAddStyle    = aListPanelManager.getStyleName();
 
-		sIndent = sIndent.substring(0, sIndent.length() - 1);
+		StyleData rNewStyle =
+			applyElementStyle(rDataElement,
+							  PanelManager.addStyles(getBaseStyle(),
+													 sAddStyle));
 
-		EWT.logTime(sIndicator + sIndent + "o-" + sDescription,
-					getDataElement().getSimpleName(),
-					nStartTime);
+		applyStyle();
+		aListPanelManager.getPanel().applyStyle(rNewStyle);
 	}
 }

@@ -49,6 +49,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import static de.esoco.lib.property.LayoutProperties.HTML_HEIGHT;
@@ -511,27 +512,29 @@ public abstract class DataElementPanelManager
 	 */
 	public void update(DataElementList rNewDataElementList, boolean bUpdateUI)
 	{
-		checkUpdateContainerStyle(rNewDataElementList);
-
 		boolean bIsUpdate =
 			!rNewDataElementList.hasFlag(STRUCTURE_CHANGED) &&
 			rNewDataElementList.getName().equals(rDataElementList.getName()) &&
 			containsSameElements(rNewDataElementList.getElements(),
 								 rDataElementList.getElements());
 
+		boolean bStyleChanged =
+			!Objects.equals(rDataElementList.getProperty(STYLE, null),
+							rNewDataElementList.getProperty(STYLE, null));
+
 		rDataElementList = rNewDataElementList;
 
 		if (bIsUpdate)
 		{
 			updateElementUIs(bUpdateUI);
-			applyElementSelection();
 		}
 		else
 		{
 			dispose();
 			rebuild();
-			applyElementSelection();
 		}
+
+		updateFromProperties(bStyleChanged);
 	}
 
 	/***************************************
@@ -934,29 +937,6 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
-	 * Check if the container style needs to be updated for a new data element.
-	 *
-	 * @param rNewDataElement The new data element
-	 */
-	void checkUpdateContainerStyle(DataElement<?> rNewDataElement)
-	{
-		String sElementStyle = rNewDataElement.getProperty(STYLE, null);
-		String sStyleName    = getStyleName();
-
-		if (sElementStyle != null && sStyleName.indexOf(sElementStyle) < 0)
-		{
-			sStyleName = sStyleName + " " + sElementStyle;
-		}
-
-		rNewDataElement.setProperty(STYLE, sStyleName);
-
-		StyleData rNewStyle =
-			DataElementUI.applyElementStyle(rNewDataElement, getBaseStyle());
-
-		getContainer().applyStyle(rNewStyle);
-	}
-
-	/***************************************
 	 * Returns the indentation for the hierarchy level of this panel manager's
 	 * data element.
 	 *
@@ -994,6 +974,42 @@ public abstract class DataElementPanelManager
 
 		return rParent instanceof DataElementPanelManager
 			   ? ((DataElementPanelManager) rParent).getHierarchyIndent() : "";
+	}
+
+	/***************************************
+	 * Updates the style and selection from the data element list.
+	 *
+	 * @param bStyleChanged TRUE if the container style has changed
+	 */
+	void updateFromProperties(boolean bStyleChanged)
+	{
+		if (bStyleChanged)
+		{
+			updateContainerStyle();
+		}
+
+		applyElementSelection();
+	}
+
+	/***************************************
+	 * Check if the container style needs to be updated for a new data element.
+	 */
+	private void updateContainerStyle()
+	{
+		String sElementStyle = rDataElementList.getProperty(STYLE, null);
+		String sStyleName    = getStyleName();
+
+		if (sElementStyle != null && sStyleName.indexOf(sElementStyle) < 0)
+		{
+			sStyleName = sStyleName + " " + sElementStyle;
+		}
+
+		rDataElementList.setProperty(STYLE, sStyleName);
+
+		StyleData rNewStyle =
+			DataElementUI.applyElementStyle(rDataElementList, getBaseStyle());
+
+		getContainer().applyStyle(rNewStyle);
 	}
 
 	//~ Inner Interfaces -------------------------------------------------------

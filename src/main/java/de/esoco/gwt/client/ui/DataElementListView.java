@@ -22,6 +22,7 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.View;
+import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
@@ -41,6 +42,7 @@ import java.util.Set;
 
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.VIEW_DISPLAY_TYPE;
+import static de.esoco.lib.property.StyleProperties.AUTO_HIDE;
 
 
 /********************************************************************
@@ -225,10 +227,10 @@ public class DataElementListView
 			}
 		}
 
-//		if (rDataElementList.hasFlag(AUTO_HIDE))
-//		{
-//			aViewFlags.add(ViewStyle.Flag.AUTO_HIDE);
-//		}
+		if (rDataElementList.hasFlag(AUTO_HIDE))
+		{
+			aViewFlags.add(ViewStyle.Flag.AUTO_HIDE);
+		}
 
 		if (!aViewFlags.isEmpty())
 		{
@@ -256,9 +258,7 @@ public class DataElementListView
 			rDataElementList.getProperty(StandardProperties.TITLE, sViewTitle);
 
 		aPanelView.addEventListener(EventType.VIEW_CLOSING,
-									e -> aViewUI.getPanelManager()
-									.handleInteractiveInput(rDataElementList,
-															InteractionEventType.UPDATE));
+									this::handleViewClosing);
 
 		aViewBuilder = new ContainerBuilder<View>(aPanelView);
 
@@ -267,5 +267,17 @@ public class DataElementListView
 													sDialogStyle));
 
 		return aViewBuilder;
+	}
+
+	/***************************************
+	 * Handles the view closing event.
+	 *
+	 * @param rEvent The event
+	 */
+	private void handleViewClosing(EWTEvent rEvent)
+	{
+		aViewUI.getPanelManager()
+			   .handleInteractiveInput(aViewUI.getDataElement(),
+									   InteractionEventType.UPDATE);
 	}
 }

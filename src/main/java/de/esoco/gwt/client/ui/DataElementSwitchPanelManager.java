@@ -150,6 +150,17 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void updateFromChildChanges()
+	{
+		super.updateFromChildChanges();
+
+		updatePageTitles();
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void updateUI()
 	{
 		@SuppressWarnings("boxing")
@@ -162,13 +173,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 			getDataElementUI(nSelection).update();
 		}
 
-		int nPage = 0;
-
-		for (DataElementUI<?> rElementUI : getDataElementUIs().values())
-		{
-			aSwitchPanel.setPageTitle(nPage++,
-									  getPageTitle(rElementUI.getDataElement()));
-		}
+		updatePageTitles();
 	}
 
 	/***************************************
@@ -285,5 +290,19 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 			   ? DataElementUI.getLabelText(getContext(),
 											rDataElement,
 											sLabelPrefix) : "";
+	}
+
+	/***************************************
+	 * Updates the page titles from the current state of the data elements.
+	 */
+	private void updatePageTitles()
+	{
+		int nPage = 0;
+
+		for (DataElementUI<?> rElementUI : getDataElementUIs().values())
+		{
+			aSwitchPanel.setPageTitle(nPage++,
+									  getPageTitle(rElementUI.getDataElement()));
+		}
 	}
 }

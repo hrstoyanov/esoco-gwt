@@ -42,6 +42,7 @@ import de.esoco.ewt.style.StyleFlag;
 import de.esoco.gwt.client.res.EsocoGwtCss;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.client.ui.CommandResultHandler;
+import de.esoco.gwt.client.ui.DataElementListUI;
 import de.esoco.gwt.client.ui.DataElementListView;
 import de.esoco.gwt.client.ui.DataElementPanelManager;
 import de.esoco.gwt.client.ui.DataElementPanelManager.InteractiveInputHandler;
@@ -1081,6 +1082,8 @@ public class ProcessPanelManager
 	 */
 	private boolean updateInteractionUIs()
 	{
+		List<DataElementListUI> aListUIs = new ArrayList<>();
+
 		for (DataElement<?> rUpdateElement :
 			 rProcessState.getInteractionParams())
 		{
@@ -1090,11 +1093,22 @@ public class ProcessPanelManager
 			if (rUpdateUI != null)
 			{
 				rUpdateUI.updateDataElement(rUpdateElement, true);
+
+				if (rUpdateUI instanceof DataElementListUI)
+				{
+					aListUIs.add((DataElementListUI) rUpdateUI);
+				}
 			}
 			else
 			{
 				return false;
 			}
+		}
+
+		// finally update list UIs after all children have been updated
+		for (DataElementListUI rListUI : aListUIs)
+		{
+			rListUI.getPanelManager().updateFromChildChanges();
 		}
 
 		manageProcessViews();

@@ -437,7 +437,6 @@ public class DataElementUI<D extends DataElement<?>>
 		long t = System.currentTimeMillis();
 
 		rBaseStyle		  = rStyle;
-		rStyle			  = applyElementStyle(rDataElement, rStyle);
 		aElementComponent = buildDataElementUI(rBuilder, rStyle);
 
 		applyElementProperties();
@@ -757,6 +756,8 @@ public class DataElementUI<D extends DataElement<?>>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
+		rStyle = applyElementStyle(rDataElement, rStyle);
+
 		if (rDataElement.isImmutable())
 		{
 			aElementComponent = createDisplayUI(rBuilder, rStyle, rDataElement);

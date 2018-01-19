@@ -193,11 +193,11 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	 */
 	private void updateStyle()
 	{
-		DataElementList rDataElement = getDataElement();
-		String		    sAddStyle    = aListPanelManager.getStyleName();
+		DataElementList rDataElementList = getDataElement();
+		String		    sAddStyle		 = aListPanelManager.getStyleName();
 
 		StyleData rNewStyle =
-			applyElementStyle(rDataElement,
+			applyElementStyle(rDataElementList,
 							  PanelManager.addStyles(getBaseStyle(),
 													 sAddStyle));
 

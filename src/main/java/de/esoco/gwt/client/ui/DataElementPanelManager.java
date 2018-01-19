@@ -538,6 +538,16 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
+	 * Updates this list from properties of updated child data elements. This
+	 * will be invoked after all children have been update and therefore
+	 * replaced in the hierarchy. Can be overridden by subclasses that need to
+	 * react to child updates if no re-build has been performed.
+	 */
+	public void updateFromChildChanges()
+	{
+	}
+
+	/***************************************
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -755,19 +765,18 @@ public abstract class DataElementPanelManager
 	@SuppressWarnings("unchecked")
 	protected ContainerBuilder<Container> createContainer(
 		ContainerBuilder<?> rBuilder,
-		StyleData			rStyleData)
+		StyleData			rStyle)
 	{
 		ContainerBuilder<? extends Container> aPanelBuilder = null;
 
 		aDataElementUIs =
 			new LinkedHashMap<>(rDataElementList.getElementCount());
 
-		rStyleData =
-			DataElementUI.applyElementStyle(rDataElementList, rStyleData);
+		rStyle = DataElementUI.applyElementStyle(rDataElementList, rStyle);
 
 		eLayout = rDataElementList.getProperty(LAYOUT, LayoutType.TABS);
 
-		aPanelBuilder = createPanel(rBuilder, rStyleData, eLayout);
+		aPanelBuilder = createPanel(rBuilder, rStyle, eLayout);
 
 		return (ContainerBuilder<Container>) aPanelBuilder;
 	}
@@ -897,6 +906,21 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
+	 * Updates the style and selection from the data element list.
+	 *
+	 * @param bStyleChanged TRUE if the container style has changed
+	 */
+	protected void updateFromProperties(boolean bStyleChanged)
+	{
+		if (bStyleChanged)
+		{
+			updateContainerStyle();
+		}
+
+		applyElementSelection();
+	}
+
+	/***************************************
 	 * Checks whether the data element list of this instance has been modified
 	 * and adds it to the given list if necessary.
 	 *
@@ -974,21 +998,6 @@ public abstract class DataElementPanelManager
 
 		return rParent instanceof DataElementPanelManager
 			   ? ((DataElementPanelManager) rParent).getHierarchyIndent() : "";
-	}
-
-	/***************************************
-	 * Updates the style and selection from the data element list.
-	 *
-	 * @param bStyleChanged TRUE if the container style has changed
-	 */
-	void updateFromProperties(boolean bStyleChanged)
-	{
-		if (bStyleChanged)
-		{
-			updateContainerStyle();
-		}
-
-		applyElementSelection();
 	}
 
 	/***************************************

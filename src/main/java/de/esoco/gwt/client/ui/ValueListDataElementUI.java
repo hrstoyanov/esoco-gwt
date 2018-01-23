@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ import static de.esoco.lib.property.LayoutProperties.FLOAT;
 import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
+import static de.esoco.lib.property.LayoutProperties.LAYOUT_VISIBILITY;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
 import static de.esoco.lib.property.StateProperties.NO_EVENT_PROPAGATION;
@@ -98,7 +99,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 									   VERTICAL_ALIGN,
 									   ICON_ALIGN,
 									   FLOAT,
-									   NO_EVENT_PROPAGATION);
+									   NO_EVENT_PROPAGATION,
+									   LAYOUT_VISIBILITY);
 
 	//~ Instance fields --------------------------------------------------------
 

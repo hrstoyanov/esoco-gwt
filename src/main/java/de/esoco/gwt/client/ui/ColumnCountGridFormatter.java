@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,9 @@ import de.esoco.lib.property.RelativeSize;
 import java.util.Collection;
 
 import static de.esoco.lib.property.LayoutProperties.COLUMN_SPAN;
+import static de.esoco.lib.property.LayoutProperties.MEDIUM_COLUMN_SPAN;
 import static de.esoco.lib.property.LayoutProperties.RELATIVE_WIDTH;
+import static de.esoco.lib.property.LayoutProperties.SMALL_COLUMN_SPAN;
 
 
 /********************************************************************
@@ -77,15 +79,21 @@ public class ColumnCountGridFormatter extends GridFormatter
 		DataElementUI<?> rColumUI,
 		StyleData		 rColumnStyle)
 	{
-		StringBuilder aColumnStyle = new StringBuilder();
-		int			  nColumnWidth = aColumnWidths[nCurrentColumn++];
+		DataElement<?> rDataElement = rColumUI.getDataElement();
+		StringBuilder  aColumnStyle = new StringBuilder();
+		int			   nColumnWidth = aColumnWidths[nCurrentColumn++];
 
-		aColumnStyle.append(sSmallPrefix)
-					.append(Math.min(nColumnWidth * 4, nGridColumns))
-					.append(' ');
-		aColumnStyle.append(sMediumPrefix)
-					.append(Math.min(nColumnWidth * 2, nGridColumns))
-					.append(' ');
+		int nSmallWidth  =
+			rDataElement.getIntProperty(SMALL_COLUMN_SPAN,
+										Math.min(nColumnWidth * 4,
+												 nGridColumns));
+		int nMediumWidth =
+			rDataElement.getIntProperty(MEDIUM_COLUMN_SPAN,
+										Math.min(nColumnWidth * 2,
+												 nGridColumns));
+
+		aColumnStyle.append(sSmallPrefix).append(nSmallWidth).append(' ');
+		aColumnStyle.append(sMediumPrefix).append(nMediumWidth).append(' ');
 		aColumnStyle.append(sLargePrefix).append(nColumnWidth);
 
 		return DataElementGridPanelManager.addStyles(rColumnStyle,

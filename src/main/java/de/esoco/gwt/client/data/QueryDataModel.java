@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -296,52 +296,41 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	}
 
 	/***************************************
-	 * @see RemoteDataModel#setWindow(int, Callback)
+	 * @see RemoteDataModel#setWindow(int, int, Callback)
 	 */
 	@Override
 	public void setWindow(
 		int												   nQueryStart,
+		int												   nQueryLimit,
 		final Callback<RemoteDataModel<DataModel<String>>> rCallback)
 	{
-		int nQueryLimit = nWindowSize;
-
-		if (aCurrentData != null)
+		if (aCurrentData == null)
 		{
-			int nWindowEnd = nWindowStart + aCurrentData.size();
-			int nEnd	   = nQueryStart + nWindowSize;
+			aCurrentData = new ArrayList<DataModel<String>>(nQueryLimit);
+		}
+		else if (nQueryLimit != nWindowSize)
+		{
+			aCurrentData.clear();
+		}
 
-			if (nQueryStart > nWindowStart && nQueryStart < nWindowEnd)
-			{
-				nQueryLimit -= nWindowEnd - nQueryStart;
-				nQueryStart = nWindowEnd;
-			}
-			else if (nEnd >= nWindowStart && nEnd < nWindowEnd)
-			{
-				nQueryLimit -= nEnd - nWindowStart;
-			}
+		nWindowSize = nQueryLimit;
+
+		int nWindowEnd = nWindowStart + aCurrentData.size();
+		int nEnd	   = nQueryStart + nWindowSize;
+
+		if (nQueryStart > nWindowStart && nQueryStart < nWindowEnd)
+		{
+			nQueryLimit -= nWindowEnd - nQueryStart;
+			nQueryStart = nWindowEnd;
+		}
+		else if (nEnd >= nWindowStart && nEnd < nWindowEnd)
+		{
+			nQueryLimit -= nEnd - nWindowStart;
 		}
 
 		DataElementList aQueryData = createQueryData(nQueryStart, nQueryLimit);
 
 		executeQuery(aQueryData, nQueryStart, nQueryLimit, rCallback);
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setWindowSize(int nSize)
-	{
-		if (aCurrentData == null)
-		{
-			aCurrentData = new ArrayList<DataModel<String>>(nSize);
-		}
-		else if (nSize != nWindowSize)
-		{
-			aCurrentData.clear();
-		}
-
-		nWindowSize = nSize;
 	}
 
 	/***************************************

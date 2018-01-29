@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -120,6 +120,8 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	{
 		RelationTypes.init(AuthenticatedServiceImpl.class);
 	}
+
+	private static String sApplicationName = null;
 
 	//~ Static methods ---------------------------------------------------------
 
@@ -554,7 +556,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 				Log.infof("[LOGIN] User %s from %s authenticated in %s\n%s",
 						  rUser,
 						  sClientAddr,
-						  ServiceContext.getInstance().getApplicationName(),
+						  getApplicationName(),
 						  sClientInfo);
 			}
 
@@ -863,6 +865,31 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 */
 	protected void endSession(SessionData rSessionData)
 	{
+	}
+
+	/***************************************
+	 * Returns the name of the application this service belongs to. The default
+	 * implementation returns the service name (without a trailing "ServiceImpl"
+	 * if present). Subclasses may override this method to return a different
+	 * name.
+	 *
+	 * @return The application name
+	 */
+	protected String getApplicationName()
+	{
+		if (sApplicationName == null)
+		{
+			sApplicationName = getClass().getSimpleName();
+
+			int nIndex = sApplicationName.indexOf("ServiceImpl");
+
+			if (nIndex > 0)
+			{
+				sApplicationName = sApplicationName.substring(0, nIndex);
+			}
+		}
+
+		return sApplicationName;
 	}
 
 	/***************************************

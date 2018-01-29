@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,17 @@ import org.obrel.core.RelatedObject;
  * structures and executes schedule processes if setup by subclasses. It also
  * listens via HttpSessionListener for sessions and reports changes to an {@link
  * AuthenticatedServiceImpl} instance if one has been registered with.
+ *
+ * <p>To enable a service context the following code must be added to the
+ * application's web.xml file:</p>
+ *
+ * <pre>
+    &lt;listener&gt;
+        &lt;listener-class&gt;
+            [full name of the ServiceContext subclass]
+        &lt;listener-class&gt;
+    &lt;listener&gt;
+ </pre>
  *
  * @author eso
  */
@@ -95,6 +106,34 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
+	 * Returns the application name.
+	 *
+	 * @return The application name
+	 */
+	public final String getApplicationName()
+	{
+		String sName;
+
+		if (rService != null)
+		{
+			sName = rService.getApplicationName();
+		}
+		else
+		{
+			sName = getClass().getSimpleName();
+
+			int nIndex = sName.indexOf(ServiceContext.class.getSimpleName());
+
+			if (nIndex > 0)
+			{
+				sName = sName.substring(0, nIndex);
+			}
+		}
+
+		return sName;
+	}
+
+	/***************************************
 	 * Returns the service of this instance.
 	 *
 	 * @return The service or NULL if not set
@@ -143,19 +182,6 @@ public abstract class ServiceContext extends RelatedObject
 	{
 		this.rService = rService;
 	}
-
-	/***************************************
-	 * Must be implemented by subclasses to return the application name.
-	 *
-	 * @return The application name
-	 */
-	protected abstract String getApplicationName();
-
-	/***************************************
-	 * Must be implemented by subclasses to notify the web application clients
-	 * of data changes.
-	 */
-	protected abstract void notifyClients();
 
 	/***************************************
 	 * This method can be overridden by subclasses to cleanup internal data

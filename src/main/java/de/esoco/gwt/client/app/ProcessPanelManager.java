@@ -71,6 +71,7 @@ import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
 import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
+import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.STYLE;
 
 
@@ -958,6 +959,8 @@ public class ProcessPanelManager
 
 			if (aView != null && aView.isVisible())
 			{
+				// always update full view structure
+				rViewParam.setFlag(STRUCTURE_CHANGED);
 				aView.updateDataElement(rViewParam, true);
 			}
 			else

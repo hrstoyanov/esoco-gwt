@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ public class HierarchicalDataObject_CustomFieldSerializer
 		SerializationStreamReader rReader) throws SerializationException
 	{
 		String				   sId		 = rReader.readString();
+		int					   nIndex    = rReader.readInt();
 		int					   nCount    = rReader.readInt();
 		boolean				   bReadonly = rReader.readBoolean();
 		List<String>		   aValues   = new ArrayList<String>(nCount);
@@ -102,6 +103,7 @@ public class HierarchicalDataObject_CustomFieldSerializer
 
 			rResult =
 				new HierarchicalDataObject(sId,
+										   nIndex,
 										   aValues,
 										   bReadonly,
 										   aFlags,
@@ -124,6 +126,7 @@ public class HierarchicalDataObject_CustomFieldSerializer
 
 			rResult =
 				new HierarchicalDataObject(sId,
+										   nIndex,
 										   aValues,
 										   bReadonly,
 										   aFlags,
@@ -146,6 +149,7 @@ public class HierarchicalDataObject_CustomFieldSerializer
 		HierarchicalDataObject    rObject) throws SerializationException
 	{
 		rWriter.writeString(rObject.sId);
+		rWriter.writeInt(rObject.nIndex);
 		rWriter.writeInt(rObject.rValues.size());
 		rWriter.writeBoolean(rObject.bEditable);
 

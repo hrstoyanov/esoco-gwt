@@ -923,6 +923,7 @@ public class DataElementFactory
 	 * Creates a data object for a certain entity in a storage query.
 	 *
 	 * @param  rEntity        The entity to create the data element from
+	 * @param  nIndex         The index of the data object
 	 * @param  pChildCriteria A predicate that constrains the child entities to
 	 *                        be included in a hierarchical object or NULL for
 	 *                        none
@@ -940,6 +941,7 @@ public class DataElementFactory
 	 */
 	public HierarchicalDataObject createEntityDataObject(
 		Entity						   rEntity,
+		int							   nIndex,
 		Predicate<? super Entity>	   pChildCriteria,
 		Predicate<? super Entity>	   pSortCriteria,
 		Function<Entity, List<String>> fGetColumnData,
@@ -961,6 +963,7 @@ public class DataElementFactory
 		}
 
 		return new HierarchicalDataObject(Integer.toString(rEntity.getId()),
+										  nIndex,
 										  aValues,
 										  true,
 										  rFlags,
@@ -1436,7 +1439,9 @@ public class DataElementFactory
 			rRelation = rTarget.set(rType, null);
 		}
 
-		copyDisplayProperties(rElement, rRelation, DataElement.SERVER_PROPERTIES);
+		copyDisplayProperties(rElement,
+							  rRelation,
+							  DataElement.SERVER_PROPERTIES);
 	}
 
 	/***************************************
@@ -1578,12 +1583,15 @@ public class DataElementFactory
 				List<DataModel<String>> aChildObjects =
 					new ArrayList<DataModel<String>>(nChildCount);
 
+				int nIndex = 0;
+
 				for (Entity rChild : rChildList)
 				{
 					if (pChildCriteria == null ||
 						pChildCriteria.evaluate(rChild))
 					{
 						aChildObjects.add(createEntityDataObject(rChild,
+																 nIndex++,
 																 pChildCriteria,
 																 pSortCriteria,
 																 fGetColumnData,
@@ -1869,9 +1877,12 @@ public class DataElementFactory
 		Function<Entity, List<String>> fCollectValues =
 			CollectionFunctions.createStringList(false, rAttributes);
 
+		int nIndex = 0;
+
 		for (Entity rEntity : rEntities)
 		{
 			aEntityObjects.add(createEntityDataObject(rEntity,
+													  nIndex++,
 													  null,
 													  null,
 													  fCollectValues,

@@ -992,7 +992,7 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 
 					writeDownloadDataToResponse(rResponse, rDownloadData);
 				}
-				catch (Exception e)
+				catch (Throwable e)
 				{
 					Log.error("Processing of download request failed", e);
 				}

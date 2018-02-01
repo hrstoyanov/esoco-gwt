@@ -74,6 +74,7 @@ import de.esoco.lib.property.HasProperties;
 import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.MutableProperties;
 import de.esoco.lib.property.PropertyName;
+import de.esoco.lib.property.SortDirection;
 import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
@@ -86,6 +87,7 @@ import de.esoco.process.ProcessStep;
 import de.esoco.storage.QueryList;
 import de.esoco.storage.QueryPredicate;
 import de.esoco.storage.StorageException;
+import de.esoco.storage.StoragePredicates.SortPredicate;
 
 import java.math.BigDecimal;
 
@@ -131,6 +133,7 @@ import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
+import static de.esoco.lib.property.StateProperties.SORT_DIRECTION;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
 
@@ -265,7 +268,11 @@ public class DataElementFactory
 									  bDisplayEntityIds);
 
 		List<ColumnDefinition> aColumns =
-			createColumnDefinitions(rEntityDefinition, rAttributes, sPrefix);
+			createColumnDefinitions(rEntityDefinition,
+									rAttributes,
+									sPrefix,
+									null,
+									null);
 
 		Validator<String> rValidator =
 			new SelectionValidator(aDataObjects, aColumns);
@@ -550,6 +557,8 @@ public class DataElementFactory
 	 * @param  rEntityDefinition The entity definition to create the columns for
 	 * @param  rAttributes       The list of attribute functions
 	 * @param  sPrefix           The prefix string for the column titles
+	 * @param  rSortAttribute    An optional sort attribute or NULL for none
+	 * @param  eSortDirection    The sort direction for a sort attribute
 	 *
 	 * @return A list containing the corresponding column data element
 	 */
@@ -557,7 +566,9 @@ public class DataElementFactory
 	private static List<ColumnDefinition> createColumnDefinitions(
 		EntityDefinition<?>						rEntityDefinition,
 		Collection<Function<? super Entity, ?>> rAttributes,
-		String									sPrefix)
+		String									sPrefix,
+		RelationType<?>							rSortAttribute,
+		SortDirection							eSortDirection)
 	{
 		List<ColumnDefinition> aColumns =
 			new ArrayList<ColumnDefinition>(rAttributes.size());
@@ -650,6 +661,11 @@ public class DataElementFactory
 				aDisplayProperties.getPropertyCount() > 0)
 			{
 				aColumn.setProperties(aDisplayProperties, true);
+			}
+
+			if (rDisplayAttr != null && rDisplayAttr == rSortAttribute)
+			{
+				aColumn.setProperty(SORT_DIRECTION, eSortDirection);
 			}
 
 			aColumns.add(aColumn);
@@ -1060,8 +1076,28 @@ public class DataElementFactory
 		rAttributes =
 			processAttributeFunctions(rDef, rAttributes, bDisplayEntityIds);
 
+		RelationType<?> rSortAttribute = null;
+		SortDirection   eSortDirection = null;
+
+		if (pDefaultSortCriteria instanceof SortPredicate)
+		{
+			SortPredicate<?> pSort			    =
+				(SortPredicate<?>) pDefaultSortCriteria;
+			Object			 rElementDescriptor = pSort.getElementDescriptor();
+
+			if (rElementDescriptor instanceof RelationType)
+			{
+				rSortAttribute = (RelationType<?>) rElementDescriptor;
+				eSortDirection = pSort.get(MetaTypes.SORT_DIRECTION);
+			}
+		}
+
 		List<ColumnDefinition> aColumns =
-			createColumnDefinitions(rDef, rAttributes, sPrefix);
+			createColumnDefinitions(rDef,
+									rAttributes,
+									sPrefix,
+									rSortAttribute,
+									eSortDirection);
 
 		Function<Entity, List<String>> fGetAttributes =
 			CollectionFunctions.createStringList(false, rAttributes);

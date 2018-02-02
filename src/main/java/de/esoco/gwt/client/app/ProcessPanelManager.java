@@ -1081,7 +1081,7 @@ public class ProcessPanelManager
 	 * Updates the UIs for the data elements that have been modified during the
 	 * last interaction.
 	 *
-	 * @return TODO: DOCUMENT ME!
+	 * @return TRUE if all UIs could be updated, FALSE if a rebuild is necessary
 	 */
 	private boolean updateInteractionUIs()
 	{

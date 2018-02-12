@@ -58,7 +58,7 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	}
 
 	/***************************************
-	 * Overridden to return the base stype from the panel manager instead.
+	 * Overridden to return the base type from the panel manager instead.
 	 *
 	 * @see DataElementUI#getBaseStyle()
 	 */

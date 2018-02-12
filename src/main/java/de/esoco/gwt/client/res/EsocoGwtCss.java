@@ -72,11 +72,14 @@ public interface EsocoGwtCss extends CssResource {
   @ClassName("ga-ErrorMessage")
   String gaErrorMessage();
   
-  @ClassName("ga-ProcessButtonPanel")
-  String gaProcessButtonPanel();
-  
+  @ClassName("ga-RootPanel")
+  String gaRootPanel();
+
   @ClassName("ga-ProcessPanel")
   String gaProcessPanel();
+  
+  @ClassName("ga-ProcessButtonPanel")
+  String gaProcessButtonPanel();
   
   @ClassName("ga-ProcessParamPanel")
   String gaProcessParamPanel();

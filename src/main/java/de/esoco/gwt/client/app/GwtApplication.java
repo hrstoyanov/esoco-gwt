@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.client.ui.AuthenticationPanelManager;
 import de.esoco.gwt.shared.GwtApplicationServiceAsync;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 
 
@@ -55,9 +56,11 @@ public abstract class GwtApplication extends EWTEntryPoint
 
 	/***************************************
 	 * Must be implemented by subclasses to create the asynchronous application
-	 * service interface.
+	 * service interface by invoking {@link GWT#create(Class)}. This invocation
+	 * must occur in the subclass because the GWT compiler parses the class
+	 * literal used in the invocation.
 	 *
-	 * @return The app service
+	 * @return The application service
 	 */
 	protected abstract GwtApplicationServiceAsync createApplicationService();
 

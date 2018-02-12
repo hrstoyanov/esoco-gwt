@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import de.esoco.ewt.event.EventType;
 import de.esoco.gwt.client.ui.AuthenticationPanelManager;
 import de.esoco.gwt.client.ui.DefaultCommandResultHandler;
 import de.esoco.gwt.client.ui.PanelManager;
-import de.esoco.gwt.shared.GwtApplicationService;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -44,6 +43,12 @@ import java.util.Map.Entry;
 
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.client.Window;
+
+import static de.esoco.gwt.shared.GwtApplicationService.ENTITY_ID_NAME;
+import static de.esoco.gwt.shared.GwtApplicationService.USER_PROCESSES;
+import static de.esoco.gwt.shared.ProcessService.APPLICATION_MAIN_PROCESS;
+import static de.esoco.gwt.shared.ProcessService.APPLICATION_PROCESS_PATH;
+import static de.esoco.gwt.shared.ProcessService.EXECUTE_PROCESS;
 
 
 /********************************************************************
@@ -192,17 +197,21 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 	}
 
 	/***************************************
-	 * Executes the main application process that is stored in the user data
-	 * element with the name {@link GwtApplicationService#APPLICATION_PROCESS}.
+	 * Executes the application process with a certain name.
 	 *
 	 * @param sProcessName rUserData The user data to read the process from
 	 */
 	protected void executeApplicationProcess(String sProcessName)
 	{
-		sProcessName =
-			GwtApplicationService.APPLICATION_PROCESS + "/" + sProcessName;
+		executeProcess(APPLICATION_PROCESS_PATH + "/" + sProcessName, null);
+	}
 
-		executeProcess(sProcessName, null);
+	/***************************************
+	 * Executes the main application process.
+	 */
+	protected void executeMainApplicationProcess()
+	{
+		executeApplicationProcess(APPLICATION_MAIN_PROCESS);
 	}
 
 	/***************************************
@@ -233,15 +242,14 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 		{
 			ProcessDescription rProcessDescription;
 
-			if (sProcessName.startsWith(GwtApplicationService.APPLICATION_PROCESS))
+			if (sProcessName.startsWith(APPLICATION_PROCESS_PATH))
 			{
 				rProcessDescription =
 					new ProcessDescription(sProcessName, null, 0, false);
 			}
 			else
 			{
-				sProcessName =
-					GwtApplicationService.USER_PROCESSES + "/" + sProcessName;
+				sProcessName = USER_PROCESSES + "/" + sProcessName;
 
 				rProcessDescription =
 					(ProcessDescription) getUserData().getElementAt(sProcessName);
@@ -256,7 +264,7 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 			rProcessDescription.setClientLocale(LocaleInfo.getCurrentLocale()
 												.getLocaleName());
 
-			executeCommand(GwtApplicationService.EXECUTE_PROCESS,
+			executeCommand(EXECUTE_PROCESS,
 						   rProcessDescription,
 				new DefaultCommandResultHandler<ProcessState>(this)
 				{
@@ -344,7 +352,7 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 		if (!SelectionDataElement.NO_SELECTION.equals(sSelection))
 		{
 			aSelectionId =
-				new IntegerDataElement(GwtApplicationService.ENTITY_ID_NAME,
+				new IntegerDataElement(ENTITY_ID_NAME,
 									   Integer.parseInt(sSelection));
 		}
 

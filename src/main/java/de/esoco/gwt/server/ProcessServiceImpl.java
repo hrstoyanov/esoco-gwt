@@ -135,11 +135,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 	private static Locale rDefaultLocale = Locale.ENGLISH;
 
-	//~ Instance fields --------------------------------------------------------
-
-	// set by services that use a bootstrap application process
-	private ProcessDescription rAppProcess = null;
-
 	//~ Static methods ---------------------------------------------------------
 
 	/***************************************
@@ -419,7 +414,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	{
 		if (!hasProcessAuthentication() ||
 			!rCommand.equals(EXECUTE_PROCESS) ||
-			!rData.getName().startsWith(APPLICATION_PROCESS))
+			!rData.getName().startsWith(APPLICATION_PROCESS_PATH))
 		{
 			super.checkCommandExecution(rCommand, rData);
 		}
@@ -442,7 +437,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		String  sProcessName = rDescription.getName();
 		Process rProcess     = null;
 
-		if (sProcessName.startsWith(APPLICATION_PROCESS))
+		if (sProcessName.startsWith(APPLICATION_PROCESS_PATH))
 		{
 			for (Process rExistingProcess : rProcesses)
 			{
@@ -537,17 +532,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * method should be invoked before any other process definitions are created
 	 * through {@link #createProcessDescriptions(Class, List)}.
 	 *
-	 * @param  rProcessDefinition The class of the application process
-	 *                            definition
-	 *
-	 * @return The description of the application process
+	 * @param rProcessDefinition The class of the application process definition
 	 */
-	protected ProcessDescription setApplicationProcess(
+	protected void setApplicationProcess(
 		Class<? extends ProcessDefinition> rProcessDefinition)
 	{
-		rAppProcess = createProcessDescriptions(rProcessDefinition, null);
-
-		return rAppProcess;
+		createProcessDescriptions(rProcessDefinition, null);
 	}
 
 	/***************************************

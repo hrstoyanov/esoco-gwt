@@ -30,12 +30,13 @@
 	
 }
 
-@external .ga-ProcessPanel, .ga-ProcessTitle;
+@external .ga-RootPanel, .ga-ProcessPanel, .ga-ProcessTitle;
 @external .ga-ProcessTopPanel, .ga-ProcessButtonPanel;
 @external .ga-ProcessParamPanel, .ga-ProcessSummaryPanel;
 @external .ga-ErrorMessage;
-.ga-ProcessPanel, .ga-ProcessTitle, .ga-ProcessTopPanel, .ga-ProcessButtonPanel,
-	.ga-ProcessParamPanel, .ga-ProcessSummaryPanel, .ga-ErrorMessage {
+.ga-RootPanel, .ga-ProcessPanel, .ga-ProcessTitle, .ga-ProcessTopPanel, 
+.ga-ProcessButtonPanel, .ga-ProcessParamPanel, .ga-ProcessSummaryPanel, 
+.ga-ErrorMessage {
 	
 }
 

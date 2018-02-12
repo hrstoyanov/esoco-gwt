@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -409,7 +409,9 @@ public abstract class AuthenticationPanelManager<C extends Container,
 			removeApplicationPanel();
 
 			aLoginPanel = buildLoginPanel(this, bReauthenticate);
-			aLoginPanel.getContainer().getElement().getStyle()
+			aLoginPanel.getContainer()
+					   .getElement()
+					   .getStyle()
 					   .setPosition(Position.RELATIVE);
 			aLoginPanel.requestFocus();
 		}
@@ -426,7 +428,7 @@ public abstract class AuthenticationPanelManager<C extends Container,
 	 * the application runs it must be done while no login is in progress, e.g.
 	 * after invocation of {@link #hideLoginPanel()}.</p>
 	 *
-	 * @param eMode bUseLoginDialog TRUE for a login dialog, FALSE for a panel
+	 * @param eMode The login mode
 	 */
 	protected void setLoginMode(LoginMode eMode)
 	{

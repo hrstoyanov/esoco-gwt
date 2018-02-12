@@ -615,9 +615,13 @@ public class DataElementUI<D extends DataElement<?>>
 	@Override
 	public String toString()
 	{
-		return TextConvert.lastElementOf(getClass().getName()) + "[" +
-			   TextConvert.lastElementOf(rDataElement.getName()) +
-			   "]";
+		return TextConvert.format("%s[%s: %s]",
+								  TextConvert.lastElementOf(getClass()
+															.getName()),
+								  TextConvert.lastElementOf(rDataElement
+															.getName()),
+								  getElementComponent().getClass()
+								  .getSimpleName());
 	}
 
 	/***************************************

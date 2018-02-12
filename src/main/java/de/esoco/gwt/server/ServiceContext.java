@@ -106,34 +106,6 @@ public abstract class ServiceContext extends RelatedObject
 	}
 
 	/***************************************
-	 * Returns the application name.
-	 *
-	 * @return The application name
-	 */
-	public final String getApplicationName()
-	{
-		String sName;
-
-		if (rService != null)
-		{
-			sName = rService.getApplicationName();
-		}
-		else
-		{
-			sName = getClass().getSimpleName();
-
-			int nIndex = sName.indexOf(ServiceContext.class.getSimpleName());
-
-			if (nIndex > 0)
-			{
-				sName = sName.substring(0, nIndex);
-			}
-		}
-
-		return sName;
-	}
-
-	/***************************************
 	 * Returns the service of this instance.
 	 *
 	 * @return The service or NULL if not set
@@ -191,6 +163,34 @@ public abstract class ServiceContext extends RelatedObject
 	 */
 	protected void destroy(ServletContext rServletContext)
 	{
+	}
+
+	/***************************************
+	 * Returns the application name.
+	 *
+	 * @return The application name
+	 */
+	protected String getApplicationName()
+	{
+		String sName;
+
+		if (rService != null)
+		{
+			sName = rService.getApplicationName();
+		}
+		else
+		{
+			sName = getClass().getSimpleName();
+
+			int nIndex = sName.indexOf(ServiceContext.class.getSimpleName());
+
+			if (nIndex > 0)
+			{
+				sName = sName.substring(0, nIndex);
+			}
+		}
+
+		return sName;
 	}
 
 	/***************************************

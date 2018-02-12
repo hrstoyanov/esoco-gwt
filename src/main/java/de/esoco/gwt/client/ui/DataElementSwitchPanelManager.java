@@ -104,8 +104,22 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		if (nSelection >= 0)
 		{
-			getDataElementUI(nSelection).collectInput(rModifiedElements);
+			DataElementUI<?> rDataElementUI = getDataElementUI(nSelection);
+
+			rDataElementUI.collectInput(rModifiedElements);
 		}
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void dispose()
+	{
+		// remove event listener to avoid event handling for non-existing UIs
+		aSwitchPanel.removeEventListener(EventType.SELECTION, this);
+
+		super.dispose();
 	}
 
 	/***************************************
@@ -130,14 +144,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		if (nSelection >= 0)
 		{
-			DataElementUI<?> rDataElementUI = getDataElementUI(nSelection);
-
-			// can be NULL because GWT tab panel fires selection events on
-			// clear() which is performed on a rebuild
-			if (rDataElementUI != null)
-			{
-				rDataElementUI.update();
-			}
+			getDataElementUI(nSelection).update();
 		}
 	}
 
@@ -149,15 +156,6 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	public void setSelectedElement(int nElement)
 	{
 		aSwitchPanel.setSelection(nElement);
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void update(DataElementList rNewDataElementList, boolean bUpdateUI)
-	{
-		super.update(rNewDataElementList, bUpdateUI);
 	}
 
 	/***************************************
@@ -221,6 +219,8 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 			setSelectedElement(getDataElementList().getProperty(CURRENT_SELECTION,
 																0));
 		}
+
+		aSwitchPanel.addEventListener(EventType.SELECTION, this);
 	}
 
 	/***************************************
@@ -257,7 +257,6 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 		}
 
 		aSwitchPanel = aPanelBuilder.getContainer();
-		aSwitchPanel.addEventListener(EventType.SELECTION, this);
 
 		return aPanelBuilder;
 	}
@@ -275,6 +274,8 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	 */
 	private DataElementUI<?> getDataElementUI(int nIndex)
 	{
+		assert nIndex >= 0 && nIndex < getDataElementUIs().size();
+
 		Iterator<DataElementUI<?>> rUIs =
 			getDataElementUIs().values().iterator();
 

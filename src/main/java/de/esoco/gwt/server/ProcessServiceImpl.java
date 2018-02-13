@@ -866,9 +866,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 			applyModifiedEntities(rProcess, aProcessState);
 
-			// reset modifications here to allow parameter relation listeners
-			// to update parameters when the DataElements are applied after the
-			// client returns from the interaction
+			// reset modifications after applying to also reset changes from
+			// parameter relation listeners that are invoked during application
 			rInteractionStep.resetParameterModifications();
 		}
 

@@ -76,6 +76,7 @@ import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_REGISTRY;
 
 import static de.esoco.entity.EntityRelationTypes.CONTEXT_MODIFIED_ENTITIES;
 
+import static de.esoco.lib.property.StateProperties.PROPERTIES_CHANGED;
 import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 
@@ -695,7 +696,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	{
 		for (DataElement<?> rDataElement : rDataElements)
 		{
-			boolean bValueChanged = rDataElement.hasFlag(VALUE_CHANGED);
+			boolean bChanged =
+				rDataElement.hasFlag(VALUE_CHANGED) |
+				rDataElement.hasFlag(PROPERTIES_CHANGED);
 
 			if (rDataElement instanceof DataElementList)
 			{
@@ -705,7 +708,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				}
 				else
 				{
-					if (bValueChanged)
+					if (bChanged)
 					{
 						rModifiedElements.add(rDataElement.copy(CopyMode.PROPERTIES));
 					}
@@ -715,7 +718,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 												rModifiedElements);
 				}
 			}
-			else if (bValueChanged)
+			else if (bChanged)
 			{
 				rModifiedElements.add(rDataElement);
 			}

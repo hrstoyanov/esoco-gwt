@@ -134,7 +134,6 @@ import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.StateProperties.SORT_DIRECTION;
-import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
 
 import static de.esoco.process.ProcessRelationTypes.ALLOWED_VALUES;
@@ -1214,18 +1213,6 @@ public class DataElementFactory
 			}
 
 			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
-		}
-
-		if (aDataElement != null)
-		{
-			if (bModified)
-			{
-				aDataElement.setFlag(VALUE_CHANGED);
-			}
-			else
-			{
-				aDataElement.removeProperty(VALUE_CHANGED);
-			}
 		}
 
 		return aDataElement;

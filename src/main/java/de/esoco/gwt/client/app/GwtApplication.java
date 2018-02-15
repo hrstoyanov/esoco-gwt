@@ -17,6 +17,9 @@
 package de.esoco.gwt.client.app;
 
 import de.esoco.ewt.app.EWTEntryPoint;
+import de.esoco.ewt.app.EWTModule;
+import de.esoco.ewt.build.ContainerBuilder;
+import de.esoco.ewt.style.AlignedPosition;
 
 import de.esoco.gwt.client.ServiceRegistry;
 import de.esoco.gwt.client.res.EsocoGwtResources;
@@ -50,7 +53,9 @@ public abstract class GwtApplication extends EWTEntryPoint
 		injectApplicationCss();
 
 		init();
+
 		super.onModuleLoad();
+
 		start();
 	}
 
@@ -74,10 +79,24 @@ public abstract class GwtApplication extends EWTEntryPoint
 	protected abstract String getCookiePrefix();
 
 	/***************************************
-	 * Must be implemented by subclasses to start the application after it has
-	 * been initialized.
+	 * Default implementation that creates a module that renders the application
+	 * process in a {@link GwtProcessAppRootPanel}.
+	 *
+	 * @see de.esoco.ewt.app.EWTEntryPoint#getApplicationModule()
 	 */
-	protected abstract void start();
+	@Override
+	protected EWTModule getApplicationModule()
+	{
+		return new GwtApplicationModule()
+		{
+			@Override
+			protected void createApplicationPanel(ContainerBuilder<?> rBuilder)
+			{
+				new GwtProcessAppRootPanel<>().buildIn(rBuilder,
+													   AlignedPosition.CENTER);
+			}
+		};
+	}
 
 	/***************************************
 	 * Can be implemented by subclasses to perform additional initializations
@@ -98,5 +117,13 @@ public abstract class GwtApplication extends EWTEntryPoint
 	protected void injectApplicationCss()
 	{
 		EsocoGwtResources.INSTANCE.css().ensureInjected();
+	}
+
+	/***************************************
+	 * Can be overridden by subclasses to perform actions after the application
+	 * has been completely initialized and it's main view is displayed.
+	 */
+	protected void start()
+	{
 	}
 }

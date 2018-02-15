@@ -117,7 +117,6 @@ public class ProcessPanelManager
 
 	private String  sProcessName;
 	private boolean bShowNavigationBar;
-	private boolean bDisableOnInteraction;
 	private boolean bRenderInline;
 
 	private DataElementPanelManager aParamPanelManager;
@@ -135,10 +134,11 @@ public class ProcessPanelManager
 	private String		 sPreviousStep  = null;
 	private String		 sPreviousStyle = "";
 
-	private boolean bAutoContinue	   = false;
-	private boolean bPauseAutoContinue = false;
-	private boolean bCancelProcess     = false;
-	private boolean bCancelled		   = false;
+	private boolean bDisableOnInteraction = true;
+	private boolean bAutoContinue		  = false;
+	private boolean bPauseAutoContinue    = false;
+	private boolean bCancelProcess		  = false;
+	private boolean bCancelled			  = false;
 
 	private Map<String, DataElementListView> aProcessViews =
 		Collections.emptyMap();
@@ -159,37 +159,31 @@ public class ProcessPanelManager
 		GwtApplicationPanelManager<?, ?> rParent,
 		String							 sProcessName)
 	{
-		this(rParent, sProcessName, true, true, false);
+		this(rParent, sProcessName, true, false);
 	}
 
 	/***************************************
 	 * Creates a new instance for a certain process.
 	 *
-	 * @param rParent               The parent panel manager
-	 * @param sProcessName          The name of the process
-	 * @param bShowNavigationBar    TRUE to show the process navigation bar at
-	 *                              the top, FALSE to show only the process
-	 *                              parameters
-	 * @param bDisableOnInteraction TRUE if the panel should be disabled while
-	 *                              an interaction event is processed
-	 * @param bRenderInline         TRUE to render the process UI in the parent
-	 *                              container, FALSE to create a separate panel
-	 *                              (may not be compatible with a navigation
-	 *                              bar)
+	 * @param rParent            The parent panel manager
+	 * @param sProcessName       The name of the process
+	 * @param bShowNavigationBar TRUE to show the process navigation bar at the
+	 *                           top, FALSE to show only the process parameters
+	 * @param bRenderInline      TRUE to render the process UI in the parent
+	 *                           container, FALSE to create a separate panel
+	 *                           (may not be compatible with a navigation bar)
 	 */
 	public ProcessPanelManager(
 		GwtApplicationPanelManager<?, ?> rParent,
 		String							 sProcessName,
 		boolean							 bShowNavigationBar,
-		boolean							 bDisableOnInteraction,
 		boolean							 bRenderInline)
 	{
 		super(rParent, CSS.gaProcessPanel());
 
-		this.sProcessName		   = sProcessName;
-		this.bShowNavigationBar    = bShowNavigationBar;
-		this.bDisableOnInteraction = bDisableOnInteraction;
-		this.bRenderInline		   = bRenderInline;
+		this.sProcessName	    = sProcessName;
+		this.bShowNavigationBar = bShowNavigationBar;
+		this.bRenderInline	    = bRenderInline;
 	}
 
 	//~ Static methods ---------------------------------------------------------
@@ -211,9 +205,9 @@ public class ProcessPanelManager
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * TODO: `Description`
+	 * Creates the panel that renders the process parameters.
 	 *
-	 * @return
+	 * @return The panel builder
 	 */
 	public ContainerBuilder<? extends Container> createParameterPanel()
 	{

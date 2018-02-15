@@ -34,9 +34,8 @@ import de.esoco.gwt.client.ui.PanelManager;
  *
  * @author eso
  */
-public class GwtProcessAppRootPanel
-	extends GwtApplicationPanelManager<Container,
-									   GwtApplicationPanelManager<?, ?>>
+public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
+	extends GwtApplicationPanelManager<Container, P>
 {
 	//~ Instance fields --------------------------------------------------------
 
@@ -133,7 +132,6 @@ public class GwtProcessAppRootPanel
 		return new ProcessPanelManager(this,
 									   rProcessState.getName(),
 									   false,
-									   true,
 									   false);
 	}
 

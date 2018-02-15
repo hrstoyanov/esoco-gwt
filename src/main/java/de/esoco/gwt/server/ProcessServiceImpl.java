@@ -131,10 +131,15 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	private static final RelationType<Map<Integer, Process>> USER_PROCESS_MAP =
 		newMapType(false);
 
+	private static Locale rDefaultLocale = Locale.ENGLISH;
+
 	private static List<ProcessDefinition> aProcessDefinitions =
 		new ArrayList<ProcessDefinition>();
 
-	private static Locale rDefaultLocale = Locale.ENGLISH;
+	//~ Instance fields --------------------------------------------------------
+
+	private Class<? extends ProcessDefinition> rAppProcess			  = null;
+	private boolean							   bProcessAuthentication = false;
 
 	//~ Static methods ---------------------------------------------------------
 
@@ -422,39 +427,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Checks whether the given process description is for an application
-	 * process and a corresponding process already exists in the given process
-	 * collection.
-	 *
-	 * @param  rDescription The application process description
-	 * @param  rProcesses   The processes to search
-	 *
-	 * @return The application process to re-use or NULL for none
-	 */
-	protected Process checkReuseExistingAppProcess(
-		ProcessDescription  rDescription,
-		Collection<Process> rProcesses)
-	{
-		String  sProcessName = rDescription.getName();
-		Process rProcess     = null;
-
-		if (sProcessName.startsWith(APPLICATION_PROCESS_PATH))
-		{
-			for (Process rExistingProcess : rProcesses)
-			{
-				if (sProcessName.endsWith(rExistingProcess.getName()))
-				{
-					rProcess = rExistingProcess;
-
-					break;
-				}
-			}
-		}
-
-		return rProcess;
-	}
-
-	/***************************************
 	 * Overridden to cancel any running processes of the current user.
 	 *
 	 * @see AuthenticatedServiceImpl#endSession(SessionData)
@@ -482,15 +454,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Can be overridden by subclasses to indicate that their application
-	 * process handles the authentication instead of the application framework.
-	 * The default implementation always return FALSE.
+	 * Indicates whether the application authentication is done by the (main)
+	 * application process or by the client side UI. The standard value if FALSE
+	 * but it will be set to TRUE if an application process is set with {@link
+	 * #setApplicationProcess(Class)}.
 	 *
 	 * @return TRUE for process based authentication
 	 */
 	protected boolean hasProcessAuthentication()
 	{
-		return false;
+		return bProcessAuthentication;
 	}
 
 	/***************************************
@@ -530,14 +503,19 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 	/***************************************
 	 * Can be invoked by subclasses to set the (main) application process. This
-	 * method should be invoked before any other process definitions are created
-	 * through {@link #createProcessDescriptions(Class, List)}.
+	 * will also set the return value of {@link #hasProcessAuthentication()} to
+	 * true. This method should be invoked before any other process definitions
+	 * are created through {@link #createProcessDescriptions(Class, List)}.
 	 *
 	 * @param rProcessDefinition The class of the application process definition
 	 */
 	protected void setApplicationProcess(
 		Class<? extends ProcessDefinition> rProcessDefinition)
 	{
+		rAppProcess			   = rProcessDefinition;
+		bProcessAuthentication = true;
+
+		// add to process definition list
 		createProcessDescriptions(rProcessDefinition, null);
 	}
 
@@ -680,6 +658,45 @@ public abstract class ProcessServiceImpl<E extends Entity>
 								   .getRootFragment());
 			}
 		}
+	}
+
+	/***************************************
+	 * Checks whether the given process description is for an application
+	 * process and a corresponding process already exists in the given process
+	 * collection.
+	 *
+	 * @param  rDescription The application process description
+	 * @param  rProcesses   The processes to search
+	 *
+	 * @return The application process to re-use or NULL for none
+	 */
+	private Process checkReuseExistingAppProcess(
+		ProcessDescription  rDescription,
+		Collection<Process> rProcesses)
+	{
+		String  sProcessName = rDescription.getName();
+		Process rProcess     = null;
+
+		if (sProcessName.startsWith(APPLICATION_PROCESS_PATH))
+		{
+			if (rAppProcess != null &&
+				sProcessName.endsWith(APPLICATION_MAIN_PROCESS))
+			{
+				sProcessName = rAppProcess.getName();
+			}
+
+			for (Process rExistingProcess : rProcesses)
+			{
+				if (sProcessName.endsWith(rExistingProcess.getName()))
+				{
+					rProcess = rExistingProcess;
+
+					break;
+				}
+			}
+		}
+
+		return rProcess;
 	}
 
 	/***************************************

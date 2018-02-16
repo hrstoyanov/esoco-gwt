@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -251,12 +251,17 @@ public abstract class StorageServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Subclasses must implement this method to return an implementation of
-	 * {@link TabularDocumentWriter} that processes table data for download.
+	 * Subclasses that want to provide a download option from UI tables must
+	 * implement this method to return an implementation of {@link
+	 * TabularDocumentWriter} that processes table data for download. The
+	 * default implementation throws an {@link UnsupportedOperationException}.
 	 *
-	 * @return An document writer instance
+	 * @return An tabular document writer instance
 	 */
-	protected abstract TabularDocumentWriter<byte[]> createTableDownloadDocumentWriter();
+	protected TabularDocumentWriter<byte[]> createTableDownloadDocumentWriter()
+	{
+		throw new UnsupportedOperationException("not implemented");
+	}
 
 	/***************************************
 	 * Returns the data element factory of this service.

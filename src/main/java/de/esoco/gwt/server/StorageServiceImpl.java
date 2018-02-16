@@ -162,7 +162,8 @@ public abstract class StorageServiceImpl<E extends Entity>
 
 			if (sColumnTitle.startsWith("$"))
 			{
-				sColumnTitle = getResourceString(sColumnTitle.substring(1));
+				sColumnTitle =
+					getResourceString(sColumnTitle.substring(1), null);
 			}
 
 			aDocumentWriter.addValue(sColumnTitle);
@@ -183,7 +184,7 @@ public abstract class StorageServiceImpl<E extends Entity>
 				{
 					if (sValue.startsWith("$"))
 					{
-						rValue = getResourceString(sValue.substring(1));
+						rValue = getResourceString(sValue.substring(1), null);
 					}
 					else if (rColumn.getDatatype().endsWith("Date"))
 					{

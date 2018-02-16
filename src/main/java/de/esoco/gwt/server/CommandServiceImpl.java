@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,10 +34,12 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import com.google.gwt.dev.util.collect.HashMap;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -58,9 +60,13 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 
 	private static final long serialVersionUID = 1L;
 
+	private static final String DEFAULT_RESOURCE_KEY = "DEFAULT";
+
 	//~ Instance fields --------------------------------------------------------
 
-	private ResourceBundle aResource;
+	private String sApplicationName = null;
+
+	private Map<String, ResourceBundle> aLocaleResources = new HashMap<>();
 
 	//~ Methods ----------------------------------------------------------------
 
@@ -117,15 +123,6 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 	}
 
 	/***************************************
-	 * Must be implemented to return the name of the properties file that
-	 * contains the application resources. If no resource file is needed NULL
-	 * may be returned.
-	 *
-	 * @return The string properties file name or NULL for none
-	 */
-	protected abstract String getApplicationStringPropertiesFile();
-
-	/***************************************
 	 * Performs a checks whether the execution of a command is possible. This
 	 * method can be overridden by subclasses to implement authentication or
 	 * command (parameter) validations. To deny the command execution the
@@ -143,27 +140,138 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 	}
 
 	/***************************************
-	 * Returns a string from the application resources if such exist. Subclasses
-	 * must implement the method {@link #getApplicationStringPropertiesFile()}
-	 * to define the resource file to be loaded.
+	 * Returns the name of the application this service belongs to. The default
+	 * implementation returns the service name (without a trailing "ServiceImpl"
+	 * if present). Subclasses may override this method to return a different
+	 * name.
 	 *
-	 * @param  sKey The key identifying the resource
-	 *
-	 * @return The resource string or NULL if not found
+	 * @return The application name
 	 */
-	protected String getResourceString(String sKey)
+	protected String getApplicationName()
 	{
-		if (aResource == null)
+		if (sApplicationName == null)
 		{
-			String sFile = getApplicationStringPropertiesFile();
+			sApplicationName = getClass().getSimpleName();
 
-			if (sFile != null)
+			int nIndex = sApplicationName.indexOf("ServiceImpl");
+
+			if (nIndex > 0)
 			{
-				aResource = readResourceFile(sFile);
+				sApplicationName = sApplicationName.substring(0, nIndex);
 			}
 		}
 
-		String sResourceString = null;
+		return sApplicationName;
+	}
+
+	/***************************************
+	 * Deprecated
+	 *
+	 * @return
+	 *
+	 * @deprecated No longer used
+	 */
+	@Deprecated
+	protected String getApplicationStringPropertiesFile()
+	{
+		return null;
+	}
+
+	/***************************************
+	 * Returns the app resource for a certain locale.
+	 *
+	 * @param  sLocale The locale name or NULL for the default resource
+	 *
+	 * @return The resource bundle (will NULL if not even a default resource is
+	 *         found)
+	 */
+	protected ResourceBundle getResource(String sLocale)
+	{
+		String sKey = sLocale != null ? sLocale : DEFAULT_RESOURCE_KEY;
+
+		ResourceBundle aResource = aLocaleResources.get(sKey);
+
+		if (aResource == null)
+		{
+			if (sLocale != null)
+			{
+				aResource =
+					readResourceFile(String.format("%s/%s_%sStrings.properties",
+												   getResourcePath(),
+												   getResourceBaseName(),
+												   sLocale));
+			}
+			else
+			{
+				aResource =
+					readResourceFile(String.format("%s/%sStrings.properties",
+												   getResourcePath(),
+												   getResourceBaseName()));
+			}
+
+			if (aResource == null && sLocale != null)
+			{
+				int    nLocaleSeparator = sLocale.indexOf('_');
+				String sNextLocale	    = null;
+
+				if (nLocaleSeparator > 0)
+				{
+					sNextLocale = sLocale.substring(0, nLocaleSeparator);
+				}
+
+				aResource = getResource(sNextLocale);
+			}
+
+			// not in else branch to also store the default resource under the
+			// locale key if no locale-specific file exists
+			if (aResource != null)
+			{
+				aLocaleResources.put(sKey, aResource);
+			}
+		}
+
+		return aResource;
+	}
+
+	/***************************************
+	 * Returns the base name for the lookup of resource properties files. The
+	 * default implementation returns {@link #getApplicationName()}.
+	 *
+	 * @return The resource base name
+	 */
+	protected String getResourceBaseName()
+	{
+		return getApplicationName();
+	}
+
+	/***************************************
+	 * Returns the server-side path to the resource files of this application.
+	 * The default value is 'data/res' relative to the web application base
+	 * path. If overridden the returned path must not end with a directory
+	 * separator.
+	 *
+	 * @return The resource path
+	 */
+	protected String getResourcePath()
+	{
+		return "data/res";
+	}
+
+	/***************************************
+	 * Returns a string from the application resources if such exist. If no
+	 * resource for a given locale is found the corresponding string from the
+	 * default resource is returned instead (if available).
+	 *
+	 * @param  sKey    The key identifying the resource
+	 * @param  sLocale The locale to return the resource string for or NULL for
+	 *                 the default resource
+	 *
+	 * @return The resource string or NULL if not found
+	 */
+	protected String getResourceString(String sKey, String sLocale)
+	{
+		ResourceBundle aResource	   = getResource(sLocale);
+		String		   sResourceString = null;
 
 		if (aResource != null)
 		{
@@ -218,16 +326,17 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 	}
 
 	/***************************************
-	 * Reads a resource file with a certain name.
+	 * Tries to read a resource file with a certain name.
 	 *
 	 * @param  sFileName The resource file name
 	 *
-	 * @return A new resource bundle instance from the given file
-	 *
-	 * @throws IllegalArgumentException If the resource file could not be found
+	 * @return A new resource bundle instance from the given file or NULL if no
+	 *         matching file could be found
 	 */
 	protected ResourceBundle readResourceFile(String sFileName)
 	{
+		ResourceBundle aResource;
+
 		try
 		{
 			sFileName = getAbsoluteFileName(sFileName);
@@ -235,11 +344,13 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 			InputStreamReader rReader =
 				new InputStreamReader(new FileInputStream(sFileName), "UTF-8");
 
-			return new PropertyResourceBundle(rReader);
+			aResource = new PropertyResourceBundle(rReader);
 		}
 		catch (IOException e)
 		{
-			throw new IllegalStateException(e);
+			aResource = null;
 		}
+
+		return aResource;
 	}
 }

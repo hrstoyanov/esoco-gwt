@@ -121,8 +121,6 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 		RelationTypes.init(AuthenticatedServiceImpl.class);
 	}
 
-	private static String sApplicationName = null;
-
 	//~ Static methods ---------------------------------------------------------
 
 	/***************************************
@@ -865,31 +863,6 @@ public abstract class AuthenticatedServiceImpl<E extends Entity>
 	 */
 	protected void endSession(SessionData rSessionData)
 	{
-	}
-
-	/***************************************
-	 * Returns the name of the application this service belongs to. The default
-	 * implementation returns the service name (without a trailing "ServiceImpl"
-	 * if present). Subclasses may override this method to return a different
-	 * name.
-	 *
-	 * @return The application name
-	 */
-	protected String getApplicationName()
-	{
-		if (sApplicationName == null)
-		{
-			sApplicationName = getClass().getSimpleName();
-
-			int nIndex = sApplicationName.indexOf("ServiceImpl");
-
-			if (nIndex > 0)
-			{
-				sApplicationName = sApplicationName.substring(0, nIndex);
-			}
-		}
-
-		return sApplicationName;
 	}
 
 	/***************************************

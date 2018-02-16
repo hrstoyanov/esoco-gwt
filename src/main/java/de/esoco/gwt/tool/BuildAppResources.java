@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -189,10 +189,11 @@ public class BuildAppResources
 			Collection<String> aCssDirs    =
 				getResourceDirs(rAppClass, aExtraDirs, bHierarchical, false);
 
-			concatenatePropertyFiles(aStringDirs, sPropertiesBase);
+			concatenatePropertyFiles(rAppClass.getSimpleName(),
+									 aStringDirs,
+									 sPropertiesBase);
 			concatenateCssFiles(aCssDirs, sCssBase);
 			generateStringClasses(rAppClass);
-			copyStringsToWarData(rAppClass);
 
 			System.out.printf("OK\n");
 		}
@@ -202,6 +203,49 @@ public class BuildAppResources
 			e.printStackTrace();
 			printUsageAndStop(null);
 		}
+	}
+
+	/***************************************
+	 * Appends a properties file for a certain locale to a target file and
+	 * creates the corresponding writer if necessary.
+	 *
+	 * @param  sSource  The source file for the given locale
+	 * @param  sTarget  The base name (!) of the target file
+	 * @param  sLocale  The locale (will be appended to the target name)
+	 * @param  aWriters The mapping from locales to writers for lookup and
+	 *                  storing of the locale writer
+	 *
+	 * @throws IOException If an I/O operation fails
+	 */
+	private static void appendLocaleProperties(String			   sSource,
+											   String			   sTarget,
+											   String			   sLocale,
+											   Map<String, Writer> aWriters)
+		throws IOException
+	{
+		Writer aLocaleWriter = aWriters.get(sLocale);
+
+		if (aLocaleWriter == null)
+		{
+			aLocaleWriter = createPropertiesWriter(sTarget, sLocale, aWriters);
+		}
+
+		appendProperties(sSource, aLocaleWriter);
+	}
+
+	/***************************************
+	 * Appends a certain properties file to a writer.
+	 *
+	 * @param  sFileName     The name of the properties file
+	 * @param  aTargetWriter The target writer
+	 *
+	 * @throws IOException If an I/O operation fails
+	 */
+	private static void appendProperties(String sFileName, Writer aTargetWriter)
+		throws IOException
+	{
+		writePropertiesHeader(sFileName, aTargetWriter);
+		writeFile(sFileName, aTargetWriter);
 	}
 
 	/***************************************
@@ -307,8 +351,11 @@ public class BuildAppResources
 	 * Concatenates the string properties files containing the resource strings
 	 * of the target application into a single files, separated by locale. If a
 	 * certain size is exceeded the file will be split into multiple parts to
-	 * prevent GWT compile errors.
+	 * prevent GWT compile errors. If locale-specific files exists they will be
+	 * handled analog to the default files that don't have a locale in their
+	 * file name.
 	 *
+	 * @param  sAppName        rAppClass sAppName The application name
 	 * @param  rDirectories    The resource directories from which to read the
 	 *                         property files
 	 * @param  sTargetBaseName The base name for the target files to write to
@@ -316,10 +363,12 @@ public class BuildAppResources
 	 * @throws IOException If reading or writing a file fails
 	 */
 	private static void concatenatePropertyFiles(
+		String			   sAppName,
 		Collection<String> rDirectories,
 		String			   sTargetBaseName) throws IOException
 	{
-		Map<String, Writer> aWriters = new HashMap<>();
+		Map<String, Writer> aWriters	   = new HashMap<>();
+		Map<String, Writer> aServerWriters = new HashMap<>();
 
 		try
 		{
@@ -327,10 +376,22 @@ public class BuildAppResources
 			Writer	    aDefaultWriter  = null;
 			String	    sTarget		    = null;
 
+			String sServerFileBaseName =
+				String.format("%s/%sStrings",
+							  aParams.get(ARG_WEBAPP_DIR),
+							  sAppName);
+
 			int nTotalLines = -1;
 			int nFileCount  = 0;
 			int nMaxLines   =
 				Integer.parseInt(aParams.get(ARG_MAX_PROPERTY_LINES));
+
+			Writer aServerWriter =
+				createPropertiesWriter(sServerFileBaseName,
+									   null,
+									   aServerWriters);
+
+			System.out.printf("Writing %s\n", sServerFileBaseName);
 
 			for (String sDirectory : rDirectories)
 			{
@@ -363,8 +424,7 @@ public class BuildAppResources
 							}
 
 							aDefaultWriter =
-								createPropertiesWriter(sTarget, "");
-							aWriters.put("DEFAULT", aDefaultWriter);
+								createPropertiesWriter(sTarget, null, aWriters);
 							System.out.printf("Writing %s\n", sTarget);
 						}
 						else
@@ -372,8 +432,8 @@ public class BuildAppResources
 							nTotalLines += nLines;
 						}
 
-						writePropertiesHeader(sFile, aDefaultWriter);
-						writeFile(sFile, aDefaultWriter);
+						appendProperties(sFile, aDefaultWriter);
+						appendProperties(sFile, aServerWriter);
 						System.out.printf(" + %s%s\n", sDirectory, sFile);
 
 						// then lookup the locale-specific files for the current
@@ -396,21 +456,18 @@ public class BuildAppResources
 								sLocaleFile.substring(nLocaleIndex + 1,
 													  sLocaleFile.indexOf('.'));
 
-							Writer aLocaleWriter = aWriters.get(sLocale);
+							String sSource = sDirectory + sLocaleFile;
 
-							if (aLocaleWriter == null)
-							{
-								aLocaleWriter =
-									createPropertiesWriter(sTarget, sLocale);
+							appendLocaleProperties(sSource,
+												   sTarget,
+												   sLocale,
+												   aWriters);
 
-								aWriters.put(sLocale, aLocaleWriter);
-							}
+							appendLocaleProperties(sSource,
+												   sServerFileBaseName,
+												   sLocale,
+												   aServerWriters);
 
-							String sFullLocalePath = sDirectory + sLocaleFile;
-
-							writePropertiesHeader(sFullLocalePath,
-												  aLocaleWriter);
-							writeFile(sFullLocalePath, aLocaleWriter);
 							System.out.printf(" + %s%s\n",
 											  sDirectory,
 											  sLocaleFile);
@@ -422,36 +479,7 @@ public class BuildAppResources
 		finally
 		{
 			closeAll(aWriters.values());
-		}
-	}
-
-	/***************************************
-	 * Concatenates all string properties into a single file in the WAR data
-	 * directory.
-	 *
-	 * @param  rAppClass The application class for which to copy
-	 *
-	 * @throws IOException If copying a file fails
-	 */
-	private static void copyStringsToWarData(Class<?> rAppClass)
-		throws IOException
-	{
-		String sDirectory  = getBaseDir(rAppClass) + GENERATED_DIR;
-		String sTargetFile =
-			aParams.get(ARG_WEBAPP_DIR) + '/' + rAppClass.getSimpleName() +
-			"Strings.properties";
-
-		try (Writer aWriter = new BufferedWriter(new FileWriter(sTargetFile)))
-		{
-			Collection<String> aSourceFiles =
-				getDefaultPropertyFiles(sDirectory);
-
-			for (String sSourceFile : aSourceFiles)
-			{
-				writeFile(sDirectory + sSourceFile, aWriter);
-
-				// TODO: also write files with locale
-			}
+			closeAll(aServerWriters.values());
 		}
 	}
 
@@ -484,27 +512,35 @@ public class BuildAppResources
 	/***************************************
 	 * Creates a writer for the output of property files.
 	 *
-	 * @param  sBaseName The base name
-	 * @param  sLocale   The locale (empty string for none)
+	 * @param  sBaseName  The base name
+	 * @param  sLocale    The locale or NULL for none
+	 * @param  rWriterMap A map to store the writer in with the locale as the
+	 *                    key (DEFAULT for NULL keys)
 	 *
-	 * @return
+	 * @return The new writer
 	 *
 	 * @throws IOException
 	 */
-	private static BufferedWriter createPropertiesWriter(
-		String sBaseName,
-		String sLocale) throws IOException
+	private static Writer createPropertiesWriter(String				 sBaseName,
+												 String				 sLocale,
+												 Map<String, Writer> rWriterMap)
+		throws IOException
 	{
 		StringBuilder aFileName = new StringBuilder(sBaseName);
 
-		if (sLocale != null && sLocale.length() > 0)
+		if (sLocale != null)
 		{
 			aFileName.append('_').append(sLocale);
 		}
 
 		aFileName.append(".properties");
 
-		return new BufferedWriter(new FileWriter(aFileName.toString()));
+		Writer aWriter =
+			new BufferedWriter(new FileWriter(aFileName.toString()));
+
+		rWriterMap.put(sLocale != null ? sLocale : "DEFAULT", aWriter);
+
+		return aWriter;
 	}
 
 	/***************************************

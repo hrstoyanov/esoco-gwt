@@ -70,15 +70,6 @@ public abstract class GwtApplication extends EWTEntryPoint
 	protected abstract GwtApplicationServiceAsync createApplicationService();
 
 	/***************************************
-	 * Must be implemented by subclasses to provide the prefix string for
-	 * application cookies that are set by the framework. It is recommended to
-	 * use an uppercase string without punctuation characters.
-	 *
-	 * @return The cookie prefix
-	 */
-	protected abstract String getCookiePrefix();
-
-	/***************************************
 	 * Default implementation that creates a module that renders the application
 	 * process in a {@link GwtProcessAppRootPanel}.
 	 *
@@ -96,6 +87,19 @@ public abstract class GwtApplication extends EWTEntryPoint
 													   AlignedPosition.CENTER);
 			}
 		};
+	}
+
+	/***************************************
+	 * Returns a prefix string for application cookies that are set by the
+	 * framework. It is recommended to use an uppercase string without any
+	 * special characters. The default implementation returns the only the
+	 * uppercase characters of the class name.
+	 *
+	 * @return The cookie prefix
+	 */
+	protected String getCookiePrefix()
+	{
+		return getClass().getSimpleName().replaceAll("\\p{Lower}}", "");
 	}
 
 	/***************************************

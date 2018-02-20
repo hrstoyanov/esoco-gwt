@@ -131,7 +131,6 @@ import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
-import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
 
 import static de.esoco.process.ProcessRelationTypes.ALLOWED_VALUES;
@@ -1175,14 +1174,6 @@ public class DataElementFactory
 			}
 
 			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
-
-			if (bModified)
-			{
-				// needs to be set on data element and not on process parameter
-				// to prevent unnecessary setting of NULL parameters only to
-				// store the UI properties
-				aDataElement.setFlag(VALUE_CHANGED);
-			}
 		}
 
 		return aDataElement;

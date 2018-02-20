@@ -39,7 +39,6 @@ import de.esoco.data.validate.QueryValidator;
 import de.esoco.data.validate.SelectionValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
-
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityDefinition;
 import de.esoco.entity.EntityDefinition.DisplayMode;
@@ -47,10 +46,8 @@ import de.esoco.entity.EntityFunctions;
 import de.esoco.entity.EntityFunctions.GetExtraAttribute;
 import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes.HierarchicalQueryMode;
-
 import de.esoco.gwt.client.data.QueryDataModel;
 import de.esoco.gwt.shared.AuthenticationException;
-
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.datatype.Period;
 import de.esoco.lib.datatype.Period.Unit;
@@ -79,20 +76,16 @@ import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
-
 import de.esoco.process.Process;
 import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
-
 import de.esoco.storage.QueryList;
 import de.esoco.storage.QueryPredicate;
 import de.esoco.storage.StorageException;
 import de.esoco.storage.StoragePredicates.SortPredicate;
 
 import java.math.BigDecimal;
-
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -112,7 +105,6 @@ import org.obrel.type.MetaTypes;
 import static de.esoco.data.DataRelationTypes.CHILD_STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_IDS;
-
 import static de.esoco.entity.EntityPredicates.forEntity;
 import static de.esoco.entity.EntityPredicates.ifAttribute;
 import static de.esoco.entity.EntityRelationTypes.DISPLAY_ENTITY_IDS;
@@ -123,7 +115,6 @@ import static de.esoco.entity.EntityRelationTypes.ENTITY_QUERY_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.ENTITY_SORT_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHICAL_QUERY_MODE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHY_CHILD_PREDICATE;
-
 import static de.esoco.lib.expression.Functions.asString;
 import static de.esoco.lib.expression.Predicates.equalTo;
 import static de.esoco.lib.expression.StringFunctions.capitalizedIdentifier;
@@ -134,9 +125,7 @@ import static de.esoco.lib.property.ContentProperties.VALUE_RESOURCE_PREFIX;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.StateProperties.SORT_DIRECTION;
-import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
-
 import static de.esoco.process.ProcessRelationTypes.ALLOWED_VALUES;
 import static de.esoco.process.ProcessRelationTypes.DATA_ELEMENT;
 import static de.esoco.process.ProcessRelationTypes.INPUT_PARAMS;
@@ -1214,14 +1203,6 @@ public class DataElementFactory
 			}
 
 			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
-
-			if (bModified)
-			{
-				// needs to be set on data element and not on process parameter
-				// to prevent unnecessary setting of NULL parameters only to
-				// store the UI properties
-				aDataElement.setFlag(VALUE_CHANGED);
-			}
 		}
 
 		return aDataElement;

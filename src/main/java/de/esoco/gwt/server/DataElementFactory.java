@@ -39,6 +39,7 @@ import de.esoco.data.validate.QueryValidator;
 import de.esoco.data.validate.SelectionValidator;
 import de.esoco.data.validate.StringListValidator;
 import de.esoco.data.validate.Validator;
+
 import de.esoco.entity.Entity;
 import de.esoco.entity.EntityDefinition;
 import de.esoco.entity.EntityDefinition.DisplayMode;
@@ -46,8 +47,10 @@ import de.esoco.entity.EntityFunctions;
 import de.esoco.entity.EntityFunctions.GetExtraAttribute;
 import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes.HierarchicalQueryMode;
+
 import de.esoco.gwt.client.data.QueryDataModel;
 import de.esoco.gwt.shared.AuthenticationException;
+
 import de.esoco.lib.collection.CollectionUtil;
 import de.esoco.lib.datatype.Period;
 import de.esoco.lib.datatype.Period.Unit;
@@ -76,16 +79,20 @@ import de.esoco.lib.property.StringProperties;
 import de.esoco.lib.property.UserInterfaceProperties;
 import de.esoco.lib.reflect.ReflectUtil;
 import de.esoco.lib.text.TextConvert;
+
 import de.esoco.process.Process;
 import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
+
 import de.esoco.storage.QueryList;
 import de.esoco.storage.QueryPredicate;
 import de.esoco.storage.StorageException;
 import de.esoco.storage.StoragePredicates.SortPredicate;
 
 import java.math.BigDecimal;
+
 import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -105,6 +112,7 @@ import org.obrel.type.MetaTypes;
 import static de.esoco.data.DataRelationTypes.CHILD_STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_IDS;
+
 import static de.esoco.entity.EntityPredicates.forEntity;
 import static de.esoco.entity.EntityPredicates.ifAttribute;
 import static de.esoco.entity.EntityRelationTypes.DISPLAY_ENTITY_IDS;
@@ -115,6 +123,7 @@ import static de.esoco.entity.EntityRelationTypes.ENTITY_QUERY_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.ENTITY_SORT_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHICAL_QUERY_MODE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHY_CHILD_PREDICATE;
+
 import static de.esoco.lib.expression.Functions.asString;
 import static de.esoco.lib.expression.Predicates.equalTo;
 import static de.esoco.lib.expression.StringFunctions.capitalizedIdentifier;
@@ -126,6 +135,7 @@ import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
 import static de.esoco.lib.property.StateProperties.SORT_DIRECTION;
 import static de.esoco.lib.property.StyleProperties.HIERARCHICAL;
+
 import static de.esoco.process.ProcessRelationTypes.ALLOWED_VALUES;
 import static de.esoco.process.ProcessRelationTypes.DATA_ELEMENT;
 import static de.esoco.process.ProcessRelationTypes.INPUT_PARAMS;
@@ -1622,6 +1632,70 @@ public class DataElementFactory
 	}
 
 	/***************************************
+	 * Creates a data element for a collection datatype.
+	 *
+	 * @param  rObject        The related object to create the element for
+	 * @param  rType          The type of the relation to convert into a data
+	 *                        element
+	 * @param  rValue         The relation value
+	 * @param  rAllowedValues The allowed values or NULL for none
+	 * @param  rFlags         The data element flags
+	 *
+	 * @return The new data element
+	 *
+	 * @throws StorageException If initializing an entity query for a
+	 *                          subordinate data element fails
+	 */
+	@SuppressWarnings("unchecked")
+	private DataElement<?> createCollectionDataElement(
+		Relatable		rObject,
+		RelationType<?> rType,
+		Object			rValue,
+		Collection<?>   rAllowedValues,
+		Set<Flag>		rFlags) throws StorageException
+	{
+		Class<?>	   rDatatype	    = rType.getValueType();
+		Class<?>	   rElementDatatype = rType.get(ELEMENT_DATATYPE);
+		String		   sName		    = rType.getName();
+		DataElement<?> aDataElement;
+
+		if (rElementDatatype != null && rElementDatatype.isEnum())
+		{
+			if (rValue == null)
+			{
+				rValue =
+					ReflectUtil.newInstance(ReflectUtil.getImplementationClass(rDatatype));
+			}
+
+			aDataElement =
+				createEnumDataElement(sName,
+									  (Class<? extends Enum<?>>)
+									  rElementDatatype,
+									  rValue,
+									  rAllowedValues,
+									  rFlags);
+		}
+		else if (rAllowedValues != null)
+		{
+			aDataElement =
+				createListDataElement(sName,
+									  (Collection<?>) rValue,
+									  rAllowedValues,
+									  rFlags);
+		}
+		else
+		{
+			aDataElement =
+				createDataElementList(rObject,
+									  rType,
+									  (Collection<Object>) rValue,
+									  rFlags);
+		}
+
+		return aDataElement;
+	}
+
+	/***************************************
 	 * Creates a new data element with a certain name and datatype. The type of
 	 * the returned data element will match the given datatype as close as
 	 * possible. If available the relation parameter allows this method to query
@@ -1642,7 +1716,6 @@ public class DataElementFactory
 	 * @throws StorageException         If registering the child query storage
 	 *                                  adapter fails
 	 */
-	@SuppressWarnings("unchecked")
 	private DataElement<?> createDataElement(Relatable		 rObject,
 											 RelationType<?> rType,
 											 Relation<?>	 rRelation,
@@ -1682,69 +1755,21 @@ public class DataElementFactory
 		}
 		else if (Entity.class.isAssignableFrom(rDatatype))
 		{
-			if (rRelation != null &&
-				(rRelation.hasAnnotation(ENTITY_QUERY_PREDICATE) ||
-				 rAllowedValues != null))
-			{
-				aDataElement =
-					createEntitySelectionElement(sName,
-												 (Relation<? extends Entity>)
-												 rRelation,
-												 rAllowedValues);
-
-				rRelation.annotate(DATA_ELEMENT, aDataElement);
-			}
-			else
-			{
-				String sValue =
-					rValue != null ? ((Entity) rValue).getGlobalId() : "";
-
-				aDataElement =
-					createSimpleDataElement(rDatatype,
-											sName,
-											sValue,
-											rAllowedValues,
-											rRelation,
-											rFlags);
-			}
+			aDataElement =
+				createEntityDataElement(sName,
+										rValue,
+										rRelation,
+										rAllowedValues,
+										rFlags);
 		}
 		else if (Collection.class.isAssignableFrom(rDatatype))
 		{
-			Class<?> rElementDatatype = rType.get(ELEMENT_DATATYPE);
-
-			if (rElementDatatype != null && rElementDatatype.isEnum())
-			{
-				if (rValue == null)
-				{
-					rValue =
-						ReflectUtil.newInstance(ReflectUtil
-												.getImplementationClass(rDatatype));
-				}
-
-				aDataElement =
-					createEnumDataElement(sName,
-										  (Class<? extends Enum<?>>)
-										  rElementDatatype,
-										  rValue,
-										  rAllowedValues,
-										  rFlags);
-			}
-			else if (rAllowedValues != null)
-			{
-				aDataElement =
-					createListDataElement(sName,
-										  (Collection<?>) rValue,
-										  rAllowedValues,
-										  rFlags);
-			}
-			else
-			{
-				aDataElement =
-					createDataElementList(rObject,
-										  rType,
-										  (Collection<Object>) rValue,
-										  rFlags);
-			}
+			aDataElement =
+				createCollectionDataElement(rObject,
+											rType,
+											rValue,
+											rAllowedValues,
+											rFlags);
 		}
 		else
 		{
@@ -1863,6 +1888,58 @@ public class DataElementFactory
 			new EntityDataElement(sName, sAttr, sPrefix, aAttrElements, rFlags);
 
 		return aElement;
+	}
+
+	/***************************************
+	 * Creates a data element for an entity data type.
+	 *
+	 * @param  sName          The element name
+	 * @param  rValue         The element value
+	 * @param  rRelation      The relation to create the element for
+	 * @param  rAllowedValues The allowed values or NULL for none
+	 * @param  rFlags         The element flags
+	 *
+	 * @return The new data element
+	 *
+	 * @throws StorageException If initializing an entity query fails
+	 */
+	@SuppressWarnings("unchecked")
+	private DataElement<?> createEntityDataElement(String		 sName,
+												   Object		 rValue,
+												   Relation<?>   rRelation,
+												   Collection<?> rAllowedValues,
+												   Set<Flag>	 rFlags)
+		throws StorageException
+	{
+		DataElement<?> aDataElement;
+
+		if (rRelation != null &&
+			(rRelation.hasAnnotation(ENTITY_QUERY_PREDICATE) ||
+			 rAllowedValues != null))
+		{
+			aDataElement =
+				createEntitySelectionElement(sName,
+											 (Relation<? extends Entity>)
+											 rRelation,
+											 rAllowedValues);
+
+			rRelation.annotate(DATA_ELEMENT, aDataElement);
+		}
+		else
+		{
+			String sValue =
+				rValue != null ? ((Entity) rValue).getGlobalId() : "";
+
+			aDataElement =
+				createSimpleDataElement(rRelation.getType().getValueType(),
+										sName,
+										sValue,
+										rAllowedValues,
+										rRelation,
+										rFlags);
+		}
+
+		return aDataElement;
 	}
 
 	/***************************************

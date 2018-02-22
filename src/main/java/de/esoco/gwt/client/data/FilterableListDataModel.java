@@ -18,8 +18,8 @@ package de.esoco.gwt.client.data;
 
 import de.esoco.lib.model.ColumnDefinition;
 import de.esoco.lib.model.DataModel;
+import de.esoco.lib.model.FilterableDataModel;
 import de.esoco.lib.model.ListDataModel;
-import de.esoco.lib.model.SearchableDataModel;
 import de.esoco.lib.model.SortableDataModel;
 import de.esoco.lib.property.SortDirection;
 
@@ -45,9 +45,9 @@ import com.google.gwt.regexp.shared.RegExp;
  *
  * @author ueggers
  */
-public class SearchableListDataModel<T extends DataModel<String>>
+public class FilterableListDataModel<T extends DataModel<String>>
 	extends ListDataModel<T> implements SortableDataModel<T>,
-										SearchableDataModel<T>, Serializable
+										FilterableDataModel<T>, Serializable
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -58,21 +58,20 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	private List<T>				   rData;
 	private List<T>				   aDataCopy;
 	private List<ColumnDefinition> rColumns;
-	private boolean				   bNewConstraints;
+	private boolean				   bNewFilters;
 	private List<String>		   aFieldIds = new ArrayList<String>();
 
 	HashMap<String, SortDirection> aColumnSorting =
 		new LinkedHashMap<String, SortDirection>();
 
-	HashMap<String, String> aSearchConstraints =
-		new LinkedHashMap<String, String>();
+	HashMap<String, String> aFilters = new LinkedHashMap<String, String>();
 
 	private RegExp rConstraintPattern =
 		RegExp.compile("([" +
-					   SearchableDataModel.CONSTRAINT_OR_PREFIX +
-					   SearchableDataModel.CONSTRAINT_AND_PREFIX +
+					   FilterableDataModel.CONSTRAINT_OR_PREFIX +
+					   FilterableDataModel.CONSTRAINT_AND_PREFIX +
 					   "])([" +
-					   SearchableDataModel.CONSTRAINT_COMPARISON_CHARS +
+					   FilterableDataModel.CONSTRAINT_COMPARISON_CHARS +
 					   "])(.*)");
 
 	//~ Constructors -----------------------------------------------------------
@@ -84,7 +83,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	 * @param rData    The model's data
 	 * @param rColumns The columns definitions
 	 */
-	public SearchableListDataModel(String				  sName,
+	public FilterableListDataModel(String				  sName,
 								   List<T>				  rData,
 								   List<ColumnDefinition> rColumns)
 	{
@@ -101,24 +100,6 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	}
 
 	//~ Methods ----------------------------------------------------------------
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getConstraint(String sFieldId)
-	{
-		return aSearchConstraints.get(sFieldId);
-	}
-
-	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Map<String, String> getConstraints()
-	{
-		return aSearchConstraints;
-	}
 
 	/***************************************
 	 * {@inheritDoc}
@@ -146,6 +127,24 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	 * {@inheritDoc}
 	 */
 	@Override
+	public String getFilter(String sFieldId)
+	{
+		return aFilters.get(sFieldId);
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, String> getFilters()
+	{
+		return aFilters;
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
 	public SortDirection getSortDirection(String sFieldId)
 	{
 		SortDirection eSortDirection = aColumnSorting.get(sFieldId);
@@ -157,10 +156,10 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void removeConstraints()
+	public void removeAllFilters()
 	{
-		aSearchConstraints.clear();
-		bNewConstraints = true;
+		aFilters.clear();
+		bNewFilters = true;
 	}
 
 	/***************************************
@@ -170,36 +169,36 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	public void removeSorting()
 	{
 		aColumnSorting.clear();
-		bNewConstraints = true;
+		bNewFilters = true;
 	}
 
 	/***************************************
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setConstraint(String sFieldId, String sConstraint)
+	public void setFilter(String sFieldId, String sFilter)
 	{
-		if (sConstraint != null && !sConstraint.isEmpty())
+		if (sFilter != null && !sFilter.isEmpty())
 		{
-			aSearchConstraints.put(sFieldId, sConstraint);
+			aFilters.put(sFieldId, sFilter);
 		}
 		else
 		{
-			aSearchConstraints.remove(sFieldId);
+			aFilters.remove(sFieldId);
 		}
 
-		bNewConstraints = true;
+		bNewFilters = true;
 	}
 
 	/***************************************
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setConstraints(Map<String, String> rConstraints)
+	public void setFilters(Map<String, String> rFilters)
 	{
-		aSearchConstraints.clear();
-		aSearchConstraints.putAll(rConstraints);
-		bNewConstraints = true;
+		aFilters.clear();
+		aFilters.putAll(rFilters);
+		bNewFilters = true;
 	}
 
 	/***************************************
@@ -217,7 +216,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 			aColumnSorting.remove(sFieldId);
 		}
 
-		bNewConstraints = true;
+		bNewFilters = true;
 	}
 
 	/***************************************
@@ -226,11 +225,11 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	 */
 	private void applyConstraints()
 	{
-		if (bNewConstraints)
+		if (bNewFilters)
 		{
 			performFiltering();
 			performSorting();
-			bNewConstraints = false;
+			bNewFilters = false;
 		}
 	}
 
@@ -245,8 +244,8 @@ public class SearchableListDataModel<T extends DataModel<String>>
 
 		for (T rT : aAllData)
 		{
-			boolean     bSatisfies = aSearchConstraints.isEmpty();
-			Set<String> sFieldIds  = aSearchConstraints.keySet();
+			boolean     bSatisfies = aFilters.isEmpty();
+			Set<String> sFieldIds  = aFilters.keySet();
 
 			int nIndex = 0;
 
@@ -254,11 +253,11 @@ public class SearchableListDataModel<T extends DataModel<String>>
 			{
 				String sValue = rT.getElement(aFieldIds.indexOf(sFieldId));
 
-				String sConstraints = aSearchConstraints.get(sFieldId);
+				String sConstraints = aFilters.get(sFieldId);
 
 				boolean bAttrOr =
 					sConstraints.charAt(0) ==
-					SearchableDataModel.CONSTRAINT_OR_PREFIX;
+					FilterableDataModel.CONSTRAINT_OR_PREFIX;
 
 				boolean bSatisfiesConstraints =
 					satisfiesConstraints(sConstraints, sValue);
@@ -366,7 +365,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	/***************************************
 	 * Checks whether a given value satisfies a given search constraints. The
 	 * search constrains are parsed and split up using {@link
-	 * SearchableDataModel#CONSTRAINT_SEPARATOR}. The resulting string elements
+	 * FilterableDataModel#CONSTRAINT_SEPARATOR}. The resulting string elements
 	 * contain a constraint prefix, a comparison operator and a constraint
 	 * value. The regular expression {@link #rConstraintPattern} is used to
 	 * retrieve the three parts from the string elements.
@@ -382,7 +381,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 		boolean bSatisfies = true;
 
 		String[] rContraints =
-			sConstraints.split(SearchableDataModel.CONSTRAINT_SEPARATOR);
+			sConstraints.split(FilterableDataModel.CONSTRAINT_SEPARATOR);
 
 		for (int i = 0; i < rContraints.length; i++)
 		{
@@ -398,7 +397,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 				String sConstraintValue = rConstraintMatcher.getGroup(3);
 
 				boolean bOr =
-					sPrefix.equals(String.valueOf(SearchableDataModel.CONSTRAINT_OR_PREFIX));
+					sPrefix.equals(String.valueOf(FilterableDataModel.CONSTRAINT_OR_PREFIX));
 
 				boolean bSatisfiesConstraint = false;
 

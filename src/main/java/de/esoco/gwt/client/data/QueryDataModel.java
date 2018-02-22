@@ -25,8 +25,8 @@ import de.esoco.gwt.shared.StorageService;
 import de.esoco.lib.model.Callback;
 import de.esoco.lib.model.DataModel;
 import de.esoco.lib.model.Downloadable;
+import de.esoco.lib.model.FilterableDataModel;
 import de.esoco.lib.model.RemoteDataModel;
-import de.esoco.lib.model.SearchableDataModel;
 import de.esoco.lib.model.SortableDataModel;
 import de.esoco.lib.property.SortDirection;
 
@@ -55,7 +55,7 @@ import static de.esoco.lib.property.StorageProperties.QUERY_START;
  */
 public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 									   SortableDataModel<DataModel<String>>,
-									   SearchableDataModel<DataModel<String>>,
+									   FilterableDataModel<DataModel<String>>,
 									   Downloadable, Serializable
 {
 	//~ Static fields/initializers ---------------------------------------------
@@ -71,7 +71,7 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	private transient int					  nWindowStart;
 	private transient List<DataModel<String>> aCurrentData;
 
-	private transient Map<String, String> aSearchConstraints = new HashMap<>();
+	private transient Map<String, String> aFilters = new HashMap<>();
 
 	private transient Map<String, SortDirection> aSortFields = new HashMap<>();
 
@@ -109,24 +109,6 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	}
 
 	/***************************************
-	 * @see SearchableDataModel#getConstraint(String)
-	 */
-	@Override
-	public String getConstraint(String sFieldId)
-	{
-		return aSearchConstraints.get(sFieldId);
-	}
-
-	/***************************************
-	 * @see SearchableDataModel#getConstraints()
-	 */
-	@Override
-	public Map<String, String> getConstraints()
-	{
-		return aSearchConstraints;
-	}
-
-	/***************************************
 	 * @see DataModel#getElement(int)
 	 */
 	@Override
@@ -142,6 +124,24 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	public int getElementCount()
 	{
 		return nQuerySize;
+	}
+
+	/***************************************
+	 * @see FilterableDataModel#getFilter(String)
+	 */
+	@Override
+	public String getFilter(String sFieldId)
+	{
+		return aFilters.get(sFieldId);
+	}
+
+	/***************************************
+	 * @see FilterableDataModel#getFilters()
+	 */
+	@Override
+	public Map<String, String> getFilters()
+	{
+		return aFilters;
 	}
 
 	/***************************************
@@ -231,12 +231,12 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	}
 
 	/***************************************
-	 * @see SearchableDataModel#removeConstraints()
+	 * @see FilterableDataModel#removeAllFilters()
 	 */
 	@Override
-	public void removeConstraints()
+	public void removeAllFilters()
 	{
-		aSearchConstraints.clear();
+		aFilters.clear();
 	}
 
 	/***************************************
@@ -257,29 +257,29 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	}
 
 	/***************************************
-	 * @see SearchableDataModel#setConstraint(String, String)
+	 * @see FilterableDataModel#setFilter(String, String)
 	 */
 	@Override
-	public void setConstraint(String sFieldId, String sConstraint)
+	public void setFilter(String sFieldId, String sFilter)
 	{
-		if (!sConstraint.isEmpty())
+		if (!sFilter.isEmpty())
 		{
-			aSearchConstraints.put(sFieldId, sConstraint);
+			aFilters.put(sFieldId, sFilter);
 		}
 		else
 		{
-			aSearchConstraints.remove(sFieldId);
+			aFilters.remove(sFieldId);
 		}
 	}
 
 	/***************************************
-	 * @see SearchableDataModel#setConstraints(Map)
+	 * @see FilterableDataModel#setFilters(Map)
 	 */
 	@Override
-	public void setConstraints(Map<String, String> rConstraints)
+	public void setFilters(Map<String, String> rFilters)
 	{
-		aSearchConstraints.clear();
-		aSearchConstraints.putAll(rConstraints);
+		aFilters.clear();
+		aFilters.putAll(rFilters);
 	}
 
 	/***************************************
@@ -347,15 +347,15 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	}
 
 	/***************************************
-	 * Lets this model use the sort and search constraints of another query
-	 * model instance.
+	 * Lets this model use the filters and sorting of another query model
+	 * instance.
 	 *
 	 * @param rOtherModel The other model
 	 */
 	public void useConstraints(QueryDataModel rOtherModel)
 	{
-		aSearchConstraints = rOtherModel.aSearchConstraints;
-		aSortFields		   = rOtherModel.aSortFields;
+		aFilters    = rOtherModel.aFilters;
+		aSortFields = rOtherModel.aSortFields;
 	}
 
 	/***************************************
@@ -379,9 +379,9 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 			aQueryData.setProperty(QUERY_SORT, aSortFields);
 		}
 
-		if (!aSearchConstraints.isEmpty())
+		if (!aFilters.isEmpty())
 		{
-			aQueryData.setProperty(QUERY_SEARCH, aSearchConstraints);
+			aQueryData.setProperty(QUERY_SEARCH, aFilters);
 		}
 
 		return aQueryData;

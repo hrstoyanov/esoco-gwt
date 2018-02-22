@@ -29,12 +29,12 @@ import de.esoco.ewt.component.TableControl;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.gwt.client.data.QueryDataModel;
-import de.esoco.gwt.client.data.SearchableListDataModel;
+import de.esoco.gwt.client.data.FilterableListDataModel;
 
 import de.esoco.lib.model.ColumnDefinition;
 import de.esoco.lib.model.DataModel;
 import de.esoco.lib.model.ListDataModel;
-import de.esoco.lib.model.SearchableDataModel;
+import de.esoco.lib.model.FilterableDataModel;
 import de.esoco.lib.property.UserInterfaceProperties;
 
 import java.util.Collections;
@@ -175,7 +175,7 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 			}
 
 			Map<String, String> rTableConstraints =
-				((SearchableDataModel<?>) aDataModel).getConstraints();
+				((FilterableDataModel<?>) aDataModel).getFilters();
 
 			if (rTableConstraints.isEmpty())
 			{
@@ -231,7 +231,7 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 				(SelectionValidator) rValidator;
 
 			aModel =
-				new SearchableListDataModel<HierarchicalDataObject>("DATA",
+				new FilterableListDataModel<HierarchicalDataObject>("DATA",
 																	rSelectionValidator
 																	.getValues(),
 																	rValidator
@@ -309,7 +309,7 @@ public class SelectionDataElementUI extends DataElementUI<SelectionDataElement>
 		Map<String, String> rConstraints =
 			rDataElement.getProperty(FILTER_CRITERIA, Collections.emptyMap());
 
-		((SearchableDataModel<?>) aDataModel).setConstraints(rConstraints);
+		((FilterableDataModel<?>) aDataModel).setFilters(rConstraints);
 
 		aColumnModel =
 			new ListDataModel<ColumnDefinition>("COLUMNS",

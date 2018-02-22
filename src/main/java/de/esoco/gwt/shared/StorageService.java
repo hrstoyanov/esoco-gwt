@@ -21,7 +21,7 @@ import de.esoco.data.element.StringDataElement;
 import de.esoco.data.element.StringMapDataElement;
 
 import de.esoco.lib.model.DataModel;
-import de.esoco.lib.model.SearchableDataModel;
+import de.esoco.lib.model.FilterableDataModel;
 import de.esoco.lib.property.ContentProperties;
 import de.esoco.lib.property.SortDirection;
 import de.esoco.lib.property.StorageProperties;
@@ -63,7 +63,7 @@ public interface StorageService extends AuthenticatedService
 	 *   <li>{@link StorageProperties#QUERY_SEARCH}: Must be a {@link
 	 *     StringMapDataElement} that contains a mapping from column IDs to
 	 *     search constraints as defined for the method {@link
-	 *     SearchableDataModel#getConstraint(String)} (Default: null, i.e. no
+	 *     FilterableDataModel#getFilter(String)} (Default: null, i.e. no
 	 *     search constraints).</li>
 	 *   <li>{@link StorageProperties#QUERY_SORT}: A mapping from column IDs to
 	 *     a {@link SortDirection} (Default: null, i.e. no specific

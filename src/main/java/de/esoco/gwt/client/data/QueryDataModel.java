@@ -16,10 +16,8 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.client.data;
 
-import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.QueryResultElement;
 import de.esoco.data.element.StringDataElement;
-import de.esoco.data.element.StringMapDataElement;
 
 import de.esoco.gwt.client.ServiceRegistry;
 import de.esoco.gwt.shared.StorageService;
@@ -30,15 +28,23 @@ import de.esoco.lib.model.Downloadable;
 import de.esoco.lib.model.RemoteDataModel;
 import de.esoco.lib.model.SearchableDataModel;
 import de.esoco.lib.model.SortableDataModel;
+import de.esoco.lib.property.SortDirection;
 
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import static de.esoco.lib.property.ContentProperties.FILE_NAME;
+import static de.esoco.lib.property.StorageProperties.QUERY_LIMIT;
+import static de.esoco.lib.property.StorageProperties.QUERY_SEARCH;
+import static de.esoco.lib.property.StorageProperties.QUERY_SORT;
+import static de.esoco.lib.property.StorageProperties.QUERY_START;
 
 
 /********************************************************************
@@ -65,10 +71,9 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	private transient int					  nWindowStart;
 	private transient List<DataModel<String>> aCurrentData;
 
-	private transient StringMapDataElement aSortFields		  =
-		new StringMapDataElement(StorageService.QUERY_SORT);
-	private transient StringMapDataElement aSearchConstraints =
-		new StringMapDataElement(StorageService.QUERY_SEARCH);
+	private transient Map<String, String> aSearchConstraints = new HashMap<>();
+
+	private transient Map<String, SortDirection> aSortFields = new HashMap<>();
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -118,7 +123,7 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	@Override
 	public Map<String, String> getConstraints()
 	{
-		return aSearchConstraints.getMap();
+		return aSearchConstraints;
 	}
 
 	/***************************************
@@ -150,14 +155,12 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	}
 
 	/***************************************
-	 * @see SortableDataModel#getSortMode(String)
+	 * @see SortableDataModel#getSortDirection(String)
 	 */
 	@Override
-	public SortMode getSortMode(String sFieldId)
+	public SortDirection getSortDirection(String sFieldId)
 	{
-		String sSortMode = aSortFields.get(sFieldId);
-
-		return sSortMode != null ? SortMode.valueOf(sSortMode) : null;
+		return aSortFields.get(sFieldId);
 	}
 
 	/***************************************
@@ -203,9 +206,9 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	{
 		if (aCurrentData != null)
 		{
-			DataElementList aQueryData = createQueryData(0, nMaxRows);
+			StringDataElement aQueryData = createQueryData(0, nMaxRows);
 
-			aQueryData.add(StorageService.DOWNLOAD_FILE_NAME, sFileName);
+			aQueryData.setProperty(FILE_NAME, sFileName);
 
 			ServiceRegistry.getStorageService()
 						   .executeCommand(StorageService.PREPARE_DOWNLOAD,
@@ -259,7 +262,7 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	@Override
 	public void setConstraint(String sFieldId, String sConstraint)
 	{
-		if (sConstraint != null)
+		if (!sConstraint.isEmpty())
 		{
 			aSearchConstraints.put(sFieldId, sConstraint);
 		}
@@ -275,19 +278,19 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	@Override
 	public void setConstraints(Map<String, String> rConstraints)
 	{
-		aSearchConstraints.getMap().clear();
-		aSearchConstraints.getMap().putAll(rConstraints);
+		aSearchConstraints.clear();
+		aSearchConstraints.putAll(rConstraints);
 	}
 
 	/***************************************
-	 * @see SortableDataModel#setSortMode(String, SortMode)
+	 * @see SortableDataModel#setSortDirection(String, SortDirection)
 	 */
 	@Override
-	public void setSortMode(String sFieldId, SortMode rMode)
+	public void setSortDirection(String sFieldId, SortDirection eDirection)
 	{
-		if (rMode != null)
+		if (eDirection != null)
 		{
-			aSortFields.put(sFieldId, rMode.name());
+			aSortFields.put(sFieldId, eDirection);
 		}
 		else
 		{
@@ -328,7 +331,8 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 			nQueryLimit -= nEnd - nWindowStart;
 		}
 
-		DataElementList aQueryData = createQueryData(nQueryStart, nQueryLimit);
+		StringDataElement aQueryData =
+			createQueryData(nQueryStart, nQueryLimit);
 
 		executeQuery(aQueryData, nQueryStart, nQueryLimit, rCallback);
 	}
@@ -363,21 +367,21 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	 *
 	 * @return
 	 */
-	private DataElementList createQueryData(int nQueryStart, int nQueryLimit)
+	private StringDataElement createQueryData(int nQueryStart, int nQueryLimit)
 	{
-		DataElementList aQueryData = new DataElementList(sQueryId, null);
+		StringDataElement aQueryData = new StringDataElement(sQueryId, null);
 
-		aQueryData.add(StorageService.QUERY_START, nQueryStart);
-		aQueryData.add(StorageService.QUERY_LIMIT, nQueryLimit);
+		aQueryData.setProperty(QUERY_START, nQueryStart);
+		aQueryData.setProperty(QUERY_LIMIT, nQueryLimit);
 
-		if (aSortFields.getMapSize() > 0)
+		if (!aSortFields.isEmpty())
 		{
-			aQueryData.addElement(aSortFields);
+			aQueryData.setProperty(QUERY_SORT, aSortFields);
 		}
 
-		if (aSearchConstraints.getMapSize() > 0)
+		if (!aSearchConstraints.isEmpty())
 		{
-			aQueryData.addElement(aSearchConstraints);
+			aQueryData.setProperty(QUERY_SEARCH, aSearchConstraints);
 		}
 
 		return aQueryData;
@@ -392,7 +396,7 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	 * @param rCallback  The callback to be invoked when the query is finished
 	 */
 	private void executeQuery(
-		DataElementList									   aQueryData,
+		StringDataElement								   aQueryData,
 		final int										   nStart,
 		final int										   nCount,
 		final Callback<RemoteDataModel<DataModel<String>>> rCallback)

@@ -16,10 +16,11 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 package de.esoco.gwt.server;
 
-import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.HierarchicalDataObject;
 import de.esoco.data.element.QueryResultElement;
+import de.esoco.data.element.StringDataElement;
 import de.esoco.data.element.StringMapDataElement;
+import de.esoco.data.storage.AbstractStorageAdapter;
 import de.esoco.data.storage.StorageAdapterId;
 
 import de.esoco.entity.Entity;
@@ -37,7 +38,7 @@ import de.esoco.lib.expression.function.CalendarFunctions;
 import de.esoco.lib.expression.predicate.FunctionPredicate;
 import de.esoco.lib.model.ColumnDefinition;
 import de.esoco.lib.model.DataModel;
-import de.esoco.lib.model.SortableDataModel.SortMode;
+import de.esoco.lib.property.SortDirection;
 import de.esoco.lib.text.TextUtil;
 
 import de.esoco.storage.Query;
@@ -53,6 +54,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -70,11 +72,6 @@ import static de.esoco.entity.EntityRelationTypes.HIERARCHICAL_QUERY_MODE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHY_CHILD_PREDICATE;
 import static de.esoco.entity.EntityRelationTypes.HIERARCHY_ROOT_PREDICATE;
 
-import static de.esoco.gwt.shared.StorageService.QUERY_LIMIT;
-import static de.esoco.gwt.shared.StorageService.QUERY_SEARCH;
-import static de.esoco.gwt.shared.StorageService.QUERY_SORT;
-import static de.esoco.gwt.shared.StorageService.QUERY_START;
-
 import static de.esoco.lib.expression.CollectionPredicates.elementOf;
 import static de.esoco.lib.expression.Predicates.equalTo;
 import static de.esoco.lib.expression.Predicates.greaterOrEqual;
@@ -87,6 +84,10 @@ import static de.esoco.lib.model.SearchableDataModel.CONSTRAINT_OR_PREFIX;
 import static de.esoco.lib.model.SearchableDataModel.CONSTRAINT_SEPARATOR;
 import static de.esoco.lib.model.SearchableDataModel.CONSTRAINT_SEPARATOR_ESCAPE;
 import static de.esoco.lib.model.SearchableDataModel.NULL_CONSTRAINT_VALUE;
+import static de.esoco.lib.property.StorageProperties.QUERY_LIMIT;
+import static de.esoco.lib.property.StorageProperties.QUERY_SEARCH;
+import static de.esoco.lib.property.StorageProperties.QUERY_SORT;
+import static de.esoco.lib.property.StorageProperties.QUERY_START;
 
 import static de.esoco.storage.StoragePredicates.almostLike;
 import static de.esoco.storage.StoragePredicates.like;
@@ -150,7 +151,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	/***************************************
 	 * Returns the current query of this instance. This will return the query
 	 * predicate that had been created by the last execution of the method
-	 * {@link #performQuery(DataElementList)} .
+	 * {@link #performQuery(StringDataElement)} .
 	 *
 	 * @return The current query predicate or NULL if no query has been executed
 	 *         yet
@@ -185,23 +186,23 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 */
 	@Override
 	public QueryResultElement<DataModel<String>> performQuery(
-		DataElementList rQueryParams) throws StorageException
+		StringDataElement rQueryParams) throws StorageException
 	{
 		aLock.lock();
 
 		try
 		{
-			int nStart     = rQueryParams.getInt(QUERY_START);
-			int nLimit     = rQueryParams.getInt(QUERY_LIMIT);
+			int nStart     = rQueryParams.getIntProperty(QUERY_START, 0);
+			int nLimit     = rQueryParams.getIntProperty(QUERY_LIMIT, 0);
 			int nQuerySize;
 
 			List<DataModel<String>> aQueryRows =
 				new ArrayList<DataModel<String>>();
 
-			StringMapDataElement rConstraints =
-				(StringMapDataElement) rQueryParams.getElement(QUERY_SEARCH);
-			StringMapDataElement rSortFields  =
-				(StringMapDataElement) rQueryParams.getElement(QUERY_SORT);
+			Map<String, String>		   rConstraints =
+				rQueryParams.getProperty(QUERY_SEARCH, null);
+			Map<String, SortDirection> rSortFields  =
+				rQueryParams.getProperty(QUERY_SORT, null);
 
 			Storage rStorage =
 				StorageManager.getStorage(qBaseQuery.getQueryType());
@@ -326,7 +327,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 */
 	private QueryPredicate<Entity> applyQueryConstraints(
 		QueryPredicate<Entity> pQuery,
-		StringMapDataElement   rConstraints)
+		Map<String, String>    rConstraints)
 	{
 		Predicate<? super Entity> pConstraints = null;
 
@@ -335,7 +336,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 			EntityDefinition<Entity> rDef =
 				EntityManager.getEntityDefinition(pQuery.getQueryType());
 
-			for (Entry<String, String> rConstraint : rConstraints.getEntries())
+			for (Entry<String, String> rConstraint : rConstraints.entrySet())
 			{
 				String sAttr		   = rConstraint.getKey();
 				String sAttrConstraint = rConstraint.getValue().trim();
@@ -395,8 +396,8 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 *         unchanged input predicate
 	 */
 	private QueryPredicate<Entity> applySortFields(
-		QueryPredicate<Entity> pQuery,
-		StringMapDataElement   rSortFields)
+		QueryPredicate<Entity>	   pQuery,
+		Map<String, SortDirection> rSortFields)
 	{
 		Predicate<? super Entity> pSortCriteria = null;
 
@@ -405,12 +406,11 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 			EntityDefinition<Entity> rDef =
 				EntityManager.getEntityDefinition(pQuery.getQueryType());
 
-			for (Entry<String, String> rConstraint : rSortFields.getEntries())
+			for (Entry<String, SortDirection> rAttrSort :
+				 rSortFields.entrySet())
 			{
-				String		    sAttr = rConstraint.getKey();
+				String		    sAttr = rAttrSort.getKey();
 				RelationType<?> rAttr = rDef.getAttribute(sAttr);
-				boolean		    bAsc  =
-					SortMode.ASCENDING.name().equals(rConstraint.getValue());
 
 				if (rAttr == null)
 				{
@@ -419,7 +419,8 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 				}
 
 				pSortCriteria =
-					Predicates.and(pSortCriteria, sortBy(rAttr, bAsc));
+					Predicates.and(pSortCriteria,
+								   sortBy(rAttr, rAttrSort.getValue()));
 			}
 		}
 		else
@@ -616,9 +617,9 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 * @throws ServiceException If creating a result data object fails
 	 */
 	private QueryPredicate<Entity> createFullQuery(
-		QueryPredicate<Entity> qBaseQuery,
-		StringMapDataElement   rConstraints,
-		StringMapDataElement   rSortFields)
+		QueryPredicate<Entity>	   qBaseQuery,
+		Map<String, String>		   rConstraints,
+		Map<String, SortDirection> rSortFields)
 	{
 		Class<Entity>			  rQueryType = qBaseQuery.getQueryType();
 		Predicate<? super Entity> pCriteria  = qBaseQuery.getCriteria();
@@ -627,7 +628,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 			qBaseQuery.get(HIERARCHICAL_QUERY_MODE);
 
 		boolean bNoConstraints =
-			rConstraints == null || rConstraints.getMapSize() == 0;
+			rConstraints == null || rConstraints.size() == 0;
 		boolean bHierarchical  =
 			eHierarchyMode == HierarchicalQueryMode.ALWAYS ||
 			eHierarchyMode == HierarchicalQueryMode.UNCONSTRAINED &&

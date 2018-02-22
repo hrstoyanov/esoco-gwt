@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import de.esoco.lib.model.DataModel;
 import de.esoco.lib.model.ListDataModel;
 import de.esoco.lib.model.SearchableDataModel;
 import de.esoco.lib.model.SortableDataModel;
+import de.esoco.lib.property.SortDirection;
 
 import java.io.Serializable;
 
@@ -60,8 +61,8 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	private boolean				   bNewConstraints;
 	private List<String>		   aFieldIds = new ArrayList<String>();
 
-	HashMap<String, SortMode> aColumnSorting =
-		new LinkedHashMap<String, SortMode>();
+	HashMap<String, SortDirection> aColumnSorting =
+		new LinkedHashMap<String, SortDirection>();
 
 	HashMap<String, String> aSearchConstraints =
 		new LinkedHashMap<String, String>();
@@ -145,11 +146,11 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SortMode getSortMode(String sFieldId)
+	public SortDirection getSortDirection(String sFieldId)
 	{
-		SortMode eSortMode = aColumnSorting.get(sFieldId);
+		SortDirection eSortDirection = aColumnSorting.get(sFieldId);
 
-		return eSortMode != null ? eSortMode : null;
+		return eSortDirection != null ? eSortDirection : null;
 	}
 
 	/***************************************
@@ -205,7 +206,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setSortMode(String sFieldId, SortMode rMode)
+	public void setSortDirection(String sFieldId, SortDirection rMode)
 	{
 		if (rMode != null)
 		{
@@ -300,7 +301,8 @@ public class SearchableListDataModel<T extends DataModel<String>>
 
 			for (final String sFielId : sFieldIds)
 			{
-				final SortMode eSortMode = aColumnSorting.get(sFielId);
+				final SortDirection eSortDirection =
+					aColumnSorting.get(sFielId);
 
 				final int nFieldIndex = aFieldIds.indexOf(sFielId);
 
@@ -322,7 +324,7 @@ public class SearchableListDataModel<T extends DataModel<String>>
 
 							int nResult = 0;
 
-							if (eSortMode == SortMode.DESCENDING)
+							if (eSortDirection == SortDirection.DESCENDING)
 							{
 								nResult =
 									compareFieldValues(sCompareValue, sValue);

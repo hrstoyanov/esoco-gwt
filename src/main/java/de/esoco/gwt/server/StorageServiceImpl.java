@@ -21,7 +21,6 @@ import de.esoco.data.DownloadData;
 import de.esoco.data.FileType;
 import de.esoco.data.SessionData;
 import de.esoco.data.document.TabularDocumentWriter;
-import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.QueryResultElement;
 import de.esoco.data.element.StringDataElement;
 import de.esoco.data.storage.StorageAdapter;
@@ -53,6 +52,8 @@ import java.util.WeakHashMap;
 
 import org.obrel.core.RelationType;
 import org.obrel.core.RelationTypes;
+
+import static de.esoco.lib.property.ContentProperties.FILE_NAME;
 
 import static org.obrel.core.RelationTypes.newMapType;
 
@@ -141,12 +142,12 @@ public abstract class StorageServiceImpl<E extends Entity>
 	 *
 	 * @throws Exception If preparing the download data fails
 	 */
-	public StringDataElement handlePrepareDownload(DataElementList rQueryParams)
-		throws Exception
+	public StringDataElement handlePrepareDownload(
+		StringDataElement rQueryParams) throws Exception
 	{
 		String		   sAdapterId = rQueryParams.getName();
+		String		   sFileName  = rQueryParams.getProperty(FILE_NAME, null);
 		StorageAdapter rAdapter   = checkStorageAdapter(sAdapterId);
-		String		   sFileName  = rQueryParams.getString(DOWNLOAD_FILE_NAME);
 
 		QueryResultElement<DataModel<String>> rQueryData =
 			rAdapter.performQuery(rQueryParams);
@@ -226,7 +227,7 @@ public abstract class StorageServiceImpl<E extends Entity>
 	 * @throws Exception If performing the query fails
 	 */
 	public QueryResultElement<DataModel<String>> handleQuery(
-		DataElementList rQueryParams) throws Exception
+		StringDataElement rQueryParams) throws Exception
 	{
 		String		   sAdapterId = rQueryParams.getName();
 		StorageAdapter rAdapter   = checkStorageAdapter(sAdapterId);

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2015 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@ package de.esoco.gwt.server;
 
 import de.esoco.data.storage.StorageAdapter;
 
-import de.esoco.gwt.shared.QueryConstraintException;
-import de.esoco.gwt.shared.StorageService;
-
-import de.esoco.lib.logging.Log;
 import de.esoco.lib.model.SearchableDataModel;
 
 import java.text.SimpleDateFormat;
@@ -32,8 +28,7 @@ import org.obrel.core.SerializableRelatedObject;
 
 
 /********************************************************************
- * The base class for objects that implement storage access strategies for the
- * {@link StorageService} implementation.
+ * A base class for for implementations of {@link StorageAdapter}.
  *
  * @author eso
  */
@@ -88,12 +83,12 @@ public abstract class AbstractStorageAdapter extends SerializableRelatedObject
 	 *
 	 * @return The parsed value or NULL if it could not be parsed
 	 *
-	 * @throws QueryConstraintException If the constraint could not be parsed
+	 * @throws IllegalArgumentException If the constraint could not be parsed
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected Object parseConstraintValue(
 		String   sConstraint,
-		Class<?> rDataType) throws QueryConstraintException
+		Class<?> rDataType)
 	{
 		Object rValue = sConstraint;
 
@@ -138,12 +133,12 @@ public abstract class AbstractStorageAdapter extends SerializableRelatedObject
 		}
 		catch (Exception e)
 		{
-			Log.warnf(e,
-					  "Could not parse constraint %s as type %s",
-					  sConstraint,
-					  rDataType);
+			String sMessage =
+				String.format("Could not parse constraint %s as type %s",
+							  sConstraint,
+							  rDataType);
 
-			throw new QueryConstraintException(sConstraint, e);
+			throw new IllegalArgumentException(sMessage, e);
 		}
 
 		return rValue;

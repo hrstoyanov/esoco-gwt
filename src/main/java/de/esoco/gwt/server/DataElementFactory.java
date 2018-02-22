@@ -63,6 +63,7 @@ import de.esoco.lib.expression.Predicate;
 import de.esoco.lib.expression.function.AbstractFunction;
 import de.esoco.lib.expression.function.FunctionChain;
 import de.esoco.lib.expression.predicate.FunctionPredicate;
+import de.esoco.lib.json.JsonObject;
 import de.esoco.lib.logging.Log;
 import de.esoco.lib.model.ColumnDefinition;
 import de.esoco.lib.model.DataModel;
@@ -102,12 +103,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.obrel.core.Relatable;
 import org.obrel.core.Relation;
 import org.obrel.core.RelationType;
 import org.obrel.type.MetaTypes;
+import org.obrel.type.StandardTypes;
 
 import static de.esoco.data.DataRelationTypes.CHILD_STORAGE_ADAPTER_ID;
 import static de.esoco.data.DataRelationTypes.STORAGE_ADAPTER_ID;
@@ -1762,6 +1765,11 @@ public class DataElementFactory
 										rAllowedValues,
 										rFlags);
 		}
+		else if (JsonObject.class.isAssignableFrom(rDatatype))
+		{
+			aDataElement =
+				createJsonDataElement(sName, rValue, rRelation, rFlags);
+		}
 		else if (Collection.class.isAssignableFrom(rDatatype))
 		{
 			aDataElement =
@@ -2103,6 +2111,34 @@ public class DataElementFactory
 		aResult = new IntegerDataElement(sName, rValue, aValidator, rFlags);
 
 		return aResult;
+	}
+
+	/***************************************
+	 * Creates a data element that references a list of JSON data from some
+	 * endpoint.
+	 *
+	 * @param  sName     The element name
+	 * @param  rValue    The element value
+	 * @param  rRelation The relation to initialize
+	 * @param  rFlags    The element flags
+	 *
+	 * @return
+	 */
+	private SelectionDataElement createJsonDataElement(String	   sName,
+													   Object	   rValue,
+													   Relation<?> rRelation,
+													   Set<Flag>   rFlags)
+	{
+		URL rDataUrl = rRelation.get(StandardTypes.URL);
+
+		Objects.requireNonNull(rDataUrl, "JSON data URL is required");
+
+		new QueryValidator(sName, null);
+
+		return new SelectionDataElement(sName,
+										SelectionDataElement.NO_SELECTION,
+										null,
+										rFlags);
 	}
 
 	/***************************************

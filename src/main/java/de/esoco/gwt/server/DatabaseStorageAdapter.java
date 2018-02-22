@@ -27,7 +27,6 @@ import de.esoco.entity.EntityDefinition;
 import de.esoco.entity.EntityManager;
 import de.esoco.entity.EntityRelationTypes.HierarchicalQueryMode;
 
-import de.esoco.gwt.shared.QueryConstraintException;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.expression.Function;
@@ -182,13 +181,11 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 *
 	 * @return A data element containing the query result
 	 *
-	 * @throws StorageException         If accessing the storage fails
-	 * @throws QueryConstraintException If a query constraint is invalid
+	 * @throws StorageException If accessing the storage fails
 	 */
 	@Override
 	public QueryResultElement<DataModel<String>> performQuery(
-		DataElementList rQueryParams) throws QueryConstraintException,
-											 StorageException
+		DataElementList rQueryParams) throws StorageException
 	{
 		aLock.lock();
 
@@ -326,12 +323,10 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 *
 	 * @return A new query predicate if constraints are available or else the
 	 *         unchanged input predicate
-	 *
-	 * @throws QueryConstraintException If a constraint could not be parsed
 	 */
 	private QueryPredicate<Entity> applyQueryConstraints(
 		QueryPredicate<Entity> pQuery,
-		StringMapDataElement   rConstraints) throws QueryConstraintException
+		StringMapDataElement   rConstraints)
 	{
 		Predicate<? super Entity> pConstraints = null;
 
@@ -500,13 +495,11 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 *
 	 * @return The predicate containing the attribute constraint or NULL if the
 	 *         constraint is not valid
-	 *
-	 * @throws QueryConstraintException If the constraint could not be parsed
 	 */
 	@SuppressWarnings({ "unchecked" })
 	private Predicate<Entity> createAttributeConstraint(
 		RelationType<?> rAttr,
-		String			sConstraint) throws QueryConstraintException
+		String			sConstraint)
 	{
 		Class<?>     rDatatype   = rAttr.getValueType();
 		Predicate<?> pAttribute  = null;
@@ -619,14 +612,13 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 	 *
 	 * @return The total size of the query
 	 *
-	 * @throws StorageException         If accessing the storage fails
-	 * @throws ServiceException         If creating a result data object fails
-	 * @throws QueryConstraintException If a constraint is invalid
+	 * @throws StorageException If accessing the storage fails
+	 * @throws ServiceException If creating a result data object fails
 	 */
 	private QueryPredicate<Entity> createFullQuery(
 		QueryPredicate<Entity> qBaseQuery,
 		StringMapDataElement   rConstraints,
-		StringMapDataElement   rSortFields) throws QueryConstraintException
+		StringMapDataElement   rSortFields)
 	{
 		Class<Entity>			  rQueryType = qBaseQuery.getQueryType();
 		Predicate<? super Entity> pCriteria  = qBaseQuery.getCriteria();
@@ -914,11 +906,6 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 			{
 				nResult =
 					(rId != null ? rQuery.positionOf(rId) : rQuery.size());
-			}
-			catch (QueryConstraintException e)
-			{
-				// this cannot occur because the constraints are NULL
-				throw new AssertionError();
 			}
 			finally
 			{

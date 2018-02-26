@@ -182,6 +182,7 @@ public class DataElementListView
 		DataElementList rNewElement,
 		boolean			bUpdateUI)
 	{
+		aViewUI.clearError();
 		aViewUI.updateDataElement(rNewElement, bUpdateUI);
 	}
 

@@ -1128,12 +1128,16 @@ public class ProcessPanelManager
 				sCurrentStep.equals(sPreviousStep) &&
 				sStepStyle.equals(sPreviousStyle))
 			{
-				if (!updateInteractionUIs())
+				if (updateInteractionUIs())
 				{
-					// if no UI has been found the root has changed, therefore
-					// rebuild the complete panel; addComponents() will then
-					// invoke updateParameterPanel() again which then falls
-					// into the else branch below
+					aParamPanelManager.clearErrors();
+				}
+				else
+				{
+					// if a UI has not been found the structure has changed,
+					// therefore rebuild the complete panel; addComponents()
+					// will then invoke updateParameterPanel() again which then
+					// falls into the else branch below
 					aParamPanelManager.dispose();
 					aParamPanelManager = null;
 					rebuild();

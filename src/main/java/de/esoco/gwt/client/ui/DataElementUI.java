@@ -449,6 +449,17 @@ public class DataElementUI<D extends DataElement<?>>
 	}
 
 	/***************************************
+	 * Clears an error message if such has been set previously.
+	 */
+	public void clearError()
+	{
+		if (bHasError)
+		{
+			setErrorMessage(null);
+		}
+	}
+
+	/***************************************
 	 * This method must be invoked externally to collect the values from an
 	 * input user interface into the associated data element. Only after this
 	 * will the data element contain any new values that have been input by the
@@ -675,8 +686,6 @@ public class DataElementUI<D extends DataElement<?>>
 			aInteractionHandler.updateDataElement(rDataElement);
 		}
 
-		clearError();
-
 		if (bUpdateUI)
 		{
 			update();
@@ -830,17 +839,6 @@ public class DataElementUI<D extends DataElement<?>>
 		{
 			requestFocus();
 			rDataElement.clearFlag(FOCUSED);
-		}
-	}
-
-	/***************************************
-	 * Clears an error message if such exists.
-	 */
-	protected void clearError()
-	{
-		if (bHasError)
-		{
-			setErrorMessage(null);
 		}
 	}
 

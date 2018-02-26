@@ -52,6 +52,17 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void clearError()
+	{
+		super.clearError();
+
+		aListPanelManager.clearErrors();
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
 		aListPanelManager.collectInput(rModifiedElements);
@@ -130,7 +141,6 @@ public class DataElementListUI extends DataElementUI<DataElementList>
 			aListPanelManager.updateFromProperties(bStyleChanged);
 
 			updateStyle();
-			clearError();
 		}
 	}
 

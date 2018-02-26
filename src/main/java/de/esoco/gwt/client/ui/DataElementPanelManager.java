@@ -311,6 +311,17 @@ public abstract class DataElementPanelManager
 	}
 
 	/***************************************
+	 * Clears all error indicators in the contained data element UIs.
+	 */
+	public void clearErrors()
+	{
+		for (DataElementUI<?> rUI : aDataElementUIs.values())
+		{
+			rUI.clearError();
+		}
+	}
+
+	/***************************************
 	 * Collects the values from the input components into the corresponding data
 	 * elements.
 	 *

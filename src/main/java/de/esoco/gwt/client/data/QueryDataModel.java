@@ -262,7 +262,7 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 	@Override
 	public void setFilter(String sFieldId, String sFilter)
 	{
-		if (!sFilter.isEmpty())
+		if (sFilter != null && !sFilter.isEmpty())
 		{
 			aFilters.put(sFieldId, sFilter);
 		}

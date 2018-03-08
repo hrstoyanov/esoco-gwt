@@ -27,8 +27,7 @@
 @external .MessageBox;
 @external .MessageBoxContent;
 @external .MessageBoxText;
-
-.gf-DataElementTablePanel > tbody > tr > td {
+.gf-DataElementTablePanel>tbody>tr>td {
 	padding: 0.3em;
 	vertical-align: top;
 }
@@ -37,18 +36,18 @@
 	width: 100%;
 }
 
-.gf-DataElementTablePanel.EditTextActions > tbody > tr > td {
+.gf-DataElementTablePanel.EditTextActions>tbody>tr>td {
 	color: #555;
 	padding: 0;
 	text-align: right;
 	vertical-align: middle;
 }
 
-.gf-DataElementTablePanel > tbody > tr > td.gf-DataElementLabel {
+.gf-DataElementTablePanel>tbody>tr>td.gf-DataElementLabel {
 	vertical-align: middle;
 }
 
-.gf-DataElementTablePanel > tbody > tr > td.gf-EmptyCell {
+.gf-DataElementTablePanel>tbody>tr>td.gf-EmptyCell {
 	padding: 0;
 }
 
@@ -83,7 +82,6 @@
 	background: #FFE;
 }
 
-
 .DialogAction .gwt-PushButton {
 	min-width: 8em;
 }
@@ -111,8 +109,7 @@ td.gf-DataElementHeader {
 	height: 1em;
 }
 
-.gf-ButtonPanel td
-	{
+.gf-ButtonPanel td {
 	padding: 2px;
 }
 
@@ -134,18 +131,11 @@ td.gf-DataElementHeader {
 	white-space: pre-wrap !important;
 }
 
-@external .gf-DataElementCssGridPanel;
-.gf-DataElementCssGridPanel {
-    display: grid;
-}
-
 @external .ewt-Error;
-
 .ewt-Error, .gf-DataElementLabel.ewt-Error {
 	color: #E84040;
 }
 
-.gf-DataElement.ewt-Error, 
-.gf-DataElement.gwt-TextArea-readonly.ewt-Error {
+.gf-DataElement.ewt-Error, .gf-DataElement.gwt-TextArea-readonly.ewt-Error {
 	border: 2px solid #E84040;
 }

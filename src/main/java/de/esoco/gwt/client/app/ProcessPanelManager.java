@@ -53,6 +53,7 @@ import de.esoco.gwt.shared.GwtApplicationService;
 import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
+import de.esoco.lib.property.ContentType;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.LayoutType;
 
@@ -69,6 +70,7 @@ import static de.esoco.ewt.style.StyleData.WEB_ADDITIONAL_STYLES;
 
 import static de.esoco.gwt.shared.StorageService.ERROR_ENTITY_LOCKED;
 
+import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.ContentProperties.RESOURCE_ID;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.StateProperties.STRUCTURE_CHANGED;
@@ -111,7 +113,8 @@ public class ProcessPanelManager
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES, CSS.gaProcessTitle());
 	private static final StyleData MESSAGE_LABEL_STYLE =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES, CSS.gaErrorMessage());
-	private static final StyleData SUMMARY_LABEL_STYLE = AlignedPosition.CENTER;
+	private static final StyleData SUMMARY_LABEL_STYLE =
+		AlignedPosition.CENTER.set(CONTENT_TYPE, ContentType.HTML);
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -740,7 +743,9 @@ public class ProcessPanelManager
 
 		if (bRenderInline)
 		{
-			addLabel(StyleData.DEFAULT, sMessage, null);
+			addLabel(StyleData.DEFAULT.set(CONTENT_TYPE, ContentType.HTML),
+					 sMessage,
+					 null);
 		}
 		else
 		{

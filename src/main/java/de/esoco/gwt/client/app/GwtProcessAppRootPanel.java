@@ -132,7 +132,7 @@ public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
 		return new ProcessPanelManager(this,
 									   rProcessState.getName(),
 									   false,
-									   false);
+									   true);
 	}
 
 	/***************************************

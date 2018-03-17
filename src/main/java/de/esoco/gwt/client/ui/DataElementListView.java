@@ -217,8 +217,10 @@ public class DataElementListView
 
 		if (rDataElementList.hasProperty(VERTICAL_ALIGN))
 		{
-			if (rDataElementList.getProperty(VERTICAL_ALIGN, null) ==
-				Alignment.END)
+			Alignment eAlignment =
+				rDataElementList.getProperty(VERTICAL_ALIGN, null);
+
+			if (eAlignment == Alignment.END)
 			{
 				aViewFlags.add(ViewStyle.Flag.BOTTOM);
 			}
@@ -226,11 +228,24 @@ public class DataElementListView
 			{
 				aViewFlags.remove(ViewStyle.Flag.BOTTOM);
 			}
+
+			if (eAlignment == Alignment.FILL)
+			{
+				aViewFlags.add(ViewStyle.Flag.FULL_SIZE);
+			}
+			else
+			{
+				aViewFlags.remove(ViewStyle.Flag.FULL_SIZE);
+			}
 		}
 
 		if (rDataElementList.hasFlag(AUTO_HIDE))
 		{
 			aViewFlags.add(ViewStyle.Flag.AUTO_HIDE);
+		}
+		else
+		{
+			aViewFlags.remove(ViewStyle.Flag.AUTO_HIDE);
 		}
 
 		if (!aViewFlags.isEmpty())

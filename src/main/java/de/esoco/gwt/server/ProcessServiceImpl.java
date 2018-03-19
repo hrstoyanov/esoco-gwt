@@ -307,13 +307,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			rProcess.pauseBackgroundJobs();
 			rProcess.executeInteractionCleanupActions();
 
+			ProcessStep rPreviousStep = rProcess.getCurrentStep();
+
 			executeProcess(rProcess, eExecutionMode);
 
+			boolean bRefresh =
+				rProcess.getCurrentStep() != rPreviousStep ||
+				eExecutionMode == ProcessExecutionMode.RELOAD;
+
 			rProcessState =
-				createProcessState(rDescription,
-								   rProcess,
-								   eExecutionMode ==
-								   ProcessExecutionMode.RELOAD);
+				createProcessState(rDescription, rProcess, bRefresh);
 
 			if (rProcess.isFinished())
 			{
@@ -822,7 +825,8 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 *
 	 * @param  rDescription The process definition
 	 * @param  rProcess     The process
-	 * @param  bReload      TRUE if all data elements should be forced to reload
+	 * @param  bRefresh     TRUE if all data elements should be refreshed even
+	 *                      if not marked as modified
 	 *
 	 * @return A new process state object
 	 *
@@ -832,7 +836,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	@SuppressWarnings("boxing")
 	private ProcessState createProcessState(ProcessDescription rDescription,
 											Process			   rProcess,
-											boolean			   bReload)
+											boolean			   bRefresh)
 		throws StorageException
 	{
 		Integer		 sProcessId    = rProcess.getParameter(PROCESS_ID);
@@ -849,12 +853,12 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			ProcessStep rInteractionStep = rProcess.getInteractionStep();
 
 			List<DataElement<?>> aInteractionElements =
-				createInteractionElements(rInteractionStep, bReload);
+				createInteractionElements(rInteractionStep, bRefresh);
 
 			List<DataElementList> aViewElements =
 				createViewDataElements(rInteractionStep);
 
-			if (!bReload)
+			if (!bRefresh)
 			{
 				aInteractionElements =
 					reduceToModifiedElements(aInteractionElements);

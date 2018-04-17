@@ -20,6 +20,7 @@ import de.esoco.ewt.app.EWTEntryPoint;
 import de.esoco.ewt.app.EWTModule;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.style.AlignedPosition;
+import de.esoco.ewt.style.ViewStyle;
 
 import de.esoco.gwt.client.ServiceRegistry;
 import de.esoco.gwt.client.res.EsocoGwtResources;
@@ -78,7 +79,7 @@ public abstract class GwtApplication extends EWTEntryPoint
 	@Override
 	protected EWTModule getApplicationModule()
 	{
-		return new GwtApplicationModule()
+		return new GwtApplicationModule(ViewStyle.DEFAULT)
 		{
 			@Override
 			protected void createApplicationPanel(ContainerBuilder<?> rBuilder)

@@ -129,10 +129,12 @@ public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
 	 */
 	protected ProcessPanelManager createProcessPanel(ProcessState rProcessState)
 	{
-		return new ProcessPanelManager(this,
-									   rProcessState.getName(),
-									   false,
-									   false);
+		ProcessPanelManager aProcessPanelManager =
+			new ProcessPanelManager(this, rProcessState.getName(), false, true);
+
+		aProcessPanelManager.setDisableOnInteraction(false);
+
+		return aProcessPanelManager;
 	}
 
 	/***************************************

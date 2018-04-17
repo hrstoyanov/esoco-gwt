@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,31 @@ import de.esoco.ewt.style.ViewStyle;
  */
 public abstract class GwtApplicationModule implements EWTModule
 {
+	//~ Instance fields --------------------------------------------------------
+
+	private ViewStyle eViewStyle;
+
+	//~ Constructors -----------------------------------------------------------
+
+	/***************************************
+	 * Creates a new instance with the view style {@link ViewStyle#FULL_SIZE
+	 * FULL_SIZE}.
+	 */
+	public GwtApplicationModule()
+	{
+		this(ViewStyle.FULL_SIZE);
+	}
+
+	/***************************************
+	 * Creates a new instance with a specific view style.
+	 *
+	 * @param eViewStyle The view style
+	 */
+	public GwtApplicationModule(ViewStyle eViewStyle)
+	{
+		this.eViewStyle = eViewStyle;
+	}
+
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
@@ -76,6 +101,6 @@ public abstract class GwtApplicationModule implements EWTModule
 	 */
 	protected ViewStyle getMainViewStyle()
 	{
-		return ViewStyle.FULL_SIZE;
+		return eViewStyle;
 	}
 }

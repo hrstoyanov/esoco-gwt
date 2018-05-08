@@ -529,7 +529,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 									  List<String>		   rAllValues)
 	{
 		List<?> rCurrentValues;
-		int     i = 0;
+		boolean bNullAllowed = false;
+		int     i			 = 0;
 
 		if (rDataElement instanceof ListDataElement)
 		{
@@ -538,6 +539,12 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		else
 		{
 			Object rValue = rDataElement.getValue();
+
+			if (rValue == null)
+			{
+				bNullAllowed =
+					rDataElement.getProperty(NULL_VALUE, null) != null;
+			}
 
 			rCurrentValues =
 				rValue != null ? Arrays.asList(rValue)
@@ -548,12 +555,21 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 		for (Object rValue : rCurrentValues)
 		{
-			String sValue = convertValueToString(rDataElement, rValue);
-			int    nIndex = rAllValues.indexOf(rContext.expandResource(sValue));
-
-			if (nIndex >= 0)
+			if (rValue != null)
 			{
-				aCurrentValueIndexes[i++] = nIndex;
+				String sValue = convertValueToString(rDataElement, rValue);
+				int    nIndex =
+					rAllValues.indexOf(rContext.expandResource(sValue));
+
+				if (nIndex >= 0)
+				{
+					aCurrentValueIndexes[i++] =
+						bNullAllowed ? nIndex + 1 : nIndex;
+				}
+			}
+			else if (bNullAllowed)
+			{
+				aCurrentValueIndexes[i++] = 0;
 			}
 		}
 
@@ -620,7 +636,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 		if (sNullValue != null)
 		{
-			aListValues.add(sNullValue);
+			aListValues.add(0, sNullValue);
 		}
 
 		return aListValues;
@@ -758,8 +774,14 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		List<?> rValues =
 			((HasValueList<?>) rDataElement.getValidator()).getValues();
 
-		if (sSelection == null ||
-			sSelection == rDataElement.getProperty(NULL_VALUE, null))
+		String sNullValue = rDataElement.getProperty(NULL_VALUE, null);
+
+		if (sNullValue != null)
+		{
+			sNullValue = rContext.expandResource(sNullValue);
+		}
+
+		if (sSelection == null || sSelection.equals(sNullValue))
 		{
 			if (!(rDataElement instanceof ListDataElement))
 			{

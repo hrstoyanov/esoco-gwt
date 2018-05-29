@@ -89,7 +89,7 @@ import static de.esoco.lib.property.StorageProperties.QUERY_SEARCH;
 import static de.esoco.lib.property.StorageProperties.QUERY_SORT;
 import static de.esoco.lib.property.StorageProperties.QUERY_START;
 
-import static de.esoco.storage.StoragePredicates.almostLike;
+import static de.esoco.storage.StoragePredicates.similarTo;
 import static de.esoco.storage.StoragePredicates.like;
 import static de.esoco.storage.StoragePredicates.sortBy;
 
@@ -589,7 +589,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 				break;
 
 			case '~':
-				pAttribute = rComparableAttr.is(almostLike(sConstraint));
+				pAttribute = rComparableAttr.is(similarTo(sConstraint));
 				break;
 
 			default:

@@ -980,7 +980,7 @@ public class DataElementFactory
 									  fGetColumnData);
 		}
 
-		return new HierarchicalDataObject(Integer.toString(rEntity.getId()),
+		return new HierarchicalDataObject(Long.toString(rEntity.getId()),
 										  nIndex,
 										  aValues,
 										  true,
@@ -1007,7 +1007,7 @@ public class DataElementFactory
 	public SelectionDataElement createEntitySelectionElement(
 		String							  sName,
 		Relatable						  rMetaData,
-		Integer							  rCurrentEntityId,
+		Number							  rCurrentEntityId,
 		List<Entity>					  rEntities,
 		List<Function<? super Entity, ?>> rAttributes) throws StorageException
 	{
@@ -1060,7 +1060,7 @@ public class DataElementFactory
 	public <E extends Entity> SelectionDataElement createEntitySelectionElement(
 		String							  sName,
 		Relatable						  rMetaData,
-		Integer							  rCurrentEntityId,
+		Number							  rCurrentEntityId,
 		int								  nCurrentSelection,
 		QueryPredicate<E>				  pQuery,
 		Predicate<? super E>			  pDefaultCriteria,
@@ -2028,8 +2028,8 @@ public class DataElementFactory
 			rDef = rAllowedEntities.get(0).getDefinition();
 		}
 
-		Entity  rEntity   = rRelation.getTarget();
-		Integer rEntityId = null;
+		Entity rEntity   = rRelation.getTarget();
+		Number rEntityId = null;
 
 		if (rEntity != null)
 		{

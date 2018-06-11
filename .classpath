@@ -20,6 +20,6 @@
 	<classpathentry kind="src" path="/objectrelations"/>
 	<classpathentry kind="src" path="/esoco-common"/>
 	<classpathentry kind="src" path="/gewt"/>
-	<classpathentry kind="con" path="com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER/gwt-2.8.2"/>
+	<classpathentry kind="con" path="com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="output" path="bin/default"/>
 </classpath>

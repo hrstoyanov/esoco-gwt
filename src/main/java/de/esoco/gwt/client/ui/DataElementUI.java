@@ -1319,11 +1319,6 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else
 		{
-			if (eContentType == ContentType.PASSWORD)
-			{
-				rStyle = rStyle.setFlags(StyleFlag.PASSWORD);
-			}
-
 			aTextComponent = rBuilder.addTextField(rStyle, sText);
 		}
 

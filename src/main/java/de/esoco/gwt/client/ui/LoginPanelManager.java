@@ -36,12 +36,16 @@ import de.esoco.gwt.client.ServiceRegistry;
 import de.esoco.gwt.client.res.EsocoGwtResources;
 import de.esoco.gwt.shared.AuthenticatedService;
 
+import de.esoco.lib.property.TextFieldStyle;
+
 import java.util.Date;
 
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
+
+import static de.esoco.lib.property.StyleProperties.TEXT_FIELD_STYLE;
 
 
 /********************************************************************
@@ -199,7 +203,8 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 						  "$lblPassword",
 						  null);
 
-		return rBuilder.addTextField(StyleData.DEFAULT.setFlags(StyleFlag.PASSWORD),
+		return rBuilder.addTextField(StyleData.DEFAULT.set(TEXT_FIELD_STYLE,
+														   TextFieldStyle.PASSWORD),
 									 "");
 	}
 

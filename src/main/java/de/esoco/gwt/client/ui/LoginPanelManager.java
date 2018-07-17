@@ -27,7 +27,7 @@ import de.esoco.ewt.component.TextField;
 import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
-import de.esoco.ewt.layout.GridLayout;
+import de.esoco.ewt.layout.TableGridLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
@@ -280,7 +280,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	protected ContainerBuilder<Panel> createLoginComponentsPanel(
 		StyleData rPanelStyle)
 	{
-		return addPanel(rPanelStyle, new GridLayout(2, true, 3));
+		return addPanel(rPanelStyle, new TableGridLayout(2, true, 3));
 	}
 
 	/***************************************

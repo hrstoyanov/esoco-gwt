@@ -26,7 +26,7 @@ import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.GenericLayout;
-import de.esoco.ewt.layout.GridLayout;
+import de.esoco.ewt.layout.TableGridLayout;
 import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
@@ -289,7 +289,7 @@ public abstract class PanelManager<C extends Container,
 
 		return rBuilder.addPanel(rToolbarStyle,
 								 bHorizontal ? new FlowLayout(true)
-											 : new GridLayout(nColumns));
+											 : new TableGridLayout(nColumns));
 	}
 
 	/***************************************
@@ -353,9 +353,9 @@ public abstract class PanelManager<C extends Container,
 			{
 				rBuilder.addLabel(TOOLBAR_SEPARATOR_STYLE, "", null);
 
-				if (rLayout instanceof GridLayout)
+				if (rLayout instanceof TableGridLayout)
 				{
-					((GridLayout) rLayout).addCellStyle(rContainer,
+					((TableGridLayout) rLayout).addCellStyle(rContainer,
 														CSS.gfToolSeparator());
 				}
 			}

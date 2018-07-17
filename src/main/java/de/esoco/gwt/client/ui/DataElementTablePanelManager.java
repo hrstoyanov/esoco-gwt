@@ -24,7 +24,7 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
-import de.esoco.ewt.layout.GridLayout;
+import de.esoco.ewt.layout.TableGridLayout;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.LayoutType;
@@ -304,7 +304,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,
-							  new GridLayout(calcLayoutColumns(rDataElements),
+							  new TableGridLayout(calcLayoutColumns(rDataElements),
 											 true));
 
 		return aContainerBuilder;
@@ -317,7 +317,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	 */
 	private void addCellStyles(String... rStyles)
 	{
-		GridLayout rLayout    = getDataElementsLayout();
+		TableGridLayout rLayout    = getDataElementsLayout();
 		Container  rContainer = getContainer();
 
 		for (String sStyle : rStyles)
@@ -404,7 +404,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 									  int			 nExtraColumns)
 	{
 		Container  rContainer = getContainer();
-		GridLayout rLayout    = getDataElementsLayout();
+		TableGridLayout rLayout    = getDataElementsLayout();
 		String     sAddStyle  = rDataElement.getProperty(STYLE, null);
 		int		   nRowSpan   = rDataElement.getIntProperty(ROW_SPAN, 1);
 		int		   nColSpan   = rDataElement.getIntProperty(COLUMN_SPAN, 1);
@@ -444,8 +444,8 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	 *
 	 * @return The data elements layout
 	 */
-	private GridLayout getDataElementsLayout()
+	private TableGridLayout getDataElementsLayout()
 	{
-		return (GridLayout) getContainer().getLayout();
+		return (TableGridLayout) getContainer().getLayout();
 	}
 }

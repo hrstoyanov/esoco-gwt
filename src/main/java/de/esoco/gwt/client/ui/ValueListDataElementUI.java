@@ -35,7 +35,7 @@ import de.esoco.ewt.event.EWTEvent;
 import de.esoco.ewt.event.EWTEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.GenericLayout;
-import de.esoco.ewt.layout.GridLayout;
+import de.esoco.ewt.layout.TableGridLayout;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.StyleFlag;
 
@@ -339,7 +339,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 			if (eLayout == LayoutType.TABLE)
 			{
-				aPanelLayout = new GridLayout(nColumns);
+				aPanelLayout = new TableGridLayout(nColumns);
 			}
 			else
 			{

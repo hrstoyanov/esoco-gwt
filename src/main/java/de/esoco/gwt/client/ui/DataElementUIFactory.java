@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2016 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import de.esoco.data.element.BooleanDataElement;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.DateDataElement;
-import de.esoco.data.element.EntityDataElement;
 import de.esoco.data.element.IntegerDataElement;
 import de.esoco.data.element.PeriodDataElement;
 import de.esoco.data.element.SelectionDataElement;
@@ -29,6 +28,7 @@ import de.esoco.data.validate.HasValueList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 
 /********************************************************************
@@ -40,8 +40,24 @@ public class DataElementUIFactory
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static Map<String, DataElementUICreator<?>> aDataElementRegistry =
+	private static Map<Class<?>, Supplier<?>> aDataElementRegistry =
 		new HashMap<>();
+
+	static
+	{
+		registerDataElementUI(DataElementList.class, DataElementListUI::new);
+		registerDataElementUI(BooleanDataElement.class,
+							  BooleanDataElementUI::new);
+		registerDataElementUI(IntegerDataElement.class,
+							  IntegerDataElementUI::new);
+		registerDataElementUI(BigDecimalDataElement.class,
+							  BigDecimalDataElementUI::new);
+		registerDataElementUI(DateDataElement.class, DateDataElementUI::new);
+		registerDataElementUI(PeriodDataElement.class,
+							  PeriodDataElementUI::new);
+		registerDataElementUI(SelectionDataElement.class,
+							  SelectionDataElementUI::new);
+	}
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -72,44 +88,11 @@ public class DataElementUIFactory
 	{
 		DataElementUI<?> aUI = null;
 
-		DataElementUICreator<?> rUICreator =
-			aDataElementRegistry.get(rElement.getClass().getName());
+		Supplier<?> rUiSupplier = aDataElementRegistry.get(rElement.getClass());
 
-		if (rUICreator != null)
+		if (rUiSupplier != null)
 		{
-			aUI = rUICreator.create();
-		}
-		else if (rElement instanceof BooleanDataElement)
-		{
-			aUI = new BooleanDataElementUI();
-		}
-		else if (rElement instanceof IntegerDataElement)
-		{
-			aUI = new IntegerDataElementUI();
-		}
-		else if (rElement instanceof BigDecimalDataElement)
-		{
-			aUI = new BigDecimalDataElementUI();
-		}
-		else if (rElement instanceof DateDataElement)
-		{
-			aUI = new DateDataElementUI();
-		}
-		else if (rElement instanceof PeriodDataElement)
-		{
-			aUI = new PeriodDataElementUI();
-		}
-		else if (rElement instanceof EntityDataElement)
-		{
-			aUI = new EntityDataElementUI();
-		}
-		else if (rElement instanceof SelectionDataElement)
-		{
-			aUI = new SelectionDataElementUI();
-		}
-		else if (rElement instanceof DataElementList)
-		{
-			aUI = new DataElementListUI();
+			aUI = (DataElementUI<D>) rUiSupplier.get();
 		}
 		else if (rElement.getValidator() instanceof HasValueList<?>)
 		{
@@ -139,30 +122,9 @@ public class DataElementUIFactory
 	 * @param rDataElementClass The class of the data element type
 	 * @param rCreator          The creator instance for the type
 	 */
-	public static <D extends DataElement<?>, U extends DataElementUI<D>> void registerDataElementUI(
-		Class<D>				rDataElementClass,
-		DataElementUICreator<U> rCreator)
+	public static <D extends DataElement<?>, U extends DataElementUI<D>> void
+	registerDataElementUI(Class<D> rDataElementClass, Supplier<U> rCreator)
 	{
-		aDataElementRegistry.put(rDataElementClass.getName(), rCreator);
-	}
-
-	//~ Inner Interfaces -------------------------------------------------------
-
-	/********************************************************************
-	 * An interface that defines the instantiation of data element UIs due to
-	 * the lack of reflection in GWT.
-	 *
-	 * @author eso
-	 */
-	public static interface DataElementUICreator<U extends DataElementUI<?>>
-	{
-		//~ Methods ------------------------------------------------------------
-
-		/***************************************
-		 * Creates a new data element UI for the given type.
-		 *
-		 * @return A new {@link DataElementUI} instance
-		 */
-		public U create();
+		aDataElementRegistry.put(rDataElementClass, rCreator);
 	}
 }

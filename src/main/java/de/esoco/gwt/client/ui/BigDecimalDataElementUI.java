@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.BigDecimalDataElement;
 
 import de.esoco.ewt.build.ContainerBuilder;
+import de.esoco.ewt.component.Calculator;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.style.StyleData;
@@ -46,6 +47,10 @@ public class BigDecimalDataElementUI
 	/** The default format for numbers if no explicit format is set. */
 	public static final String DEFAULT_FORMAT = "#0.00";
 
+	//~ Instance fields --------------------------------------------------------
+
+	private Calculator aCalculator;
+
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -58,53 +63,90 @@ public class BigDecimalDataElementUI
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * Overridden to convert the input constraint if necessary.
-	 *
-	 * @see DataElementUI#createInputUI(ContainerBuilder, StyleData,
-	 *      de.esoco.data.element.DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected Component createInputUI(ContainerBuilder<?>   rBuilder,
 									  StyleData				rStyle,
 									  BigDecimalDataElement rDataElement)
 	{
-		convertInputConstraintToLocale(rDataElement);
+		Component rComponent;
 
-		return super.createInputUI(rBuilder, rStyle, rDataElement);
+		if (rStyle.hasFlag(BigDecimalDataElement.CALCULATOR))
+		{
+			aCalculator = new Calculator();
+			rComponent  = aCalculator;
+
+			rBuilder.addComposite(aCalculator, rStyle);
+		}
+		else
+		{
+			convertInputConstraintToLocale(rDataElement);
+			rComponent = super.createInputUI(rBuilder, rStyle, rDataElement);
+		}
+
+		return rComponent;
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, de.esoco.data.element.DataElement)
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void transferDataElementValueToComponent(
+		BigDecimalDataElement rDataElement,
+		Component			  rComponent)
+	{
+		if (aCalculator != null)
+		{
+			aCalculator.setValue(rDataElement.getValue());
+		}
+		else
+		{
+			super.transferDataElementValueToComponent(rDataElement, rComponent);
+		}
+	}
+
+	/***************************************
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void transferInputToDataElement(
 		Component			  rComponent,
 		BigDecimalDataElement rDataElement)
 	{
-		String     sText  = ((TextControl) rComponent).getText();
 		BigDecimal rValue;
 
-		try
+		if (aCalculator != null)
 		{
-			String sFormat = rDataElement.getProperty(FORMAT, DEFAULT_FORMAT);
-			int    nScale  = 0;
-
-			int nDecimalPoint = sFormat.indexOf('.');
-
-			if (nDecimalPoint >= 0)
-			{
-				nScale = sFormat.length() - (nDecimalPoint + 1);
-			}
-
-			// TODO: check for actual decimal group characters
-			sText  = sText.replace(',', '.');
-			rValue = new BigDecimal(sText);
-
-			rValue = rValue.setScale(nScale, RoundingMode.HALF_UP);
+			rValue = aCalculator.getValue();
 		}
-		catch (Exception e)
+		else
 		{
-			rValue = null;
+			String sText = ((TextControl) rComponent).getText();
+
+			try
+			{
+				String sFormat =
+					rDataElement.getProperty(FORMAT, DEFAULT_FORMAT);
+				int    nScale  = 0;
+
+				int nDecimalPoint = sFormat.indexOf('.');
+
+				if (nDecimalPoint >= 0)
+				{
+					nScale = sFormat.length() - (nDecimalPoint + 1);
+				}
+
+				// TODO: check for actual decimal group characters
+				sText  = sText.replace(',', '.');
+				rValue = new BigDecimal(sText);
+
+				rValue = rValue.setScale(nScale, RoundingMode.HALF_UP);
+			}
+			catch (Exception e)
+			{
+				rValue = null;
+			}
 		}
 
 		rDataElement.setValue(rValue);

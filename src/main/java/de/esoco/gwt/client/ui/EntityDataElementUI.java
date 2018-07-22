@@ -24,8 +24,8 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.Tree;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.EdgeLayout;
 import de.esoco.ewt.layout.FlowLayout;
@@ -103,7 +103,7 @@ public class EntityDataElementUI extends DataElementListUI
 	 *
 	 * @author eso
 	 */
-	static class TreeDetailEventHandler implements EWTEventHandler
+	static class TreeDetailEventHandler implements EwtEventHandler
 	{
 		//~ Instance fields ----------------------------------------------------
 
@@ -143,7 +143,7 @@ public class EntityDataElementUI extends DataElementListUI
 		 * @param rEvent rTree The tree component to handle the selection of
 		 */
 		@Override
-		public void handleEvent(EWTEvent rEvent)
+		public void handleEvent(EwtEvent rEvent)
 		{
 			Object[] rSelection = ((Tree) rEvent.getSource()).getSelection();
 

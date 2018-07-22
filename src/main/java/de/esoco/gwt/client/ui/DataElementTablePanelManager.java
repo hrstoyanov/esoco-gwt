@@ -305,7 +305,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 		ContainerBuilder<Panel> aContainerBuilder =
 			rBuilder.addPanel(rStyleData,
 							  new TableGridLayout(calcLayoutColumns(rDataElements),
-											 true));
+												  true));
 
 		return aContainerBuilder;
 	}
@@ -318,7 +318,7 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 	private void addCellStyles(String... rStyles)
 	{
 		TableGridLayout rLayout    = getDataElementsLayout();
-		Container  rContainer = getContainer();
+		Container	    rContainer = getContainer();
 
 		for (String sStyle : rStyles)
 		{
@@ -403,11 +403,12 @@ public class DataElementTablePanelManager extends DataElementPanelManager
 									  String		 sHeight,
 									  int			 nExtraColumns)
 	{
-		Container  rContainer = getContainer();
+		Container	    rContainer = getContainer();
 		TableGridLayout rLayout    = getDataElementsLayout();
-		String     sAddStyle  = rDataElement.getProperty(STYLE, null);
-		int		   nRowSpan   = rDataElement.getIntProperty(ROW_SPAN, 1);
-		int		   nColSpan   = rDataElement.getIntProperty(COLUMN_SPAN, 1);
+		String		    sAddStyle  = rDataElement.getProperty(STYLE, null);
+		int			    nRowSpan   = rDataElement.getIntProperty(ROW_SPAN, 1);
+		int			    nColSpan   =
+			rDataElement.getIntProperty(COLUMN_SPAN, 1);
 
 		if (nRowSpan > 1)
 		{

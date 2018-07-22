@@ -27,8 +27,8 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Button;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.Panel;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 
 import de.esoco.gwt.client.ui.AuthenticationPanelManager;
@@ -142,10 +142,10 @@ public abstract class GwtApplicationPanelManager<C extends Container,
 										 "$prc" + sName);
 
 					aButton.addEventListener(EventType.ACTION,
-						new EWTEventHandler()
+						new EwtEventHandler()
 						{
 							@Override
-							public void handleEvent(EWTEvent rEvent)
+							public void handleEvent(EwtEvent rEvent)
 							{
 								executeProcess(sName, getSelectedElement());
 							}

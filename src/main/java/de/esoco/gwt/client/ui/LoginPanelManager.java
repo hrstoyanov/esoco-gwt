@@ -24,8 +24,8 @@ import de.esoco.ewt.component.Button;
 import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.TextField;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.TableGridLayout;
 import de.esoco.ewt.style.AlignedPosition;
@@ -54,7 +54,7 @@ import static de.esoco.lib.property.StyleProperties.TEXT_FIELD_STYLE;
  * @author eso
  */
 public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
-	implements EWTEventHandler
+	implements EwtEventHandler
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -101,7 +101,7 @@ public class LoginPanelManager extends PanelManager<Panel, PanelManager<?, ?>>
 	 * @param rEvent The event that occurred
 	 */
 	@Override
-	public void handleEvent(EWTEvent rEvent)
+	public void handleEvent(EwtEvent rEvent)
 	{
 		if (rEvent.getSource() == aUserField)
 		{

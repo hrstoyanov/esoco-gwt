@@ -39,8 +39,8 @@ import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.component.TextArea;
 import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.component.TextField;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.KeyCode;
 import de.esoco.ewt.event.ModifierKeys;
@@ -390,7 +390,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * @param rHandler   The event handler
 	 */
 	public void addEventListener(EventType		 eEventType,
-								 EWTEventHandler rHandler)
+								 EwtEventHandler rHandler)
 	{
 		Component rComponent = getElementComponent();
 
@@ -703,10 +703,10 @@ public class DataElementUI<D extends DataElement<?>>
 
 		rOptionalCheckBox.setSelected(false);
 		rOptionalCheckBox.addEventListener(EventType.ACTION,
-			new EWTEventHandler()
+			new EwtEventHandler()
 			{
 				@Override
-				public void handleEvent(EWTEvent rEvent)
+				public void handleEvent(EwtEvent rEvent)
 				{
 					setEnabled(rOptionalCheckBox.isSelected());
 				}
@@ -1053,10 +1053,10 @@ public class DataElementUI<D extends DataElement<?>>
 		Component aComponent = rBuilder.addLabel(rStyle, sURL, null);
 
 		aComponent.addEventListener(EventType.ACTION,
-			new EWTEventHandler()
+			new EwtEventHandler()
 			{
 				@Override
-				public void handleEvent(EWTEvent rEvent)
+				public void handleEvent(EwtEvent rEvent)
 				{
 					Window.open(sURL, sTitle, "");
 				}
@@ -1200,11 +1200,11 @@ public class DataElementUI<D extends DataElement<?>>
 		final List<TextField> aNumberFields  = new ArrayList<TextField>(4);
 		String				  sPartSeparator = "+";
 
-		EWTEventHandler rEventHandler =
-			new EWTEventHandler()
+		EwtEventHandler rEventHandler =
+			new EwtEventHandler()
 			{
 				@Override
-				public void handleEvent(EWTEvent rEvent)
+				public void handleEvent(EwtEvent rEvent)
 				{
 					handlePhoneNumberEvent(rEvent, aNumberFields);
 				}
@@ -1351,10 +1351,10 @@ public class DataElementUI<D extends DataElement<?>>
 		Button aButton = rBuilder.addButton(rDisplayStyle, sText, null);
 
 		aButton.addEventListener(EventType.ACTION,
-			new EWTEventHandler()
+			new EwtEventHandler()
 			{
 				@Override
-				public void handleEvent(EWTEvent rEvent)
+				public void handleEvent(EwtEvent rEvent)
 				{
 					openUrl(rDataElement.getValue().toString(),
 							rDataElement.getProperty(CONTENT_TYPE, null) ==
@@ -1785,7 +1785,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * @param rNumberFields The list of the input fields for the phone number
 	 *                      parts
 	 */
-	void handlePhoneNumberEvent(EWTEvent rEvent, List<TextField> rNumberFields)
+	void handlePhoneNumberEvent(EwtEvent rEvent, List<TextField> rNumberFields)
 	{
 		TextField    rField		   = (TextField) rEvent.getSource();
 		String		 sText		   = rField.getText();

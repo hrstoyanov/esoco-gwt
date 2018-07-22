@@ -22,8 +22,8 @@ import de.esoco.ewt.component.ComboBox;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.TextControl;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.impl.gwt.HasEventHandlingDelay;
 
@@ -53,7 +53,7 @@ import static de.esoco.lib.property.StateProperties.INTERACTION_EVENT_TYPES;
  * @author eso
  */
 public class DataElementInteractionHandler<D extends DataElement<?>>
-	implements EWTEventHandler
+	implements EwtEventHandler
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -111,7 +111,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void handleEvent(final EWTEvent rEvent)
+	public void handleEvent(final EwtEvent rEvent)
 	{
 		boolean bDeferredEventHandling =
 			nEventHandlingDelay > 0 ||
@@ -306,7 +306,7 @@ public class DataElementInteractionHandler<D extends DataElement<?>>
 	 *
 	 * @param rEvent The GEWT event that occurred
 	 */
-	protected void processEvent(EWTEvent rEvent)
+	protected void processEvent(EwtEvent rEvent)
 	{
 		cancelInputEventTimer();
 

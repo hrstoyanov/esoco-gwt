@@ -26,8 +26,8 @@ import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.dialog.MessageBox;
 import de.esoco.ewt.dialog.MessageBox.ResultHandler;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.FlowLayout;
 import de.esoco.ewt.layout.TableGridLayout;
@@ -58,7 +58,7 @@ import static de.esoco.ewt.style.StyleFlag.VERTICAL_ALIGN_CENTER;
  */
 public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPanelManager<?,
 																						 ?>>
-	extends GwtApplicationPanelManager<Panel, P> implements EWTEventHandler,
+	extends GwtApplicationPanelManager<Panel, P> implements EwtEventHandler,
 															ClosingHandler,
 															CloseHandler<Window>
 {
@@ -161,10 +161,10 @@ public abstract class GwtApplicationTopPanelManager<P extends GwtApplicationPane
 	}
 
 	/***************************************
-	 * @see EWTEventHandler#handleEvent(EWTEvent)
+	 * @see EwtEventHandler#handleEvent(EwtEvent)
 	 */
 	@Override
-	public void handleEvent(EWTEvent rEvent)
+	public void handleEvent(EwtEvent rEvent)
 	{
 		Object rSource = rEvent.getSource();
 

@@ -22,7 +22,7 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.View;
-import de.esoco.ewt.event.EWTEvent;
+import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
@@ -290,7 +290,7 @@ public class DataElementListView
 	 *
 	 * @param rEvent The event
 	 */
-	private void handleViewClosing(EWTEvent rEvent)
+	private void handleViewClosing(EwtEvent rEvent)
 	{
 		aViewUI.getPanelManager()
 			   .handleInteractiveInput(aViewUI.getDataElement(),

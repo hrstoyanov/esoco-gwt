@@ -25,8 +25,8 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.SelectableButton;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.style.StyleData;
@@ -249,14 +249,14 @@ public abstract class DataElementPanelManager
 	/***************************************
 	 * Registers an event listener for events on all data element components
 	 * that are displayed in this panel. The listener will be added by means of
-	 * {@link DataElementUI#addEventListener(EventType, EWTEventHandler)}.
+	 * {@link DataElementUI#addEventListener(EventType, EwtEventHandler)}.
 	 *
 	 * @param rEventType The event type the listener shall be registered for
 	 * @param rListener  The event listener to be notified of events
 	 */
 	public void addElementEventListener(
 		EventType		rEventType,
-		EWTEventHandler rListener)
+		EwtEventHandler rListener)
 	{
 		for (DataElementUI<?> rDataElementUI : aDataElementUIs.values())
 		{
@@ -267,7 +267,7 @@ public abstract class DataElementPanelManager
 	/***************************************
 	 * Registers an event listener for events of a certain data element
 	 * component that is displayed in this panel. The listener will be added
-	 * with {@link DataElementUI#addEventListener(EventType, EWTEventHandler)}.
+	 * with {@link DataElementUI#addEventListener(EventType, EwtEventHandler)}.
 	 *
 	 * @param rDataElement The data element to register the event listener for
 	 * @param rEventType   The event type the listener shall be registered for
@@ -275,7 +275,7 @@ public abstract class DataElementPanelManager
 	 */
 	public void addElementEventListener(DataElement<?>  rDataElement,
 										EventType		rEventType,
-										EWTEventHandler rListener)
+										EwtEventHandler rListener)
 	{
 		DataElementUI<?> rDataElementUI =
 			aDataElementUIs.get(rDataElement.getName());
@@ -1067,7 +1067,7 @@ public abstract class DataElementPanelManager
 	 *
 	 * @author eso
 	 */
-	private class SelectionDependencyHandler implements EWTEventHandler
+	private class SelectionDependencyHandler implements EwtEventHandler
 	{
 		//~ Instance fields ----------------------------------------------------
 
@@ -1144,11 +1144,11 @@ public abstract class DataElementPanelManager
 		}
 
 		/***************************************
-		 * @see EWTEventHandler#handleEvent(EWTEvent)
+		 * @see EwtEventHandler#handleEvent(EwtEvent)
 		 */
 		@Override
 		@SuppressWarnings("boxing")
-		public void handleEvent(EWTEvent rEvent)
+		public void handleEvent(EwtEvent rEvent)
 		{
 			// prevent re-invocation due to selection change in dependent UIs
 			if (!bHandlingSelectionEvent)

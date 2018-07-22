@@ -31,8 +31,8 @@ import de.esoco.ewt.component.ComboBox;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.ListControl;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.layout.TableGridLayout;
@@ -85,7 +85,7 @@ import static de.esoco.lib.property.StyleProperties.LIST_STYLE;
  * @author eso
  */
 public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
-	implements EWTEventHandler
+	implements EwtEventHandler
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -111,10 +111,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	/***************************************
 	 * Handles the action event for list buttons.
 	 *
-	 * @see EWTEventHandler#handleEvent(EWTEvent)
+	 * @see EwtEventHandler#handleEvent(EwtEvent)
 	 */
 	@Override
-	public void handleEvent(EWTEvent rEvent)
+	public void handleEvent(EwtEvent rEvent)
 	{
 		setButtonSelection(getDataElement(),
 						   aListButtons,

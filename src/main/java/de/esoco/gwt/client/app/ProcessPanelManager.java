@@ -29,8 +29,8 @@ import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.dialog.MessageBox;
 import de.esoco.ewt.dialog.MessageBox.ResultHandler;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.graphics.Image;
 import de.esoco.ewt.layout.DockLayout;
@@ -87,7 +87,7 @@ public class ProcessPanelManager
 	extends GwtApplicationPanelManager<Container,
 									   GwtApplicationPanelManager<?, ?>>
 	implements InteractiveInputHandler, CommandResultHandler<ProcessState>,
-			   EWTEventHandler
+			   EwtEventHandler
 {
 	//~ Static fields/initializers ---------------------------------------------
 
@@ -327,7 +327,7 @@ public class ProcessPanelManager
 	 * @param rEvent The event
 	 */
 	@Override
-	public void handleEvent(EWTEvent rEvent)
+	public void handleEvent(EwtEvent rEvent)
 	{
 		if (rEvent.getSource() instanceof Button)
 		{

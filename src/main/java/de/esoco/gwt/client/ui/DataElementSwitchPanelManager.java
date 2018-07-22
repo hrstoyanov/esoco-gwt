@@ -23,8 +23,8 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.SwitchPanel;
-import de.esoco.ewt.event.EWTEvent;
-import de.esoco.ewt.event.EWTEventHandler;
+import de.esoco.ewt.event.EwtEvent;
+import de.esoco.ewt.event.EwtEventHandler;
 import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 
@@ -44,7 +44,7 @@ import static de.esoco.lib.property.StateProperties.CURRENT_SELECTION;
  * @author eso
  */
 public class DataElementSwitchPanelManager extends DataElementPanelManager
-	implements EWTEventHandler
+	implements EwtEventHandler
 {
 	//~ Instance fields --------------------------------------------------------
 
@@ -74,7 +74,7 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	 *
 	 * @param rListener The listener to notify if a new page is selected
 	 */
-	public void addPageSelectionListener(EWTEventHandler rListener)
+	public void addPageSelectionListener(EwtEventHandler rListener)
 	{
 		aSwitchPanel.addEventListener(EventType.SELECTION, rListener);
 	}
@@ -135,10 +135,10 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	/***************************************
 	 * Handles the selection of a page.
 	 *
-	 * @see EWTEventHandler#handleEvent(EWTEvent)
+	 * @see EwtEventHandler#handleEvent(EwtEvent)
 	 */
 	@Override
-	public void handleEvent(EWTEvent rEvent)
+	public void handleEvent(EwtEvent rEvent)
 	{
 		int nSelection = getSelectedElement();
 

@@ -21,14 +21,14 @@ dependencies {
 		compile project(':esoco-business')
 	}
 	else {
-		compile 'de.esoco:esoco-business:1.2.+'
+		compile 'de.esoco:esoco-business:1.2.3'
 	}
 
  	if (project(':gewt').getProjectDir().exists()) {
 		compile project(':gewt')
 	}
 	else {
-		compile 'de.esoco:gewt:1.1.+'
+		compile 'de.esoco:gewt:1.1.4'
 	}
 
     testCompile 'junit:junit:4.+'

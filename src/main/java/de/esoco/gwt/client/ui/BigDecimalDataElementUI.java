@@ -19,9 +19,9 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.BigDecimalDataElement;
 
 import de.esoco.ewt.build.ContainerBuilder;
-import de.esoco.ewt.component.Calculator;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.TextControl;
+import de.esoco.ewt.composite.Calculator;
 import de.esoco.ewt.style.StyleData;
 
 import java.math.BigDecimal;

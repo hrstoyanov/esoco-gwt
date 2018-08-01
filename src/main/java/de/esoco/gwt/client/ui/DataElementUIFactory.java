@@ -40,7 +40,7 @@ public class DataElementUIFactory
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static Map<Class<?>, Supplier<?>> aDataElementRegistry =
+	private static Map<String, Supplier<?>> aDataElementRegistry =
 		new HashMap<>();
 
 	static
@@ -88,7 +88,8 @@ public class DataElementUIFactory
 	{
 		DataElementUI<?> aUI = null;
 
-		Supplier<?> rUiSupplier = aDataElementRegistry.get(rElement.getClass());
+		Supplier<?> rUiSupplier =
+			aDataElementRegistry.get(rElement.getClass().getName());
 
 		if (rUiSupplier != null)
 		{
@@ -125,6 +126,6 @@ public class DataElementUIFactory
 	public static <D extends DataElement<?>, U extends DataElementUI<D>> void
 	registerDataElementUI(Class<D> rDataElementClass, Supplier<U> rCreator)
 	{
-		aDataElementRegistry.put(rDataElementClass, rCreator);
+		aDataElementRegistry.put(rDataElementClass.getName(), rCreator);
 	}
 }

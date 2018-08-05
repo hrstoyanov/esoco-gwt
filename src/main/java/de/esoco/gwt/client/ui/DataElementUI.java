@@ -39,9 +39,9 @@ import de.esoco.ewt.component.SelectableButton;
 import de.esoco.ewt.component.TextArea;
 import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.component.TextField;
+import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.event.EwtEventHandler;
-import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.KeyCode;
 import de.esoco.ewt.event.ModifierKeys;
 import de.esoco.ewt.graphics.Image;
@@ -105,6 +105,7 @@ import static de.esoco.lib.property.StateProperties.CARET_POSITION;
 import static de.esoco.lib.property.StateProperties.DISABLED;
 import static de.esoco.lib.property.StateProperties.FOCUSED;
 import static de.esoco.lib.property.StateProperties.HIDDEN;
+import static de.esoco.lib.property.StateProperties.INVISIBLE;
 import static de.esoco.lib.property.StateProperties.NO_INTERACTION_LOCK;
 import static de.esoco.lib.property.StateProperties.VALUE_CHANGED;
 import static de.esoco.lib.property.StyleProperties.BUTTON_STYLE;
@@ -719,13 +720,15 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void applyElementProperties()
 	{
-		boolean bVisible = !rDataElement.hasFlag(HIDDEN);
+		boolean bVisible    = !rDataElement.hasFlag(HIDDEN);
+		boolean bVisibility = !rDataElement.hasFlag(INVISIBLE);
 
 		if (aElementComponent != null)
 		{
 			sToolTip = rDataElement.getProperty(TOOLTIP, sHiddenLabelHint);
 
 			aElementComponent.setVisible(bVisible);
+			aElementComponent.setVisibility(bVisible);
 			rPanelManager.setElementVisibility(this, bVisible);
 
 			if (!bHasError && sToolTip != null && sToolTip.length() > 0)
@@ -751,6 +754,7 @@ public class DataElementUI<D extends DataElement<?>>
 
 			aElementLabel.setProperties(sLabel);
 			aElementLabel.setVisible(bVisible);
+			aElementLabel.setVisibility(bVisibility);
 		}
 	}
 

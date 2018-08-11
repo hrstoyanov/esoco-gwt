@@ -1185,6 +1185,14 @@ public class DataElementFactory
 
 		if (rRelation != null)
 		{
+			Process rProcess = rRelation.get(PROCESS);
+
+			if (rProcess != null)
+			{
+				// redirect to parameters of a sub-process if present
+				rObject = rProcess.getInteractionStep();
+			}
+
 			aDataElement = rRelation.get(DATA_ELEMENT);
 		}
 
@@ -1205,16 +1213,6 @@ public class DataElementFactory
 		}
 		else
 		{
-			if (rRelation != null)
-			{
-				Process rProcess = rRelation.get(PROCESS);
-
-				if (rProcess != null)
-				{
-					rObject = rProcess.getInteractionStep();
-				}
-			}
-
 			aDataElement = createDataElement(rObject, rType, rRelation, rValue);
 		}
 
@@ -1691,7 +1689,7 @@ public class DataElementFactory
 			aDataElement =
 				createDataElementList(rObject,
 									  rType,
-									  (Collection<Object>) rValue,
+									  (Collection<?>) rValue,
 									  rFlags);
 		}
 

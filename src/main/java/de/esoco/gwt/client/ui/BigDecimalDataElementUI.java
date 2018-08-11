@@ -17,11 +17,14 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.BigDecimalDataElement;
+import de.esoco.data.element.BigDecimalDataElement.DisplayStyle;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.TextControl;
 import de.esoco.ewt.composite.Calculator;
+import de.esoco.ewt.composite.MultiFormatDisplay;
+import de.esoco.ewt.composite.MultiFormatDisplay.NumberDisplayFormat;
 import de.esoco.ewt.style.StyleData;
 
 import java.math.BigDecimal;
@@ -47,10 +50,6 @@ public class BigDecimalDataElementUI
 	/** The default format for numbers if no explicit format is set. */
 	public static final String DEFAULT_FORMAT = "#0.00";
 
-	//~ Instance fields --------------------------------------------------------
-
-	private Calculator aCalculator;
-
 	//~ Constructors -----------------------------------------------------------
 
 	/***************************************
@@ -66,18 +65,52 @@ public class BigDecimalDataElementUI
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected Component createDisplayUI(ContainerBuilder<?>   rBuilder,
+										StyleData			  rStyle,
+										BigDecimalDataElement rDataElement)
+	{
+		DisplayStyle eDisplayStyle =
+			rStyle.getProperty(BigDecimalDataElement.DISPLAY_STYLE,
+							   DisplayStyle.DECIMAL);
+
+		Component rComponent;
+
+		if (eDisplayStyle == DisplayStyle.MULTI_FORMAT)
+		{
+			MultiFormatDisplay<BigDecimal, NumberDisplayFormat> aMultiFormatDisplay =
+				new MultiFormatDisplay<>(NumberDisplayFormat.DECIMAL,
+										 NumberDisplayFormat.HEXADECIMAL,
+										 NumberDisplayFormat.BINARY);
+
+			rComponent = rBuilder.addComposite(aMultiFormatDisplay, rStyle);
+		}
+		else
+		{
+			rComponent = super.createDisplayUI(rBuilder, rStyle, rDataElement);
+		}
+
+		return rComponent;
+	}
+
+	/***************************************
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected Component createInputUI(ContainerBuilder<?>   rBuilder,
 									  StyleData				rStyle,
 									  BigDecimalDataElement rDataElement)
 	{
+		DisplayStyle eDisplayStyle =
+			rStyle.getProperty(BigDecimalDataElement.DISPLAY_STYLE,
+							   DisplayStyle.DECIMAL);
+
 		Component rComponent;
 
-		if (rStyle.hasFlag(BigDecimalDataElement.CALCULATOR))
+		if (eDisplayStyle == DisplayStyle.CALCULATOR)
 		{
-			aCalculator = new Calculator();
-			rComponent  = aCalculator;
+			Calculator aCalculator = new Calculator();
 
-			rBuilder.addComposite(aCalculator, rStyle);
+			rComponent = rBuilder.addComposite(aCalculator, rStyle);
 		}
 		else
 		{
@@ -92,13 +125,20 @@ public class BigDecimalDataElementUI
 	 * {@inheritDoc}
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void transferDataElementValueToComponent(
 		BigDecimalDataElement rDataElement,
 		Component			  rComponent)
 	{
-		if (aCalculator != null)
+		if (rComponent instanceof Calculator)
 		{
-			aCalculator.setValue(rDataElement.getValue());
+			((Calculator) rComponent).setValue(rDataElement.getValue());
+		}
+
+		if (rComponent instanceof MultiFormatDisplay)
+		{
+			((MultiFormatDisplay<BigDecimal, NumberDisplayFormat>) rComponent)
+			.update(rDataElement.getValue());
 		}
 		else
 		{
@@ -116,9 +156,9 @@ public class BigDecimalDataElementUI
 	{
 		BigDecimal rValue;
 
-		if (aCalculator != null)
+		if (rComponent instanceof Calculator)
 		{
-			rValue = aCalculator.getValue();
+			rValue = ((Calculator) rComponent).getValue();
 		}
 		else
 		{

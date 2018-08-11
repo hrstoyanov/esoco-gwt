@@ -720,16 +720,19 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void applyElementProperties()
 	{
-		boolean bVisible    = !rDataElement.hasFlag(HIDDEN);
-		boolean bVisibility = !rDataElement.hasFlag(INVISIBLE);
+		boolean bVisible = !rDataElement.hasFlag(HIDDEN);
 
 		if (aElementComponent != null)
 		{
 			sToolTip = rDataElement.getProperty(TOOLTIP, sHiddenLabelHint);
 
 			aElementComponent.setVisible(bVisible);
-			aElementComponent.setVisibility(bVisible);
 			rPanelManager.setElementVisibility(this, bVisible);
+
+			if (rDataElement.hasProperty(INVISIBLE))
+			{
+				aElementComponent.setVisibility(!rDataElement.hasFlag(INVISIBLE));
+			}
 
 			if (!bHasError && sToolTip != null && sToolTip.length() > 0)
 			{
@@ -754,7 +757,11 @@ public class DataElementUI<D extends DataElement<?>>
 
 			aElementLabel.setProperties(sLabel);
 			aElementLabel.setVisible(bVisible);
-			aElementLabel.setVisibility(bVisibility);
+
+			if (rDataElement.hasProperty(INVISIBLE))
+			{
+				aElementComponent.setVisibility(!rDataElement.hasFlag(INVISIBLE));
+			}
 		}
 	}
 

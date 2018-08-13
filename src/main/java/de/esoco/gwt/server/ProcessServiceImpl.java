@@ -89,10 +89,9 @@ import static de.esoco.process.ProcessRelationTypes.CLIENT_WIDTH;
 import static de.esoco.process.ProcessRelationTypes.EXTERNAL_SERVICE_ACCESS;
 import static de.esoco.process.ProcessRelationTypes.FINAL_STEP;
 import static de.esoco.process.ProcessRelationTypes.IMMEDIATE_INTERACTION;
+import static de.esoco.process.ProcessRelationTypes.INTERACTION_EVENT_PARAM;
+import static de.esoco.process.ProcessRelationTypes.INTERACTION_EVENT_TYPE;
 import static de.esoco.process.ProcessRelationTypes.INTERACTION_PARAMS;
-import static de.esoco.process.ProcessRelationTypes.INTERACTIVE_INPUT_ACTION_EVENT;
-import static de.esoco.process.ProcessRelationTypes.INTERACTIVE_INPUT_EVENT_TYPE;
-import static de.esoco.process.ProcessRelationTypes.INTERACTIVE_INPUT_PARAM;
 import static de.esoco.process.ProcessRelationTypes.OPTIONAL_PROCESS_INPUT_PARAMS;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_ID;
 import static de.esoco.process.ProcessRelationTypes.PROCESS_INFO;
@@ -294,7 +293,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			{
 				setClientProperties(rDescription, rProcess);
 
-				if (rProcess.get(INTERACTIVE_INPUT_PARAM) ==
+				if (rProcess.get(INTERACTION_EVENT_PARAM) ==
 					RELOAD_CURRENT_STEP)
 				{
 					eExecutionMode = ProcessExecutionMode.RELOAD;
@@ -977,7 +976,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 			if (rProcess != null)
 			{
-				rProcess.set(INTERACTIVE_INPUT_PARAM, RELOAD_CURRENT_STEP);
+				rProcess.set(INTERACTION_EVENT_PARAM, RELOAD_CURRENT_STEP);
 			}
 			else
 			{
@@ -1241,20 +1240,14 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				InteractionEventType eEventType =
 					rProcessState.getInteractionEventType();
 
-				rProcess.setParameter(INTERACTIVE_INPUT_EVENT_TYPE, eEventType);
-
-				// for legacy code
-				rProcess.setParameter(INTERACTIVE_INPUT_ACTION_EVENT,
-									  eEventType ==
-									  InteractionEventType.ACTION);
+				rProcess.setParameter(INTERACTION_EVENT_TYPE, eEventType);
 			}
 			else
 			{
-				rProcess.deleteRelation(INTERACTIVE_INPUT_EVENT_TYPE);
-				rProcess.deleteRelation(INTERACTIVE_INPUT_ACTION_EVENT);
+				rProcess.deleteRelation(INTERACTION_EVENT_TYPE);
 			}
 		}
 
-		rProcess.setParameter(INTERACTIVE_INPUT_PARAM, rInteractionParam);
+		rProcess.setParameter(INTERACTION_EVENT_PARAM, rInteractionParam);
 	}
 }

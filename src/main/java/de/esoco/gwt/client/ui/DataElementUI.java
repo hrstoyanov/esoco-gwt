@@ -115,7 +115,6 @@ import static de.esoco.lib.property.StyleProperties.HAS_IMAGES;
 import static de.esoco.lib.property.StyleProperties.LABEL_STYLE;
 import static de.esoco.lib.property.StyleProperties.NO_WRAP;
 import static de.esoco.lib.property.StyleProperties.STYLE;
-import static de.esoco.lib.property.StyleProperties.VERTICAL;
 import static de.esoco.lib.property.StyleProperties.WRAP;
 
 
@@ -131,8 +130,9 @@ public class DataElementUI<D extends DataElement<?>>
 {
 	//~ Static fields/initializers ---------------------------------------------
 
+	// these properties are mapped to StyleData fields
 	private static final List<PropertyName<?>> MAPPED_PROPERTIES =
-		Arrays.asList(STYLE, WIDTH, HEIGHT, VERTICAL, WRAP, NO_WRAP, RESOURCE);
+		Arrays.asList(STYLE, WIDTH, HEIGHT, WRAP, NO_WRAP, RESOURCE);
 
 	private static final boolean PROFILING = false;
 
@@ -217,11 +217,6 @@ public class DataElementUI<D extends DataElement<?>>
 		if (rDataElement.hasProperty(HEIGHT))
 		{
 			rStyle = rStyle.h(rDataElement.getIntProperty(HEIGHT, 0));
-		}
-
-		if (rDataElement.hasFlag(VERTICAL))
-		{
-			rStyle = rStyle.setFlags(StyleFlag.VERTICAL);
 		}
 
 		if (rDataElement.hasFlag(WRAP))

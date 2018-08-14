@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,13 +26,14 @@ import de.esoco.ewt.style.AlignedPosition;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.LayoutType;
+import de.esoco.lib.property.Orientation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static de.esoco.lib.property.LayoutProperties.HEIGHT;
 import static de.esoco.lib.property.LayoutProperties.WIDTH;
-import static de.esoco.lib.property.StyleProperties.VERTICAL;
+import static de.esoco.lib.property.StyleProperties.ORIENTATION;
 
 
 /********************************************************************
@@ -98,15 +99,19 @@ public class DataElementOrderedPanelManager extends DataElementPanelManager
 	{
 		Map<DataElement<?>, StyleData> rElementStyles = new LinkedHashMap<>();
 
-		boolean bVertical     = rDataElementList.hasFlag(VERTICAL);
-		int     nElementCount = rDataElementList.getElementCount();
+		Orientation eOrientation =
+			rDataElementList.getProperty(ORIENTATION, Orientation.HORIZONTAL);
+
+		int nElementCount = rDataElementList.getElementCount();
 
 		// reorder elements because the center element must be added last
 		AlignedPosition rCenter = AlignedPosition.CENTER;
 		AlignedPosition rFirst  =
-			bVertical ? AlignedPosition.TOP : AlignedPosition.LEFT;
+			eOrientation == Orientation.VERTICAL ? AlignedPosition.TOP
+												 : AlignedPosition.LEFT;
 		AlignedPosition rLast   =
-			bVertical ? AlignedPosition.BOTTOM : AlignedPosition.RIGHT;
+			eOrientation == Orientation.VERTICAL ? AlignedPosition.BOTTOM
+												 : AlignedPosition.RIGHT;
 
 		if (nElementCount == 3)
 		{
@@ -117,7 +122,8 @@ public class DataElementOrderedPanelManager extends DataElementPanelManager
 		else if (nElementCount == 2)
 		{
 			if (rDataElementList.getElement(1)
-				.hasProperty(bVertical ? HEIGHT : WIDTH))
+				.hasProperty(eOrientation == Orientation.VERTICAL ? HEIGHT
+																  : WIDTH))
 			{
 				rElementStyles.put(rDataElementList.getElement(1), rLast);
 				rElementStyles.put(rDataElementList.getElement(0), rCenter);

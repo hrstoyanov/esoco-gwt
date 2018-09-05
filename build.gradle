@@ -1,12 +1,12 @@
 buildscript {
     repositories { jcenter() }
-    dependencies { classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6' }
+    dependencies { classpath 'de.esoco.gwt:gwt-gradle-plugin:1.+' }
 }
 
 apply plugin: 'java'
 apply plugin: 'osgi'
 apply plugin: 'eclipse'
-apply plugin: 'gwt-base'
+apply plugin: 'de.esoco.gwt-lib'
 
 project.group   = 'de.esoco'
 
@@ -35,7 +35,7 @@ dependencies {
 }
 
 gwt {
-    gwtVersion='2.8.2'
+    gwtVersion = '2.8.2'
 }
 
 jar { from sourceSets.main.allSource }

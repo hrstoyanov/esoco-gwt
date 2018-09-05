@@ -64,7 +64,6 @@ import de.esoco.lib.expression.function.AbstractFunction;
 import de.esoco.lib.expression.function.FunctionChain;
 import de.esoco.lib.expression.predicate.FunctionPredicate;
 import de.esoco.lib.json.JsonObject;
-import de.esoco.lib.logging.Log;
 import de.esoco.lib.model.ColumnDefinition;
 import de.esoco.lib.model.DataModel;
 import de.esoco.lib.model.DataSet;
@@ -1105,13 +1104,13 @@ public class DataElementFactory
 			CollectionFunctions.createStringList(false, rAttributes);
 
 		StorageAdapterId rStorageAdapterId =
-			getStorageAdapter(rMetaData,
-							  STORAGE_ADAPTER_ID,
-							  pQuery,
-							  fGetAttributes,
-							  pDefaultCriteria,
-							  pDefaultSortCriteria,
-							  aColumns);
+			getDatabaseStorageAdapter(rMetaData,
+									  STORAGE_ADAPTER_ID,
+									  pQuery,
+									  fGetAttributes,
+									  pDefaultCriteria,
+									  pDefaultSortCriteria,
+									  aColumns);
 
 		Validator<String> rValidator =
 			new QueryValidator(rStorageAdapterId.toString(), aColumns);
@@ -2266,6 +2265,71 @@ public class DataElementFactory
 	}
 
 	/***************************************
+	 * Checks a target object for a database storage adapter. If no storage
+	 * adapter exist a a new storage adapter instance will be created and
+	 * registered. The return value is the registered storage adapter ID.
+	 *
+	 * @param  rTarget          The target relatable to create the adapter for
+	 * @param  rAdapterId       The target's attribute to check for an existing
+	 *                          storage adapter ID
+	 * @param  pQuery           The storage query to perform
+	 * @param  fGetColumnData   The column data function
+	 * @param  pDefaultCriteria The default criteria or NULL for none
+	 * @param  pSortCriteria    The sort criteria or NULL for none
+	 * @param  rColumns         The column definitions
+	 *
+	 * @return The storage adapter ID
+	 *
+	 * @throws StorageException If registering the storage adapter fails
+	 */
+	@SuppressWarnings("boxing")
+	private <E extends Entity> StorageAdapterId getDatabaseStorageAdapter(
+		Relatable					   rTarget,
+		RelationType<StorageAdapterId> rAdapterId,
+		QueryPredicate<E>			   pQuery,
+		Function<Entity, List<String>> fGetColumnData,
+		Predicate<? super E>		   pDefaultCriteria,
+		Predicate<? super E>		   pSortCriteria,
+		List<ColumnDefinition>		   rColumns) throws StorageException
+	{
+		DatabaseStorageAdapter rStorageAdapter   = null;
+		StorageAdapterId	   rStorageAdapterId = rTarget.get(rAdapterId);
+
+		if (rStorageAdapterId != null)
+		{
+			rStorageAdapter =
+				(DatabaseStorageAdapter) rStorageAdapterRegistry
+				.getStorageAdapter(rStorageAdapterId);
+		}
+
+		if (rStorageAdapter == null)
+		{
+			rStorageAdapter   = new DatabaseStorageAdapter(this);
+			rStorageAdapterId =
+				rStorageAdapterRegistry.registerStorageAdapter(rStorageAdapter);
+
+			// keep ID to prevent the adapter from being garbage collected
+			// because IDs may be stored only as weak keys in a weak hash map
+			if (rTarget instanceof Relation)
+			{
+				rTarget.set(rAdapterId, rStorageAdapterId);
+			}
+			else
+			{
+				rTarget.get(STORAGE_ADAPTER_IDS).add(rStorageAdapterId);
+			}
+		}
+
+		rStorageAdapter.setQueryParameters(pQuery,
+										   fGetColumnData,
+										   pDefaultCriteria,
+										   pSortCriteria,
+										   rColumns);
+
+		return rStorageAdapterId;
+	}
+
+	/***************************************
 	 * Returns the attributes of an entity that are to be transferred into a
 	 * entity data element.
 	 *
@@ -2293,80 +2357,5 @@ public class DataElementFactory
 		}
 
 		return aAttributes;
-	}
-
-	/***************************************
-	 * Checks a target object for a database storage adapter. If no storage
-	 * adapter exist a a new storage adapter instance will be created and
-	 * registered. The return value is the registered storage adapter ID.
-	 *
-	 * @param  rTarget          The target relatable to create the adapter for
-	 * @param  rAdapterId       The target's attribute to check for an existing
-	 *                          storage adapter ID
-	 * @param  pQuery           The storage query to perform
-	 * @param  fGetColumnData   The column data function
-	 * @param  pDefaultCriteria The default criteria or NULL for none
-	 * @param  pSortCriteria    The sort criteria or NULL for none
-	 * @param  rColumns         The column definitions
-	 *
-	 * @return The storage adapter ID
-	 *
-	 * @throws StorageException If registering the storage adapter fails
-	 */
-	@SuppressWarnings("boxing")
-	private <E extends Entity> StorageAdapterId getStorageAdapter(
-		Relatable					   rTarget,
-		RelationType<StorageAdapterId> rAdapterId,
-		QueryPredicate<E>			   pQuery,
-		Function<Entity, List<String>> fGetColumnData,
-		Predicate<? super E>		   pDefaultCriteria,
-		Predicate<? super E>		   pSortCriteria,
-		List<ColumnDefinition>		   rColumns) throws StorageException
-	{
-		DatabaseStorageAdapter rStorageAdapter   = null;
-		StorageAdapterId	   rStorageAdapterId = rTarget.get(rAdapterId);
-
-		if (rStorageAdapterId != null)
-		{
-			rStorageAdapter =
-				(DatabaseStorageAdapter) rStorageAdapterRegistry
-				.getStorageAdapter(rStorageAdapterId);
-		}
-
-		if (rStorageAdapter == null)
-		{
-			rStorageAdapter   = new DatabaseStorageAdapter(this);
-			rStorageAdapterId =
-				rStorageAdapterRegistry.registerStorageAdapter(rStorageAdapter);
-
-			// keep ID to prevent the adapter from being garbage collected
-			// because IDs are stored only as weak keys in a weak hash map
-			if (rTarget instanceof Relation)
-			{
-				rTarget.set(rAdapterId, rStorageAdapterId);
-			}
-			else
-			{
-				rTarget.get(STORAGE_ADAPTER_IDS).add(rStorageAdapterId);
-			}
-
-			Log.debugf("NEW storage adapter %s[%d]\n",
-					   rStorageAdapterId,
-					   rStorageAdapterRegistry.getStorageAdapterCount());
-		}
-		else
-		{
-			Log.debugf("Re-using storage adapter %s[%d]\n",
-					   rStorageAdapterId,
-					   rStorageAdapterRegistry.getStorageAdapterCount());
-		}
-
-		rStorageAdapter.setQueryParameters(pQuery,
-										   fGetColumnData,
-										   pDefaultCriteria,
-										   pSortCriteria,
-										   rColumns);
-
-		return rStorageAdapterId;
 	}
 }

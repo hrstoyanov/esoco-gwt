@@ -134,8 +134,6 @@ public class DataElementUI<D extends DataElement<?>>
 	private static final List<PropertyName<?>> MAPPED_PROPERTIES =
 		Arrays.asList(STYLE, WIDTH, HEIGHT, WRAP, NO_WRAP, RESOURCE);
 
-	private static final boolean PROFILING = false;
-
 	static final EsocoGwtCss CSS = EsocoGwtResources.INSTANCE.css();
 
 	/** The default prefix for label resource IDs. */
@@ -430,18 +428,11 @@ public class DataElementUI<D extends DataElement<?>>
 		ContainerBuilder<?> rBuilder,
 		StyleData			rStyle)
 	{
-		long t = System.currentTimeMillis();
-
 		rBaseStyle		  = rStyle;
 		aElementComponent = buildDataElementUI(rBuilder, rStyle);
 
 		applyElementProperties();
 		rDataElement.setModified(false);
-
-		if (PROFILING)
-		{
-			profile("DE-BUILD", t);
-		}
 	}
 
 	/***************************************
@@ -633,21 +624,12 @@ public class DataElementUI<D extends DataElement<?>>
 
 	/***************************************
 	 * Updates the element component display from the data element value. Uses
-	 * {@link #transferDataElementValueToComponent(DataElement, Component)} to
-	 * display the new value. This method must be overridden by subclasses that
-	 * provide additional component renderings.
-	 *
-	 * <p><b>Attention</b>: Invoking this method will replace any values entered
-	 * into an input component with the model value stored in the data element.
-	 * Therefore it should only be invoked on display UIs or when the resetting
-	 * of input fields is explicitly desired.</p>
+	 * {@link #updateValue()} to display the new value.
 	 */
 	public void update()
 	{
 		if (aElementComponent != null)
 		{
-			long t = System.currentTimeMillis();
-
 			if (rDataElement.hasFlag(VALUE_CHANGED))
 			{
 				updateValue();
@@ -656,11 +638,6 @@ public class DataElementUI<D extends DataElement<?>>
 			applyStyle();
 			aElementComponent.repaint();
 			checkRequestFocus();
-
-			if (PROFILING)
-			{
-				profile("DE-UPDATE", t);
-			}
 		}
 	}
 
@@ -1584,8 +1561,8 @@ public class DataElementUI<D extends DataElement<?>>
 	 * elements. This default implementation handles the standard components
 	 * that are created by this base class.
 	 *
-	 * <p>This method will be invoked from the {@link #update()} method if the
-	 * UI needs to be updated from the model data (i.e. from the data
+	 * <p>This method will be invoked from the {@link #updateValue()} method if
+	 * the UI needs to be updated from the model data (i.e. from the data
 	 * element).</p>
 	 *
 	 * @param rDataElement The data element to transfer the value of
@@ -1889,20 +1866,6 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		this.rPanelManager = rParent;
 		this.rDataElement  = rElement;
-	}
-
-	/***************************************
-	 * Profiling output
-	 *
-	 * @param sDescription A description string
-	 * @param nStartTime   The start time of the profiled execution
-	 */
-	void profile(String sDescription, long nStartTime)
-	{
-		EWT.logTime("  " + rPanelManager.getHierarchyChildIndent() + " +-" +
-					sDescription,
-					getDataElement().getSimpleName(),
-					nStartTime);
 	}
 
 	/***************************************

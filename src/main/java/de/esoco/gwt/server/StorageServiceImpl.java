@@ -71,10 +71,11 @@ public abstract class StorageServiceImpl<E extends Entity>
 
 	private static final long serialVersionUID = 1L;
 
+	// relation type to store the storage adapters for a session
 	private static final RelationType<Map<StorageAdapterId, StorageAdapter>> STORAGE_ADAPTER_MAP =
 		newMapType(false);
 
-	private static int nNextAdapterId = 1;
+	private static long nNextStorageAdapterId = 1;
 
 	static
 	{
@@ -102,35 +103,13 @@ public abstract class StorageServiceImpl<E extends Entity>
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * @see StorageAdapterRegistry#getStorageAdapter(StorageAdapterId)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public final StorageAdapter getStorageAdapter(StorageAdapterId rId)
 		throws StorageException
 	{
 		return getStorageAdapterMap().get(rId);
-	}
-
-	/***************************************
-	 * @see StorageAdapterRegistry#getStorageAdapter(String)
-	 */
-	@Override
-	public final StorageAdapter getStorageAdapter(String sId)
-		throws StorageException
-	{
-		StorageAdapter rStorageAdapter =
-			getStorageAdapter(new StorageAdapterId(Integer.parseInt(sId)));
-
-		return rStorageAdapter;
-	}
-
-	/***************************************
-	 * @see StorageAdapterRegistry#getStorageAdapterCount()
-	 */
-	@Override
-	public int getStorageAdapterCount() throws StorageException
-	{
-		return getStorageAdapterMap().size();
 	}
 
 	/***************************************
@@ -236,13 +215,13 @@ public abstract class StorageServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * @see StorageAdapterRegistry#registerStorageAdapter(StorageAdapter)
+	 * {@inheritDoc}
 	 */
 	@Override
 	public StorageAdapterId registerStorageAdapter(StorageAdapter rAdapter)
 		throws StorageException
 	{
-		StorageAdapterId aId = new StorageAdapterId(nNextAdapterId++);
+		StorageAdapterId aId = new StorageAdapterId(nNextStorageAdapterId++);
 
 		Map<StorageAdapterId, StorageAdapter> rAdapterMap =
 			getStorageAdapterMap();

@@ -1,1 +1,9 @@
 /gradle/
+/com.google.gdt.eclipse.core.prefs
+/com.google.gwt.eclipse.core.prefs
+/com.gwtplugins.gdt.eclipse.core.prefs
+/com.gwtplugins.gwt.eclipse.core.prefs
+/org.eclipse.buildship.core.prefs
+/org.eclipse.core.resources.prefs
+/org.eclipse.jdt.core.prefs
+/org.eclipse.jst.common.project.facet.core.prefs

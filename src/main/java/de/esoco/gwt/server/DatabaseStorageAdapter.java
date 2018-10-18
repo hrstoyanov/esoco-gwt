@@ -502,7 +502,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 		RelationType<?> rAttr,
 		String			sConstraint)
 	{
-		Class<?>     rDatatype   = rAttr.getValueType();
+		Class<?>     rDatatype   = rAttr.getTargetType();
 		Predicate<?> pAttribute  = null;
 		char		 cComparison = sConstraint.charAt(0);
 
@@ -760,7 +760,7 @@ public class DatabaseStorageAdapter extends AbstractStorageAdapter
 		}
 		else
 		{
-			Class<?>		  rDatatype   = rAttr.getValueType();
+			Class<?>		  rDatatype   = rAttr.getTargetType();
 			Predicate<Object> pComparison;
 
 			if (sConstraint.indexOf('%') >= 0 || sConstraint.indexOf('_') >= 0)

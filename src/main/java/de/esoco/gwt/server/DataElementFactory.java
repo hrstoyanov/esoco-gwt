@@ -339,7 +339,7 @@ public class DataElementFactory
 		if (fGetAttr instanceof RelationType<?>)
 		{
 			rAttribute = (RelationType<?>) fGetAttr;
-			rDatatype  = rAttribute.getValueType();
+			rDatatype  = rAttribute.getTargetType();
 
 			if (Entity.class.isAssignableFrom(rDatatype))
 			{
@@ -366,7 +366,7 @@ public class DataElementFactory
 		else if (fGetAttr instanceof FunctionChain)
 		{
 			rAttribute = findDisplayAttribute(fGetAttr);
-			rDatatype  = rAttribute.getValueType();
+			rDatatype  = rAttribute.getTargetType();
 		}
 
 		if (rDatatype.isEnum())
@@ -592,7 +592,7 @@ public class DataElementFactory
 
 			if (rDisplayAttr != null)
 			{
-				Class<?> rDatatype = rDisplayAttr.getValueType();
+				Class<?> rDatatype = rDisplayAttr.getTargetType();
 
 				sId		  = rDisplayAttr.getName();
 				sDatatype = rDatatype.getSimpleName();
@@ -602,7 +602,7 @@ public class DataElementFactory
 					RelationType<?> rRefAttr =
 						(RelationType<?>) Functions.firstInChain(fGetAttr);
 
-					Class<?> rRefType = rRefAttr.getValueType();
+					Class<?> rRefType = rRefAttr.getTargetType();
 
 					if (Entity.class.isAssignableFrom(rRefType))
 					{
@@ -784,7 +784,7 @@ public class DataElementFactory
 								 RelationType<?> rType)
 		throws AuthenticationException, StorageException
 	{
-		Class<?> rTargetDatatype = rType.getValueType();
+		Class<?> rTargetDatatype = rType.getTargetType();
 
 		if (DataElement.class.isAssignableFrom(rTargetDatatype))
 		{
@@ -1654,7 +1654,7 @@ public class DataElementFactory
 		Collection<?>   rAllowedValues,
 		Set<Flag>		rFlags) throws StorageException
 	{
-		Class<?>	   rDatatype	    = rType.getValueType();
+		Class<?>	   rDatatype	    = rType.getTargetType();
 		Class<?>	   rElementDatatype = rType.get(ELEMENT_DATATYPE);
 		String		   sName		    = rType.getName();
 		DataElement<?> aDataElement;
@@ -1724,7 +1724,7 @@ public class DataElementFactory
 	{
 		assert rType != null;
 
-		Class<?>	   rDatatype    = rType.getValueType();
+		Class<?>	   rDatatype    = rType.getTargetType();
 		String		   sName	    = rType.getName();
 		DataElement<?> aDataElement;
 
@@ -1936,7 +1936,7 @@ public class DataElementFactory
 				rValue != null ? ((Entity) rValue).getGlobalId() : "";
 
 			aDataElement =
-				createSimpleDataElement(rRelation.getType().getValueType(),
+				createSimpleDataElement(rRelation.getType().getTargetType(),
 										sName,
 										sValue,
 										rAllowedValues,

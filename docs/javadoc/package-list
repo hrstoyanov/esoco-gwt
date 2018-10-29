@@ -1,0 +1,11 @@
+de.esoco.data.element
+de.esoco.data.process
+de.esoco.gwt.client
+de.esoco.gwt.client.app
+de.esoco.gwt.client.data
+de.esoco.gwt.client.res
+de.esoco.gwt.client.ui
+de.esoco.gwt.server
+de.esoco.gwt.shared
+de.esoco.gwt.tool
+de.esoco.lib.property

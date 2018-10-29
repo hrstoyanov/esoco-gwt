@@ -56,6 +56,8 @@ artifacts {
 }
 
 tasks.withType(Javadoc) {
+    // workaround for javadoc errors from references to gwt-user.jar
+    options.addStringOption("sourcepath", "")
     failOnError = false
     options.addBooleanOption('quiet', true)
     

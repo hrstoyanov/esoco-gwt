@@ -66,6 +66,15 @@ tasks.withType(Javadoc) {
     }
 }
 
+eclipse {
+	classpath {
+		// add GWT plugin container and prevent buildship from replacing the
+		// eclipse classpath (which would remove GWT)
+		containers 'com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER',
+		           'org.eclipse.buildship.core.gradleclasspathcontainer'
+	}
+}
+
 // ----------- Bintray Release -----------
 
 buildscript {

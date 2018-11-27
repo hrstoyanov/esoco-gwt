@@ -31,9 +31,9 @@ import de.esoco.ewt.component.ComboBox;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Container;
 import de.esoco.ewt.component.ListControl;
+import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.event.EwtEventHandler;
-import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.layout.GenericLayout;
 import de.esoco.ewt.layout.TableGridLayout;
 import de.esoco.ewt.style.StyleData;
@@ -90,17 +90,18 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	//~ Static fields/initializers ---------------------------------------------
 
 	private static final Collection<PropertyName<?>> BUTTON_STYLE_PROPERTIES =
-		Arrays.<PropertyName<?>>asList(BUTTON_STYLE,
-									   BUTTON_SIZE,
-									   CHECK_BOX_STYLE,
-									   ICON_SIZE,
-									   ICON_COLOR,
-									   HORIZONTAL_ALIGN,
-									   VERTICAL_ALIGN,
-									   ICON_ALIGN,
-									   FLOAT,
-									   NO_EVENT_PROPAGATION,
-									   LAYOUT_VISIBILITY);
+		Arrays.<PropertyName<?>>asList(
+			BUTTON_STYLE,
+			BUTTON_SIZE,
+			CHECK_BOX_STYLE,
+			ICON_SIZE,
+			ICON_COLOR,
+			HORIZONTAL_ALIGN,
+			VERTICAL_ALIGN,
+			ICON_ALIGN,
+			FLOAT,
+			NO_EVENT_PROPAGATION,
+			LAYOUT_VISIBILITY);
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -116,9 +117,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	@Override
 	public void handleEvent(EwtEvent rEvent)
 	{
-		setButtonSelection(getDataElement(),
-						   aListButtons,
-						   (Button) rEvent.getSource());
+		setButtonSelection(
+			getDataElement(),
+			aListButtons,
+			(Button) rEvent.getSource());
 	}
 
 	/***************************************
@@ -150,8 +152,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 				(ListDataElement<String>) rDataElement;
 
 			// update validator to allow new values entered into the combo box
-			((StringListValidator) rListDataElement.getValidator()).getValues()
-																   .addAll(rValues);
+			((StringListValidator) rListDataElement.getElementValidator())
+			.getValues().addAll(rValues);
 			rListDataElement.clear();
 			rListDataElement.addAll(rValues);
 		}
@@ -186,9 +188,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		}
 		else if (rComponent instanceof ComboBox)
 		{
-			updateComboBox((ComboBox) rComponent,
-						   rValues,
-						   bAllowedValuesChanged);
+			updateComboBox(
+				(ComboBox) rComponent,
+				rValues,
+				bAllowedValuesChanged);
 		}
 		else if (rComponent instanceof Container)
 		{
@@ -258,8 +261,9 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	private StyleData createButtonStyle(DataElement<?> rDataElement)
 	{
 		StyleData rButtonStyle =
-			StyleData.DEFAULT.withProperties(rDataElement,
-											 BUTTON_STYLE_PROPERTIES);
+			StyleData.DEFAULT.withProperties(
+				rDataElement,
+				BUTTON_STYLE_PROPERTIES);
 
 		if (rDataElement.getProperty(CONTENT_TYPE, null) ==
 			ContentType.HYPERLINK)
@@ -319,8 +323,9 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
 		LayoutType eLayout =
-			rDataElement.getProperty(UserInterfaceProperties.LAYOUT,
-									 getButtonPanelDefaultLayout());
+			rDataElement.getProperty(
+				UserInterfaceProperties.LAYOUT,
+				getButtonPanelDefaultLayout());
 
 		// inline inserts buttons directly into enclosing panels
 		// TODO: return not the parent container from this method as this
@@ -334,8 +339,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 
 			rStyle = rStyle.append(WEB_ADDITIONAL_STYLES, sButtonPanelStyle);
 
-			setBaseStyle(getBaseStyle().append(WEB_ADDITIONAL_STYLES,
-											   sButtonPanelStyle));
+			setBaseStyle(
+				getBaseStyle().append(
+					WEB_ADDITIONAL_STYLES,
+					sButtonPanelStyle));
 
 			if (eLayout == LayoutType.TABLE)
 			{
@@ -499,12 +506,13 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			case DISCRETE:
 			case IMMEDIATE:
 				aComponent =
-					createListButtonPanel(rBuilder,
-										  rStyle,
-										  rDataElement,
-										  rValues,
-										  eListStyle,
-										  rCurrentSelection);
+					createListButtonPanel(
+						rBuilder,
+						rStyle,
+						rDataElement,
+						rValues,
+						eListStyle,
+						rCurrentSelection);
 				break;
 		}
 
@@ -793,8 +801,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			for (Object rValue : rValues)
 			{
 				String sValue =
-					rContext.expandResource(convertValueToString(rDataElement,
-																 rValue));
+					rContext.expandResource(
+						convertValueToString(rDataElement, rValue));
 
 				if (sSelection.equals(sValue))
 				{
@@ -852,9 +860,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		}
 
 		int[] rCurrentSelection =
-			getCurrentSelection(rContainer.getContext(),
-								getDataElement(),
-								rButtonLabels);
+			getCurrentSelection(
+				rContainer.getContext(),
+				getDataElement(),
+				rButtonLabels);
 
 		applyCurrentSelection(rCurrentSelection, aListButtons);
 	}
@@ -893,8 +902,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		}
 		else
 		{
-			rComboBox.setText(convertValueToString(rDataElement,
-												   rDataElement.getValue()));
+			rComboBox.setText(
+				convertValueToString(rDataElement, rDataElement.getValue()));
 		}
 	}
 
@@ -919,8 +928,10 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			}
 		}
 
-		rListControl.setSelection(getCurrentSelection(rListControl.getContext(),
-													  getDataElement(),
-													  rValues));
+		rListControl.setSelection(
+			getCurrentSelection(
+				rListControl.getContext(),
+				getDataElement(),
+				rValues));
 	}
 }

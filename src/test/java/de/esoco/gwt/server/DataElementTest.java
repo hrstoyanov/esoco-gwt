@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -88,23 +88,26 @@ public class DataElementTest
 		DataElementFactory aFactory = new DataElementFactory(null);
 
 		DataElement<?> e1  =
-			aFactory.createEnumDataElement("TEST",
-										   TestEnum.class,
-										   TestEnum.T1,
-										   null,
-										   null);
+			aFactory.createEnumDataElement(
+				"TEST",
+				TestEnum.class,
+				TestEnum.T1,
+				null,
+				null);
 		DataElement<?> e1a =
-			aFactory.createEnumDataElement("TEST",
-										   TestEnum.class,
-										   TestEnum.T1,
-										   null,
-										   null);
+			aFactory.createEnumDataElement(
+				"TEST",
+				TestEnum.class,
+				TestEnum.T1,
+				null,
+				null);
 		DataElement<?> e2  =
-			aFactory.createEnumDataElement("TEST2",
-										   TestEnum.class,
-										   TestEnum.T2,
-										   null,
-										   null);
+			aFactory.createEnumDataElement(
+				"TEST2",
+				TestEnum.class,
+				TestEnum.T2,
+				null,
+				null);
 
 		assertTrue(e1.equals(e1a));
 		assertFalse(e1.equals(e2));
@@ -200,10 +203,11 @@ public class DataElementTest
 		StringDataElement e =
 			new StringDataElement("ELEMENT", "VALUE", null, aImmutableFlag);
 		DataElementList   l =
-			new DataElementList("PARENT",
-								null,
-								Arrays.asList(e),
-								aImmutableFlag);
+			new DataElementList(
+				"PARENT",
+				null,
+				Arrays.asList(e),
+				aImmutableFlag);
 
 		try
 		{
@@ -240,14 +244,15 @@ public class DataElementTest
 	public void testValidValue()
 	{
 		StringDataElement e =
-			new StringDataElement("TEST",
-								  "1",
-								  new RegExValidator("\\d+"),
-								  null);
+			new StringDataElement(
+				"TEST",
+				"1",
+				new RegExValidator("\\d+"),
+				null);
 
-		assertTrue(e.isValidValue("2"));
-		assertFalse(e.isValidValue(""));
-		assertFalse(e.isValidValue("a"));
+		assertTrue(e.isValidValue(e.getValidator(), "2"));
+		assertFalse(e.isValidValue(e.getValidator(), ""));
+		assertFalse(e.isValidValue(e.getValidator(), "a"));
 
 		e.setValue("123");
 		assertEquals("123", e.getValue());
@@ -277,8 +282,8 @@ public class DataElementTest
 	{
 		for (int i = 1; i <= nCount; i++)
 		{
-			rList.addElement(new StringDataElement(sNamePrefix + i,
-												   sValuePrefix + i));
+			rList.addElement(
+				new StringDataElement(sNamePrefix + i, sValuePrefix + i));
 		}
 	}
 }

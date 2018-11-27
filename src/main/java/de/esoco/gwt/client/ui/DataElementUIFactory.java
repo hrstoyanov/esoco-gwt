@@ -46,17 +46,22 @@ public class DataElementUIFactory
 	static
 	{
 		registerDataElementUI(DataElementList.class, DataElementListUI::new);
-		registerDataElementUI(BooleanDataElement.class,
-							  BooleanDataElementUI::new);
-		registerDataElementUI(IntegerDataElement.class,
-							  IntegerDataElementUI::new);
-		registerDataElementUI(BigDecimalDataElement.class,
-							  BigDecimalDataElementUI::new);
+		registerDataElementUI(
+			BooleanDataElement.class,
+			BooleanDataElementUI::new);
+		registerDataElementUI(
+			IntegerDataElement.class,
+			IntegerDataElementUI::new);
+		registerDataElementUI(
+			BigDecimalDataElement.class,
+			BigDecimalDataElementUI::new);
 		registerDataElementUI(DateDataElement.class, DateDataElementUI::new);
-		registerDataElementUI(PeriodDataElement.class,
-							  PeriodDataElementUI::new);
-		registerDataElementUI(SelectionDataElement.class,
-							  SelectionDataElementUI::new);
+		registerDataElementUI(
+			PeriodDataElement.class,
+			PeriodDataElementUI::new);
+		registerDataElementUI(
+			SelectionDataElement.class,
+			SelectionDataElementUI::new);
 	}
 
 	//~ Constructors -----------------------------------------------------------
@@ -106,8 +111,9 @@ public class DataElementUIFactory
 
 		if (aUI == null)
 		{
-			throw new IllegalArgumentException("No UI for data element " +
-											   rElement);
+			throw new IllegalArgumentException(
+				"No UI for data element " +
+				rElement);
 		}
 
 		((DataElementUI<D>) aUI).init(rPanelManager, rElement);
@@ -116,12 +122,31 @@ public class DataElementUIFactory
 	}
 
 	/***************************************
-	 * Registers a data element UI creator for a certain data element type. This
-	 * must be invoked once before a user interface for the given types shall be
-	 * created.
+	 * Returns the registered data element UI factory for a certain data element
+	 * type. The returned value can be used to create UI factories with a
+	 * fallback on previously registered UIs.
 	 *
-	 * @param rDataElementClass The class of the data element type
-	 * @param rCreator          The creator instance for the type
+	 * @param  rDataElementClass The data element type class
+	 *
+	 * @return The factory function for the type or NULL if none has been
+	 *         registered so far
+	 */
+	@SuppressWarnings("unchecked")
+	public static <D extends DataElement<?>, U extends DataElementUI<D>> Supplier<U>
+	getRegisteredUI(Class<D> rDataElementClass)
+	{
+		return (Supplier<U>) aDataElementRegistry.get(
+			rDataElementClass.getName());
+	}
+
+	/***************************************
+	 * Registers a data element UI factory for a certain data element type. This
+	 * will replace any previously registered factory if such exists. If an
+	 * existing factory should be extended instead the original can be queried
+	 * with {@link #getRegisteredUI(Class)}.
+	 *
+	 * @param rDataElementClass The data element type class
+	 * @param rCreator          The factory function for the type
 	 */
 	public static <D extends DataElement<?>, U extends DataElementUI<D>> void
 	registerDataElementUI(Class<D> rDataElementClass, Supplier<U> rCreator)

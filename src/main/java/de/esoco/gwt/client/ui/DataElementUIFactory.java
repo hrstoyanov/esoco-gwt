@@ -24,11 +24,14 @@ import de.esoco.data.element.DateDataElement;
 import de.esoco.data.element.IntegerDataElement;
 import de.esoco.data.element.PeriodDataElement;
 import de.esoco.data.element.SelectionDataElement;
+import de.esoco.data.element.StringDataElement;
 import de.esoco.data.validate.HasValueList;
+
+import de.esoco.ewt.EWT;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 
 /********************************************************************
@@ -40,28 +43,38 @@ public class DataElementUIFactory
 {
 	//~ Static fields/initializers ---------------------------------------------
 
-	private static Map<String, Supplier<?>> aDataElementRegistry =
+	private static Map<String, Function<DataElement<?>, DataElementUI<?>>> aDataElementRegistry =
 		new HashMap<>();
 
 	static
 	{
-		registerDataElementUI(DataElementList.class, DataElementListUI::new);
+		registerDataElementUI(
+			DataElement.class,
+			rElement -> createDefaultUI(rElement));
+		registerDataElementUI(
+			StringDataElement.class,
+			rElement -> createDefaultUI(rElement));
+		registerDataElementUI(
+			DataElementList.class,
+			e -> new DataElementListUI());
 		registerDataElementUI(
 			BooleanDataElement.class,
-			BooleanDataElementUI::new);
+			e -> new BooleanDataElementUI());
 		registerDataElementUI(
 			IntegerDataElement.class,
-			IntegerDataElementUI::new);
+			e -> new IntegerDataElementUI());
 		registerDataElementUI(
 			BigDecimalDataElement.class,
-			BigDecimalDataElementUI::new);
-		registerDataElementUI(DateDataElement.class, DateDataElementUI::new);
+			e -> new BigDecimalDataElementUI());
+		registerDataElementUI(
+			DateDataElement.class,
+			e -> new DateDataElementUI());
 		registerDataElementUI(
 			PeriodDataElement.class,
-			PeriodDataElementUI::new);
+			e -> new PeriodDataElementUI());
 		registerDataElementUI(
 			SelectionDataElement.class,
-			SelectionDataElementUI::new);
+			e -> new SelectionDataElementUI());
 	}
 
 	//~ Constructors -----------------------------------------------------------
@@ -93,27 +106,24 @@ public class DataElementUIFactory
 	{
 		DataElementUI<?> aUI = null;
 
-		Supplier<?> rUiSupplier =
+		Function<DataElement<?>, DataElementUI<?>> rUiFactory =
 			aDataElementRegistry.get(rElement.getClass().getName());
 
-		if (rUiSupplier != null)
+		if (rUiFactory == null)
 		{
-			aUI = (DataElementUI<D>) rUiSupplier.get();
+			EWT.log("No UI factory for " + rElement.getClass());
+			rUiFactory = aDataElementRegistry.get(DataElement.class.getName());
 		}
-		else if (rElement.getValidator() instanceof HasValueList<?>)
+
+		if (rUiFactory != null)
 		{
-			aUI = new ValueListDataElementUI();
-		}
-		else
-		{
-			aUI = new DataElementUI<DataElement<?>>();
+			aUI = rUiFactory.apply(rElement);
 		}
 
 		if (aUI == null)
 		{
 			throw new IllegalArgumentException(
-				"No UI for data element " +
-				rElement);
+				"No UI for data element " + rElement);
 		}
 
 		((DataElementUI<D>) aUI).init(rPanelManager, rElement);
@@ -132,10 +142,10 @@ public class DataElementUIFactory
 	 *         registered so far
 	 */
 	@SuppressWarnings("unchecked")
-	public static <D extends DataElement<?>, U extends DataElementUI<D>> Supplier<U>
+	public static <D extends DataElement<?>, U extends DataElementUI<D>> Function<D, U>
 	getRegisteredUI(Class<D> rDataElementClass)
 	{
-		return (Supplier<U>) aDataElementRegistry.get(
+		return (Function<D, U>) aDataElementRegistry.get(
 			rDataElementClass.getName());
 	}
 
@@ -146,11 +156,40 @@ public class DataElementUIFactory
 	 * with {@link #getRegisteredUI(Class)}.
 	 *
 	 * @param rDataElementClass The data element type class
-	 * @param rCreator          The factory function for the type
+	 * @param rFactory          The factory function for the type
 	 */
+	@SuppressWarnings("unchecked")
 	public static <D extends DataElement<?>, U extends DataElementUI<D>> void
-	registerDataElementUI(Class<D> rDataElementClass, Supplier<U> rCreator)
+	registerDataElementUI(Class<D> rDataElementClass, Function<D, U> rFactory)
 	{
-		aDataElementRegistry.put(rDataElementClass.getName(), rCreator);
+		aDataElementRegistry.put(
+			rDataElementClass.getName(),
+			(Function<DataElement<?>, DataElementUI<?>>) rFactory);
+	}
+
+	/***************************************
+	 * Internal generically typed method to create the default UI for a data
+	 * element that has no specific factory.
+	 *
+	 * @param  rElement The element to create the UI for
+	 *
+	 * @return The new default UI
+	 */
+	@SuppressWarnings("unchecked")
+	static <D extends DataElement<?>> DataElementUI<D> createDefaultUI(
+		D rElement)
+	{
+		DataElementUI<D> aUI;
+
+		if (rElement.getValidator() instanceof HasValueList<?>)
+		{
+			aUI = (DataElementUI<D>) new ValueListDataElementUI();
+		}
+		else
+		{
+			aUI = (DataElementUI<D>) new DataElementUI<DataElement<?>>();
+		}
+
+		return aUI;
 	}
 }

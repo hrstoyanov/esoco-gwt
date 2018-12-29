@@ -16,7 +16,6 @@
 }
 
 .gf-DataElement {
-	white-space: pre-wrap;
 }
 
 @external .gf-LoginDialog, .gf-LoginPanel;

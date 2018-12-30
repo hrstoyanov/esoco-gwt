@@ -207,19 +207,21 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			// create a special edit process description with the same ID (!)
 			// that will be invoked if a selection is available
 			ProcessDescription aDescription =
-				new ProcessDescription(rDefinition.get(NAME) + "Edit",
-									   rDefinition.get(DESCRIPTION),
-									   nIndex,
-									   true);
+				new ProcessDescription(
+					rDefinition.get(NAME) + "Edit",
+					rDefinition.get(DESCRIPTION),
+					nIndex,
+					true);
 
 			rDescriptionList.add(aDescription);
 		}
 
 		ProcessDescription aDescription =
-			new ProcessDescription(rDefinition.get(NAME),
-								   rDefinition.get(DESCRIPTION),
-								   nIndex,
-								   bInputRequired);
+			new ProcessDescription(
+				rDefinition.get(NAME),
+				rDefinition.get(DESCRIPTION),
+				nIndex,
+				bInputRequired);
 
 		if (rDescriptionList != null)
 		{
@@ -335,8 +337,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				{
 					// Only log secondary exceptions and fall through to
 					// standard exception handling
-					Log.error("Could not create exception process state",
-							  eSecondary);
+					Log.error(
+						"Could not create exception process state",
+						eSecondary);
 				}
 			}
 
@@ -552,14 +555,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				for (Entry<RelationType<?>, String> rEntry :
 					 rParamMessageMap.entrySet())
 				{
-					aInvalidParams.put(rEntry.getKey().getName(),
-									   rEntry.getValue());
+					aInvalidParams.put(
+						rEntry.getKey().getName(),
+						rEntry.getValue());
 				}
 
 				eResult =
-					new ServiceException(sMessage,
-										 aInvalidParams,
-										 rProcessState);
+					new ServiceException(
+						sMessage,
+						aInvalidParams,
+						rProcessState);
 			}
 			else if (e.getCause() instanceof
 					 ConcurrentEntityModificationException)
@@ -574,9 +579,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				aLockedEntity.put(ERROR_LOCKED_ENTITY_ID, sEntityId);
 
 				eResult =
-					new ServiceException(ERROR_ENTITY_LOCKED,
-										 aLockedEntity,
-										 rProcessState);
+					new ServiceException(
+						ERROR_ENTITY_LOCKED,
+						aLockedEntity,
+						rProcessState);
 			}
 			else
 			{
@@ -618,8 +624,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			{
 				aLocks.setLength(aLocks.length() - 1);
 
-				rProcessState.setProperty(PROCESS_ENTITY_LOCKS,
-										  aLocks.toString());
+				rProcessState.setProperty(
+					PROCESS_ENTITY_LOCKS,
+					aLocks.toString());
 			}
 		}
 	}
@@ -647,12 +654,13 @@ public abstract class ProcessServiceImpl<E extends Entity>
 					rInteractionStep.get(INTERACTION_PARAMS);
 
 				ViewFragment aViewFragment =
-					new ViewFragment("UI_INSPECTOR",
-									 new EditInteractionParameters(rParams),
-									 ViewDisplayType.VIEW);
+					new ViewFragment(
+						"UI_INSPECTOR",
+						new EditInteractionParameters(rParams),
+						ViewDisplayType.VIEW);
 
-				aViewFragment.show(((FragmentInteraction) rInteractionStep)
-								   .getRootFragment());
+				aViewFragment.show(
+					((FragmentInteraction) rInteractionStep).getRootFragment());
 			}
 		}
 	}
@@ -724,12 +732,13 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				{
 					if (bChanged)
 					{
-						rModifiedElements.add(rDataElement.copy(CopyMode.PROPERTIES));
+						rModifiedElements.add(
+							rDataElement.copy(CopyMode.PROPERTIES));
 					}
 
-					collectModifiedDataElements(((DataElementList) rDataElement)
-												.getElements(),
-												rModifiedElements);
+					collectModifiedDataElements(
+						((DataElementList) rDataElement).getElements(),
+						rModifiedElements);
 				}
 			}
 			else if (bChanged)
@@ -807,15 +816,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		rProcess.setParameter(EXTERNAL_SERVICE_ACCESS, this);
 		rProcess.setParameter(STORAGE_ADAPTER_REGISTRY, this);
 		rProcess.setParameter(PROCESS_USER, rUser);
-		rProcess.setParameter(PROCESS_LOCALE,
-							  getThreadLocalRequest().getLocale());
+		rProcess.setParameter(
+			PROCESS_LOCALE,
+			getThreadLocalRequest().getLocale());
 
 		return rProcess;
 	}
 
 	/***************************************
 	 * Creates a new {@link ProcessState} instance from a certain process.
-	 * Invoked by {@link #executeProcess(int, ProcessDescription)}.
+	 * Invoked by {@link #executeProcess(ProcessDescription, Relatable)}.
 	 *
 	 * @param  rDescription The process definition
 	 * @param  rProcess     The process
@@ -859,15 +869,15 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			}
 
 			aProcessState =
-				new ProcessState(rDescription,
-								 sProcessId,
-								 sProcessInfo,
-								 rInteractionStep.getName(),
-								 aInteractionElements,
-								 aViewElements,
-								 getSpawnProcesses(rProcess),
-								 getProcessStateFlags(rProcess,
-													  rInteractionStep));
+				new ProcessState(
+					rDescription,
+					sProcessId,
+					sProcessInfo,
+					rInteractionStep.getName(),
+					aInteractionElements,
+					aViewElements,
+					getSpawnProcesses(rProcess),
+					getProcessStateFlags(rProcess, rInteractionStep));
 
 			if (rProcess.hasFlagParameter(MetaTypes.AUTHENTICATED))
 			{
@@ -878,8 +888,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 			if (sStyle != null)
 			{
-				aProcessState.setProperty(UserInterfaceProperties.STYLE,
-										  sStyle);
+				aProcessState.setProperty(
+					UserInterfaceProperties.STYLE,
+					sStyle);
 			}
 
 			applyModifiedEntities(rProcess, aProcessState);
@@ -923,8 +934,10 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 			for (RelationType<List<RelationType<?>>> rViewParam : rViewParams)
 			{
-				aViewElements.add((DataElementList) rFactory.getDataElement(rInteractionStep,
-																			rViewParam));
+				aViewElements.add(
+					(DataElementList) rFactory.getDataElement(
+						rInteractionStep,
+						rViewParam));
 			}
 		}
 
@@ -966,8 +979,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 			// if the user reloads the browser windows the existing process can
 			// be re-used instead of creating a new one
 			rProcess =
-				checkReuseExistingAppProcess(rDescription,
-											 rUserProcessMap.values());
+				checkReuseExistingAppProcess(
+					rDescription,
+					rUserProcessMap.values());
 
 			if (rProcess != null)
 			{
@@ -981,8 +995,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				rProcess = createProcess(rDefinition, rSessionData);
 
 				getSessionContext().get(PROCESS_LIST).add(rProcess);
-				rUserProcessMap.put(rProcess.getParameter(PROCESS_ID),
-									rProcess);
+				rUserProcessMap.put(
+					rProcess.getParameter(PROCESS_ID),
+					rProcess);
 				initProcess(rProcess, rInitParams);
 				setProcessInput(rProcess, rDescription.getProcessInput());
 			}
@@ -1007,8 +1022,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		}
 		else
 		{
-			throw new IllegalArgumentException("Unknown process reference: " +
-											   rDescription);
+			throw new IllegalArgumentException(
+				"Unknown process reference: " +
+				rDescription);
 		}
 
 		return rProcess;
@@ -1127,8 +1143,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		{
 			try
 			{
-				rProcess.set(CLIENT_LOCALE,
-							 Locale.forLanguageTag(sClientLocale));
+				rProcess.set(
+					CLIENT_LOCALE,
+					Locale.forLanguageTag(sClientLocale));
 			}
 			catch (Exception e)
 			{
@@ -1208,13 +1225,15 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				DataElementFactory rDataElementFactory =
 					getDataElementFactory();
 
-				rDataElementFactory.applyDataElements(rInteractionParams,
-													  rProcess);
+				rDataElementFactory.applyDataElements(
+					rInteractionParams,
+					rProcess);
 
 				if (!rViewParams.isEmpty())
 				{
-					rDataElementFactory.applyDataElements(rViewParams,
-														  rProcess);
+					rDataElementFactory.applyDataElements(
+						rViewParams,
+						rProcess);
 				}
 			}
 
@@ -1228,8 +1247,9 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 				if (rInteractionParam == null)
 				{
-					throw new IllegalStateException("Unknown interaction parameter: " +
-													rInteractionParam);
+					throw new IllegalStateException(
+						"Unknown interaction parameter: " +
+						rInteractionParam);
 				}
 
 				InteractionEventType eEventType =

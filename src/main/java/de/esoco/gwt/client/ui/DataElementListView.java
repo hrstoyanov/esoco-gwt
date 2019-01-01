@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import de.esoco.data.element.DataElementList;
 import de.esoco.ewt.UserInterfaceContext;
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.View;
-import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.event.EventType;
+import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.style.StyleData;
 import de.esoco.ewt.style.ViewStyle;
 
@@ -46,7 +46,7 @@ import static de.esoco.lib.property.StyleProperties.AUTO_HIDE;
 
 
 /********************************************************************
- * A class that handles the display of a data element list in a separate EWT
+ * A class that handles the display of a data element list in a separate GEWT
  * view.
  *
  * @author eso
@@ -77,8 +77,9 @@ public class DataElementListView
 		DataElementList			rViewElement)
 	{
 		aViewUI =
-			(DataElementListUI) DataElementUIFactory.create(rParent,
-															rViewElement);
+			(DataElementListUI) DataElementUIFactory.create(
+				rParent,
+				rViewElement);
 	}
 
 	//~ Static methods ---------------------------------------------------------
@@ -97,7 +98,9 @@ public class DataElementListView
 	//~ Methods ----------------------------------------------------------------
 
 	/***************************************
-	 * {@inheritDoc}
+	 * Collects the modified data element UIs that received user input.
+	 *
+	 * @param rModifiedElements A list to add modified data elements to
 	 */
 	public void collectInput(List<DataElement<?>> rModifiedElements)
 	{
@@ -149,15 +152,17 @@ public class DataElementListView
 	{
 		ViewDisplayType eViewType =
 			aViewUI.getDataElement()
-				   .getProperty(VIEW_DISPLAY_TYPE,
-								ViewDisplayType.MODAL_DIALOG);
+				   .getProperty(
+	   				VIEW_DISPLAY_TYPE,
+	   				ViewDisplayType.MODAL_DIALOG);
 
 		ContainerBuilder<View> rBuilder =
 			createView(aViewUI.getParent().getContainer().getView(), eViewType);
 
 		StyleData rStyle =
-			PanelManager.addStyles(StyleData.DEFAULT,
-								   aViewUI.getElementStyleName());
+			PanelManager.addStyles(
+				StyleData.DEFAULT,
+				aViewUI.getElementStyleName());
 
 		aViewUI.buildUserInterface(rBuilder, rStyle);
 
@@ -273,14 +278,17 @@ public class DataElementListView
 		sViewTitle =
 			rDataElementList.getProperty(StandardProperties.TITLE, sViewTitle);
 
-		aPanelView.addEventListener(EventType.VIEW_CLOSING,
-									this::handleViewClosing);
+		aPanelView.addEventListener(
+			EventType.VIEW_CLOSING,
+			this::handleViewClosing);
 
 		aViewBuilder = new ContainerBuilder<View>(aPanelView);
 
 		aPanelView.setTitle(sViewTitle);
-		aPanelView.applyStyle(StyleData.DEFAULT.set(StyleData.WEB_ADDITIONAL_STYLES,
-													sDialogStyle));
+		aPanelView.applyStyle(
+			StyleData.DEFAULT.set(
+				StyleData.WEB_ADDITIONAL_STYLES,
+				sDialogStyle));
 
 		return aViewBuilder;
 	}
@@ -293,7 +301,8 @@ public class DataElementListView
 	private void handleViewClosing(EwtEvent rEvent)
 	{
 		aViewUI.getPanelManager()
-			   .handleInteractiveInput(aViewUI.getDataElement(),
-									   InteractionEventType.UPDATE);
+			   .handleInteractiveInput(
+	   			aViewUI.getDataElement(),
+	   			InteractionEventType.UPDATE);
 	}
 }

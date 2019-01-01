@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -183,7 +183,7 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 
 	/***************************************
 	 * Returns an iterator over the current data set that has been retrieved by
-	 * the last call to {@link #setWindow(int, Callback)}.
+	 * the last call to {@link #setWindow(int, int, Callback)}.
 	 *
 	 * @see DataModel#iterator()
 	 */
@@ -211,22 +211,25 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 			aQueryData.setProperty(FILE_NAME, sFileName);
 
 			ServiceRegistry.getStorageService()
-						   .executeCommand(StorageService.PREPARE_DOWNLOAD,
-										   aQueryData,
-				new AsyncCallback<StringDataElement>()
-				{
-					@Override
-					public void onFailure(Throwable e)
-					{
-						rCallback.onError(e);
-					}
+						   .executeCommand(
+			   				StorageService.PREPARE_DOWNLOAD,
+			   				aQueryData,
+			   				new AsyncCallback<StringDataElement>()
+			   				{
+			   					@Override
+			   					public void onFailure(Throwable e)
+			   					{
+			   						rCallback.onError(e);
+			   					}
 
-					@Override
-					public void onSuccess(StringDataElement rDownloadUrl)
-					{
-						rCallback.onSuccess(rDownloadUrl.getValue());
-					}
-				});
+			   					@Override
+			   					public void onSuccess(
+			   						StringDataElement rDownloadUrl)
+			   					{
+			   						rCallback.onSuccess(
+			   							rDownloadUrl.getValue());
+			   					}
+			   				});
 		}
 	}
 
@@ -402,25 +405,26 @@ public class QueryDataModel implements RemoteDataModel<DataModel<String>>,
 		final Callback<RemoteDataModel<DataModel<String>>> rCallback)
 	{
 		ServiceRegistry.getStorageService()
-					   .executeCommand(StorageService.QUERY,
-									   aQueryData,
-			new AsyncCallback<QueryResultElement<DataModel<String>>>()
-			{
-				@Override
-				public void onFailure(Throwable e)
-				{
-					rCallback.onError(e);
-				}
+					   .executeCommand(
+			   			StorageService.QUERY,
+			   			aQueryData,
+			   			new AsyncCallback<QueryResultElement<DataModel<String>>>()
+			   			{
+			   				@Override
+			   				public void onFailure(Throwable e)
+			   				{
+			   					rCallback.onError(e);
+			   				}
 
-				@Override
-				public void onSuccess(
-					QueryResultElement<DataModel<String>> rResult)
-				{
-					setCurrentData(rResult, nStart, nCount);
+			   				@Override
+			   				public void onSuccess(
+			   					QueryResultElement<DataModel<String>> rResult)
+			   				{
+			   					setCurrentData(rResult, nStart, nCount);
 
-					rCallback.onSuccess(QueryDataModel.this);
-				}
-			});
+			   					rCallback.onSuccess(QueryDataModel.this);
+			   				}
+			   			});
 	}
 
 	/***************************************

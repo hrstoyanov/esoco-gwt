@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.component.SwitchPanel;
+import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.event.EwtEventHandler;
-import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.LayoutType;
@@ -80,8 +80,8 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	}
 
 	/***************************************
-	 * Invokes {@link DataElementPanelManager#collectInput()} on the currently
-	 * selected page's panel manager.
+	 * Invokes {@link DataElementPanelManager#collectInput(List)} on the
+	 * currently selected page's panel manager.
 	 *
 	 * @see DataElementPanelManager#collectInput(List)
 	 */
@@ -200,9 +200,10 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		Component rElementComponent = rDataElementUI.getElementComponent();
 
-		aSwitchPanel.addPage(rElementComponent,
-							 getPageTitle(rDataElementUI.getDataElement()),
-							 false);
+		aSwitchPanel.addPage(
+			rElementComponent,
+			getPageTitle(rDataElementUI.getDataElement()),
+			false);
 	}
 
 	/***************************************
@@ -216,8 +217,8 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		if (!aSwitchPanel.getComponents().isEmpty())
 		{
-			setSelectedElement(getDataElementList().getProperty(CURRENT_SELECTION,
-																0));
+			setSelectedElement(
+				getDataElementList().getProperty(CURRENT_SELECTION, 0));
 		}
 
 		aSwitchPanel.addEventListener(EventType.SELECTION, this);
@@ -252,8 +253,9 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 				break;
 
 			default:
-				throw new IllegalStateException("Unsupported DataElementList mode " +
-												eDisplayMode);
+				throw new IllegalStateException(
+					"Unsupported DataElementList mode " +
+					eDisplayMode);
 		}
 
 		aSwitchPanel = aPanelBuilder.getContainer();
@@ -299,9 +301,10 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 	private String getPageTitle(DataElement<?> rDataElement)
 	{
 		return sLabelPrefix != null
-			   ? DataElementUI.getLabelText(getContext(),
-											rDataElement,
-											sLabelPrefix) : "";
+			   ? DataElementUI.getLabelText(
+			getContext(),
+			rDataElement,
+			sLabelPrefix) : "";
 	}
 
 	/***************************************
@@ -313,8 +316,9 @@ public class DataElementSwitchPanelManager extends DataElementPanelManager
 
 		for (DataElementUI<?> rElementUI : getDataElementUIs().values())
 		{
-			aSwitchPanel.setPageTitle(nPage++,
-									  getPageTitle(rElementUI.getDataElement()));
+			aSwitchPanel.setPageTitle(
+				nPage++,
+				getPageTitle(rElementUI.getDataElement()));
 		}
 	}
 }

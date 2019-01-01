@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,10 +63,11 @@ public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
 	@Override
 	public void displayMessage(String sMessage, int nDisplayTime)
 	{
-		MessageBox.showNotification(getContainer().getView(),
-									"$tiErrorMessage",
-									sMessage,
-									MessageBox.ICON_ERROR);
+		MessageBox.showNotification(
+			getContainer().getView(),
+			"$tiErrorMessage",
+			sMessage,
+			MessageBox.ICON_ERROR);
 	}
 
 	/***************************************
@@ -204,7 +205,7 @@ public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
 	}
 
 	/***************************************
-	 * @see CustomerSelfCarePanelManager#logout()
+	 * {@inheritDoc}
 	 */
 	@Override
 	protected void logout()

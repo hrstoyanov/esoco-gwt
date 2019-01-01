@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public interface ProcessService extends StorageService
 	 *
 	 * <p>The mode of the process execution must be set by invoking the method
 	 * {@link
-	 * ProcessState#setExecutionMode(de.esoco.gwt.shared.ProcessState.ProcessExecutionMode)
+	 * ProcessState#setExecutionMode(de.esoco.data.process.ProcessState.ProcessExecutionMode)
 	 * }.</p>
 	 */
 	public static final Command<ProcessDescription, ProcessState> EXECUTE_PROCESS =

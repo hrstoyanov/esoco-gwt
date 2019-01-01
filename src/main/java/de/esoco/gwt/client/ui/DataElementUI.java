@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -410,8 +410,8 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	public void applyStyle()
 	{
-		aElementComponent.applyStyle(applyElementStyle(rDataElement,
-													   getBaseStyle()));
+		aElementComponent.applyStyle(
+			applyElementStyle(rDataElement, getBaseStyle()));
 		applyElementProperties();
 		enableComponent(bUIEnabled);
 	}
@@ -469,8 +469,10 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (rDataElement.isModified())
 			{
-				rModifiedElements.add(rDataElement.copy(CopyMode.FLAT,
-														DataElement.SERVER_PROPERTIES));
+				rModifiedElements.add(
+					rDataElement.copy(
+						CopyMode.FLAT,
+						DataElement.SERVER_PROPERTIES));
 				rDataElement.setModified(false);
 			}
 		}
@@ -613,13 +615,11 @@ public class DataElementUI<D extends DataElement<?>>
 	@Override
 	public String toString()
 	{
-		return TextConvert.format("%s[%s: %s]",
-								  TextConvert.lastElementOf(getClass()
-															.getName()),
-								  TextConvert.lastElementOf(rDataElement
-															.getName()),
-								  getElementComponent().getClass()
-								  .getSimpleName());
+		return TextConvert.format(
+			"%s[%s: %s]",
+			TextConvert.lastElementOf(getClass().getName()),
+			TextConvert.lastElementOf(rDataElement.getName()),
+			getElementComponent().getClass().getSimpleName());
 	}
 
 	/***************************************
@@ -675,7 +675,8 @@ public class DataElementUI<D extends DataElement<?>>
 		rOptionalCheckBox = rBuilder.addCheckBox(StyleData.DEFAULT, "", null);
 
 		rOptionalCheckBox.setSelected(false);
-		rOptionalCheckBox.addEventListener(EventType.ACTION,
+		rOptionalCheckBox.addEventListener(
+			EventType.ACTION,
 			new EwtEventHandler()
 			{
 				@Override
@@ -703,7 +704,8 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (rDataElement.hasProperty(INVISIBLE))
 			{
-				aElementComponent.setVisibility(!rDataElement.hasFlag(INVISIBLE));
+				aElementComponent.setVisibility(
+					!rDataElement.hasFlag(INVISIBLE));
 			}
 
 			if (!bHasError && sToolTip != null && sToolTip.length() > 0)
@@ -715,24 +717,24 @@ public class DataElementUI<D extends DataElement<?>>
 
 			if (sImage != null && aElementComponent instanceof ImageAttribute)
 			{
-				((ImageAttribute) aElementComponent).setImage(aElementComponent
-															  .getContext()
-															  .createImage(sImage));
+				((ImageAttribute) aElementComponent).setImage(
+					aElementComponent.getContext().createImage(sImage));
 			}
 		}
 
 		if (aElementLabel != null)
 		{
 			String sLabel =
-				appendLabelSuffix(getElementLabelText(aElementLabel
-													  .getContext()));
+				appendLabelSuffix(
+					getElementLabelText(aElementLabel.getContext()));
 
 			aElementLabel.setProperties(sLabel);
 			aElementLabel.setVisible(bVisible);
 
 			if (rDataElement.hasProperty(INVISIBLE))
 			{
-				aElementComponent.setVisibility(!rDataElement.hasFlag(INVISIBLE));
+				aElementComponent.setVisibility(
+					!rDataElement.hasFlag(INVISIBLE));
 			}
 		}
 	}
@@ -796,8 +798,9 @@ public class DataElementUI<D extends DataElement<?>>
 		if (rDataElement.hasProperty(FORMAT_ARGUMENTS))
 		{
 			List<String> rFormatArgs =
-				rDataElement.getProperty(FORMAT_ARGUMENTS,
-										 Collections.emptyList());
+				rDataElement.getProperty(
+					FORMAT_ARGUMENTS,
+					Collections.emptyList());
 
 			Object[] aArgs = new String[rFormatArgs.size()];
 
@@ -868,8 +871,9 @@ public class DataElementUI<D extends DataElement<?>>
 		else if (rValue instanceof BigDecimal)
 		{
 			String sFormat =
-				rDataElement.getProperty(FORMAT,
-										 BigDecimalDataElementUI.DEFAULT_FORMAT);
+				rDataElement.getProperty(
+					FORMAT,
+					BigDecimalDataElementUI.DEFAULT_FORMAT);
 
 			sValue =
 				NumberFormat.getFormat(sFormat).format((BigDecimal) rValue);
@@ -881,8 +885,9 @@ public class DataElementUI<D extends DataElement<?>>
 		else if (rValue instanceof DataElement)
 		{
 			sValue =
-				convertValueToString(rDataElement,
-									 ((DataElement<?>) rValue).getValue());
+				convertValueToString(
+					rDataElement,
+					((DataElement<?>) rValue).getValue());
 		}
 		else if (rValue instanceof Enum)
 		{
@@ -908,7 +913,8 @@ public class DataElementUI<D extends DataElement<?>>
 			{
 				sValue = "#" + sValue;
 			}
-			else if (Component.COMPOUND_PROPERTY_CHARS.indexOf(sValue.charAt(0)) <
+			else if (Component.COMPOUND_PROPERTY_CHARS.indexOf(
+					sValue.charAt(0)) <
 					 0)
 			{
 				sValue = "%" + sValue;
@@ -934,10 +940,10 @@ public class DataElementUI<D extends DataElement<?>>
 		ButtonStyle eButtonStyle =
 			rDataElement.getProperty(BUTTON_STYLE, ButtonStyle.DEFAULT);
 
-		return rBuilder.addButton(rStyle.set(BUTTON_STYLE, eButtonStyle),
-								  convertValueToString(rDataElement,
-													   rDataElement),
-								  null);
+		return rBuilder.addButton(
+			rStyle.set(BUTTON_STYLE, eButtonStyle),
+			convertValueToString(rDataElement, rDataElement),
+			null);
 	}
 
 	/***************************************
@@ -1035,7 +1041,8 @@ public class DataElementUI<D extends DataElement<?>>
 
 		Component aComponent = rBuilder.addLabel(rStyle, sURL, null);
 
-		aComponent.addEventListener(EventType.ACTION,
+		aComponent.addEventListener(
+			EventType.ACTION,
 			new EwtEventHandler()
 			{
 				@Override
@@ -1055,9 +1062,7 @@ public class DataElementUI<D extends DataElement<?>>
 	 * returned by {@link #convertValueToString(DataElement, Object)} or a list
 	 * if the data element's value is constrained by a {@link ListValidator}.
 	 * The list values will be read from the validator, converted with the above
-	 * method, and finally expanded as resources. The creation of these
-	 * components is handled by {@link #createEditComponent(ContainerBuilder,
-	 * StyleData, DataElement)}.
+	 * method, and finally expanded as resources.}.
 	 *
 	 * @param  rBuilder     The container builder to create the components with
 	 * @param  rStyle       The default style data for the input components
@@ -1083,9 +1088,10 @@ public class DataElementUI<D extends DataElement<?>>
 		else if (eContentType == ContentType.FILE_UPLOAD)
 		{
 			aComponent =
-				rBuilder.addFileChooser(rStyle,
-										rDataElement.getProperty(URL, null),
-										"$btn" + rDataElement.getResourceId());
+				rBuilder.addFileChooser(
+					rStyle,
+					rDataElement.getProperty(URL, null),
+					"$btn" + rDataElement.getResourceId());
 		}
 		else if (eContentType == ContentType.WEBSITE)
 		{
@@ -1095,9 +1101,10 @@ public class DataElementUI<D extends DataElement<?>>
 		else if (eContentType == ContentType.HYPERLINK)
 		{
 			aComponent =
-				rBuilder.addLabel(rStyle.setFlags(StyleFlag.HYPERLINK),
-								  rDataElement.getValue().toString(),
-								  null);
+				rBuilder.addLabel(
+					rStyle.setFlags(StyleFlag.HYPERLINK),
+					rDataElement.getValue().toString(),
+					null);
 		}
 		else if (rDataElement.getProperty(LABEL_STYLE, null) != null)
 		{
@@ -1110,11 +1117,12 @@ public class DataElementUI<D extends DataElement<?>>
 		else
 		{
 			aComponent =
-				createTextInputComponent(rBuilder,
-										 rStyle,
-										 rDataElement,
-										 sValue,
-										 eContentType);
+				createTextInputComponent(
+					rBuilder,
+					rStyle,
+					rDataElement,
+					sValue,
+					eContentType);
 		}
 
 		return aComponent;
@@ -1133,8 +1141,9 @@ public class DataElementUI<D extends DataElement<?>>
 		DataElementPanelManager rPanelManager,
 		D						rDataElement)
 	{
-		return new DataElementInteractionHandler<D>(rPanelManager,
-													rDataElement);
+		return new DataElementInteractionHandler<D>(
+			rPanelManager,
+			rDataElement);
 	}
 
 	/***************************************
@@ -1158,10 +1167,10 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 
 		String sLabel =
-			checkApplyFormatting(rDataElement,
-								 rBuilder.getContext(),
-								 convertValueToString(rDataElement,
-													  rDataElement));
+			checkApplyFormatting(
+				rDataElement,
+				rBuilder.getContext(),
+				convertValueToString(rDataElement, rDataElement));
 
 		return rBuilder.addLabel(rStyle, sLabel, null);
 	}
@@ -1194,8 +1203,9 @@ public class DataElementUI<D extends DataElement<?>>
 			};
 
 		rBuilder =
-			rBuilder.addPanel(rStyle.setFlags(StyleFlag.HORIZONTAL_ALIGN_CENTER),
-							  new FlowLayout(true));
+			rBuilder.addPanel(
+				rStyle.setFlags(StyleFlag.HORIZONTAL_ALIGN_CENTER),
+				new FlowLayout(true));
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -1242,10 +1252,10 @@ public class DataElementUI<D extends DataElement<?>>
 		int		  nCols = rDataElement.getIntProperty(COLUMNS, -1);
 
 		String sText =
-			checkApplyFormatting(rDataElement,
-								 rBuilder.getContext(),
-								 convertValueToString(rDataElement,
-													  rDataElement));
+			checkApplyFormatting(
+				rDataElement,
+				rBuilder.getContext(),
+				convertValueToString(rDataElement, rDataElement));
 
 		TextArea aTextArea = rBuilder.addTextArea(rStyle, sText);
 
@@ -1333,15 +1343,17 @@ public class DataElementUI<D extends DataElement<?>>
 
 		Button aButton = rBuilder.addButton(rDisplayStyle, sText, null);
 
-		aButton.addEventListener(EventType.ACTION,
+		aButton.addEventListener(
+			EventType.ACTION,
 			new EwtEventHandler()
 			{
 				@Override
 				public void handleEvent(EwtEvent rEvent)
 				{
-					openUrl(rDataElement.getValue().toString(),
-							rDataElement.getProperty(CONTENT_TYPE, null) ==
-							ContentType.RELATIVE_URL);
+					openUrl(
+						rDataElement.getValue().toString(),
+						rDataElement.getProperty(CONTENT_TYPE, null) ==
+						ContentType.RELATIVE_URL);
 				}
 			});
 
@@ -1357,8 +1369,9 @@ public class DataElementUI<D extends DataElement<?>>
 	 */
 	protected void enableComponent(boolean bEnable)
 	{
-		enableComponent(aElementComponent,
-						bEnable && !rDataElement.hasFlag(DISABLED));
+		enableComponent(
+			aElementComponent,
+			bEnable && !rDataElement.hasFlag(DISABLED));
 	}
 
 	/***************************************
@@ -1381,8 +1394,8 @@ public class DataElementUI<D extends DataElement<?>>
 			{
 				if (sElements != null)
 				{
-					rChild.setEnabled(bEnabled &&
-									  !sElements.contains("(" + nIndex++ + ")"));
+					rChild.setEnabled(
+						bEnabled && !sElements.contains("(" + nIndex++ + ")"));
 				}
 				else
 				{
@@ -1445,9 +1458,10 @@ public class DataElementUI<D extends DataElement<?>>
 				rDataElement.getProperty(CONTENT_TYPE, null);
 
 			rFormat =
-				DateTimeFormat.getFormat(eContentType == ContentType.DATE_TIME
-										 ? PredefinedFormat.DATE_TIME_MEDIUM
-										 : PredefinedFormat.DATE_MEDIUM);
+				DateTimeFormat.getFormat(
+					eContentType == ContentType.DATE_TIME
+					? PredefinedFormat.DATE_TIME_MEDIUM
+					: PredefinedFormat.DATE_MEDIUM);
 		}
 
 		return rFormat.format(rDate);
@@ -1583,10 +1597,10 @@ public class DataElementUI<D extends DataElement<?>>
 				  rDataElement instanceof ListDataElement))
 			{
 				String sValue =
-					checkApplyFormatting(rDataElement,
-										 rComponent.getContext(),
-										 convertValueToString(rDataElement,
-															  rDataElement));
+					checkApplyFormatting(
+						rDataElement,
+						rComponent.getContext(),
+						convertValueToString(rDataElement, rDataElement));
 
 				rComponent.setProperties(sValue);
 			}
@@ -1631,8 +1645,8 @@ public class DataElementUI<D extends DataElement<?>>
 	{
 		if (rComponent instanceof FileChooser)
 		{
-			rDataElement.setStringValue(((FileChooser) rComponent)
-										.getFilename());
+			rDataElement.setStringValue(
+				((FileChooser) rComponent).getFilename());
 		}
 		else if (rComponent instanceof TextAttribute)
 		{
@@ -1651,8 +1665,9 @@ public class DataElementUI<D extends DataElement<?>>
 		}
 		else
 		{
-			throw new UnsupportedOperationException("Cannot transfer input to " +
-													rDataElement);
+			throw new UnsupportedOperationException(
+				"Cannot transfer input to " +
+				rDataElement);
 		}
 	}
 
@@ -1679,9 +1694,9 @@ public class DataElementUI<D extends DataElement<?>>
 		if (rComponent instanceof TextControl &&
 			rDataElement.hasProperty(CARET_POSITION))
 		{
-			rDataElement.setProperty(CARET_POSITION,
-									 ((TextControl) rComponent)
-									 .getCaretPosition());
+			rDataElement.setProperty(
+				CARET_POSITION,
+				((TextControl) rComponent).getCaretPosition());
 		}
 	}
 

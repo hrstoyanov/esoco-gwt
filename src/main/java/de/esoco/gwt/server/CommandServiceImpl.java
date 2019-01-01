@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -75,9 +75,8 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends DataElement<?>, R extends DataElement<?>> R executeCommand(
-		Command<T, R> rCommand,
-		T			  rData) throws ServiceException
+	public <T extends DataElement<?>, R extends DataElement<?>> R
+	executeCommand(Command<T, R> rCommand, T rData) throws ServiceException
 	{
 		checkCommandExecution(rCommand, rData);
 
@@ -91,8 +90,9 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 
 			if (rHandler == null)
 			{
-				throw new ServiceException("Missing command handling method " +
-										   sMethod);
+				throw new ServiceException(
+					"Missing command handling method " +
+					sMethod);
 			}
 
 			return (R) rHandler.invoke(this, rData);
@@ -117,9 +117,10 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 	@Override
 	public String toString()
 	{
-		return String.format("%s[%s]",
-							 getClass().getSimpleName(),
-							 getServletContext().getServerInfo());
+		return String.format(
+			"%s[%s]",
+			getClass().getSimpleName(),
+			getServletContext().getServerInfo());
 	}
 
 	/***************************************
@@ -165,19 +166,6 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 	}
 
 	/***************************************
-	 * Deprecated
-	 *
-	 * @return
-	 *
-	 * @deprecated No longer used
-	 */
-	@Deprecated
-	protected String getApplicationStringPropertiesFile()
-	{
-		return null;
-	}
-
-	/***************************************
 	 * Returns the app resource for a certain locale.
 	 *
 	 * @param  sLocale The locale name or NULL for the default resource
@@ -196,17 +184,21 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 			if (sLocale != null)
 			{
 				aResource =
-					readResourceFile(String.format("%s/%s_%sStrings.properties",
-												   getResourcePath(),
-												   getResourceBaseName(),
-												   sLocale));
+					readResourceFile(
+						String.format(
+							"%s/%s_%sStrings.properties",
+							getResourcePath(),
+							getResourceBaseName(),
+							sLocale));
 			}
 			else
 			{
 				aResource =
-					readResourceFile(String.format("%s/%sStrings.properties",
-												   getResourcePath(),
-												   getResourceBaseName()));
+					readResourceFile(
+						String.format(
+							"%s/%sStrings.properties",
+							getResourcePath(),
+							getResourceBaseName()));
 			}
 
 			if (aResource == null && sLocale != null)

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import de.esoco.ewt.component.Label;
 import de.esoco.ewt.component.Panel;
 import de.esoco.ewt.dialog.MessageBox;
 import de.esoco.ewt.dialog.MessageBox.ResultHandler;
+import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.event.EwtEvent;
 import de.esoco.ewt.event.EwtEventHandler;
-import de.esoco.ewt.event.EventType;
 import de.esoco.ewt.graphics.Image;
 import de.esoco.ewt.layout.DockLayout;
 import de.esoco.ewt.layout.FillLayout;
@@ -50,7 +50,6 @@ import de.esoco.gwt.client.ui.DataElementTablePanelManager;
 import de.esoco.gwt.client.ui.DataElementUI;
 import de.esoco.gwt.client.ui.PanelManager;
 import de.esoco.gwt.shared.GwtApplicationService;
-import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
 import de.esoco.lib.property.ContentType;
@@ -100,14 +99,17 @@ public class ProcessPanelManager
 		AlignedPosition.TOP.h(6)
 						   .set(WEB_ADDITIONAL_STYLES, CSS.gaProcessTopPanel());
 	private static final StyleData TOOLBAR_STYLE	   =
-		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES,
-							  CSS.gaProcessButtonPanel());
+		StyleData.DEFAULT.set(
+			WEB_ADDITIONAL_STYLES,
+			CSS.gaProcessButtonPanel());
 	private static final StyleData PARAM_PANEL_STYLE   =
-		AlignedPosition.CENTER.set(WEB_ADDITIONAL_STYLES,
-								   CSS.gaProcessParamPanel());
+		AlignedPosition.CENTER.set(
+			WEB_ADDITIONAL_STYLES,
+			CSS.gaProcessParamPanel());
 	private static final StyleData SUMMARY_PANEL_STYLE =
-		AlignedPosition.CENTER.set(WEB_ADDITIONAL_STYLES,
-								   CSS.gaProcessSummaryPanel());
+		AlignedPosition.CENTER.set(
+			WEB_ADDITIONAL_STYLES,
+			CSS.gaProcessSummaryPanel());
 
 	private static final StyleData TITLE_LABEL_STYLE   =
 		StyleData.DEFAULT.set(WEB_ADDITIONAL_STYLES, CSS.gaProcessTitle());
@@ -449,10 +451,10 @@ public class ProcessPanelManager
 		else
 		{
 			rPanelBuilder =
-				rBuilder.addPanel(rStyleData,
-								  bShowNavigationBar
-								  ? new DockLayout(false, false)
-								  : new FillLayout());
+				rBuilder.addPanel(
+					rStyleData,
+					bShowNavigationBar ? new DockLayout(false, false)
+									   : new FillLayout());
 		}
 
 		return (ContainerBuilder<Container>) rPanelBuilder;
@@ -492,7 +494,7 @@ public class ProcessPanelManager
 
 			sMessage =
 				getContext().getResourceString("msg" +
-											   sMessage, rMessageArgs);
+					sMessage, rMessageArgs);
 		}
 		else
 		{
@@ -638,21 +640,6 @@ public class ProcessPanelManager
 	}
 
 	/***************************************
-	 * Opens the UI inspector panel.
-	 */
-	void toggleUiInspector()
-	{
-		@SuppressWarnings("boxing")
-		boolean bShowUiInspector =
-			rProcessState.getProperty(ProcessService.SHOW_UI_INSPECTOR, false);
-
-		rProcessState.setProperty(ProcessService.SHOW_UI_INSPECTOR,
-								  !bShowUiInspector);
-
-		reload();
-	}
-
-	/***************************************
 	 * Adds a data element panel for a list of process parameter data elements.
 	 */
 	private void addParameterDataElementPanel()
@@ -669,9 +656,9 @@ public class ProcessPanelManager
 			LayoutType.TABLE)
 		{
 			aParamPanelManager =
-				DataElementPanelManager.newInstance(this,
-													(DataElementList)
-													rFirstElement);
+				DataElementPanelManager.newInstance(
+					this,
+					(DataElementList) rFirstElement);
 		}
 		else // legacy handling for root-level table layouts
 		{
@@ -743,9 +730,10 @@ public class ProcessPanelManager
 
 		if (bRenderInline)
 		{
-			addLabel(StyleData.DEFAULT.set(CONTENT_TYPE, ContentType.HTML),
-					 sMessage,
-					 null);
+			addLabel(
+				StyleData.DEFAULT.set(CONTENT_TYPE, ContentType.HTML),
+				sMessage,
+				null);
 		}
 		else
 		{
@@ -836,10 +824,11 @@ public class ProcessPanelManager
 		}
 
 		ProcessState aInteractionState =
-			new ProcessState(rProcessState,
-							 eEventType,
-							 rInteractionElement,
-							 aModifiedElements);
+			new ProcessState(
+				rProcessState,
+				eEventType,
+				rInteractionElement,
+				aModifiedElements);
 
 		// reset all modification flags for next interaction loop
 		for (DataElement<?> rElement : aModifiedElements)
@@ -897,10 +886,11 @@ public class ProcessPanelManager
 					bPauseAutoContinue = true;
 				}
 
-				MessageBox.showQuestion(getPanel().getView(),
-										"$tiCancelProcess",
-										"$msgCancelProcess",
-										MessageBox.ICON_QUESTION,
+				MessageBox.showQuestion(
+					getPanel().getView(),
+					"$tiCancelProcess",
+					"$msgCancelProcess",
+					MessageBox.ICON_QUESTION,
 					new ResultHandler()
 					{
 						@Override
@@ -1068,11 +1058,12 @@ public class ProcessPanelManager
 			// interruption of the process
 			aCancelButton.setEnabled(bHasState);
 			aReloadButton.setEnabled(!bAutoContinue && bHasState);
-			aPrevButton.setEnabled(!bAutoContinue && !bCancelled && bHasState &&
-								   rProcessState.canRollback());
-			aNextButton.setEnabled(!bAutoContinue && !bCancelled &&
-								   !(bHasState &&
-									 rProcessState.hasImmedidateInteraction()));
+			aPrevButton.setEnabled(
+				!bAutoContinue && !bCancelled && bHasState &&
+				rProcessState.canRollback());
+			aNextButton.setEnabled(
+				!bAutoContinue && !bCancelled &&
+				!(bHasState && rProcessState.hasImmedidateInteraction()));
 		}
 	}
 

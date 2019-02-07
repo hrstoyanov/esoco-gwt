@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,8 +84,7 @@ public abstract class StorageServiceImpl<E extends Entity>
 
 	//~ Instance fields --------------------------------------------------------
 
-	private final DataElementFactory rDataElementFactory;
-	private Set<String>				 aInvalidStorageAdapters;
+	private Set<String> aInvalidStorageAdapters;
 
 	//~ Constructors -----------------------------------------------------------
 
@@ -94,10 +93,9 @@ public abstract class StorageServiceImpl<E extends Entity>
 	 */
 	public StorageServiceImpl()
 	{
-		rDataElementFactory = new DataElementFactory(this);
-
-		StorageManager.setStorageMetaData(DataRelationTypes.SESSION_MANAGER,
-										  this);
+		StorageManager.setStorageMetaData(
+			DataRelationTypes.SESSION_MANAGER,
+			this);
 	}
 
 	//~ Methods ----------------------------------------------------------------
@@ -187,13 +185,15 @@ public abstract class StorageServiceImpl<E extends Entity>
 		byte[] aDocumentData = aDocumentWriter.createDocument();
 
 		DownloadData aDownloadData =
-			new DownloadData(sFileName != null ? sFileName : "download.xls",
-							 aDocumentWriter.getFileType(),
-							 Functions.<FileType, byte[]>value(aDocumentData),
-							 true);
+			new DownloadData(
+				sFileName != null ? sFileName : "download.xls",
+				aDocumentWriter.getFileType(),
+				Functions.<FileType, byte[]>value(aDocumentData),
+				true);
 
-		return new StringDataElement("DownloadUrl",
-									 prepareDownload(aDownloadData));
+		return new StringDataElement(
+			"DownloadUrl",
+			prepareDownload(aDownloadData));
 	}
 
 	/***************************************
@@ -242,16 +242,6 @@ public abstract class StorageServiceImpl<E extends Entity>
 	protected TabularDocumentWriter<byte[]> createTableDownloadDocumentWriter()
 	{
 		throw new UnsupportedOperationException("not implemented");
-	}
-
-	/***************************************
-	 * Returns the data element factory of this service.
-	 *
-	 * @return The data element factory
-	 */
-	protected final DataElementFactory getDataElementFactory()
-	{
-		return rDataElementFactory;
 	}
 
 	/***************************************

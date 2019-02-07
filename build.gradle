@@ -30,6 +30,8 @@ dependencies {
 	else {
 		compile 'de.esoco:gewt:1.2.+'
 	}
+	
+	compileOnly 'javax.websocket:javax.websocket-api:1.1'
 
     testCompile 'junit:junit:4.+'
 }

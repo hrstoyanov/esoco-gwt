@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,12 +34,11 @@ import de.esoco.gwt.shared.Command;
 import de.esoco.gwt.shared.ProcessService;
 import de.esoco.gwt.shared.ServiceException;
 
+import de.esoco.lib.expression.monad.Option;
 import de.esoco.lib.logging.Log;
 import de.esoco.lib.property.InteractionEventType;
 import de.esoco.lib.property.UserInterfaceProperties;
-import de.esoco.lib.property.ViewDisplayType;
 
-import de.esoco.process.FragmentInteraction;
 import de.esoco.process.InvalidParametersException;
 import de.esoco.process.Process;
 import de.esoco.process.ProcessDefinition;
@@ -49,8 +48,6 @@ import de.esoco.process.ProcessFragment;
 import de.esoco.process.ProcessManager;
 import de.esoco.process.ProcessRelationTypes;
 import de.esoco.process.ProcessStep;
-import de.esoco.process.ViewFragment;
-import de.esoco.process.step.EditInteractionParameters;
 
 import de.esoco.storage.StorageException;
 
@@ -63,8 +60,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.servlet.ServletException;
 
 import org.obrel.core.ObjectRelations;
 import org.obrel.core.Relatable;
@@ -137,8 +132,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 	//~ Instance fields --------------------------------------------------------
 
-	private Class<? extends ProcessDefinition> rAppProcess			  = null;
-	private boolean							   bProcessAuthentication = false;
+	private Option<Class<? extends ProcessDefinition>> aAppProcess =
+		Option.none();
+
+	private final DataElementFactory rDataElementFactory =
+		new DataElementFactory(this);
 
 	//~ Static methods ---------------------------------------------------------
 
@@ -289,7 +287,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 				rProcessState = (ProcessState) rDescription;
 
 				eExecutionMode = rProcessState.getExecutionMode();
-				checkOpenUiInspector(rProcessState, rProcess);
 			}
 			else
 			{
@@ -376,18 +373,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void init() throws ServletException
-	{
-		super.init();
-
-		// property name not known to GWT serialization if not accessed once
-		SHOW_UI_INSPECTOR.getName();
-	}
-
-	/***************************************
 	 * Cancels all processes that are active in the given session.
 	 *
 	 * @param rSessionData The session data
@@ -411,7 +396,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 * Overridden to allow the execution of a self-authenticating application
 	 * process.
 	 *
-	 * @see ProcessServiceImpl#checkCommandExecution(Command, DataElement)
+	 * @see CommandServiceImpl#checkCommandExecution(Command, DataElement)
 	 */
 	@Override
 	protected <T extends DataElement<?>> void checkCommandExecution(
@@ -463,7 +448,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	 */
 	protected boolean hasProcessAuthentication()
 	{
-		return bProcessAuthentication;
+		return aAppProcess.exists();
 	}
 
 	/***************************************
@@ -512,8 +497,7 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	protected void setApplicationProcess(
 		Class<? extends ProcessDefinition> rProcessDefinition)
 	{
-		rAppProcess			   = rProcessDefinition;
-		bProcessAuthentication = true;
+		aAppProcess = Option.of(rProcessDefinition);
 
 		// add to process definition list
 		createProcessDescriptions(rProcessDefinition, null);
@@ -632,40 +616,6 @@ public abstract class ProcessServiceImpl<E extends Entity>
 	}
 
 	/***************************************
-	 * Checks whether the client has requested to open the UI inspector and
-	 * opens the corresponding view if necessary.
-	 *
-	 * @param  rProcessState The current process state
-	 * @param  rProcess      The
-	 *
-	 * @throws Exception
-	 */
-	private void checkOpenUiInspector(
-		ProcessState rProcessState,
-		Process		 rProcess) throws Exception
-	{
-		if (rProcessState.hasFlag(SHOW_UI_INSPECTOR))
-		{
-			ProcessStep rInteractionStep = rProcess.getInteractionStep();
-
-			if (rInteractionStep instanceof FragmentInteraction)
-			{
-				List<RelationType<?>> rParams =
-					rInteractionStep.get(INTERACTION_PARAMS);
-
-				ViewFragment aViewFragment =
-					new ViewFragment(
-						"UI_INSPECTOR",
-						new EditInteractionParameters(rParams),
-						ViewDisplayType.VIEW);
-
-				aViewFragment.show(
-					((FragmentInteraction) rInteractionStep).getRootFragment());
-			}
-		}
-	}
-
-	/***************************************
 	 * Checks whether the given process description is for an application
 	 * process and a corresponding process already exists in the given process
 	 * collection.
@@ -684,10 +634,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 		if (sProcessName.startsWith(APPLICATION_PROCESS_PATH))
 		{
-			if (rAppProcess != null &&
+			if (aAppProcess.exists() &&
 				sProcessName.endsWith(APPLICATION_MAIN_PROCESS))
 			{
-				sProcessName = rAppProcess.getName();
+				// will never fail as exists() is checked above
+				sProcessName = aAppProcess.map(p -> p.getName()).orFail();
 			}
 
 			for (Process rExistingProcess : rProcesses)
@@ -942,6 +893,16 @@ public abstract class ProcessServiceImpl<E extends Entity>
 		}
 
 		return aViewElements;
+	}
+
+	/***************************************
+	 * Returns the data element factory of this service.
+	 *
+	 * @return The data element factory
+	 */
+	private final DataElementFactory getDataElementFactory()
+	{
+		return rDataElementFactory;
 	}
 
 	/***************************************

@@ -40,6 +40,14 @@ import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+
+import javax.websocket.DeploymentException;
+import javax.websocket.Endpoint;
+import javax.websocket.server.ServerContainer;
+import javax.websocket.server.ServerEndpointConfig;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -138,6 +146,53 @@ public abstract class CommandServiceImpl extends RemoteServiceServlet
 		Command<T, ?> rCommand,
 		T			  rData) throws ServiceException
 	{
+	}
+
+	/***************************************
+	 * Registers a {@link Endpoint WebSocket Endpoint} class for deployment at a
+	 * certain path relative to the servlet context.
+	 *
+	 * @param  rWebSocketClass The class of the endpoint
+	 * @param  sPath           The context-relative path to deploy the endpoint
+	 *                         at (with or without leading '/')
+	 *
+	 * @throws ServletException If the endpoint registration failed
+	 */
+	protected void deployWebSocket(
+		Class<? extends Endpoint> rWebSocketClass,
+		String					  sPath) throws ServletException
+	{
+		ServletContext  rContext		 = getServletContext();
+		ServerContainer rServerContainer =
+			(ServerContainer) rContext.getAttribute(
+				"javax.websocket.server.ServerContainer");
+
+		if (rServerContainer == null)
+		{
+			throw new ServletException(
+				"No server container for WebSocket deployment found");
+		}
+
+		if (!sPath.startsWith("/"))
+		{
+			sPath = "/" + sPath;
+		}
+
+		sPath = rContext.getContextPath() + sPath;
+
+		ServerEndpointConfig aConfig =
+			ServerEndpointConfig.Builder.create(rWebSocketClass, sPath).build();
+
+		Log.infof("WebSocket deployed at %s\n", sPath);
+
+		try
+		{
+			rServerContainer.addEndpoint(aConfig);
+		}
+		catch (DeploymentException e)
+		{
+			throw new ServletException(e);
+		}
 	}
 
 	/***************************************

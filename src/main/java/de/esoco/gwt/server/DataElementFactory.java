@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,6 @@ import de.esoco.lib.expression.ElementAccess;
 import de.esoco.lib.expression.Function;
 import de.esoco.lib.expression.Functions;
 import de.esoco.lib.expression.Predicate;
-import de.esoco.lib.expression.function.AbstractFunction;
 import de.esoco.lib.expression.function.FunctionChain;
 import de.esoco.lib.expression.predicate.FunctionPredicate;
 import de.esoco.lib.json.JsonObject;
@@ -164,14 +163,7 @@ public class DataElementFactory
 		new HashMap<Class<? extends Enum<?>>, Validator<?>>();
 
 	private static final Function<Date, Long> GET_DATE_LONG_VALUE =
-		new AbstractFunction<Date, Long>("GetDateLongValue")
-		{
-			@Override
-			public Long evaluate(Date rDate)
-			{
-				return rDate != null ? Long.valueOf(rDate.getTime()) : null;
-			}
-		};
+		d -> d != null ? Long.valueOf(d.getTime()) : null;
 
 	//~ Instance fields --------------------------------------------------------
 
@@ -220,9 +212,9 @@ public class DataElementFactory
 		else if (rFunction instanceof FunctionPredicate<?, ?>)
 		{
 			sName =
-				createAttributeName(((FunctionPredicate<?, ?>) rFunction)
-									.getFunction(),
-									"");
+				createAttributeName(
+					((FunctionPredicate<?, ?>) rFunction).getFunction(),
+					"");
 		}
 		else
 		{
@@ -264,16 +256,18 @@ public class DataElementFactory
 		boolean									bDisplayEntityIds)
 	{
 		rAttributes =
-			processAttributeFunctions(rEntityDefinition,
-									  rAttributes,
-									  bDisplayEntityIds);
+			processAttributeFunctions(
+				rEntityDefinition,
+				rAttributes,
+				bDisplayEntityIds);
 
 		List<ColumnDefinition> aColumns =
-			createColumnDefinitions(rEntityDefinition,
-									rAttributes,
-									sPrefix,
-									null,
-									null);
+			createColumnDefinitions(
+				rEntityDefinition,
+				rAttributes,
+				sPrefix,
+				null,
+				null);
 
 		Validator<String> rValidator =
 			new SelectionValidator(aDataObjects, aColumns);
@@ -390,15 +384,15 @@ public class DataElementFactory
 			// add formatting function for enum values that creates a
 			// resource identifier
 			fGetAttr =
-				format(aEnumItem.toString()).from(capitalizedIdentifier().from(asString()
-																			   .from(fGetAttr)));
+				format(aEnumItem.toString()).from(
+					capitalizedIdentifier().from(asString().from(fGetAttr)));
 		}
 		else if (Date.class.isAssignableFrom(rDatatype))
 		{
 			// convert dates into their long values
 			fGetAttr =
-				GET_DATE_LONG_VALUE.from((Function<? super Entity,
-												   ? extends Date>) fGetAttr);
+				GET_DATE_LONG_VALUE.from(
+					(Function<? super Entity, ? extends Date>) fGetAttr);
 		}
 		else if (rDatatype == Boolean.class)
 		{
@@ -408,7 +402,8 @@ public class DataElementFactory
 			sAttr = DataElement.ITEM_RESOURCE_PREFIX + sAttr + "%s";
 
 			fGetAttr =
-				format(sAttr).from(capitalizedIdentifier().from(asString().from(fGetAttr)));
+				format(sAttr).from(
+					capitalizedIdentifier().from(asString().from(fGetAttr)));
 		}
 
 		return fGetAttr;
@@ -440,9 +435,11 @@ public class DataElementFactory
 
 		for (Function<? super Entity, ?> fGetAttr : rAttributes)
 		{
-			aResult.add(processAttributeFunction(rEntityDefinition,
-												 fGetAttr,
-												 bDisplayEntityIds));
+			aResult.add(
+				processAttributeFunction(
+					rEntityDefinition,
+					fGetAttr,
+					bDisplayEntityIds));
 		}
 
 		return aResult;
@@ -463,8 +460,9 @@ public class DataElementFactory
 		if (rProperties.hasProperty(UserInterfaceProperties.ALLOWED_VALUES))
 		{
 			sAllowedValues =
-				rProperties.getProperty(UserInterfaceProperties.ALLOWED_VALUES,
-										"");
+				rProperties.getProperty(
+					UserInterfaceProperties.ALLOWED_VALUES,
+					"");
 		}
 
 		if (sAllowedValues == null || sAllowedValues.isEmpty())
@@ -474,11 +472,12 @@ public class DataElementFactory
 			sAllowedValues = CollectionUtil.toString(rEnumValues, ",");
 		}
 
-		rProperties.setProperty(VALUE_RESOURCE_PREFIX,
-								DataElement.ITEM_RESOURCE_PREFIX +
-								rDatatype.getSimpleName());
-		rProperties.setProperty(UserInterfaceProperties.ALLOWED_VALUES,
-								sAllowedValues);
+		rProperties.setProperty(
+			VALUE_RESOURCE_PREFIX,
+			DataElement.ITEM_RESOURCE_PREFIX + rDatatype.getSimpleName());
+		rProperties.setProperty(
+			UserInterfaceProperties.ALLOWED_VALUES,
+			sAllowedValues);
 	}
 
 	/***************************************
@@ -610,8 +609,8 @@ public class DataElementFactory
 						// referenced entity then add the display properties
 						// from that entity and disable sorting and searching
 						EntityDefinition<?> rRefDef =
-							EntityManager.getEntityDefinition((Class<? extends Entity>)
-															  rRefType);
+							EntityManager.getEntityDefinition(
+								(Class<? extends Entity>) rRefType);
 
 						HasProperties aBaseProperties =
 							rEntityDefinition.getDisplayProperties(rRefAttr);
@@ -633,9 +632,9 @@ public class DataElementFactory
 				{
 					if (rDatatype.isEnum())
 					{
-						setEnumColumnProperties((Class<? extends Enum<?>>)
-												rDatatype,
-												aDisplayProperties);
+						setEnumColumnProperties(
+							(Class<? extends Enum<?>>) rDatatype,
+							aDisplayProperties);
 						sDatatype = Enum.class.getSimpleName();
 					}
 				}
@@ -651,12 +650,13 @@ public class DataElementFactory
 			}
 
 			SimpleColumnDefinition aColumn =
-				new SimpleColumnDefinition(sId,
-										   sTitle,
-										   sDatatype,
-										   bSortable,
-										   bSearchable,
-										   bEditable);
+				new SimpleColumnDefinition(
+					sId,
+					sTitle,
+					sDatatype,
+					bSortable,
+					bSearchable,
+					bEditable);
 
 			if (aDisplayProperties != null &&
 				aDisplayProperties.getPropertyCount() > 0)
@@ -710,8 +710,8 @@ public class DataElementFactory
 		else if (rAccessFunction instanceof FunctionPredicate<?, ?>)
 		{
 			rResult =
-				findDisplayAttribute(((FunctionPredicate<?, ?>) rAccessFunction)
-									 .getFunction());
+				findDisplayAttribute(
+					((FunctionPredicate<?, ?>) rAccessFunction).getFunction());
 		}
 		else
 		{
@@ -804,9 +804,10 @@ public class DataElementFactory
 		}
 		else if (rElement instanceof SelectionDataElement)
 		{
-			applyEntitySelection((SelectionDataElement) rElement,
-								 rTarget,
-								 rType);
+			applyEntitySelection(
+				(SelectionDataElement) rElement,
+				rTarget,
+				rType);
 		}
 		else if (rElement instanceof StringListDataElement &&
 				 Collection.class.isAssignableFrom(rTargetDatatype))
@@ -814,14 +815,16 @@ public class DataElementFactory
 			Collection<?> rTargetCollection =
 				(Collection<?>) rTarget.get(rType);
 
-			applyStringList(((StringListDataElement) rElement).getList(),
-							rType.get(ELEMENT_DATATYPE),
-							rTargetCollection);
+			applyStringList(
+				((StringListDataElement) rElement).getList(),
+				rType.get(ELEMENT_DATATYPE),
+				rTargetCollection);
 		}
 		else if (!(rElement instanceof DataElementList))
 		{
-			rTarget.set((RelationType<Object>) rType,
-						convertValue(rTargetDatatype, rElement.getValue()));
+			rTarget.set(
+				(RelationType<Object>) rType,
+				convertValue(rTargetDatatype, rElement.getValue()));
 		}
 	}
 
@@ -863,10 +866,9 @@ public class DataElementFactory
 					Process rSubProcess =
 						rTarget.getRelation(rType).getAnnotation(PROCESS);
 
-					applyDataElements(((DataElementList) rElement)
-									  .getElements(),
-									  rSubProcess != null ? rSubProcess
-														  : rTarget);
+					applyDataElements(
+						((DataElementList) rElement).getElements(),
+						rSubProcess != null ? rSubProcess : rTarget);
 				}
 			}
 		}
@@ -919,8 +921,9 @@ public class DataElementFactory
 				else
 				{
 					aDataElement =
-						new StringDataElement(rValue.getClass().getSimpleName(),
-											  rValue.toString());
+						new StringDataElement(
+							rValue.getClass().getSimpleName(),
+							rValue.toString());
 				}
 
 				if (aDataElement != null)
@@ -930,10 +933,11 @@ public class DataElementFactory
 			}
 		}
 
-		return new DataElementList(rType.getName(),
-								   null,
-								   aDataElements,
-								   rFlags);
+		return new DataElementList(
+			rType.getName(),
+			null,
+			aDataElements,
+			rFlags);
 	}
 
 	/***************************************
@@ -973,18 +977,20 @@ public class DataElementFactory
 			rEntity.getDefinition().getHierarchyChildAttribute() != null)
 		{
 			aChildren =
-				createChildDataModels(rEntity,
-									  pChildCriteria,
-									  pSortCriteria,
-									  fGetColumnData);
+				createChildDataModels(
+					rEntity,
+					pChildCriteria,
+					pSortCriteria,
+					fGetColumnData);
 		}
 
-		return new HierarchicalDataObject(Long.toString(rEntity.getId()),
-										  nIndex,
-										  aValues,
-										  true,
-										  rFlags,
-										  aChildren);
+		return new HierarchicalDataObject(
+			Long.toString(rEntity.getId()),
+			nIndex,
+			aValues,
+			true,
+			rFlags,
+			aChildren);
 	}
 
 	/***************************************
@@ -1014,21 +1020,23 @@ public class DataElementFactory
 		String			    sPrefix = rDef.getEntityName();
 
 		List<HierarchicalDataObject> aEntityObjects =
-			createEntityDataObjects(rEntities,
-									rAttributes,
-									rMetaData.hasFlag(MetaTypes.HIERARCHICAL));
+			createEntityDataObjects(
+				rEntities,
+				rAttributes,
+				rMetaData.hasFlag(MetaTypes.HIERARCHICAL));
 
 		String sCurrentValue =
 			rCurrentEntityId != null ? rCurrentEntityId.toString() : "-1";
 
 		SelectionDataElement aResult =
-			createSelectionDataElement(sName,
-									   sCurrentValue,
-									   sPrefix,
-									   rDef,
-									   aEntityObjects,
-									   rAttributes,
-									   rMetaData.hasFlag(DISPLAY_ENTITY_IDS));
+			createSelectionDataElement(
+				sName,
+				sCurrentValue,
+				sPrefix,
+				rDef,
+				aEntityObjects,
+				rAttributes,
+				rMetaData.hasFlag(DISPLAY_ENTITY_IDS));
 
 		return aResult;
 	}
@@ -1094,23 +1102,25 @@ public class DataElementFactory
 		}
 
 		List<ColumnDefinition> aColumns =
-			createColumnDefinitions(rDef,
-									rAttributes,
-									sPrefix,
-									rSortAttribute,
-									eSortDirection);
+			createColumnDefinitions(
+				rDef,
+				rAttributes,
+				sPrefix,
+				rSortAttribute,
+				eSortDirection);
 
 		Function<Entity, List<String>> fGetAttributes =
 			CollectionFunctions.createStringList(false, rAttributes);
 
 		StorageAdapterId rStorageAdapterId =
-			getDatabaseStorageAdapter(rMetaData,
-									  STORAGE_ADAPTER_ID,
-									  pQuery,
-									  fGetAttributes,
-									  pDefaultCriteria,
-									  pDefaultSortCriteria,
-									  aColumns);
+			getDatabaseStorageAdapter(
+				rMetaData,
+				STORAGE_ADAPTER_ID,
+				pQuery,
+				fGetAttributes,
+				pDefaultCriteria,
+				pDefaultSortCriteria,
+				aColumns);
 
 		Validator<String> rValidator =
 			new QueryValidator(rStorageAdapterId.toString(), aColumns);
@@ -1130,7 +1140,8 @@ public class DataElementFactory
 		{
 			nCurrentSelection =
 				((DatabaseStorageAdapter) rStorageAdapterRegistry
-				 .getStorageAdapter(rStorageAdapterId)).positionOf(rCurrentEntityId);
+				 .getStorageAdapter(rStorageAdapterId)).positionOf(
+					rCurrentEntityId);
 		}
 
 		if (nCurrentSelection >= 0)
@@ -1319,10 +1330,11 @@ public class DataElementFactory
 			}
 
 			aResult =
-				new StringListDataElement(sName,
-										  aStringValues,
-										  rValidator,
-										  rFlags);
+				new StringListDataElement(
+					sName,
+					aStringValues,
+					rValidator,
+					rFlags);
 		}
 		else
 		{
@@ -1350,8 +1362,9 @@ public class DataElementFactory
 										RelationType<?>   rType)
 		throws AuthenticationException, StorageException
 	{
-		applyDataElements(rEntityDataElement.getDataElements(),
-						  (Entity) rTarget.get(rType));
+		applyDataElements(
+			rEntityDataElement.getDataElements(),
+			(Entity) rTarget.get(rType));
 	}
 
 	/***************************************
@@ -1396,8 +1409,9 @@ public class DataElementFactory
 			}
 			else
 			{
-				throw new IllegalArgumentException("Not a database storage adapter ID: " +
-												   sQueryId);
+				throw new IllegalArgumentException(
+					"Not a database storage adapter ID: " +
+					sQueryId);
 			}
 
 			Class<Entity> rEntityType = pQuery.getQueryType();
@@ -1410,17 +1424,20 @@ public class DataElementFactory
 				// ignore duplicates even if querying by ID to support views
 				// which may contain duplicate generated IDs
 				rEntity =
-					EntityManager.queryEntity(rEntityType,
-											  rDef.getIdAttribute(),
-											  nSelectedId,
-											  false);
+					EntityManager.queryEntity(
+						rEntityType,
+						rDef.getIdAttribute(),
+						nSelectedId,
+						false);
 
 				if (rEntity == null)
 				{
-					throw new IllegalArgumentException(String.format("Could not find entity " +
-																	 "%s with ID %d",
-																	 rEntityType,
-																	 nSelectedId));
+					throw new IllegalArgumentException(
+						String.format(
+							"Could not find entity " +
+							"%s with ID %d",
+							rEntityType,
+							nSelectedId));
 				}
 			}
 			else
@@ -1431,8 +1448,9 @@ public class DataElementFactory
 		else if (rValidator instanceof SelectionValidator)
 		{
 			rEntity =
-				(Entity) CollectionUtil.get(rRelation.get(ALLOWED_VALUES),
-											nSelectedId);
+				(Entity) CollectionUtil.get(
+					rRelation.get(ALLOWED_VALUES),
+					nSelectedId);
 		}
 		else
 		{
@@ -1462,9 +1480,10 @@ public class DataElementFactory
 			rRelation = rTarget.set(rType, null);
 		}
 
-		copyDisplayProperties(rElement,
-							  rRelation,
-							  DataElement.SERVER_PROPERTIES);
+		copyDisplayProperties(
+			rElement,
+			rRelation,
+			DataElement.SERVER_PROPERTIES);
 	}
 
 	/***************************************
@@ -1528,9 +1547,9 @@ public class DataElementFactory
 
 			if (rDisplayProperties != null)
 			{
-				rDisplayProperties.setProperty((PropertyName<Object>)
-											   rProperty,
-											   rValue);
+				rDisplayProperties.setProperty(
+					(PropertyName<Object>) rProperty,
+					rValue);
 			}
 		}
 	}
@@ -1578,11 +1597,12 @@ public class DataElementFactory
 				DatabaseStorageAdapter aAdapter =
 					new DatabaseStorageAdapter(this);
 
-				aAdapter.setQueryParameters(qChildren,
-											fGetColumnData,
-											pChildCriteria,
-											pSortCriteria,
-											null);
+				aAdapter.setQueryParameters(
+					qChildren,
+					fGetColumnData,
+					pChildCriteria,
+					pSortCriteria,
+					null);
 
 				StorageAdapterId rAdapterId =
 					rStorageAdapterRegistry.registerStorageAdapter(aAdapter);
@@ -1613,13 +1633,15 @@ public class DataElementFactory
 					if (pChildCriteria == null ||
 						pChildCriteria.evaluate(rChild))
 					{
-						aChildObjects.add(createEntityDataObject(rChild,
-																 nIndex++,
-																 pChildCriteria,
-																 pSortCriteria,
-																 fGetColumnData,
-																 null,
-																 true));
+						aChildObjects.add(
+							createEntityDataObject(
+								rChild,
+								nIndex++,
+								pChildCriteria,
+								pSortCriteria,
+								fGetColumnData,
+								null,
+								true));
 					}
 				}
 
@@ -1664,32 +1686,35 @@ public class DataElementFactory
 			if (rValue == null)
 			{
 				rValue =
-					ReflectUtil.newInstance(ReflectUtil.getImplementationClass(rDatatype));
+					ReflectUtil.newInstance(
+						ReflectUtil.getImplementationClass(rDatatype));
 			}
 
 			aDataElement =
-				createEnumDataElement(sName,
-									  (Class<? extends Enum<?>>)
-									  rElementDatatype,
-									  rValue,
-									  rAllowedValues,
-									  rFlags);
+				createEnumDataElement(
+					sName,
+					(Class<? extends Enum<?>>) rElementDatatype,
+					rValue,
+					rAllowedValues,
+					rFlags);
 		}
 		else if (rAllowedValues != null)
 		{
 			aDataElement =
-				createListDataElement(sName,
-									  (Collection<?>) rValue,
-									  rAllowedValues,
-									  rFlags);
+				createListDataElement(
+					sName,
+					(Collection<?>) rValue,
+					rAllowedValues,
+					rFlags);
 		}
 		else
 		{
 			aDataElement =
-				createDataElementList(rObject,
-									  rType,
-									  (Collection<?>) rValue,
-									  rFlags);
+				createDataElementList(
+					rObject,
+					rType,
+					(Collection<?>) rValue,
+					rFlags);
 		}
 
 		return aDataElement;
@@ -1756,11 +1781,12 @@ public class DataElementFactory
 		else if (Entity.class.isAssignableFrom(rDatatype))
 		{
 			aDataElement =
-				createEntityDataElement(sName,
-										rValue,
-										rRelation,
-										rAllowedValues,
-										rFlags);
+				createEntityDataElement(
+					sName,
+					rValue,
+					rRelation,
+					rAllowedValues,
+					rFlags);
 		}
 		else if (JsonObject.class.isAssignableFrom(rDatatype))
 		{
@@ -1770,21 +1796,23 @@ public class DataElementFactory
 		else if (Collection.class.isAssignableFrom(rDatatype))
 		{
 			aDataElement =
-				createCollectionDataElement(rObject,
-											rType,
-											rValue,
-											rAllowedValues,
-											rFlags);
+				createCollectionDataElement(
+					rObject,
+					rType,
+					rValue,
+					rAllowedValues,
+					rFlags);
 		}
 		else
 		{
 			aDataElement =
-				createSimpleDataElement(rDatatype,
-										sName,
-										rValue,
-										rAllowedValues,
-										rRelation,
-										rFlags);
+				createSimpleDataElement(
+					rDatatype,
+					sName,
+					rValue,
+					rAllowedValues,
+					rRelation,
+					rFlags);
 		}
 
 		if (aDataElement != null && rRelation != null)
@@ -1849,18 +1877,19 @@ public class DataElementFactory
 				ifAttribute(rParentAttribute, equalTo(rEntity));
 
 			List<Function<? super Entity, ?>> rChildAttributes =
-				new ArrayList<Function<? super Entity, ?>>(rChildDef
-														   .getDisplayAttributes(DisplayMode.COMPACT));
+				new ArrayList<Function<? super Entity, ?>>(
+					rChildDef.getDisplayAttributes(DisplayMode.COMPACT));
 
 			SelectionDataElement aChildElement =
-				createEntitySelectionElement(sChildren,
-											 rEntity,
-											 null,
-											 -1,
-											 forEntity(rChildType, pParent),
-											 null,
-											 null,
-											 rChildAttributes);
+				createEntitySelectionElement(
+					sChildren,
+					rEntity,
+					null,
+					-1,
+					forEntity(rChildType, pParent),
+					null,
+					null,
+					rChildAttributes);
 
 			aChildElements.add(aChildElement);
 		}
@@ -1868,10 +1897,11 @@ public class DataElementFactory
 		if (aChildElements.size() > 0)
 		{
 			DataElementList aChildList =
-				new DataElementList(EntityDataElement.CHILDREN_ELEMENT,
-									null,
-									aChildElements,
-									null);
+				new DataElementList(
+					EntityDataElement.CHILDREN_ELEMENT,
+					null,
+					aChildElements,
+					null);
 
 			if (aChildElements.size() > 1)
 			{
@@ -1923,10 +1953,10 @@ public class DataElementFactory
 			 rAllowedValues != null))
 		{
 			aDataElement =
-				createEntitySelectionElement(sName,
-											 (Relation<? extends Entity>)
-											 rRelation,
-											 rAllowedValues);
+				createEntitySelectionElement(
+					sName,
+					(Relation<? extends Entity>) rRelation,
+					rAllowedValues);
 
 			rRelation.annotate(DATA_ELEMENT, aDataElement);
 		}
@@ -1936,12 +1966,13 @@ public class DataElementFactory
 				rValue != null ? ((Entity) rValue).getGlobalId() : "";
 
 			aDataElement =
-				createSimpleDataElement(rRelation.getType().getTargetType(),
-										sName,
-										sValue,
-										rAllowedValues,
-										rRelation,
-										rFlags);
+				createSimpleDataElement(
+					rRelation.getType().getTargetType(),
+					sName,
+					sValue,
+					rAllowedValues,
+					rRelation,
+					rFlags);
 		}
 
 		return aDataElement;
@@ -1976,13 +2007,15 @@ public class DataElementFactory
 
 		for (Entity rEntity : rEntities)
 		{
-			aEntityObjects.add(createEntityDataObject(rEntity,
-													  nIndex++,
-													  null,
-													  null,
-													  fCollectValues,
-													  null,
-													  bHierarchical));
+			aEntityObjects.add(
+				createEntityDataObject(
+					rEntity,
+					nIndex++,
+					null,
+					null,
+					fCollectValues,
+					null,
+					bHierarchical));
 		}
 
 		return aEntityObjects;
@@ -2038,7 +2071,8 @@ public class DataElementFactory
 			DisplayMode rMode = rRelation.get(ENTITY_DISPLAY_MODE);
 
 			rAttributes =
-				new ArrayList<Function<? super Entity, ?>>(rDef.getDisplayAttributes(rMode));
+				new ArrayList<Function<? super Entity, ?>>(
+					rDef.getDisplayAttributes(rMode));
 		}
 
 		int nCurrentSelection = -1;
@@ -2055,22 +2089,24 @@ public class DataElementFactory
 			Predicate<? super Entity> pSortOrder =
 				rRelation.get(ENTITY_SORT_PREDICATE);
 
-			return createEntitySelectionElement(sName,
-												rRelation,
-												rEntityId,
-												nCurrentSelection,
-												pQuery,
-												null,
-												pSortOrder,
-												rAttributes);
+			return createEntitySelectionElement(
+				sName,
+				rRelation,
+				rEntityId,
+				nCurrentSelection,
+				pQuery,
+				null,
+				pSortOrder,
+				rAttributes);
 		}
 		else
 		{
-			return createEntitySelectionElement(sName,
-												rRelation,
-												rEntityId,
-												rAllowedEntities,
-												rAttributes);
+			return createEntitySelectionElement(
+				sName,
+				rRelation,
+				rEntityId,
+				rAllowedEntities,
+				rAttributes);
 		}
 	}
 
@@ -2101,8 +2137,9 @@ public class DataElementFactory
 			rMetaData.hasRelation(MAXIMUM))
 		{
 			aValidator =
-				new IntegerRangeValidator(rMetaData.get(MINIMUM),
-										  rMetaData.get(MAXIMUM));
+				new IntegerRangeValidator(
+					rMetaData.get(MINIMUM),
+					rMetaData.get(MAXIMUM));
 		}
 
 		aResult = new IntegerDataElement(sName, rValue, aValidator, rFlags);
@@ -2132,10 +2169,11 @@ public class DataElementFactory
 
 		new QueryValidator(sName, null);
 
-		return new SelectionDataElement(sName,
-										SelectionDataElement.NO_SELECTION,
-										null,
-										rFlags);
+		return new SelectionDataElement(
+			sName,
+			SelectionDataElement.NO_SELECTION,
+			null,
+			rFlags);
 	}
 
 	/***************************************
@@ -2165,10 +2203,11 @@ public class DataElementFactory
 			aStringValues.add(rValue.toString());
 		}
 
-		return new StringListDataElement(sName,
-										 aStringValues,
-										 rValidator,
-										 rFlags);
+		return new StringListDataElement(
+			sName,
+			aStringValues,
+			rValidator,
+			rFlags);
 	}
 
 	/***************************************
@@ -2203,38 +2242,41 @@ public class DataElementFactory
 		else if (rDatatype == Integer.class)
 		{
 			rResult =
-				createIntegerDataElement(sName,
-										 (Integer) rValue,
-										 rMetaData,
-										 rFlags);
+				createIntegerDataElement(
+					sName,
+					(Integer) rValue,
+					rMetaData,
+					rFlags);
 		}
 		else if (rDatatype == BigDecimal.class)
 		{
 			rResult =
-				new BigDecimalDataElement(sName,
-										  (BigDecimal) rValue,
-										  null,
-										  rFlags);
+				new BigDecimalDataElement(
+					sName,
+					(BigDecimal) rValue,
+					null,
+					rFlags);
 		}
 		else if (rDatatype == Date.class)
 		{
 			rResult =
-				new DateDataElement(sName,
-									(Date) rValue,
-									new DateValidator(null, null),
-									rFlags);
+				new DateDataElement(
+					sName,
+					(Date) rValue,
+					new DateValidator(null, null),
+					rFlags);
 		}
 		else if (rDatatype == Period.class)
 		{
 			Period rPeriod = rValue != null ? (Period) rValue : Period.NONE;
 
 			rResult =
-				new PeriodDataElement(sName,
-									  rPeriod.getCount(),
-									  rPeriod.getUnit().name(),
-									  getEnumValidator(Unit.class,
-													   rAllowedValues),
-									  rFlags);
+				new PeriodDataElement(
+					sName,
+					rPeriod.getCount(),
+					rPeriod.getUnit().name(),
+					getEnumValidator(Unit.class, rAllowedValues),
+					rFlags);
 		}
 		else if (DataSet.class.isAssignableFrom(rDatatype))
 		{
@@ -2244,11 +2286,12 @@ public class DataElementFactory
 		else if (rDatatype.isEnum())
 		{
 			rResult =
-				createEnumDataElement(sName,
-									  (Class<? extends Enum<?>>) rDatatype,
-									  (Enum<?>) rValue,
-									  rAllowedValues,
-									  rFlags);
+				createEnumDataElement(
+					sName,
+					(Class<? extends Enum<?>>) rDatatype,
+					(Enum<?>) rValue,
+					rAllowedValues,
+					rFlags);
 		}
 		else
 		{
@@ -2320,11 +2363,12 @@ public class DataElementFactory
 			}
 		}
 
-		rStorageAdapter.setQueryParameters(pQuery,
-										   fGetColumnData,
-										   pDefaultCriteria,
-										   pSortCriteria,
-										   rColumns);
+		rStorageAdapter.setQueryParameters(
+			pQuery,
+			fGetColumnData,
+			pDefaultCriteria,
+			pSortCriteria,
+			rColumns);
 
 		return rStorageAdapterId;
 	}

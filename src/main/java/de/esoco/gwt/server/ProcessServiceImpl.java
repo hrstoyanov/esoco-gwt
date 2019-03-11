@@ -64,6 +64,7 @@ import java.util.Set;
 import org.obrel.core.ObjectRelations;
 import org.obrel.core.Relatable;
 import org.obrel.core.RelationType;
+import org.obrel.core.RelationTypes;
 import org.obrel.type.MetaTypes;
 
 import static de.esoco.data.DataRelationTypes.SESSION_MANAGER;
@@ -129,6 +130,11 @@ public abstract class ProcessServiceImpl<E extends Entity>
 
 	private static List<ProcessDefinition> aProcessDefinitions =
 		new ArrayList<ProcessDefinition>();
+
+	static
+	{
+		RelationTypes.init(ProcessServiceImpl.class);
+	}
 
 	//~ Instance fields --------------------------------------------------------
 

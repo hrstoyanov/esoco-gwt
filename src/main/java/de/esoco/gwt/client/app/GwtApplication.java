@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,21 @@ import com.google.gwt.resources.client.CssResource;
  */
 public abstract class GwtApplication extends EWTEntryPoint
 {
+	//~ Instance fields --------------------------------------------------------
+
+	private GwtProcessAppRootPanel aRootPanel;
+
 	//~ Methods ----------------------------------------------------------------
+
+	/***************************************
+	 * Returns the root process panel of this application.
+	 *
+	 * @return The root panel
+	 */
+	public GwtProcessAppRootPanel getRootPanel()
+	{
+		return aRootPanel;
+	}
 
 	/***************************************
 	 * Overridden as final to invoke the {@link #init()} and {@link #start()}
@@ -49,7 +63,8 @@ public abstract class GwtApplication extends EWTEntryPoint
 	@Override
 	public final void onModuleLoad()
 	{
-		AuthenticationPanelManager.setAuthenticationCookiePrefix(getCookiePrefix());
+		AuthenticationPanelManager.setAuthenticationCookiePrefix(
+			getCookiePrefix());
 		ServiceRegistry.init(createApplicationService());
 		injectApplicationCss();
 
@@ -82,10 +97,11 @@ public abstract class GwtApplication extends EWTEntryPoint
 		return new GwtApplicationModule(ViewStyle.DEFAULT)
 		{
 			@Override
-			protected void createApplicationPanel(ContainerBuilder<?> rBuilder)
+			protected void createModulePanel(ContainerBuilder<?> rBuilder)
 			{
-				new GwtProcessAppRootPanel<>().buildIn(rBuilder,
-													   AlignedPosition.CENTER);
+				aRootPanel = new GwtProcessAppRootPanel();
+
+				aRootPanel.buildIn(rBuilder, AlignedPosition.CENTER);
 			}
 		};
 	}

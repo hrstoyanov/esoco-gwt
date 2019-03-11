@@ -34,8 +34,9 @@ import de.esoco.gwt.client.ui.PanelManager;
  *
  * @author eso
  */
-public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
-	extends GwtApplicationPanelManager<Container, P>
+public class GwtProcessAppRootPanel
+	extends GwtApplicationPanelManager<Container,
+									   GwtApplicationPanelManager<?, ?>>
 {
 	//~ Instance fields --------------------------------------------------------
 
@@ -81,6 +82,17 @@ public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
 		removeApplicationPanel();
 
 		super.dispose();
+	}
+
+	/***************************************
+	 * Returns the process panel manager that is used to display the root
+	 * process.
+	 *
+	 * @return The process panel manager
+	 */
+	public ProcessPanelManager getProcessPanel()
+	{
+		return aProcessPanel;
 	}
 
 	/***************************************
@@ -133,7 +145,7 @@ public class GwtProcessAppRootPanel<P extends GwtApplicationPanelManager<?, ?>>
 		ProcessPanelManager aProcessPanelManager =
 			new ProcessPanelManager(this, rProcessState.getName(), false, true);
 
-		aProcessPanelManager.setDisableOnInteraction(false);
+		aProcessPanelManager.setDisableOnInteraction(true);
 
 		return aProcessPanelManager;
 	}

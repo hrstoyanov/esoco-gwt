@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ public abstract class GwtApplicationModule implements EWTModule
 		ContainerBuilder<?> aMainViewBuilder =
 			new ContainerBuilder<View>(aMainView);
 
-		createApplicationPanel(aMainViewBuilder);
+		createModulePanel(aMainViewBuilder);
 
 		return aMainView;
 	}
@@ -85,13 +85,12 @@ public abstract class GwtApplicationModule implements EWTModule
 	}
 
 	/***************************************
-	 * Must be implemented by subclasses to create the application's main panel
-	 * with the given builder.
+	 * Must be implemented by subclasses to create the module's main panel with
+	 * the given builder.
 	 *
 	 * @param rBuilder The view builder
 	 */
-	protected abstract void createApplicationPanel(
-		ContainerBuilder<?> rBuilder);
+	protected abstract void createModulePanel(ContainerBuilder<?> rBuilder);
 
 	/***************************************
 	 * Returns the view style for the main view of this module. May be

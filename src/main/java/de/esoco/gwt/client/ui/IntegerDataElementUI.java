@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,8 +28,12 @@ import de.esoco.ewt.style.StyleData;
 
 import de.esoco.lib.property.ContentType;
 
+import com.google.gwt.user.client.Timer;
+
 import static de.esoco.lib.property.ContentProperties.CONTENT_TYPE;
 import static de.esoco.lib.property.ContentProperties.INPUT_CONSTRAINT;
+import static de.esoco.lib.property.StateProperties.AUTO_UPDATE_INCREMENT;
+import static de.esoco.lib.property.StateProperties.AUTO_UPDATE_INTERVAL;
 
 
 /********************************************************************
@@ -70,10 +74,13 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 			{
 				IntegerRangeValidator rRange =
 					(IntegerRangeValidator) rValidator;
+				Integer				  rValue = rDataElement.getValue();
 
 				rProgressBar.setMinimum(rRange.getMinimum());
 				rProgressBar.setMaximum(rRange.getMaximum());
-				rProgressBar.setValue(rDataElement.getValue().intValue());
+				rProgressBar.setValue(rValue != null ? rValue.intValue() : 0);
+
+				checkSetupAutoUpdate(rProgressBar, rDataElement);
 			}
 
 			rComponent = rProgressBar;
@@ -87,8 +94,7 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#createInputUI(ContainerBuilder, StyleData,
-	 *      de.esoco.data.element.DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	@SuppressWarnings("boxing")
@@ -104,10 +110,11 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 			IntegerRangeValidator rRange = (IntegerRangeValidator) rValidator;
 
 			Spinner aSpinner =
-				rBuilder.addSpinner(rStyle,
-									rRange.getMinimum(),
-									rRange.getMaximum(),
-									1);
+				rBuilder.addSpinner(
+					rStyle,
+					rRange.getMinimum(),
+					rRange.getMaximum(),
+					1);
 
 			if (rDataElement.getValue() != null)
 			{
@@ -152,7 +159,7 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 	}
 
 	/***************************************
-	 * @see DataElementUI#transferInputToDataElement(Component, de.esoco.data.element.DataElement)
+	 * {@inheritDoc}
 	 */
 	@Override
 	@SuppressWarnings("boxing")
@@ -167,6 +174,47 @@ public class IntegerDataElementUI extends DataElementUI<IntegerDataElement>
 		else
 		{
 			super.transferInputToDataElement(rComponent, rDataElement);
+		}
+	}
+
+	/***************************************
+	 * Checks whether the given progress bar data element should be updated
+	 * automatically.
+	 *
+	 * @param rProgressBar The progress bar component
+	 * @param rDataElement The associated data element
+	 */
+	private void checkSetupAutoUpdate(
+		ProgressBar		   rProgressBar,
+		IntegerDataElement rDataElement)
+	{
+		int nIncrement = rDataElement.getIntProperty(AUTO_UPDATE_INCREMENT, 0);
+		int nInterval  = rDataElement.getIntProperty(AUTO_UPDATE_INTERVAL, -1);
+
+		if (nIncrement != 0 && nInterval > 0)
+		{
+			Timer aTimer =
+				new Timer()
+				{
+					@Override
+					public void run()
+					{
+						int nCurrent = rProgressBar.getValue();
+
+						if ((nIncrement > 0 &&
+							 nCurrent < rProgressBar.getMaximum()) ||
+							(nIncrement < 0 &&
+							 nCurrent > rProgressBar.getMinimum()))
+						{
+							rProgressBar.setValue(nCurrent + nIncrement);
+						}
+						else
+						{
+							cancel();
+						}
+					}
+				};
+			aTimer.scheduleRepeating(nInterval);
 		}
 	}
 }

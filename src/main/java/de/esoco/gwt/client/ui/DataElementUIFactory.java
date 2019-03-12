@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import de.esoco.data.element.IntegerDataElement;
 import de.esoco.data.element.PeriodDataElement;
 import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.element.StringDataElement;
+import de.esoco.data.element.StringListDataElement;
 import de.esoco.data.validate.HasValueList;
 
 import de.esoco.ewt.EWT;
@@ -53,6 +54,9 @@ public class DataElementUIFactory
 			rElement -> createDefaultUI(rElement));
 		registerDataElementUI(
 			StringDataElement.class,
+			rElement -> createDefaultUI(rElement));
+		registerDataElementUI(
+			StringListDataElement.class,
 			rElement -> createDefaultUI(rElement));
 		registerDataElementUI(
 			DataElementList.class,

@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2018 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ import de.esoco.lib.property.LayoutType;
 import de.esoco.lib.property.ListStyle;
 import de.esoco.lib.property.PropertyName;
 import de.esoco.lib.property.Selectable;
-import de.esoco.lib.property.UserInterfaceProperties;
+import de.esoco.lib.property.StyleProperties;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +67,7 @@ import static de.esoco.lib.property.LayoutProperties.FLOAT;
 import static de.esoco.lib.property.LayoutProperties.HORIZONTAL_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_ALIGN;
 import static de.esoco.lib.property.LayoutProperties.ICON_SIZE;
+import static de.esoco.lib.property.LayoutProperties.LAYOUT;
 import static de.esoco.lib.property.LayoutProperties.LAYOUT_VISIBILITY;
 import static de.esoco.lib.property.LayoutProperties.ROWS;
 import static de.esoco.lib.property.LayoutProperties.VERTICAL_ALIGN;
@@ -76,6 +77,7 @@ import static de.esoco.lib.property.StyleProperties.CHECK_BOX_STYLE;
 import static de.esoco.lib.property.StyleProperties.DISABLED_ELEMENTS;
 import static de.esoco.lib.property.StyleProperties.ICON_COLOR;
 import static de.esoco.lib.property.StyleProperties.LIST_STYLE;
+import static de.esoco.lib.property.StyleProperties.SORT;
 
 
 /********************************************************************
@@ -323,9 +325,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		int nColumns = rDataElement.getIntProperty(COLUMNS, 1);
 
 		LayoutType eLayout =
-			rDataElement.getProperty(
-				UserInterfaceProperties.LAYOUT,
-				getButtonPanelDefaultLayout());
+			rDataElement.getProperty(LAYOUT, getButtonPanelDefaultLayout());
 
 		// inline inserts buttons directly into enclosing panels
 		// TODO: return not the parent container from this method as this
@@ -610,37 +610,40 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	/***************************************
 	 * Returns the display values for a list from a value list. If the list
 	 * values are resource IDs they will be converted accordingly. If the data
-	 * element has the flag {@link UserInterfaceProperties#SORT} set and the
-	 * values are of the type {@link Comparable} the returned list will be
-	 * sorted by their natural order.
+	 * element has the flag {@link StyleProperties#SORT} set and the values are
+	 * of the type {@link Comparable} the returned list will be sorted by their
+	 * natural order.
 	 *
-	 * @param  rContext     The user interface context for resource expansion
-	 * @param  rDataElement The data element
+	 * @param  rContext The user interface context for resource expansion
+	 * @param  rElement The data element
 	 *
 	 * @return The resulting list of display values
 	 */
 	private List<String> getListValues(
 		UserInterfaceContext rContext,
-		DataElement<?>		 rDataElement)
+		DataElement<?>		 rElement)
 	{
-		Validator<?> rValidator  = rDataElement.getValidator();
+		Validator<?> rValidator =
+			rElement instanceof ListDataElement
+			? ((ListDataElement<?>) rElement).getElementValidator()
+			: rElement.getValidator();
+
 		List<?>		 rRawValues  = ((HasValueList<?>) rValidator).getValues();
 		List<String> aListValues = new ArrayList<String>();
 
 		for (Object rValue : rRawValues)
 		{
-			String sValue = convertValueToString(rDataElement, rValue);
+			String sValue = convertValueToString(rElement, rValue);
 
 			aListValues.add(rContext.expandResource(sValue));
 		}
 
-		if (rDataElement.hasFlag(UserInterfaceProperties.SORT) &&
-			aListValues.size() > 1)
+		if (rElement.hasFlag(SORT) && aListValues.size() > 1)
 		{
 			Collections.sort(aListValues);
 		}
 
-		String sNullValue = rDataElement.getProperty(NULL_VALUE, null);
+		String sNullValue = rElement.getProperty(NULL_VALUE, null);
 
 		if (sNullValue != null)
 		{

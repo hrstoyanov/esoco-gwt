@@ -139,7 +139,7 @@ public class DataElementUI<D extends DataElement<?>>
 	/** The default prefix for label resource IDs. */
 	protected static final String LABEL_RESOURCE_PREFIX = "$lbl";
 
-	private static LayoutType eButtonPanelDefaultLayout = LayoutType.TABLE;
+	private static LayoutType eButtonPanelDefaultLayout = LayoutType.FLOW;
 
 	private static final int[] PHONE_NUMBER_FIELD_SIZES =
 		new int[] { 3, 5, 8, 4 };

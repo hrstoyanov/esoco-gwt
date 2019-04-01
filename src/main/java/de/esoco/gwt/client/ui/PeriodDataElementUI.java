@@ -1,6 +1,6 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // This file is a part of the 'esoco-gwt' project.
-// Copyright 2017 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
+// Copyright 2019 Elmar Sonnenschein, esoco GmbH, Flensburg, Germany
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package de.esoco.gwt.client.ui;
 
 import de.esoco.data.element.PeriodDataElement;
-import de.esoco.data.validate.StringListValidator;
 
 import de.esoco.ewt.build.ContainerBuilder;
 import de.esoco.ewt.component.Component;
@@ -89,8 +88,8 @@ public class PeriodDataElementUI extends DataElementUI<PeriodDataElement>
 		Spinner		    aSpinner    = (Spinner) rComponents.get(0);
 		ListBox		    rComboBox   = (ListBox) rComponents.get(1);
 
-		List<String> rUnits =
-			((StringListValidator) rElement.getValidator()).getValues();
+		@SuppressWarnings("unchecked")
+		List<String> rUnits = (List<String>) rElement.getAllowedValues();
 
 		for (String sUnit : rUnits)
 		{

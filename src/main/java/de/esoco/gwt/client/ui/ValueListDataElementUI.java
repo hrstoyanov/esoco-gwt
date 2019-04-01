@@ -19,9 +19,6 @@ package de.esoco.gwt.client.ui;
 import de.esoco.data.element.DataElement;
 import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.SelectionDataElement;
-import de.esoco.data.validate.HasValueList;
-import de.esoco.data.validate.StringListValidator;
-import de.esoco.data.validate.Validator;
 
 import de.esoco.ewt.EWT;
 import de.esoco.ewt.UserInterfaceContext;
@@ -154,8 +151,7 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 				(ListDataElement<String>) rDataElement;
 
 			// update validator to allow new values entered into the combo box
-			((StringListValidator) rListDataElement.getElementValidator())
-			.getValues().addAll(rValues);
+			rListDataElement.addAllowedValues(rValues);
 			rListDataElement.clear();
 			rListDataElement.addAll(rValues);
 		}
@@ -623,13 +619,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 		UserInterfaceContext rContext,
 		DataElement<?>		 rElement)
 	{
-		Validator<?> rValidator =
-			rElement instanceof ListDataElement
-			? ((ListDataElement<?>) rElement).getElementValidator()
-			: rElement.getValidator();
-
-		List<?>		 rRawValues  = ((HasValueList<?>) rValidator).getValues();
-		List<String> aListValues = new ArrayList<String>();
+		Collection<?> rRawValues  = rElement.getAllowedValues();
+		List<String>  aListValues = new ArrayList<String>();
 
 		for (Object rValue : rRawValues)
 		{
@@ -669,10 +660,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 			rButton instanceof Selectable ? ((Selectable) rButton).isSelected()
 										  : false;
 
-		List<?> rValues =
-			((HasValueList<?>) rDataElement.getValidator()).getValues();
-
-		Object rButtonValue = rValues.get(rAllButtons.indexOf(rButton));
+		List<?> rValues		 = rDataElement.getAllowedValues();
+		Object  rButtonValue = rValues.get(rAllButtons.indexOf(rButton));
 
 		setDataElementValueFromList(rDataElement, rButtonValue, bSelected);
 	}
@@ -782,10 +771,8 @@ public class ValueListDataElementUI extends DataElementUI<DataElement<?>>
 	{
 		UserInterfaceContext rContext = getElementComponent().getContext();
 
-		List<?> rValues =
-			((HasValueList<?>) rDataElement.getValidator()).getValues();
-
-		String sNullValue = rDataElement.getProperty(NULL_VALUE, null);
+		List<?> rValues    = rDataElement.getAllowedValues();
+		String  sNullValue = rDataElement.getProperty(NULL_VALUE, null);
 
 		if (sNullValue != null)
 		{

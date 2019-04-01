@@ -901,7 +901,7 @@ public class DataElementUI<D extends DataElement<?>>
 			bImageValue = rDataElement.hasFlag(HAS_IMAGES);
 		}
 
-		if (containsResourceIds(rDataElement.getValidator()))
+		if (containsResourceIds(rDataElement.getElementValidator()))
 		{
 			sValue = getValueItemString(rDataElement, sValue);
 		}

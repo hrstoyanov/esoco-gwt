@@ -22,13 +22,10 @@ import de.esoco.data.element.DataElement;
 import de.esoco.data.element.DataElementList;
 import de.esoco.data.element.DateDataElement;
 import de.esoco.data.element.IntegerDataElement;
-import de.esoco.data.element.ListDataElement;
 import de.esoco.data.element.PeriodDataElement;
 import de.esoco.data.element.SelectionDataElement;
 import de.esoco.data.element.StringDataElement;
 import de.esoco.data.element.StringListDataElement;
-import de.esoco.data.validate.HasValueList;
-import de.esoco.data.validate.Validator;
 
 import de.esoco.ewt.EWT;
 
@@ -187,12 +184,7 @@ public class DataElementUIFactory
 	{
 		DataElementUI<D> aUI;
 
-		Validator<?> rValidator =
-			rElement instanceof ListDataElement
-			? ((ListDataElement<?>) rElement).getElementValidator()
-			: rElement.getValidator();
-
-		if (rValidator instanceof HasValueList<?>)
+		if (rElement.getAllowedValues() != null)
 		{
 			aUI = (DataElementUI<D>) new ValueListDataElementUI();
 		}
